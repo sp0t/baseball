@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>BetMLB</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="/static/styles.css"> 
+        <link rel="stylesheet" href="/static/nav.css"> 
+        <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🚀</text></svg>"> 
+        <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></script>
+        <script type="text/javascript" src="/static/index.js"></script>
+    </head>
+    <body>
+        <div class="nav">
+            <input type="checkbox" id="nav-check">
+            <div class="nav-header"><div class="nav-title">BetMLB</div></div>
+            <div class="nav-btn">
+              <label for="nav-check">
+                <span></span>
+                <span></span>
+                <span></span>
+              </label>
+            </div>
+            
+            <div class="nav-links">
+              <a href="">Home</a>
+              <a href="">Teams</a>
+              <a href="">Documentation</a>
+            </div>
+          </div>
+        <div class="container">
+            <!-- Card Grid -->
+            
+
+            <!-- Large Card -->
+            <div class="large-card" id="large-card">
+                <button class="close-button" onclick="closeCard()">Close</button>
+                <div id="large-card-wrapper">
+                    <span class="large-card-title" id="large-card-title"></span>
+                    <span class="large-game-date" id="large-game-date"></span>
+
+                    <form id = 'calc' onsubmit="return false;">
+                        <div class="form-wrapper">
+
+                            <div class="form-left">
+                                <span class="card-title">Away</span>
+                                <hr>
+
+                                <div class="form-left-wrapper">
+                                    <table>
+                                        <tr>
+                                            <td>Win Prob</td>
+                                            <td><div class="input-box" name="away_prob" style="border: none">55.5%</div></td>
+                                            <td><div class="input-box" name="away_prob_1" style="border: none; display: none">55.5%</div></td>           
+                                            <td><div class="input-box" name="away_prob_2" style="border: none; display: none">52.5%</div></td>                                                   </tr>
+                                        <tr></tr>
+
+                                        <tr>
+                                            <td>Model</td>
+                                            <td>
+                                              <div>
+                                                <input onchange="getAwayBet()" type="radio" id="away_model_1a" name="away_model_type" value="away_model_1a" checked>
+                                                <label for="away_model_1a">Model 1a</label>
+                                              </div>
+                                              <div>
+                                                <input onchange="getAwayBet()" type="radio" id="away_model_1b" name="away_model_type" value="away_model_1b">
+                                                <label for="away_model_1b">Model 1b</label></td>
+                                              </div>
+                                          </tr>
+                                          <tr></tr>
+
+                        
+                                        <tr>
+                                            <td>Adj.</td>
+                                            <td><input type="text" class="input-box" name="away_adjustment" onchange="getAwayBet()" value="0"></td>
+                                        </tr>
+                                        <tr></tr>
+
+                                        <tr>
+                                            <td>Odds</td>
+                                            <td><input type="text" class="input-box" name="away_odds" onchange="getAwayBet()" placeholder="+150"></td>
+                                        </tr>
+                                        <tr></tr>
+
+                                        <tr>
+                                            <td>Min Edge</td>
+                                            <td><input type="text" class="input-box" name="away_min_edge" value="3%" onchange="getHomeBet()"></td>
+                                        </tr>
+                                        <tr></tr>
+
+                                        <tr>
+                                            <td>Min Prob</td>
+                                            <td><input type="text" class="input-box" name="away_min_prob" value="48%" onchange="getHomeBet()"></td>
+                                        </tr>
+                                        <tr></tr>
+
+                                    
+
+                                        <tr>
+                                            <td>Edge</td>
+                                            <td><div type="text" class="input-box" name="away_edge" style="border: none">—</div></td>
+                                        </tr>
+                                        <tr></tr>
+                                        
+                                        <tr>
+                                            <td>Bet Size</td>
+                                            
+                                            <td><div type="text" class="input-box" name="away_bet_size" style="border: none">—</div></td>
+                                        </tr>
+
+
+                                    </table>
+                                    
+
+                                    
+
+
+
+                            </div>
+
+                    
+                          </div>
+
+                            <div class="form-right">
+                                <span class="card-title">Home</span>
+                                <hr>
+                                
+                                <div class="form-right-wrapper">
+
+                                    <table>
+
+                                        <tr>
+                                            <td>Win Prob</td>
+                                            <td><div class="input-box" name="home_prob" style="border: none">45.5%</div></td>
+                                            <td><div class="input-box" name="home_prob_1" style="border: none; display: none">45.5%</div></td>           
+                                            <td><div class="input-box" name="home_prob_2" style="border: none; display: none">47.5%</div></td>
+                                        </tr>
+
+                                        <tr></tr>
+                                        <tr>
+                                            <td>Model</td>
+                                            <td>
+                                              <div>
+                                                <input onchange="getHomeBet()" type="radio" id="home_model_1a" name="home_model_type" value="home_model_1a" checked>
+                                                <label for="home_model_1a">Model 1a</label>
+                                              </div>
+                                              <div>
+                                                <input onchange="getHomeBet()" type="radio" id="home_model_1b" name="home_model_type" value="home_model_1b">
+                                                <label for="home_model_1b">Model 1b</label></td>
+                                              </div>
+                                          </tr>
+                                          <tr></tr>
+                                        
+                                        <tr>
+                                            <td>Adj.</td>
+                                            <td><input type="text" class="input-box" name="home_adjustment" value="0" onchange="getHomeBet()"></td>
+                                        </tr>
+                                        <tr></tr>
+                                        
+
+                                        <tr>
+                                            <td>Odds</td>
+                                            <td><input type="text" class="input-box" name="home_odds" placeholder="+150" onchange="getHomeBet()"></td>
+                                        </tr>
+                                        <tr></tr>
+
+                                        <tr>
+                                            <td>Min Edge</td>
+                                            <td><input type="text" class="input-box" name="home_min_edge" value="3%" onchange="getHomeBet()"></td>
+                                        </tr>
+                                        <tr></tr>
+
+                                        <tr>
+                                            <td>Min Prob</td>
+                                            <td><input type="text" class="input-box" name="home_min_prob" value="48%" onchange="getHomeBet()"></td>
+                                        </tr>
+                                        <tr></tr>
+
+                                        <tr>
+                                            <td>Edge</td>
+                                            <td><div type="text" class="input-box" name="home_edge" style="border: none">—</div></td>
+                                        </tr>
+                                        <tr></tr>
+
+
+                                        <tr>
+                                            <td>Bet Size</td>
+                        
+                                            <td><div type="text" class="input-box" name="home_bet_size" style="border: none">—</div></td>
+                                        </tr>
+
+
+                                    </table>
+                                    
+
+                                    
+
+
+
+                            </div>
+
+                            </div>
+                        </div>
+                    </form>
+
+                    
+                </div>
+
+                
+                <div id="loader"><img style="width: 50px; margin-top: 220px;" src="/static/loader.gif"/></div>
+            </div>
+
+
+                
+        </div>
+    </body>
+</html>

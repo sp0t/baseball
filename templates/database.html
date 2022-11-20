@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>BetMLB</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="/static/styles.css"> 
+        <link rel="stylesheet" href="/static/nav.css"> 
+        <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🚀</text></svg>"> 
+        <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></script>
+        <script type="text/javascript" src="{{ url_for('static', filename='index.js') }}"></script>
+    </head>
+    <body>
+        <div class="nav">
+            <input type="checkbox" id="nav-check">
+            <div class="nav-header"><div class="nav-title">BetMLB</div></div>
+            <div class="nav-btn">
+              <label for="nav-check">
+                <span></span>
+                <span></span>
+                <span></span>
+              </label>
+            </div>
+            
+            <div class="nav-links">
+              <a href="/">Home</a>
+              <a href="/teams">Teams</a>
+              <a href="/database">Database</a>
+            </div>
+        </div>
+        
+        <div style="margin: 100px auto">
+            <p style="margin: 0 auto 20px; text-align: center">Last 10 Games in Database</p>
+            <table class="table" style="margin: 0 auto; text-align: center">
+                <thead>
+                    <tr>
+                        <td>game_id</td>
+                        <td>game_date</td>
+                        <td>away_team</td>
+                        <td>home_team</td>
+                        <td>away_score</td>
+                        <td>home_score</td>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for game in data %}
+
+                    <tr>
+                        <td>{{game['game_id']}}</td>
+                        <td>{{game['game_date']}}</td>
+                        <td>{{game['away_team']}}</td>
+                        <td>{{game['home_team']}}</td>
+                        <td>{{game['away_score']}}</td>
+                        <td>{{game['home_score']}}</td>
+                    </tr>
+
+
+                    {% endfor %}
+                </tbody>
+            </table>
+
+            <p style="margin: 20px auto; text-align: center">You can download the whole database 
+                in CSV format </p>
+            <div class="database"><a href="/download_game_table", class="table-link">GameTable</a></div>
+            <div class="database"><a href="/download_batter_table", class="table-link">BatterTable</a></div>
+            <div class="database"><a href="/download_pitcher_table", class="table-link">PitcherTable</a></div>
+        </div>
+    
+    </body>
+</html>

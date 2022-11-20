@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>BetMLB</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="/static/styles.css"> 
+        <link rel="stylesheet" href="/static/nav.css"> 
+        <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🚀</text></svg>"> 
+        <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></script>
+        <script type="text/javascript" src="{{ url_for('static', filename='index.js') }}"></script>
+    </head>
+    <body>
+        <div class="nav">
+            <input type="checkbox" id="nav-check">
+            <div class="nav-header"><div class="nav-title">BetMLB</div></div>
+            <div class="nav-btn">
+              <label for="nav-check">
+                <span></span>
+                <span></span>
+                <span></span>
+              </label>
+            </div>
+            
+            <div class="nav-links">
+              <a href="/">Home</a>
+              <a href="/teams">Teams</a>
+              <a href="/database">Database</a>
+            </div>
+        </div>
+            <div id='query-container'>
+            <p class="team-name">{{team_name}}</p>
+                <form onsubmit="event.preventDefault(); queryDatabase();">
+                    <table style='margin: 40px auto'>
+                        <tbody>
+                            <tr class="query-row">
+                                <td><label for="player">Player</label></td>
+                                <td>
+                                    <select name="player" style="width: 125px; " required>
+                                        <option value="">—</option>
+                                        {% for player in roster %}
+                                        <option value="{{player.person.id}}">{{player.person.fullName}}</option>
+                                        {% endfor %}
+                                    </select>
+                            </td>
+                            </tr>
+                            <tr></tr>
+                            <tr class="query-row">
+                                <td><label for="date">Date</label></td>
+                                <td><input name='date' id="date" type="date" style="width: 125px;"></td>
+                            </tr>
+                            <tr></tr>
+    
+                            <tr class="query-row">
+                                <td><label for="type">Type</label></td>
+                                <td><select name="type" style="width: 125px;" required>
+                                    <option value = 'batting'>Batting</option>
+                                    <option value = 'pitching'>Pitching</option>
+                                </select></td>
+                            </tr>
+                            <tr></tr>
+                            <tr class="query-row">
+                                <td><label for="length">Length</label></td>
+                                <td><select name="length" style="width: 125px;" required>
+                                    <option value = 'recent'>Recent Form</option>
+                                    <option value = 'season'>This Season</option>
+                                    <option value = 'career'>All</option>
+                                </select></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <button style="margin: 50px auto" class="submit-button">Search</button>
+                </form>
+
+            <div id="loader"><img style="width: 50px; margin-top: 20px;" src="/static/loader.gif"/></div>
+        </div>
+                    
+
+
+    
+    </body>
+</html>

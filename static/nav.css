@@ -1,0 +1,111 @@
+:root {
+  --blue: #222C35;
+  --light-blue: #3E95CD;
+  --off-white: #FCFCFC;
+}
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans&display=swap');
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0px;
+  font-family: 'Open Sans', sans-serif;
+}
+
+.nav {
+  height: 50px;
+  width: 100%;
+  margin-top: 20px;
+  background-color: var(--off-white);
+  position: relative;
+  padding: 0 90px 0 90px;
+}
+
+.nav > .nav-header {
+  display: inline;
+}
+
+.nav > .nav-header > .nav-title {
+  display: inline-block;
+  font-size: 65px;
+  color: var(--blue);
+  margin: 10px 10px 10px 10px;
+}
+
+.nav > .nav-btn {
+  display: none;
+}
+
+.nav > .nav-links {
+  display: inline;
+  float: right;
+  font-size: 22px;
+  padding-top: 20px;
+}
+
+.nav > .nav-links > a {
+  display: inline-block;
+  padding: 15px 10px 15px 10px;
+  text-decoration: none;
+  color: var(--blue);
+}
+
+.nav > .nav-links > a:hover {
+  color: var(--light-blue);
+}
+
+.nav > #nav-check {
+  display: none;
+}
+
+@media (max-width:600px) {
+  .nav > .nav-btn {
+    display: inline-block;
+    position: absolute;
+    margin-top: 20px;
+    right: 0px;
+    top: 0px;
+  }
+  .nav > .nav-btn > label {
+    display: inline-block;
+    width: 50px;
+    height: 70px;
+    padding: 13px;
+
+  }
+  .nav > .nav-btn > label:hover,.nav  #nav-check:checked ~ .nav-btn > label {
+    background-color: var(--off-white);
+    cursor: pointer;
+
+  }
+  .nav > .nav-btn > label > span {
+    display: block;
+    width: 25px;
+    height: 10px;
+    border-top: 2px solid var(--blue);
+  }
+  .nav > .nav-links {
+    position: absolute;
+    display: block;
+    width: 100%;
+    background-color: var(--off-white);
+    height: 0px;
+    transition: all 0.3s ease-in;
+    overflow-y: hidden;
+    top: 80px;
+    left: 0px;
+  }
+  .nav > .nav-links > a {
+    display: block;
+    width: 100%;
+    color: var(--blue);
+  }
+  .nav > #nav-check:not(:checked) ~ .nav-links {
+    height: 0px;
+  }
+  .nav > #nav-check:checked ~ .nav-links {
+    height: calc(100vh - 50px);
+    overflow-y: auto;
+  }
+}

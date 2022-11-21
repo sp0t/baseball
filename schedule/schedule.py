@@ -31,13 +31,13 @@ def get_rosters(game_id):
     away_team_id = data['teamInfo']['away']['id']
     home_team_id = data['teamInfo']['home']['id']
 
-    #away_roster = mlb.get('team_roster', params = {'teamId':away_team_id,'date':date.today()})['roster']
-    away_roster = mlb.get('team_roster', params = {'teamId':away_team_id,'date':"2022-11-03"})['roster']
+    away_roster = mlb.get('team_roster', params = {'teamId':away_team_id,'date':date.today()})['roster']
+    #away_roster = mlb.get('team_roster', params = {'teamId':away_team_id,'date':"2022-11-03"})['roster']
     away_roster = [el['person'] for el in away_roster]
     away_roster = [{k:v for k,v in el.items() if k!='link'} for el in away_roster]
 
-    #home_roster = mlb.get('team_roster', params = {'teamId':home_team_id,'date':date.today()})['roster']
-    home_roster = mlb.get('team_roster', params = {'teamId':home_team_id,'date':"2022-11-03"})['roster']
+    home_roster = mlb.get('team_roster', params = {'teamId':home_team_id,'date':date.today()})['roster']
+    #home_roster = mlb.get('team_roster', params = {'teamId':home_team_id,'date':"2022-11-03"})['roster']
     home_roster = [el['person'] for el in home_roster]
     home_roster = [{k:v for k,v in el.items() if k!='link'} for el in home_roster]
     
@@ -46,8 +46,8 @@ def get_rosters(game_id):
     return rosters
 
 def get_schedule_from_mlb():
-    #game_sched = mlb.schedule(start_date = date.today())
-    game_sched = mlb.schedule("2022-11-03")
+    game_sched = mlb.schedule(start_date = date.today())
+    #game_sched = mlb.schedule("2022-11-03")
     info_keys = ['game_id', 'game_datetime','away_name', 'home_name']
     game_sched = [{k:v for k,v in el.items() if k in info_keys} for el in game_sched]
     

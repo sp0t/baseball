@@ -1,7 +1,7 @@
 # Dependencies 
 import pickle
 from logging import raiseExceptions
-from flask import Flask, render_template, request, Response, url_for, jsonify
+from flask import Flask, render_template, request, Response, url_for, jsonify, redirect
 from datetime import datetime, date
 import sqlite3
 import pandas as pd
@@ -24,7 +24,7 @@ app.secret_key = "^d@0U%['Plt7w,p"
 app.config['BASIC_AUTH_USERNAME'] = 'luca'
 app.config['BASIC_AUTH_PASSWORD'] = 'betmlbluca4722'
 basic_auth = BasicAuth(app)
-app.config['BASIC_AUTH_FORCE'] = False
+app.config['BASIC_AUTH_FORCE'] = True
 
 
 
@@ -164,6 +164,12 @@ def show_database():
     
     
     return render_template("database.html", data = list(res_15_cols.T.to_dict().values()))
+
+@app.route('/history', methods = ["GET"])
+def open_jupyter(): 
+    #return redirect('http://localhost:8888', code=301)
+    #return flask. redirect("/a_new_url")
+    app.run(host="0.0.0.0", port=81)
 
 @app.route("/download_game_table")
 def get_game_csv_table():

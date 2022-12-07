@@ -169,17 +169,19 @@ def show_database():
 def betting_proc(): 
     if request.method == 'POST':
         betting_data = request.get_json()
-        print(betting_data)
-        # engine = database.connect_to_db()
-        # print(data)
-        # data = request.json
-        # for bet in data:
-        #     betsql = "INSERT INTO betting"
-        #     engine.execute(betsql)
-        test = "123"
-        print(test)
-
-        return test
+        engine = database.connect_to_db()
+        for betting in betting_data:
+            bettype = betting["type"].split(" ");
+            betting_table_sql = 'INSERT INTO betting_table(betdate, team1, team2, marcket, place, odds, stake, state, profit) '\
+                                'VALUES (' + \
+                                '\'' + bettype[0] + '\'' + ',' +  '\'' + betting["team1"] + '\'' +  ',' + \
+                                '\'' + betting["team2"] + '\'' +  ',' + '\'' + bettype[1] + '\'' +  ',' + '\'' + betting["place"] + '\'' +  ','\
+                                '\'' + betting["odds"] + '\'' +  ',' + '\'' + betting["stake"] + '\'' +  ',' + \
+                                '\'' + '0' + '\'' +  ',' + '\'' + '0' + '\'' + ');'
+    
+            engine.execute(betting_table_sql)
+            result = "OK!"
+        return result
     print("not recive from betting site")
     return render_template("team.html")
 

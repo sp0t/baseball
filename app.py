@@ -24,7 +24,7 @@ app.secret_key = "^d@0U%['Plt7w,p"
 app.config['BASIC_AUTH_USERNAME'] = 'luca'
 app.config['BASIC_AUTH_PASSWORD'] = 'betmlbluca4722'
 basic_auth = BasicAuth(app)
-app.config['BASIC_AUTH_FORCE'] = True
+app.config['BASIC_AUTH_FORCE'] = False
 
 
 
@@ -165,11 +165,23 @@ def show_database():
     
     return render_template("database.html", data = list(res_15_cols.T.to_dict().values()))
 
-@app.route('/history', methods = ["GET"])
-def open_jupyter(): 
-    #return redirect('http://localhost:8888', code=301)
-    #return flask. redirect("/a_new_url")
-    app.run(host="0.0.0.0", port=81)
+@app.route('/betting', methods = ["GET", "POST"])
+def betting_proc(): 
+    if request.method == 'POST':
+        betting_data = request.get_json()
+        print(betting_data)
+        # engine = database.connect_to_db()
+        # print(data)
+        # data = request.json
+        # for bet in data:
+        #     betsql = "INSERT INTO betting"
+        #     engine.execute(betsql)
+        test = "123"
+        print(test)
+
+        return test
+    print("not recive from betting site")
+    return render_template("team.html")
 
 @app.route("/download_game_table")
 def get_game_csv_table():
@@ -232,5 +244,5 @@ def get_pitcher_csv_data():
 
     return 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(ssl_context='adhoc')
     

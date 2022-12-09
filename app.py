@@ -179,26 +179,26 @@ def show_betting():
         modify_data = request.get_json()
         daystr = modify_data["gamedate"]
 
-        if modify_data["state"] == 1:
+        if modify_data["status"] == 1:
             loseid = modify_data["betid"]
-            engine.execute(f"UPDATE betting_table SET state = '1' WHERE betid = '{loseid}';")
-        elif modify_data["state"] == 2:
+            engine.execute(f"UPDATE betting_table SET status = '1' WHERE betid = '{loseid}';")
+        elif modify_data["status"] == 2:
             windid = modify_data["betid"]
-            engine.execute(f"UPDATE betting_table SET state = '2' WHERE betid = '{windid}';")
+            engine.execute(f"UPDATE betting_table SET status = '2' WHERE betid = '{windid}';")
 
-    res = pd.read_sql(f"SELECT * FROM betting_table WHERE betdate = '{daystr}' AND match = 'baseball' ORDER BY betid;", con = engine)
+    res = pd.read_sql(f"SELECT * FROM betting_table WHERE betdate = '{daystr}' AND game = 'baseball' ORDER BY betid;", con = engine)
     betdata = res.to_dict('records')
 
     for bet in betdata:
         bet["game"] = bet["team1"] + " vs " + bet["team2"]
-        if bet["state"] == "0":
-            bet["state"] = "PENDING"
+        if bet["status"] == "0":
+            bet["status"] = "PENDING"
             bet["wins"] = "PENDING"
-        elif bet["state"] == "1":
-            bet["state"] = "L"
+        elif bet["status"] == "1":
+            bet["status"] = "L"
             bet["wins"] = "(" + bet["wins"] + ")"
-        elif bet["state"] == "2":
-            bet["state"] = "W"
+        elif bet["status"] == "2":
+            bet["status"] = "W"
 
     if request.method == 'GET':
         return render_template("betting.html", data = betdata)
@@ -211,9 +211,9 @@ def betting_proc():
         betting_data = request.get_json()
         engine = database.connect_to_db()
         for betting in betting_data:
-            betting_table_sql = 'INSERT INTO betting_table(betdate, match, team1, team2, marcket, place, odds, stake, wins, state, site) '\
+            betting_table_sql = 'INSERT INTO betting_table(betdate, game, team1, team2, marcket, place, odds, stake, wins, status, site) '\
                                 'VALUES (' + \
-                                '\'' + betting["gamedate"] + '\'' + ',' + '\'' + betting["match"].lower() + '\'' + ','+  '\'' + betting["team1"] + '\'' +  ',' + \
+                                '\'' + betting["gamedate"] + '\'' + ',' + '\'' + betting["game"].lower() + '\'' + ','+  '\'' + betting["team1"] + '\'' +  ',' + \
                                 '\'' + betting["team2"] + '\'' +  ',' + '\'' + betting["marcket"] + '\'' +  ',' + '\'' + betting["place"] + '\'' +  ','\
                                 '\'' + betting["odds"] + '\'' +  ',' + '\'' + betting["stake"] + '\'' +  ',' + '\'' + betting["wins"] + '\'' +  ',' + \
                                 '\'' + '0' + '\'' +  ',' + '\'' + betting["site"] + '\'' + ');'

@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>BetMLB</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="/static/styles.css">
+    <link rel="stylesheet" href="/static/nav.css">
+    <link rel="icon"
+        href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🚀</text></svg>">
+    <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='index.js') }}"></script>
+
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.3.0/css/datepicker.css" rel="stylesheet" type="text/css" />
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.3.0/js/bootstrap-datepicker.js"></script>
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.3/moment-with-locales.min.js"
+   integrity="sha512-vFABRuf5oGUaztndx4KoAEUVQnOvAIFs59y4tO0DILGWhQiFnFHiR+ZJfxLDyJlXgeut9Z07Svuvm+1Jv89w5g=="  crossorigin="anonymous" referrerpolicy="no-referrer"> </script>
+    <script type="text/javascript">
+        $(function () {
+        $("#datepicker").datepicker({ 
+                autoclose: true, 
+                todayHighlight: true,
+        }).datepicker('update', new Date());
+
+        $("#datepicker").on("changeDate", ({date, oldDate}) => {              
+                  changeDisp(date);
+          });
+        
+    });
+
+    function changeDisp(date){
+            dispdate = date.toDispStr();
+            document.getElementById('gamedate').innerHTML = dispdate
+            var data={};
+            data["gamedate"] = date.yyyymmdd();
+            data["state"] = 0;
+            updatebettingdata(data);
+    }
+
+    $( document ).ready(function() {
+        date = new Date();
+        dispdate = date.toDispStr();
+        document.getElementById('gamedate').innerHTML = dispdate
+    });
+
+    Date.prototype.yyyymmdd = function() {
+    var mm = this.getMonth() + 1; // getMonth() is zero-based
+    var dd = this.getDate();
+
+    return [this.getFullYear(), "-",
+            (mm>9 ? '' : '0') + mm, "-",  
+            (dd>9 ? '' : '0') + dd
+            ].join('');
+    };
+
+    function getcurrentDate(){
+        var date = $(".form-control").val();
+        return date;
+    }
+
+    function setcurrentDate(value){
+        var date = $(".form-control").val(value);
+        return date;
+    }
+
+    Date.prototype.toDispStr = function()
+    {
+        var months = ["January", "February", "March", "April", "May", "June", "July",
+                      "August", "September", "October", "November", "December"];
+
+        var dd = this.getDate();
+        var mm = months[this.getMonth()];
+        var yy = this.getFullYear();
+
+        return [mm, " ", (dd>9 ? '' : '0') + dd, "st", ", ", yy].join('');
+    }
+
+    function onNextDay(value){
+        var str = $(".form-control").val();
+        var date = new Date(str);
+        date.setDate(date.getDate() + 2);
+        dispdate = date.toDispStr();
+        document.getElementById('gamedate').innerHTML = dispdate
+        newdate = date.yyyymmdd();
+        $(".form-control").val(newdate);
+        var data = {};
+        data["gamedate"] = newdate;
+        data["state"] = 0;
+        updatebettingdata(data);
+    }
+
+    function onPreviousDay(value){
+        var str = $(".form-control").val();
+        var date = new Date(str);
+        date.setDate(date.getDate());
+        dispdate = date.toDispStr();
+        document.getElementById('gamedate').innerHTML = dispdate
+        newdate = date.yyyymmdd();
+        $(".form-control").val(newdate);
+        var data = {};
+        data["gamedate"] = newdate;
+        data["state"] = 0;
+        updatebettingdata(data);
+    }
+
+    function updatebett(select){
+        var selectedOption = select.options[select.selectedIndex];
+        var id = selectedOption.getAttribute('value');
+
+        var str = $(".form-control").val();
+        var date = new Date(str);
+        date.setDate(date.getDate() + 1);
+
+        var data = {};
+        data["gamedate"] = date.yyyymmdd();
+        data["state"] = select.selectedIndex;
+        data["betid"] = id;
+
+        updatebettingdata(data);
+    }
+
+
+    function updatebettingdata(senddata){ 
+        $.ajax({
+            url: '/showbetting', 
+            type: 'POST', 
+            data: JSON.stringify(senddata),
+            dataType: 'json',
+            contentType: 'application/json',
+
+            success: function (data){ 
+                var html='';
+                for(var i=0; i<data.length;i++){
+                    html+='<tr>';
+                    html+='<td>'+data[i]["game"]+'</td>';
+                    html+='<td>'+data[i]["place"]+'</td>';
+                    html+='<td>'+data[i]["stake"]+'</td>';
+                    html+='<td><select style="height: auto; text-align:center;" onchange="updatebett(this)">';
+                    var item = ['PENDING', 'L', 'W'];
+                    for(var j = 0; j < item.length; j++){
+                        if(data[i]["state"] == item[j])
+                            html+=`<option value= ${data[i]["betid"]} selected>` + item[j] + "</option>";
+                        else
+                        html+=`<option value= ${data[i]["betid"]}>` + item[j] + "</option>";
+                    }
+                    
+                    html+='</td></select>';
+                    html+='<td>'+data[i]["wins"]+'</td>';
+                    html+='</tr>';
+
+                }
+
+                $("#betbody").html(html);
+            }
+        })
+
+
+    }
+
+    </script>
+    <style>
+        .table thead tr th, .table tbody tr td {
+            border: none;
+            font-size: 20px;
+        }
+
+        thead th {
+        font-size: 20px;
+        margin-top: 0;
+        padding-bottom: 10px !important;
+        height: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container-fluid">
+        <div class="row" style="padding-top: 5rem">
+            <div class="col-lg-6">
+                <div class="col-lg-4 text-right">
+                    <h1 style="font-weight: bold">Summary</h1>
+                </div>
+                <div class="col-lg-8 text-left">
+                    <h1 id = "gamedate" style="font-weight: bold"></h1>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="col-lg-6 text-right">
+                    <a href="#"><h1 style="font-weight: bold">Stats</h1></a>
+                    
+                </div>
+                <div class="col-lg-6" style="padding-top: 30px;">
+                    <a href="/" style="font-size: 20px;">Home</a>
+                    <a href="/teams" style="font-size: 20px;">Teams</a>
+                    <a href="/database" style="font-size: 20px;">Database</a>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-5">
+                <div class="col-lg-6 text-center">
+                    <h3 style="margin-left: -50px">Date</h3>
+                </div>
+                <div class="col-lg-6" style="margin-left: -100px">
+                    <div id="datepicker" class="input-group date" data-date-format="yyyy-mm-dd" style="padding-top: 15px;">
+                        <input class="form-control" type="text" style="font-weight: bold; font-size: 20px; text-align: center;"/>
+                        <span class="input-group-addon" style="cursor: pointer; font-size: 15px;">Change Date</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container-fluid" style="padding: 100px 120px 0px 120px;">
+        <div class="row">
+            <div class="col-lg-6 text-left">
+                <a href="#" aria-label="Previous" onclick="onPreviousDay(); return false;">
+                    <span aria-hidden="true">&laquo;</span>
+                </a>
+                <a href="#" style="font-size: 15px;" onclick="onPreviousDay(); return false;">Previous Day</a>
+            </div>
+            <div class="col-lg-6 text-right">
+                <a href="#" style="font-size: 15px;" onclick="onNextDay(); return false;">Next Day</a>
+                <a href="#" aria-label="Next" onclick="onNextDay(); return false;">
+                    <span aria-hidden="true">&raquo;</span>
+                </a>
+            </div>
+        </div>
+        <hr style="height:2px;border-width:0;color:rgb(14, 14, 163);margin-top: 5px; background-color: gray;">
+        <div class="container-fluid"> 
+            <table class="table borderless" style="text-align: center;">
+              <thead style="text-align: center; padding-bottom: 20px;">
+                <tr style="margin-top: 0;">
+                  <th class="text-center">Game</th>
+                  <th class="text-center">Selection</th>
+                  <th class="text-center">Price</th>
+                  <th class="text-center">Result</th>
+                  <th class="text-center">Profit</th>
+                </tr>
+              </thead>
+              <tbody id = "betbody" style="text-align: center;">
+                {% for bett in data %}
+                <tr>
+                  <td>{{bett["game"]}}</td>
+                  <td>{{bett["place"]}}</td>
+                  <td>{{bett["stake"]}}</td>
+                  <td>
+                    <select id="betid" style="height: auto; text-align:center;" onchange="updatebett(this)">
+                        {% for item in ['PENDING','L','W'] %}
+                            <option value="{{bett['betid']}}" {% if item == bett['state'] %}  selected {% endif %}>{{item}}</option>
+                        {% endfor %}
+                    </select>
+                  </td>
+                  <td>{{bett["wins"]}}</td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+            </div>
+    </div>
+</body>
+
+</html>
+
+

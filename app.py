@@ -165,25 +165,61 @@ def show_database():
     
     return render_template("database.html", data = list(res_15_cols.T.to_dict().values()))
 
-@app.route('/betting', methods = ["GET", "POST"])
+@app.route('/showbetting', methods = ["GET", "POST"])
+def show_betting():
+    engine = database.connect_to_db()
+    print("start betting")
+
+    if request.method == 'GET':
+        today = date.today()
+        global daystr
+        daystr = today.strftime("%Y-%m-%d")
+
+    if request.method == 'POST':
+        modify_data = request.get_json()
+        daystr = modify_data["gamedate"]
+
+        if modify_data["state"] == 1:
+            loseid = modify_data["betid"]
+            engine.execute(f"UPDATE betting_table SET state = '1' WHERE betid = '{loseid}';")
+        elif modify_data["state"] == 2:
+            windid = modify_data["betid"]
+            engine.execute(f"UPDATE betting_table SET state = '2' WHERE betid = '{windid}';")
+
+    res = pd.read_sql(f"SELECT * FROM betting_table WHERE betdate = '{daystr}' AND match = 'baseball' ORDER BY betid;", con = engine)
+    betdata = res.to_dict('records')
+
+    for bet in betdata:
+        bet["game"] = bet["team1"] + " vs " + bet["team2"]
+        if bet["state"] == "0":
+            bet["state"] = "PENDING"
+            bet["wins"] = "PENDING"
+        elif bet["state"] == "1":
+            bet["state"] = "L"
+            bet["wins"] = "(" + bet["wins"] + ")"
+        elif bet["state"] == "2":
+            bet["state"] = "W"
+
+    if request.method == 'GET':
+        return render_template("betting.html", data = betdata)
+    if request.method == 'POST':
+        return betdata
+
+@app.route('/betting', methods = ["POST"])    
 def betting_proc(): 
     if request.method == 'POST':
         betting_data = request.get_json()
         engine = database.connect_to_db()
         for betting in betting_data:
-            bettype = betting["type"].split(" ");
-            betting_table_sql = 'INSERT INTO betting_table(betdate, team1, team2, marcket, place, odds, stake, state, profit) '\
+            betting_table_sql = 'INSERT INTO betting_table(betdate, match, team1, team2, marcket, place, odds, stake, wins, state, site) '\
                                 'VALUES (' + \
-                                '\'' + bettype[0] + '\'' + ',' +  '\'' + betting["team1"] + '\'' +  ',' + \
-                                '\'' + betting["team2"] + '\'' +  ',' + '\'' + bettype[1] + '\'' +  ',' + '\'' + betting["place"] + '\'' +  ','\
-                                '\'' + betting["odds"] + '\'' +  ',' + '\'' + betting["stake"] + '\'' +  ',' + \
-                                '\'' + '0' + '\'' +  ',' + '\'' + '0' + '\'' + ');'
+                                '\'' + betting["gamedate"] + '\'' + ',' + '\'' + betting["match"].lower() + '\'' + ','+  '\'' + betting["team1"] + '\'' +  ',' + \
+                                '\'' + betting["team2"] + '\'' +  ',' + '\'' + betting["marcket"] + '\'' +  ',' + '\'' + betting["place"] + '\'' +  ','\
+                                '\'' + betting["odds"] + '\'' +  ',' + '\'' + betting["stake"] + '\'' +  ',' + '\'' + betting["wins"] + '\'' +  ',' + \
+                                '\'' + '0' + '\'' +  ',' + '\'' + betting["site"] + '\'' + ');'
     
             engine.execute(betting_table_sql)
-            result = "OK!"
-        return result
-    print("not recive from betting site")
-    return render_template("team.html")
+    return
 
 @app.route("/download_game_table")
 def get_game_csv_table():
@@ -247,4 +283,5 @@ def get_pitcher_csv_data():
     return 
 if __name__ == '__main__':
     app.run(ssl_context='adhoc')
+    # app.run(debug=True)
     

@@ -17,7 +17,7 @@ def connect_to_db():
         engine = create_engine('postgresql://postgres:123@ec2-18-180-226-162.ap-northeast-1.compute.amazonaws.com:5432/betmlb', 
                                 connect_args = {'connect_timeout': 10}, 
                                 echo=False, pool_size=20, max_overflow=0)
-        #engine = create_engine('postgresql://postgres:123@localhost:5432/testdb', 
+        # engine = create_engine('postgresql://postgres:123@localhost:5432/testdb', 
         #                        connect_args = {'connect_timeout': 10}, 
         #                        echo=False, pool_size=20, max_overflow=0)
         print('Connection Initiated')

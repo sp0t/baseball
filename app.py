@@ -168,7 +168,6 @@ def show_database():
 @app.route('/showbetting', methods = ["GET", "POST"])
 def show_betting():
     engine = database.connect_to_db()
-    print("start betting")
 
     if request.method == 'GET':
         today = date.today()
@@ -190,13 +189,17 @@ def show_betting():
     betdata = res.to_dict('records')
 
     for bet in betdata:
-        bet["game"] = bet["team1"] + " vs " + bet["team2"]
+        if(bet["team1"] == bet["team2"]):
+            bet["game"] = bet["team1"]
+        else:    
+            bet["game"] = bet["team1"] + " vs " + bet["team2"]
+
         if bet["status"] == "0":
             bet["status"] = "PENDING"
             bet["wins"] = "PENDING"
         elif bet["status"] == "1":
             bet["status"] = "L"
-            bet["wins"] = "(" + bet["wins"] + ")"
+            bet["wins"] = "(" + bet["stake"] + ")"
         elif bet["status"] == "2":
             bet["status"] = "W"
 
@@ -204,6 +207,26 @@ def show_betting():
         return render_template("betting.html", data = betdata)
     if request.method == 'POST':
         return betdata
+
+@app.route('/season', methods = ["GET"])    
+def season_state(): 
+    engine = database.connect_to_db()
+    res = pd.read_sql(f"SELECT stake, wins, status FROM betting_table WHERE game = 'baseball' ORDER BY betid;", con = engine)
+    seasondata = res.to_dict('records')
+    stake, profit, losses = 0, 0, 0
+
+    for item in seasondata:
+        stake += float(item["stake"])
+        if(item["status"] == "1"):
+            losses += float(item["stake"])
+        elif(item["status"] == "2"):
+            profit += float(item["wins"])
+    data = {}
+    data["stake"] = f'{stake:.2f}'
+    data["profit"] = f'{profit:.2f}'
+    data["losses"] = f'{losses:.2f}'
+
+    return render_template("season.html", data = data)
 
 @app.route('/betting', methods = ["POST"])    
 def betting_proc(): 
@@ -282,6 +305,6 @@ def get_pitcher_csv_data():
 
     return 
 if __name__ == '__main__':
-    app.run(ssl_context='adhoc')
-    # app.run(debug=True)
+    # app.run(ssl_context='adhoc')
+    app.run(debug=True)
     

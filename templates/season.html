@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>BetMLB</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="/static/styles.css"> 
+        <link rel="stylesheet" href="/static/nav.css"> 
+        <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🚀</text></svg>"> 
+        <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></script>
+        <script type="text/javascript" src="{{ url_for('static', filename='index.js') }}"></script>
+        <style>
+            th, td {
+                padding-left: 30px;
+                padding-right: 30px;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="nav">
+            <input type="checkbox" id="nav-check">
+            <div class="nav-header"><div class="nav-title">Season Stats</div></div>
+            <div class="nav-btn">
+              <label for="nav-check">
+                <span></span>
+                <span></span>
+                <span></span>
+              </label>
+            </div>
+            
+            <div class="nav-links">
+              <a href="/">Home</a>
+              <a href="/teams">Teams</a>
+              <a href="/database">Database</a>
+              <a href="/showbetting">Betting</a>
+            </div>
+        </div>
+        
+        <div style="margin: 100px auto">
+            <table class="table" style="margin: 0 auto; text-align: center; width: auto;">
+                <thead style="font-size: 30px;color: black; font-weight: bold; height: 80px;">
+                    <tr>
+                        <td>Total Stake</td>
+                        <td>Current Profit</td>
+                        <td>Current Losses</td>
+                    </tr>
+                </thead>
+                <tbody style="font-size: 30px; height: 60px;">
+                    <tr>
+                        <td style="color: rgba(0, 38, 255, 0.784);">{{data['stake']}}</td>
+                        <td style="color: rgb(255, 1, 1);">{{data['profit']}}</td>
+                        <td style="color: rgb(0, 0, 0);">{{data['losses']}}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    
+    </body>
+</html>

@@ -1,7 +1,7 @@
 # Dependencies 
 import pickle
 from logging import raiseExceptions
-from flask import Flask, render_template, request, Response, url_for, jsonify, redirect
+from flask import Flask, render_template, request, Response, url_for, jsonify, redirect, session
 from datetime import datetime, date
 import sqlite3
 import pandas as pd
@@ -12,7 +12,7 @@ from database import database
 from flask_basicauth import BasicAuth
 
 # Modules
-from functions import batting, predict, starters
+from functions import batting, predict, starters, smartContract
 from schedule import schedule
 
 
@@ -26,11 +26,14 @@ app.config['BASIC_AUTH_PASSWORD'] = 'betmlbluca4722'
 basic_auth = BasicAuth(app)
 app.config['BASIC_AUTH_FORCE'] = False
 
-
+user = {"username": "abc", "password": "xyz"}
 
 # Routes
-@app.route('/', methods = ["GET", "POST"])
+@app.route('/home', methods = ["GET", "POST"])
 def index(): 
+    if('user' in session and session['user'] != user['username']):
+        return '<h1>You are not logged in.</h1>'
+    
     try: 
         del model_1a
     except: 
@@ -60,6 +63,25 @@ def index():
     
     return render_template("index.html", schedule = today_schedule, last_record = last_record, 
                            update_date = last_date, update_time = last_time)
+
+@app.route('/login', methods = ['POST', 'GET'])
+def login():
+    if(request.method == 'POST'):
+        username = request.form.get('username')
+        password = request.form.get('password')     
+        if username == user['username'] and password == user['password']:
+            
+            session['user'] = username
+            return redirect('/home')
+
+        return "<h1>Wrong username or password</h1>"    #if the username or password does not matches 
+
+    return render_template("login.html")
+
+@app.route('/logout')
+def logout():
+    session.pop('user')         #session.pop('user') help to remove the session from the browser
+    return redirect('/login')
 
 @app.route('/get_game_info', methods = ["POST"])
 def get_game_info(): 
@@ -180,9 +202,11 @@ def show_betting():
 
         if modify_data["status"] == 1:
             loseid = modify_data["betid"]
+            smartContract.createBetData(betting_data)
             engine.execute(f"UPDATE betting_table SET status = '1' WHERE betid = '{loseid}';")
         elif modify_data["status"] == 2:
             windid = modify_data["betid"]
+            smartContract.createBetData(betting_data)
             engine.execute(f"UPDATE betting_table SET status = '2' WHERE betid = '{windid}';")
 
     res = pd.read_sql(f"SELECT * FROM betting_table WHERE betdate = '{daystr}' AND game = 'baseball' ORDER BY betid;", con = engine)
@@ -242,6 +266,8 @@ def betting_proc():
                                 '\'' + '0' + '\'' +  ',' + '\'' + betting["site"] + '\'' + ');'
     
             engine.execute(betting_table_sql)
+            betid = engine.execute("SELECT MAX(betid) FROM betting_table;")
+            smartContract.createBetData(betid, betting)
     return
 
 @app.route("/download_game_table")

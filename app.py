@@ -266,9 +266,9 @@ def betting_proc():
                                 '\'' + '0' + '\'' +  ',' + '\'' + betting["site"] + '\'' + ');'
     
             engine.execute(betting_table_sql)
-            betid = engine.execute("SELECT MAX(betid) FROM betting_table;")
+            betid = engine.execute("SELECT MAX(betid) FROM betting_table;").fetchall()
             if(betting["game"].lower() == "baseball"):
-               smartContract.createBetData(betid, betting)
+               smartContract.createBetData(betid[0][0], betting)
     return
 
 @app.route("/download_game_table")

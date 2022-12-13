@@ -13,7 +13,7 @@ def createBetData(betID, betData):
   _betId = int(betID)
   _betDate = betData["gamedate"]
   _game = betData["game"].lower()
-  if(betting["team1"] == betData["team2"]):
+  if(betData["team1"] == betData["team2"]):
     global _teams
     _teams = betData["team1"]
   else:
@@ -34,27 +34,22 @@ def createBetData(betID, betData):
 
   _site = betData["site"]
 
-  deployed_contract.functions.createBetData( _betId, _betDate, _game, _teams, _market, _place, _stake, _odds, _profitloss, _status, _site)
+  add_tx = deployed_contract.functions.createBetData( _betId, _betDate, _game, _teams, _market, _place, _stake, _odds, _profitloss, _status, _site)
   nonce = w3.eth.getTransactionCount(public_key)
   gasprice = w3.eth.gas_price
   add_tx = add_tx.buildTransaction({'from': public_key, 'chainId': chainId, 'gasPrice': gasprice, 'nonce': nonce})
   tx_create = w3.eth.account.sign_transaction(add_tx, private_key)
   txn_hash = w3.eth.sendRawTransaction(tx_create.rawTransaction)
+  print("txn_hash1", txn_hash)
   return
 
 def changeBetStatus(betID, status):
   betid = int(betID)
-  if bet["status"] == "0":
-      global state
-      state = "PENDING"
-  elif bet["status"] == "1":
-      state = "L"
-  elif bet["status"] == "2":
-      state = "W"
-  deployed_contract.functions.changeBetstatus(betid, state)
+  add_tx = deployed_contract.functions.changeBetstatus(betid, status)
   nonce = w3.eth.getTransactionCount(public_key)
   gasprice = w3.eth.gas_price
   add_tx = add_tx.buildTransaction({'from': public_key, 'chainId': chainId, 'gasPrice': gasprice, 'nonce': nonce})
   tx_create = w3.eth.account.sign_transaction(add_tx, private_key)
   txn_hash = w3.eth.sendRawTransaction(tx_create.rawTransaction)
+  print("txn_hash1", txn_hash)
   return

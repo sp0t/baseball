@@ -29,7 +29,7 @@ app.config['BASIC_AUTH_FORCE'] = False
 user = {"username": "abc", "password": "xyz"}
 
 # Routes
-@app.route('/home', methods = ["GET", "POST"])
+@app.route('/', methods = ["GET", "POST"])
 def index(): 
     if('user' in session and session['user'] != user['username']):
         return '<h1>You are not logged in.</h1>'
@@ -202,11 +202,11 @@ def show_betting():
 
         if modify_data["status"] == 1:
             loseid = modify_data["betid"]
-            smartContract.createBetData(betting_data)
+            smartContract.changeBetStatus(int(loseid), "L")
             engine.execute(f"UPDATE betting_table SET status = '1' WHERE betid = '{loseid}';")
         elif modify_data["status"] == 2:
             windid = modify_data["betid"]
-            smartContract.createBetData(betting_data)
+            smartContract.changeBetStatus(int(windid), "W")
             engine.execute(f"UPDATE betting_table SET status = '2' WHERE betid = '{windid}';")
 
     res = pd.read_sql(f"SELECT * FROM betting_table WHERE betdate = '{daystr}' AND game = 'baseball' ORDER BY betid;", con = engine)

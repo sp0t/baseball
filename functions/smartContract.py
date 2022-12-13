@@ -24,14 +24,7 @@ def createBetData(betID, betData):
   _stake = int(float(betData["stake"]) * 100)
   _odds = int(float(betData["odds"]) * 100)
   _profitloss = int(float(betData["wins"]) * 100)
-  
-  if betData["status"] == "0":
-      _status = "PENDING"
-  elif betData["status"] == "1":
-      _status = "L"
-  elif betData["status"] == "2":
-      _status = "W"
-
+  _status = "PENDING"
   _site = betData["site"]
 
   add_tx = deployed_contract.functions.createBetData( _betId, _betDate, _game, _teams, _market, _place, _stake, _odds, _profitloss, _status, _site)

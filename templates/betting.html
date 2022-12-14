@@ -85,7 +85,7 @@
     function onNextDay(value){
         var str = $(".form-control").val();
         var date = new Date(str);
-        date.setDate(date.getDate() + 2);
+        date.setDate(date.getDate() + 1);
         dispdate = date.toDispStr();
         document.getElementById('gamedate').innerHTML = dispdate
         newdate = date.yyyymmdd();
@@ -99,7 +99,7 @@
     function onPreviousDay(value){
         var str = $(".form-control").val();
         var date = new Date(str);
-        date.setDate(date.getDate());
+        date.setDate(date.getDate() - 1);
         dispdate = date.toDispStr();
         document.getElementById('gamedate').innerHTML = dispdate
         newdate = date.yyyymmdd();
@@ -116,7 +116,7 @@
 
         var str = $(".form-control").val();
         var date = new Date(str);
-        date.setDate(date.getDate() + 1);
+        date.setDate(date.getDate());
 
         var data = {};
         data["gamedate"] = date.yyyymmdd();

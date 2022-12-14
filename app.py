@@ -222,15 +222,13 @@ def season_state():
 
     for item in seasondata:
         fwins = (item["wins"]).replace(",", "")
-        fstake = (item["stake"]).replace(",", "")
-        stake += float(fwins)
+        fstake = (item["stake"]).replace(",", "") 
+        stake += float(fstake)
         if(item["status"] == "1"):
-            losses += float(fwins)
+            losses += float(fstake)
         elif(item["status"] == "2"):
-            profit += float(fstake)
+            profit += float(fwins)
     data = {}
-    print(losses)
-    print(profit)
     data["stake"] = f'{stake:.2f}'
     data["profit"] = f'{profit:.2f}'
     data["losses"] = f'{losses:.2f}'

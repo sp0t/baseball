@@ -21,9 +21,22 @@ def createBetData(betID, betData):
 
   _market = betData["market"]
   _place = betData["place"]
-  _stake = int(float(betData["stake"]) * 1000)
-  _odds = int(float(betData["odds"]) * 1000)
-  _profitloss = int(float(betData["wins"]) * 1000)
+  stake = betData["stake"].replace(",", "")
+  plus = 2
+  if(betData["odds"][0]  == "+"):
+    plus = 1
+  elif(betData["odds"][0]  == "-"):
+    plus = 0
+  odds = betData["odds"].replace(",", "").replace("+", "").replace("-", "")
+  wins = betData["wins"].replace(",", "")
+  _stake = int(float(stake) * 1000)
+  _odds = int(float(odds) * 1000)
+  if(plus == 1):
+    _odds = "+" + _odds
+  elif(plus == 0):
+    _odds = "-" + _odds
+
+  _profitloss = int(float(wins) * 1000)
   _status = "PENDING"
   _site = betData["site"]
 

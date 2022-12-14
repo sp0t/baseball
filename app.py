@@ -171,7 +171,6 @@ def show_database():
 @app.route('/showbetting', methods = ["GET", "POST"])
 def show_betting():
     engine = database.connect_to_db()
-    print("123")
     if request.method == 'GET':
         today = date.today()
         global daystr
@@ -179,13 +178,13 @@ def show_betting():
 
     if request.method == 'POST':
         modify_data = request.get_json()
-        daystr = modify_data["gamedate"]
+        daystr = modify_data[0]["gamedate"]
 
-        if modify_data["status"] == 1:
-            loseid = modify_data["betid"]
+        if modify_data[0]["status"] == 1:
+            loseid = modify_data[0]["betid"]
             smartContract.changeBetStatus(int(loseid), "L")
             engine.execute(f"UPDATE betting_table SET status = '1' WHERE betid = '{loseid}';")
-        elif modify_data["status"] == 2:
+        elif modify_data[0]["status"] == 2:
             windid = modify_data["betid"]
             smartContract.changeBetStatus(int(windid), "W")
             engine.execute(f"UPDATE betting_table SET status = '2' WHERE betid = '{windid}';")
@@ -218,15 +217,20 @@ def season_state():
     engine = database.connect_to_db()
     res = pd.read_sql(f"SELECT stake, wins, status FROM betting_table WHERE game = 'baseball' ORDER BY betid;", con = engine)
     seasondata = res.to_dict('records')
+    print(seasondata)
     stake, profit, losses = 0, 0, 0
 
     for item in seasondata:
-        stake += float(item["stake"])
+        fwins = (item["wins"]).replace(",", "")
+        fstake = (item["stake"]).replace(",", "")
+        stake += float(fwins)
         if(item["status"] == "1"):
-            losses += float(item["stake"])
+            losses += float(fwins)
         elif(item["status"] == "2"):
-            profit += float(item["wins"])
+            profit += float(fstake)
     data = {}
+    print(losses)
+    print(profit)
     data["stake"] = f'{stake:.2f}'
     data["profit"] = f'{profit:.2f}'
     data["losses"] = f'{losses:.2f}'

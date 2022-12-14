@@ -255,6 +255,7 @@ def season_state():
 @app.route('/betting', methods = ["POST"])    
 def betting_proc(): 
     if request.method == 'POST':
+        print("######################create table####################")
         betting_data = request.get_json()
         engine = database.connect_to_db()
         for betting in betting_data:
@@ -266,9 +267,14 @@ def betting_proc():
                                 '\'' + '0' + '\'' +  ',' + '\'' + betting["site"] + '\'' + ');'
     
             engine.execute(betting_table_sql)
+            print("##################insert table####################")
+            print(betting_table_sql)
+            print("##################contract data####################")
             betid = engine.execute("SELECT MAX(betid) FROM betting_table;").fetchall()
             if(betting["game"].lower() == "baseball"):
-               smartContract.createBetData(betid[0][0], betting)
+                print(betid)
+                print(betting)
+                smartContract.createBetData(betid[0][0], betting)
     return
 
 @app.route("/download_game_table")

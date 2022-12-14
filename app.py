@@ -178,20 +178,20 @@ def show_betting():
 
     if request.method == 'POST':
         modify_data = request.get_json()
-        daystr = modify_data[0]["gamedate"]
+        daystr = modify_data["gamedate"]
 
-        if modify_data[0]["status"] == 1:
-            loseid = modify_data[0]["betid"]
+        if modify_data["status"] == 1:
+            loseid = modify_data["betid"]
             smartContract.changeBetStatus(int(loseid), "L")
             engine.execute(f"UPDATE betting_table SET status = '1' WHERE betid = '{loseid}';")
-        elif modify_data[0]["status"] == 2:
+        elif modify_data["status"] == 2:
             windid = modify_data["betid"]
             smartContract.changeBetStatus(int(windid), "W")
             engine.execute(f"UPDATE betting_table SET status = '2' WHERE betid = '{windid}';")
 
     res = pd.read_sql(f"SELECT * FROM betting_table WHERE betdate = '{daystr}' AND game = 'baseball' ORDER BY betid;", con = engine)
     betdata = res.to_dict('records')
-
+    
     for bet in betdata:
         if(bet["team1"] == bet["team2"]):
             bet["game"] = bet["team1"]

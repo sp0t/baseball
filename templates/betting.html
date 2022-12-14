@@ -29,7 +29,7 @@
                 todayHighlight: true,
         }).datepicker('update', new Date());
 
-        $("#datepicker").on("changeDate", ({date, oldDate}) => {              
+        $("#datepicker").on("changeDate", ({date, oldDate}) => {        
                   changeDisp(date);
           });
         
@@ -125,7 +125,11 @@
         var id = selectedOption.getAttribute('value');
 
         var str = $(".form-control").val();
-        var date = new Date(str);
+        var date = new Date();
+        var tmp = str.split('-');
+        date.setFullYear(tmp[0])
+        date.setMonth(tmp[1]-1)
+        date.setDate(tmp[2])
         date.setDate(date.getDate());
 
         var data = {};

@@ -240,6 +240,7 @@ def betting_proc():
     if request.method == 'POST':
         betting_data = request.get_json()
         engine = database.connect_to_db()
+        for betting in betting_data:
             betting_table_sql = 'INSERT INTO betting_table(betdate, game, team1, team2, market, place, odds, stake, wins, status, site) '\
                                 'VALUES (' + \
                                 '\'' + betting["gamedate"] + '\'' + ',' + '\'' + betting["game"].lower() + '\'' + ','+  '\'' + betting["team1"] + '\'' +  ',' + \

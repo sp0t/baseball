@@ -31,10 +31,8 @@ user = {"username": "abc", "password": "xyz"}
 # Routes
 @app.route('/', methods = ["GET", "POST"])
 def index(): 
-    print("123")
     if('user' in session and session['user'] != user['username']):
         return '<h1>You are not logged in.</h1>'
-    print("345")
     
     try: 
         del model_1a
@@ -57,16 +55,11 @@ def index():
     except:
         pass
 
-    print("456")
-
     today_schedule = schedule.get_schedule()
     engine = database.connect_to_db()
     last_update = pd.read_sql("SELECT * FROM updates", con = engine).iloc[-1]
-    print("1trt")
 
     last_date, last_time, last_record = last_update["update_date"], last_update["update_time"], last_update["last_record"]
-    
-    print("567")
 
     return render_template("index.html", schedule = today_schedule, last_record = last_record, 
                            update_date = last_date, update_time = last_time)
@@ -183,7 +176,6 @@ def show_betting():
         today = date.today()
         global daystr
         daystr = today.strftime("%Y-%m-%d")
-        print("1234")
 
     if request.method == 'POST':
         modify_data = request.get_json()
@@ -253,13 +245,14 @@ def betting_proc():
                                 '\'' + betting["team2"] + '\'' +  ',' + '\'' + betting["market"] + '\'' +  ',' + '\'' + betting["place"] + '\'' +  ','\
                                 '\'' + betting["odds"] + '\'' +  ',' + '\'' + betting["stake"] + '\'' +  ',' + '\'' + betting["wins"] + '\'' +  ',' + \
                                 '\'' + '0' + '\'' +  ',' + '\'' + betting["site"] + '\'' + ');'
-    
+
             engine.execute(betting_table_sql)
-            print(betting_table_sql)
             betid = engine.execute("SELECT MAX(betid) FROM betting_table;").fetchall()
             if(betting["game"].lower() == "baseball"):
                 smartContract.createBetData(betid[0][0], betting)
-    return
+
+    ret = "ok"
+    return ret
 
 @app.route("/download_game_table")
 def get_game_csv_table():

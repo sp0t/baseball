@@ -91,8 +91,10 @@
         date.setDate(tmp[2])
         date.setDate(date.getDate() + 1);
         dispdate = date.toDispStr();
-        document.getElementById('gamedate').innerHTML = dispdate
+        document.getElementById('gamedate').innerHTML = dispdate;
+        console.log(date);
         newdate = date.yyyymmdd();
+        console.log(newdate);
         $(".form-control").val(newdate);
         var data = {};
         data["gamedate"] = newdate;
@@ -109,7 +111,7 @@
         date.setDate(tmp[2])
         date.setDate(date.getDate() - 1);
         dispdate = date.toDispStr();
-        document.getElementById('gamedate').innerHTML = dispdate
+        document.getElementById('gamedate').innerHTML = dispdate;
         newdate = date.yyyymmdd();
         $(".form-control").val(newdate);
         var data = {};

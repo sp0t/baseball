@@ -84,7 +84,11 @@
 
     function onNextDay(value){
         var str = $(".form-control").val();
-        var date = new Date(str);
+        var tmp = str.split('-');
+        var date = new Date();
+        date.setFullYear(tmp[0])
+        date.setMonth(tmp[1]-1)
+        date.setDate(tmp[2])
         date.setDate(date.getDate() + 1);
         dispdate = date.toDispStr();
         document.getElementById('gamedate').innerHTML = dispdate
@@ -95,10 +99,14 @@
         data["status"] = 0;
         updatebettingdata(data);
     }
-
+    
     function onPreviousDay(value){
         var str = $(".form-control").val();
-        var date = new Date(str);
+        var date = new Date();
+        var tmp = str.split('-');
+        date.setFullYear(tmp[0])
+        date.setMonth(tmp[1]-1)
+        date.setDate(tmp[2])
         date.setDate(date.getDate() - 1);
         dispdate = date.toDispStr();
         document.getElementById('gamedate').innerHTML = dispdate

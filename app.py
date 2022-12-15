@@ -14,7 +14,11 @@ from flask_basicauth import BasicAuth
 # Modules
 from functions import batting, predict, starters, smartContract
 from schedule import schedule
+import time
+import atexit
+import calendar
 
+from apscheduler.schedulers.background import BackgroundScheduler
 
 # Connect App + DB
 app = Flask(__name__)
@@ -173,20 +177,31 @@ def show_betting():
     engine = database.connect_to_db()
     if request.method == 'GET':
         return render_template("betting.html")
-    if request.method == 'POST':
-        modify_data = request.get_json()
-        daystr = modify_data["gamedate"]
 
-        if modify_data["status"] == 1:
-            loseid = modify_data["betid"]
-            smartContract.changeBetStatus(int(loseid), "L")
-            engine.execute(f"UPDATE betting_table SET status = '1' WHERE betid = '{loseid}';")
-        elif modify_data["status"] == 2:
-            windid = modify_data["betid"]
-            smartContract.changeBetStatus(int(windid), "W")
-            engine.execute(f"UPDATE betting_table SET status = '2' WHERE betid = '{windid}';")
+    modify_data = request.get_json()
+    daystr = modify_data["gamedate"]
 
-    res = pd.read_sql(f"SELECT * FROM betting_table WHERE betdate = '{daystr}' AND game = 'baseball' ORDER BY betindex;", con = engine)
+    if modify_data["status"] == 1 or modify_data["status"] == 2:
+        global res
+        res = pd.read_sql(f"SELECT * FROM betting_table WHERE game = 'baseball' AND betid = '{modify_data['betid']}';", con = engine)
+        betstate = res.to_dict('records')
+
+        if betstate[0]['regstate'] == '0':
+            Index = smartContract.betIndex
+            engine.execute(f"UPDATE betting_table SET regstate = '1', betindex = '{Index + 1}' WHERE betid = '{modify_data['betid']}';")
+            smartContract.createBetData(betstate)
+
+        res = engine.execute(f"SELECT betindex FROM betting_table WHERE betid = '{modify_data['betid']}';").fetchall()
+        betIndex = int(res[0][0])
+        status = "L" if modify_data["status"] == 1 else "W"
+        smartContract.changeBetStatus(betIndex, status)
+        engine.execute(f"UPDATE betting_table SET status = '{modify_data['status']}' WHERE betid = '{modify_data['betid']}';")
+    elif modify_data["status"] == 3:
+        res = engine.execute(f"SELECT regstate FROM betting_table WHERE betid = '{modify_data['betid']}';").fetchall()
+        if int(res[0][0]) == 0:
+            engine.execute(f"UPDATE betting_table SET regstate = '2' WHERE betid = '{modify_data['betid']}';")
+
+    res = pd.read_sql(f"SELECT * FROM betting_table WHERE betdate = '{daystr}' AND game = 'baseball' AND regstate != '2' ORDER BY betindex;", con = engine)
     betdata = res.to_dict('records')
     
     for bet in betdata:
@@ -233,19 +248,16 @@ def betting_proc():
         betting_data = request.get_json()
         engine = database.connect_to_db()
         for betting in betting_data:
-            betIndex = smartContract.betIndex
-            betting_table_sql = 'INSERT INTO betting_table(betdate, game, team1, team2, market, place, odds, stake, wins, status, site, betindex) '\
+            current_GMT = time.gmtime()
+            regtime = calendar.timegm(current_GMT)
+
+            betting_table_sql = 'INSERT INTO betting_table(betdate, game, team1, team2, market, place, odds, stake, wins, status, site, regtime, regstate, betindex) '\
                                 'VALUES (' + \
                                 '\'' + betting["gamedate"] + '\'' + ',' + '\'' + betting["game"].lower() + '\'' + ','+  '\'' + betting["team1"] + '\'' +  ',' + \
                                 '\'' + betting["team2"] + '\'' +  ',' + '\'' + betting["market"] + '\'' +  ',' + '\'' + betting["place"] + '\'' +  ','\
                                 '\'' + str(betting["odds"]) + '\'' +  ',' + '\'' + betting["stake"] + '\'' +  ',' + '\'' + betting["wins"] + '\'' +  ',' + \
-                                '\'' + '0' + '\'' +  ',' + '\'' + betting["site"] + '\'' +  ',' + '\'' + str(betIndex+1) + '\''');'
-
+                                '\'' + '0' + '\'' +  ',' + '\'' + betting["site"] + '\'' +  ',' + '\'' + str(regtime) + '\'' +  ',' + '\'' + "0" + '\'' +  ',' + '\'' + "0" + '\''+ ');'
             engine.execute(betting_table_sql)
-            betid = engine.execute("SELECT MAX(betid) FROM betting_table;").fetchall()
-            if(betting["game"].lower() == "baseball"):
-                smartContract.createBetData(betting)
-
     ret = "ok"
     return ret
 
@@ -309,6 +321,28 @@ def get_pitcher_csv_data():
 #     model_1b = pickle.load(open('algorithms/model_1b_v10.sav', 'rb'))
 
     return 
+
+def print_date_time():
+    current_GMT = time.gmtime()
+
+    time_stamp = calendar.timegm(current_GMT)
+    estimatestamp = time_stamp - 60 * 10
+
+    engine = database.connect_to_db()
+    res = pd.read_sql(f"SELECT * FROM betting_table WHERE regstate = '0' AND game = 'baseball' AND regtime <= {estimatestamp} ORDER BY betid;", con = engine)
+    betdata = res.to_dict('records')
+    
+    for bet in betdata:
+        betIndex = smartContract.betIndex
+        engine.execute(f"UPDATE betting_table SET regstate = '1', betindex = '{betIndex + 1}' WHERE betid = '{bet['betid']}';")
+        smartContract.createBetData(bet)
+
+scheduler = BackgroundScheduler()
+scheduler.add_job(func=print_date_time, trigger="interval", seconds=600)
+scheduler.start()
+# Shut down the scheduler when exiting the app
+atexit.register(lambda: scheduler.shutdown())
+
 if __name__ == '__main__':
     # app.run(ssl_context='adhoc')
     app.run(debug=True)

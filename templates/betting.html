@@ -26,13 +26,13 @@
         $(function () {
         $("#datepicker").datepicker({ 
                 autoclose: true, 
-                todayHighlight: true,
+                todayHighlight: true
         }).datepicker('update', new Date());
 
         $("#datepicker").on("changeDate", ({date, oldDate}) => {        
                   changeDisp(date);
           });
-        
+          
     });
 
     function changeDisp(date){
@@ -48,6 +48,12 @@
         date = new Date();
         dispdate = date.toDispStr();
         document.getElementById('gamedate').innerHTML = dispdate
+        var date = new Date();
+        var data = {};
+        data["gamedate"] = date.yyyymmdd();
+        data["status"] = "0";
+
+        updatebettingdata(data);
     });
 
     Date.prototype.yyyymmdd = function() {
@@ -225,7 +231,7 @@
                 </div>
                 <div class="col-lg-6" style="margin-left: -100px">
                     <div id="datepicker" class="input-group date" data-date-format="yyyy-mm-dd" style="padding-top: 15px;">
-                        <input class="form-control" type="text" style="font-weight: bold; font-size: 20px; text-align: center;"/>
+                        <input class="form-control" type="text" style="font-weight: bold; font-size: 20px; text-align: center;" value="2022-10-10"/>
                         <span class="input-group-addon" style="cursor: pointer; font-size: 15px;">Change Date</span>
                     </div>
                 </div>
@@ -261,7 +267,7 @@
                 </tr>
               </thead>
               <tbody id = "betbody" style="text-align: center;">
-                {% for bett in data %}
+                <!-- {% for bett in data %}
                 <tr>
                   <td>{{bett["betindex"]}}</td>
                   <td>{{bett["game"]}}</td>
@@ -276,7 +282,7 @@
                   </td>
                   <td>{{bett["wins"]}}</td>
                 </tr>
-                {% endfor %}
+                {% endfor %} -->
               </tbody>
             </table>
             </div>

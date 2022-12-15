@@ -172,10 +172,7 @@ def show_database():
 def show_betting():
     engine = database.connect_to_db()
     if request.method == 'GET':
-        today = date.today()
-        global daystr
-        daystr = today.strftime("%Y-%m-%d")
-
+        return render_template("betting.html")
     if request.method == 'POST':
         modify_data = request.get_json()
         daystr = modify_data["gamedate"]
@@ -206,11 +203,7 @@ def show_betting():
             bet["wins"] = "(" + bet["stake"] + ")"
         elif bet["status"] == "2":
             bet["status"] = "W"
-
-    if request.method == 'GET':
-        return render_template("betting.html", data = betdata)
-    if request.method == 'POST':
-        return betdata
+    return betdata
 
 @app.route('/season', methods = ["GET"])    
 def season_state(): 

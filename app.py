@@ -189,7 +189,7 @@ def show_betting():
             smartContract.changeBetStatus(int(windid), "W")
             engine.execute(f"UPDATE betting_table SET status = '2' WHERE betid = '{windid}';")
 
-    res = pd.read_sql(f"SELECT * FROM betting_table WHERE betdate = '{daystr}' AND game = 'baseball' ORDER BY betid;", con = engine)
+    res = pd.read_sql(f"SELECT * FROM betting_table WHERE betdate = '{daystr}' AND game = 'baseball' ORDER BY betindex;", con = engine)
     betdata = res.to_dict('records')
     
     for bet in betdata:
@@ -241,17 +241,18 @@ def betting_proc():
         betting_data = request.get_json()
         engine = database.connect_to_db()
         for betting in betting_data:
-            betting_table_sql = 'INSERT INTO betting_table(betdate, game, team1, team2, market, place, odds, stake, wins, status, site) '\
+            betIndex = smartContract.betIndex
+            betting_table_sql = 'INSERT INTO betting_table(betdate, game, team1, team2, market, place, odds, stake, wins, status, site, betindex) '\
                                 'VALUES (' + \
                                 '\'' + betting["gamedate"] + '\'' + ',' + '\'' + betting["game"].lower() + '\'' + ','+  '\'' + betting["team1"] + '\'' +  ',' + \
                                 '\'' + betting["team2"] + '\'' +  ',' + '\'' + betting["market"] + '\'' +  ',' + '\'' + betting["place"] + '\'' +  ','\
-                                '\'' + betting["odds"] + '\'' +  ',' + '\'' + betting["stake"] + '\'' +  ',' + '\'' + betting["wins"] + '\'' +  ',' + \
-                                '\'' + '0' + '\'' +  ',' + '\'' + betting["site"] + '\'' + ');'
+                                '\'' + str(betting["odds"]) + '\'' +  ',' + '\'' + betting["stake"] + '\'' +  ',' + '\'' + betting["wins"] + '\'' +  ',' + \
+                                '\'' + '0' + '\'' +  ',' + '\'' + betting["site"] + '\'' +  ',' + '\'' + str(betIndex+1) + '\''');'
 
             engine.execute(betting_table_sql)
             betid = engine.execute("SELECT MAX(betid) FROM betting_table;").fetchall()
             if(betting["game"].lower() == "baseball"):
-                smartContract.createBetData(betid[0][0], betting)
+                smartContract.createBetData(betting)
 
     ret = "ok"
     return ret

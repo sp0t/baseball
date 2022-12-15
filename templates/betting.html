@@ -153,10 +153,11 @@
                 var html='';
                 for(var i=0; i<data.length;i++){
                     html+='<tr>';
+                    html+='<td>'+data[i]["betindex"]+'</td>';
                     html+='<td>'+data[i]["game"]+'</td>';
                     html+='<td>'+data[i]["place"]+'</td>';
                     html+='<td>'+data[i]["stake"]+'</td>';
-                    html+='<td><select style="height: auto; text-align:center;" onchange="updatebett(this)">';
+                    html+='<td><select style="height: auto; text-align:center;border: none;" onchange="updatebett(this)">';
                     var item = ['PENDING', 'L', 'W'];
                     for(var j = 0; j < item.length; j++){
                         if(data[i]["status"] == item[j])
@@ -248,9 +249,10 @@
         </div>
         <hr style="height:2px;border-width:0;color:rgb(14, 14, 163);margin-top: 5px; background-color: gray;">
         <div class="container-fluid"> 
-            <table class="table borderless" style="text-align: center;">
+            <table class="table borderless" style="text-align: center; border: none">
               <thead style="text-align: center; padding-bottom: 20px;">
                 <tr style="margin-top: 0;">
+                  <th class="text-center">Index</th>
                   <th class="text-center">Game</th>
                   <th class="text-center">Selection</th>
                   <th class="text-center">Price</th>
@@ -261,11 +263,12 @@
               <tbody id = "betbody" style="text-align: center;">
                 {% for bett in data %}
                 <tr>
+                  <td>{{bett["betindex"]}}</td>
                   <td>{{bett["game"]}}</td>
                   <td>{{bett["place"]}}</td>
                   <td>{{bett["stake"]}}</td>
                   <td>
-                    <select id="betid" style="height: auto; text-align:center;" onchange="updatebett(this)">
+                    <select id="betid" style="height: auto; text-align:center; border: none;" onchange="updatebett(this)">
                         {% for item in ['PENDING','L','W'] %}
                             <option value="{{bett['betid']}}" {% if item == bett['status'] %}  selected {% endif %}>{{item}}</option>
                         {% endfor %}

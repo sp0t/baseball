@@ -217,7 +217,6 @@ def season_state():
     engine = database.connect_to_db()
     res = pd.read_sql(f"SELECT stake, wins, status FROM betting_table WHERE game = 'baseball' ORDER BY betid;", con = engine)
     seasondata = res.to_dict('records')
-    print(seasondata)
     stake, profit, losses = 0, 0, 0
 
     for item in seasondata:

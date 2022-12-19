@@ -12,6 +12,8 @@
         <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></script>
         <script type="text/javascript" src="{{ url_for('static', filename='index.js') }}"></script>
+        <!-- Latest compiled and minified CSS -->
+   
     </head>
     <body>
         <div class="nav">
@@ -30,6 +32,12 @@
               <a href="/teams">Teams</a>
               <a href="/database">Database</a>
               <a href="/showbetting">Accounting</a>
+              <div class="dropdown">
+                <button class="btn btn-primary dropdown-toggle dropbtn" type="button" data-toggle="dropdown">
+                    <img src="/static/1.png" style="width: 40px; height: 40px;" alt="dropdown image" class="img-responsive">
+                    <span class="caret"></span>
+                </button>
+              </div>
             </div>
         </div>
             <div id='query-container'>

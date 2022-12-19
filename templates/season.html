@@ -12,10 +12,22 @@
         <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></script>
         <script type="text/javascript" src="{{ url_for('static', filename='index.js') }}"></script>
+        <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.3.0/css/datepicker.css" rel="stylesheet" type="text/css" />
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.3.0/js/bootstrap-datepicker.js"></script>
+        <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.3/moment-with-locales.min.js"
+        integrity="sha512-vFABRuf5oGUaztndx4KoAEUVQnOvAIFs59y4tO0DILGWhQiFnFHiR+ZJfxLDyJlXgeut9Z07Svuvm+1Jv89w5g=="  crossorigin="anonymous" referrerpolicy="no-referrer"> </script>
         <style>
             th, td {
                 padding-left: 30px;
                 padding-right: 30px;
+            }
+
+            p:hover{
+                color: rgb(0, 4, 255);
+                font-size: 20x;
             }
         </style>
     </head>
@@ -31,11 +43,20 @@
               </label>
             </div>
             
-            <div class="nav-links">
-              <a href="/">Home</a>
-              <a href="/teams">Teams</a>
-              <a href="/database">Database</a>
-              <a href="/showbetting">Accounting</a>
+            <div class="nav-links" style="display: flex;">
+                <div style="display: flex; flex-direction: column-reverse;  margin-right: 50px;">
+                    <a href="/showbetting">Accounting</a>
+                </div>
+                <div class="dropdown">
+                    <button class="btn btn-primary dropdown-toggle dropbtn" type="button" data-toggle="dropdown">
+                        <img src="/static/1.png" style="width: 40px; height: 40px;" alt="dropdown image" class="img-responsive">
+                        <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu dropend" style="left: -95px; width: 100px;">
+                        <!-- <li style="display: block; padding-top: 16px; padding-bottom: 16px;"><a href="#"><p>Reset Pssword</p></a></li> -->
+                        <li style="display: block; padding-top: 16px; padding-bottom: 16px;"><a  href="{{url_for('logout')}}"><p>Log Out</p></a></li>
+                    </ul>
+                </div>
             </div>
         </div>
         

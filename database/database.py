@@ -20,7 +20,7 @@ def connect_to_db():
         # engine = create_engine('postgresql://postgres:123@localhost:5432/testdb', 
         #                        connect_args = {'connect_timeout': 10}, 
         #                        echo=False, pool_size=20, max_overflow=0)
-        print('Connection Initiated')
+        # print('Connection Initiated')
     except:
         raise ValueError("Can't connect to Heroku PostgreSQL! You must be so embarrassed")
     return engine

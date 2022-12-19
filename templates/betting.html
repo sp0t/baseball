@@ -133,6 +133,7 @@
         data["gamedate"] = str;
         data["status"] = 3;
         data["betid"] = $(bt).attr('class');
+        alert()
         updatebettingdata(data);
     }
 
@@ -161,6 +162,7 @@
 
             success: function (data){ 
                 var html='';
+
                 for(var i=0; i<data.length;i++){
                     html+='<tr>';
                     html+='<td>'+data[i]["betindex"]+'</td>';
@@ -194,8 +196,6 @@
                 $("#betbody").html(html);
             }
         })
-
-
     }
 
     </script>
@@ -208,9 +208,16 @@
         thead th {
         font-size: 20px;
         margin-top: 0;
+
         padding-bottom: 10px !important;
         height: 20px;
         }
+
+        p:hover{
+                color: rgb(0, 4, 255);
+                font-size: 20x;
+            }
+        
     </style>
 </head>
 
@@ -230,11 +237,23 @@
                     <a href="/season"><h1 style="font-weight: bold">Stats</h1></a>
                     
                 </div>
-                <div class="col-lg-6" style="padding-top: 30px;">
-                    <a href="/" style="font-size: 20px;">Home</a>
-                    <a href="/teams" style="font-size: 20px;">Teams</a>
-                    <a href="/database" style="font-size: 20px;">Database</a>
+                <div class="col-lg-4" style="padding-top: 30px;">
+                    <a href="/" id="homeln" style="font-size: 20px;">Home</a>
+                    <a href="/teams" id="teamsln" style="font-size: 20px;">Teams</a>
+                    <a href="/database" id="databaseln" style="font-size: 20px;">Database</a>
                 </div>
+                <div class="col-lg-2" style="padding-right: 0px; margin-top: -20px;">
+                    <div class="dropdown">
+                        <button class="btn btn-primary dropdown-toggle dropbtn" type="button" data-toggle="dropdown">
+                            <img src="/static/1.png" style="width: 40px; height: 40px;" alt="dropdown image" class="img-responsive">
+                            <span class="caret"></span>
+                        </button>
+                        <ul class="dropdown-menu dropend" style="left: -95px; width: 100px;">
+                            <!-- <li style="display: block; padding-top: 16px; padding-bottom: 16px;"><a href="#" id="changepassword" data-toggle="modal" data-target="#updatepassword"><p>Reset Pssword</p></a></li> -->
+                            <li style="display: block; padding-top: 16px; padding-bottom: 16px;"><a href="{{url_for('logout')}}" id="logout"><p>Log Out</p></a></li>
+                        </ul>
+                    </div>
+                </div>  
             </div>
         </div>
         <div class="row">
@@ -302,8 +321,38 @@
             </table>
             </div>
     </div>
-</body>
 
+
+    <!-- <div class="modal fade" id="updatepassword" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" id="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document" style="width: 20%;">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h3 class="modal-title text-center">Reset password</h3>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <form>
+                <div class="form-group">
+                  <input type="text" class="form-control" id="ch-old-paswd" placeholder="Previous password">
+                </div>
+                <div class="form-group">
+                  <input type="text" class="form-control" id="ch-new-paswd" placeholder="New password">
+                </div>
+                <div class="form-group">
+                  <input type="text" class="form-control" id="ch-con-paswd" placeholder="Confirm password">
+                </div>
+
+              </form>
+            </div>
+            <div class="d-flex justify-content-center modal-footer">
+                <button type="button" class="btn-outline-success" onclick="updat">Reset</button>
+                <button type="button" class="btn-outline-success" data-dismiss="modal">Close</button>
+            </div>
+          </div>
+        </div>
+      </div> -->
 </html>
 
 

@@ -17,8 +17,11 @@ from schedule import schedule
 import time
 import atexit
 import calendar
+from passlib.hash import sha256_crypt
 
 from apscheduler.schedulers.background import BackgroundScheduler
+import functools
+from datetime import timedelta
 
 # Connect App + DB
 app = Flask(__name__)
@@ -30,13 +33,27 @@ app.config['BASIC_AUTH_PASSWORD'] = 'betmlbluca4722'
 basic_auth = BasicAuth(app)
 app.config['BASIC_AUTH_FORCE'] = False
 
-user = {"username": "abc", "password": "xyz"}
+users = {"username": "luca", "password": "betmlbluca4722"}
+
+def login_required(func):
+    @functools.wraps(func)
+    def secure_function():
+        # if "username" not in session:
+        #     return redirect(url_for("login"))
+        if "username" not in session:
+            return redirect(url_for("login"))
+        return func()
+
+    return secure_function
 
 # Routes
 @app.route('/', methods = ["GET", "POST"])
+@login_required
 def index(): 
-    if('user' in session and session['user'] != user['username']):
-        return '<h1>You are not logged in.</h1>'
+    # if('user' in session and session['username'] != users['username']):
+    #     return '<h1>You are not logged in.</h1>'
+    if session["state"] == 0:
+        return redirect(url_for("show_betting"))
     
     try: 
         del model_1a
@@ -59,7 +76,7 @@ def index():
     except:
         pass
 
-    today_schedule = schedule.get_schedule()
+    today_schedule = schedule.get_schedule()                                                                                                                                                                                                                                                                                                                                                                                                                                                 
     engine = database.connect_to_db()
     last_update = pd.read_sql("SELECT * FROM updates", con = engine).iloc[-1]
 
@@ -67,6 +84,62 @@ def index():
 
     return render_template("index.html", schedule = today_schedule, last_record = last_record, 
                            update_date = last_date, update_time = last_time)
+
+
+@app.route('/login', methods = ["GET", "POST"])
+def login(): 
+    if request.method == 'GET':
+        return render_template("login.html")
+
+    user = request.get_json()
+    engine = database.connect_to_db()
+
+    res = engine.execute(f"SELECT username, password, position FROM user_table WHERE username = '{user['username']}';").fetchall()
+
+    if res == []:
+        return jsonify("User don't registered")
+
+    if sha256_crypt.verify(user["password"], res[0][1]) == True:
+        session.permanent = True
+        app.permanent_session_lifetime = timedelta(minutes=1)
+        session["username"] = user['username']
+        if res[0][2] == "0":
+            session["state"] = 0
+            return jsonify("user")
+        elif res[0][2] == "1":
+            session["state"] = 1
+            return jsonify("admin")
+    
+    return jsonify("Password failed!")
+
+@app.route('/signup', methods = ["POST"])
+def signup(): 
+    user = request.get_json()
+
+    engine = database.connect_to_db()
+    res = engine.execute(f"SELECT username, password, position FROM user_table WHERE username = '{user['username']}';").fetchall()
+
+    if res != []:
+        return jsonify("Already regestered")
+    
+    password = sha256_crypt.encrypt(user["password"])
+    engine.execute(f"INSERT INTO user_table(username, password, position) VALUES('{user['username']}', '{password}', '0');")
+
+    return jsonify("Register success!")
+
+@app.route('/changepassword', methods = ["POST"])
+def changepassword(): 
+    user = request.get_json()
+    engine = database.connect_to_db()
+    res = engine.execute(f"SELECT username, password, position FROM user_table WHERE user = '{user['username']}';").fetchall()
+    password = sha256_crypt.encrypt("password")
+
+    return
+
+@app.route('/logout', methods = ["GET"])
+def logout(): 
+    session.clear()
+    return redirect(url_for("login"))
 
 @app.route('/get_game_info', methods = ["POST"])
 def get_game_info(): 
@@ -123,7 +196,10 @@ def make_prediction():
     return prediction
 
 @app.route('/teams')
+@login_required
 def teams():
+    if session["state"] == 0:
+        return redirect(url_for("show_betting"))
     res = mlb.get('teams', params={'sportId':1})['teams']
     team_dict = [{k:v for k,v in el.items() if k in ['id', 'name', 'abbreviation', 'division', 'teamName']} for el in res]
     team_dict = {item['name']: item for item in team_dict}
@@ -140,6 +216,7 @@ def teams():
     return render_template('teams.html', al = al, nl = nl)
 
 @app.route('/teams/<team_abbreviation>', methods=["GET", "POST"])
+@login_required
 def team(team_abbreviation): 
     
     team_info = mlb.lookup_team(team_abbreviation)[0]
@@ -159,8 +236,10 @@ def update_data():
     return update_data
 
 @app.route('/database', methods = ["GET", "POST"])
+@login_required
 def show_database(): 
-    
+    if session["state"] == 0:
+        return redirect(url_for("show_betting"))
     engine = database.connect_to_db()
     res = pd.read_sql("SELECT * FROM game_table", con = engine)
     res_15 = res.tail(10)
@@ -173,6 +252,7 @@ def show_database():
     return render_template("database.html", data = list(res_15_cols.T.to_dict().values()))
 
 @app.route('/showbetting', methods = ["GET", "POST"])
+@login_required
 def show_betting():
     engine = database.connect_to_db()
     if request.method == 'GET':
@@ -218,12 +298,15 @@ def show_betting():
             bet["wins"] = "(" + bet["stake"] + ")"
         elif bet["status"] == "2":
             bet["status"] = "W"
+
     return betdata
 
-@app.route('/season', methods = ["GET"])    
-def season_state(): 
+@app.route('/season', methods = ["GET"]) 
+@login_required
+def season_state():
+    
     engine = database.connect_to_db()
-    res = pd.read_sql(f"SELECT stake, wins, status FROM betting_table WHERE game = 'baseball' ORDER BY betid;", con = engine)
+    res = pd.read_sql(f"SELECT stake, wins, status FROM betting_table WHERE game = 'baseball' AND regstate != '2' ORDER BY betid;", con = engine)
     seasondata = res.to_dict('records')
     stake, profit, losses = 0, 0, 0
 

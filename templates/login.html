@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BetMLB</title>
+    <!-- Latest compiled and minified CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Latest compiled JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script
+    src="https://code.jquery.com/jquery-3.6.2.js"
+    integrity="sha256-pkn2CUZmheSeyssYw3vMp1+xyub4m+e+QK4sQskvuo4="
+    crossorigin="anonymous"></script>
+
+    <script>
+        $(document).ready(function(){
+            signstate(0);
+        })
+        function signstate(state){
+            if(state == 0)
+            {
+                $("#title").text("Log In");
+                $("#userstate").find("h6").text("Don't have an account ?");
+                $("#userstate").find("a").text("Sign Up");
+                $("#submitbt").text("Sign In");
+                $("#RepeatPassword").css("display","none");
+
+            }
+            else if(state == 1)
+            {
+                $("#title").text("Sign Up");
+                $("#userstate").find("h6").text("Already register ?");
+                $("#userstate").find("a").text("Sign In");
+                $("#submitbt").text("Sign Up");
+                $("#RepeatPassword").css("display","block");
+            }
+        }
+
+        function chgState(){
+            if( $("#title").text() == "Log In")
+                signstate(1);
+            else
+                signstate(0);
+        }
+
+        function confirmpassword(pass1, pass2){
+            var cap = false, str = false, num = false, len = 0;
+            for(len = 0; len < pass1.length; len++)
+            {
+                // if(pass1[len] == pass1[len].toUpperCase())
+                //     cap = true;
+                if(pass1[len] == pass1[len].toLowerCase())
+                    str = true;
+                if (pass1[len] >= '0' && pass1[len] <= '9') 
+                    num = true;
+            }
+
+            if(len < 8)
+                return -1;
+
+            if(str && num)
+                return 1;
+            else
+                return -1;
+        }
+
+        function submitform()
+        {
+            var url;
+            var password = $("#registerPassword").val();
+            var repassword = $("#RepeatPassword").val();
+
+            if($("#submitbt").text() == "Sign In")
+                url = "/login";
+            else if($("#submitbt").text() == "Sign Up")
+            {
+                url = "/signup"
+
+                if(password != repassword)
+                {
+                    $("#signresult").text("Confirm the password!");
+                    return;
+                }
+
+                if(confirmpassword(password, repassword) < 0)
+                {
+                    $("#signresult").text("Passwrod must be more than 8 charater at least with letter, number!");
+                    return;
+                }
+            }
+            else 
+                reutrn;
+
+            var userdata = {};
+            userdata['username'] = $("#registerUsername").val();
+            userdata['password'] = password;
+
+            if($("#submitbt").text() == "Sign Up")
+                userdata['repassword'] = repassword;
+            else
+                userdata['repassword'] = "sign";
+
+            console.log(userdata)
+            $.ajax({
+                url: url, 
+                type: 'POST', 
+                data: JSON.stringify(userdata),
+                dataType: 'json',
+                contentType: 'application/json',
+
+                success: function (data){
+
+                    if(data == "user")
+                    {
+                        location.href = '/season';
+                        return;
+                    }
+                    
+                    if(data == "admin")
+                    {
+                        location.href = '/';
+                        return;
+                    }
+
+                    $("#signresult").text(data);
+                }
+            })
+        }
+    </script>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="vw-100 vh-100 d-flex flex-direction align-items-center justify-content-center">
+            <div class="border border-dark p-3 rounded-3" style="width: 400px;">
+                <form>
+                    <div class="row mt-3 mb-3">
+                        <h3 class="d-flex justify-content-center" id="title"></h3>
+                    </div>
+                    <div class="row mt-3">
+                        <p class="mb-0 ms-4" id="signresult"></p>
+                    </div>
+                    <!-- Username input -->
+                    <div class="form-outline ms-3 me-3 mb-3">
+                        <input type="text" id="registerUsername" class="form-control" placeholder="Username"/>
+                    </div>
+    
+                    <!-- Password input -->
+                    <div class="form-outline ms-3 me-3 mb-3">
+                        <input type="password" id="registerPassword" class="form-control" placeholder="Password"/>
+                    </div>
+    
+                    <!-- Repeat Password input -->
+                    <div class="form-outline ms-3 me-3 mb-3">
+                        <input type="password" id="RepeatPassword" class="form-control"s placeholder="Repassword"/>
+                    </div>
+
+                    <div class="form-outline ms-3 me-3 mb-3  d-flex justify-content-center">
+                        <button type="button" id="submitbt" class="btn btn-outline-secondary" onclick="submitform()"></button>
+                    </div>
+                    <div class="ms-3 me-3 mb-3  d-flex justify-content-center" id="userstate">
+                        <h6>Don't have an account ?</h6>
+                        <a class="ms-2 text-decoration-none" href="#" onclick="chgState()"></a>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+</body>
+</html>

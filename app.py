@@ -37,20 +37,20 @@ app.config['BASIC_AUTH_PASSWORD'] = 'betmlbluca4722'
 basic_auth = BasicAuth(app)
 app.config['BASIC_AUTH_FORCE'] = False
 
-# app.config['MAIL_SERVER']='smtp.mailtrap.io'
-# app.config['MAIL_PORT'] = 2525
-# app.config['MAIL_USERNAME'] = 'd6940e1e3a7b9e'
-# app.config['MAIL_PASSWORD'] = '5a3c33eb014fbe'
+app.config['MAIL_SERVER']='smtp.mailtrap.io'
+app.config['MAIL_PORT'] = 2525
+app.config['MAIL_USERNAME'] = 'd6940e1e3a7b9e'
+app.config['MAIL_PASSWORD'] = '5a3c33eb014fbe'
 
-app.config['MAIL_SERVER']='smtp.gmail.com'
-app.config['MAIL_PORT'] = 465
+# app.config['MAIL_SERVER']='smtp.gmail.com'
+# app.config['MAIL_PORT'] = 465
 
-app.config['MAIL_USERNAME'] = 'Strongwind410@gmail.com'
-app.config['MAIL_PASSWORD'] = "1234567890zZ"
-app.config['MAIL_USE_TLS'] = True
-app.config['MAIL_USE_SSL'] = False
+# app.config['MAIL_USERNAME'] = 'Strongwind410@gmail.com'
+# app.config['MAIL_PASSWORD'] = "1234567890zZ"
+# app.config['MAIL_USE_TLS'] = True
+# app.config['MAIL_USE_SSL'] = False
 app.config['SECURITY_PASSWORD_SALT'] = "betmlblucalucamaurelli@proton.me"
-app.config['MAIL_DEFAULT_SENDER'] = "lucamaurelli@proton.me"
+app.config['MAIL_DEFAULT_SENDER'] = "Strongwind410@gmail.com'"
 
 mail = Mail(app)
 

@@ -182,24 +182,26 @@ def signup():
     engine = database.connect_to_db()
     res = engine.execute(f"SELECT username, confirmed FROM user_table WHERE username = '{user['username']}';").fetchall()
 
+    print(res)
+
     if res !=[]:
         if res[0][1] == '0':
             return jsonify("NOCON")
         
         if res[0][1] == '1':
             return jsonify("Already regestered")
-        
+   
     password = sha256_crypt.encrypt(user["password"])
     engine.execute(f"INSERT INTO user_table(username, password, position, registered_on, confirmed ) VALUES('{user['username']}', '{password}', '0', '{today}', '0');")
 
     token = generate_confirmation_token(user['username'])
 
-    # return jsonify("Register success!")
-
     confirm_url = url_for('confirm_email', token=token, _external=True)
+
     html = render_template('activate.html', confirm_url=confirm_url)
     subject = "Please confirm your email"
-    send_email(user['username'], subject, html)
+    print(html)
+    # send_email(user['username'], subject, html)
 
     return jsonify("NOCON")
 

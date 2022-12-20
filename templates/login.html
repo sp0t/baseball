@@ -27,6 +27,7 @@
                 $("#userstate").find("a").text("Sign Up");
                 $("#submitbt").text("Sign In");
                 $("#RepeatPassword").css("display","none");
+                $("#signresult").text("");
 
             }
             else if(state == 1)
@@ -36,6 +37,7 @@
                 $("#userstate").find("a").text("Sign In");
                 $("#submitbt").text("Sign Up");
                 $("#RepeatPassword").css("display","block");
+                $("#signresult").text("");
             }
         }
 
@@ -44,6 +46,10 @@
                 signstate(1);
             else
                 signstate(0);
+        }
+
+        function cleanError(){
+            $("#signresult").text("");
         }
 
         function confirmpassword(pass1, pass2){
@@ -106,6 +112,10 @@
             else 
                 reutrn;
 
+            var userdata = {};
+            userdata['username'] =  $("#registerUsername").val();
+            userdata['password'] = password;
+
             if($("#submitbt").text() == "Sign Up")
                 userdata['repassword'] = repassword;
             else
@@ -164,17 +174,17 @@
                     </div>
                     <!-- Username input -->
                     <div class="form-outline ms-3 me-3 mb-3">
-                        <input type="email" required class="form-control" id="registerUsername" aria-describedby="emailHelp" name = "email" placeholder="Enter email"/>
+                        <input type="email" required class="form-control" id="registerUsername" aria-describedby="emailHelp" name = "email" placeholder="Enter email" onclick="cleanError()"/>
                     </div>
     
                     <!-- Password input -->
                     <div class="form-outline ms-3 me-3 mb-3">
-                        <input type="password" id="registerPassword" class="form-control" name = "password" placeholder="Password"/>
+                        <input type="password" id="registerPassword" class="form-control" name = "password" placeholder="Password" onclick="cleanError()"/>
                     </div>
     
                     <!-- Repeat Password input -->
                     <div class="form-outline ms-3 me-3 mb-3">
-                        <input type="password" id="RepeatPassword" class="form-control" name="repassword" placeholder="Repassword"/>
+                        <input type="password" id="RepeatPassword" class="form-control" name="repassword" placeholder="Repassword" onclick="cleanError()"/>
                     </div>
 
                     <div class="form-outline ms-3 me-3 mb-3  d-flex justify-content-center">

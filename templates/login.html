@@ -73,6 +73,18 @@
             var password = $("#registerPassword").val();
             var repassword = $("#RepeatPassword").val();
 
+            email = $("#registerUsername").val();
+
+            var pattern = /^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$/; 
+
+   
+            if(email != email.match(pattern))
+            {
+                $("#signresult").text("Input correct email address!");
+                return;
+            }  
+
+
             if($("#submitbt").text() == "Sign In")
                 url = "/login";
             else if($("#submitbt").text() == "Sign Up")
@@ -93,10 +105,6 @@
             }
             else 
                 reutrn;
-
-            var userdata = {};
-            userdata['username'] = $("#registerUsername").val();
-            userdata['password'] = password;
 
             if($("#submitbt").text() == "Sign Up")
                 userdata['repassword'] = repassword;
@@ -152,21 +160,24 @@
                         <h3 class="d-flex justify-content-center" id="title"></h3>
                     </div>
                     <div class="row mt-3">
-                        <h6 class="mb-0 ms-4" id="signresult" style="color: red;"></h6>
+                        <h6 class="mb-0 ms-4" id="signresult" style="color: red; padding-bottom: 10px;"></h6>
                     </div>
                     <!-- Username input -->
                     <div class="form-outline ms-3 me-3 mb-3">
-                        <input type="email" id="registerUsername" class="form-control" placeholder="user@gamil.com"/>
+                        <label for="email" class="form-label">Email address</label>
+                        <input type="email" required class="form-control" id="registerUsername" aria-describedby="emailHelp" name = "email" placeholder="Enter email"/>
                     </div>
     
                     <!-- Password input -->
                     <div class="form-outline ms-3 me-3 mb-3">
-                        <input type="password" id="registerPassword" class="form-control" placeholder="Password"/>
+                        <label for="password" class="form-label">Password</label>
+                        <input type="password" id="registerPassword" class="form-control" name = "password" placeholder="Password"/>
                     </div>
     
                     <!-- Repeat Password input -->
                     <div class="form-outline ms-3 me-3 mb-3">
-                        <input type="password" id="RepeatPassword" class="form-control"s placeholder="Repassword"/>
+                        <label for="repassword" class="form-label">Confirm password</label>
+                        <input type="password" id="RepeatPassword" class="form-control" name="repassword" placeholder="Repassword"/>
                     </div>
 
                     <div class="form-outline ms-3 me-3 mb-3  d-flex justify-content-center">

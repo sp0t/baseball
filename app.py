@@ -22,10 +22,14 @@ from passlib.hash import sha256_crypt
 from apscheduler.schedulers.background import BackgroundScheduler
 import functools
 from datetime import timedelta
+from flask_mail import Mail
+from itsdangerous import URLSafeTimedSerializer
+from flask_mail import Message
 
 # Connect App + DB
 app = Flask(__name__)
 app.secret_key = "^d@0U%['Plt7w,p"
+app.config['SECRET_KEY'] = "^d@0U%['Plt7w,p"
 
 # Password Protect
 app.config['BASIC_AUTH_USERNAME'] = 'luca'
@@ -33,7 +37,43 @@ app.config['BASIC_AUTH_PASSWORD'] = 'betmlbluca4722'
 basic_auth = BasicAuth(app)
 app.config['BASIC_AUTH_FORCE'] = False
 
+app.config['MAIL_SERVER']='smtp.mailtrap.io'
+app.config['MAIL_PORT'] = 2525
+app.config['MAIL_USERNAME'] = 'd6940e1e3a7b9e'
+app.config['MAIL_PASSWORD'] = '5a3c33eb014fbe'
+app.config['MAIL_USE_TLS'] = True
+app.config['MAIL_USE_SSL'] = False
+app.config['SECURITY_PASSWORD_SALT'] = "betmlblucalucamaurelli@proton.me"
+
+mail = Mail(app)
+
 users = {"username": "luca", "password": "betmlbluca4722"}
+
+def generate_confirmation_token(email):
+    serializer = URLSafeTimedSerializer(app.config['SECRET_KEY'])
+    return serializer.dumps(email, salt=app.config['SECURITY_PASSWORD_SALT'])
+
+
+def confirm_token(token, expiration=3600):
+    serializer = URLSafeTimedSerializer(app.config['SECRET_KEY'])
+    try:
+        email = serializer.loads(
+            token,
+            salt=app.config['SECURITY_PASSWORD_SALT'],
+            max_age=expiration
+        )
+    except:
+        return False
+    return email
+
+def send_email(to, subject, template):
+    msg = Message(
+        subject,
+        recipients=[to],
+        html=template,
+        sender=app.config['MAIL_DEFAULT_SENDER']
+    )
+    mail.send(msg)
 
 def login_required(func):
     @functools.wraps(func)
@@ -45,6 +85,24 @@ def login_required(func):
         return func()
 
     return secure_function
+
+@app.route('/confirm/<token>')
+@login_required
+def confirm_email(token):
+    email
+    try:
+        email = confirm_token(token)
+    except:
+        return jsonify('The confirmation link is invalid or has expired.')
+    
+    engine = database.connect_to_db()
+    res = engine.execute(f"SELECT confirmed FROM user_table WHERE username = '{email}';").fetchall()
+
+    if res[0][0] == "1":    
+        return jsonify('Account already confirmed. Please login.')
+    else:
+        engine.execute(f"UPDATE user_table SET confirmed_on = {date.today()} confirmed = '1' WHERE username = '{email}';")
+        return redirect(url_for('show_betting'))
 
 # Routes
 @app.route('/', methods = ["GET", "POST"])
@@ -114,18 +172,34 @@ def login():
 
 @app.route('/signup', methods = ["POST"])
 def signup(): 
-    user = request.get_json()
+    user = request.get_json()   
+    today = date.today()
 
     engine = database.connect_to_db()
-    res = engine.execute(f"SELECT username, password, position FROM user_table WHERE username = '{user['username']}';").fetchall()
+    res = engine.execute(f"SELECT username, confirmed FROM user_table WHERE username = '{user['username']}';").fetchall()
 
-    if res != []:
+    if res[0][1] == '0':
+        return jsonify("Please confirm your email")
+    
+    if res[0][1] == '1':
         return jsonify("Already regestered")
     
     password = sha256_crypt.encrypt(user["password"])
-    engine.execute(f"INSERT INTO user_table(username, password, position) VALUES('{user['username']}', '{password}', '0');")
+    engine.execute(f"INSERT INTO user_table(username, password, position, registered_on, confirmed ) VALUES('{user['username']}', '{password}', '0', {today}, '0');")
 
-    return jsonify("Register success!")
+    token = generate_confirmation_token(user['username'])
+
+    session["username"] = user['username']
+    session["state"] = 0
+
+    # return jsonify("Register success!")
+
+    confirm_url = url_for('confirm_email', token=token, _external=True)
+    html = render_template('activate.html', confirm_url=confirm_url)
+    subject = "Please confirm your email"
+    send_email(user['username'], subject, html)
+
+    return jsonify("Please confirm your email")
 
 @app.route('/changepassword', methods = ["POST"])
 def changepassword(): 

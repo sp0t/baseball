@@ -44,6 +44,7 @@ app.config['MAIL_PASSWORD'] = '5a3c33eb014fbe'
 app.config['MAIL_USE_TLS'] = True
 app.config['MAIL_USE_SSL'] = False
 app.config['SECURITY_PASSWORD_SALT'] = "betmlblucalucamaurelli@proton.me"
+app.config['MAIL_DEFAULT_SENDER'] = "lucamaurelli@proton.me"
 
 mail = Mail(app)
 
@@ -77,19 +78,17 @@ def send_email(to, subject, template):
 
 def login_required(func):
     @functools.wraps(func)
-    def secure_function():
-        # if "username" not in session:
-        #     return redirect(url_for("login"))
+    def secure_function(**kwargs):
         if "username" not in session:
             return redirect(url_for("login"))
-        return func()
+        return func(**kwargs)
 
     return secure_function
 
 @app.route('/confirm/<token>')
 @login_required
 def confirm_email(token):
-    email
+    email = None
     try:
         email = confirm_token(token)
     except:
@@ -101,7 +100,7 @@ def confirm_email(token):
     if res[0][0] == "1":    
         return jsonify('Account already confirmed. Please login.')
     else:
-        engine.execute(f"UPDATE user_table SET confirmed_on = {date.today()} confirmed = '1' WHERE username = '{email}';")
+        engine.execute(f"UPDATE user_table SET confirmed_on = '{date.today()}', confirmed = '1' WHERE username = '{email}';")
         return redirect(url_for('show_betting'))
 
 # Routes
@@ -152,10 +151,13 @@ def login():
     user = request.get_json()
     engine = database.connect_to_db()
 
-    res = engine.execute(f"SELECT username, password, position FROM user_table WHERE username = '{user['username']}';").fetchall()
+    res = engine.execute(f"SELECT username, password, position, confirmed FROM user_table WHERE username = '{user['username']}';").fetchall()
 
     if res == []:
-        return jsonify("User don't registered")
+        return jsonify("User didn't registered")
+    
+    if res[0][3] == '0':
+        return jsonify("NOCON")
 
     if sha256_crypt.verify(user["password"], res[0][1]) == True:
         session.permanent = True
@@ -178,19 +180,17 @@ def signup():
     engine = database.connect_to_db()
     res = engine.execute(f"SELECT username, confirmed FROM user_table WHERE username = '{user['username']}';").fetchall()
 
-    if res[0][1] == '0':
-        return jsonify("Please confirm your email")
-    
-    if res[0][1] == '1':
-        return jsonify("Already regestered")
-    
+    if res !=[]:
+        if res[0][1] == '0':
+            return jsonify("NOCON")
+        
+        if res[0][1] == '1':
+            return jsonify("Already regestered")
+        
     password = sha256_crypt.encrypt(user["password"])
-    engine.execute(f"INSERT INTO user_table(username, password, position, registered_on, confirmed ) VALUES('{user['username']}', '{password}', '0', {today}, '0');")
+    engine.execute(f"INSERT INTO user_table(username, password, position, registered_on, confirmed ) VALUES('{user['username']}', '{password}', '0', '{today}', '0');")
 
     token = generate_confirmation_token(user['username'])
-
-    session["username"] = user['username']
-    session["state"] = 0
 
     # return jsonify("Register success!")
 
@@ -199,7 +199,7 @@ def signup():
     subject = "Please confirm your email"
     send_email(user['username'], subject, html)
 
-    return jsonify("Please confirm your email")
+    return jsonify("NOCON")
 
 @app.route('/changepassword', methods = ["POST"])
 def changepassword(): 

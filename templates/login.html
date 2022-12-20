@@ -125,6 +125,12 @@
                         return;
                     }
 
+                    if(data == "NOCON")
+                    {
+                        $("#form").css("display", "none");
+                        $("#verifytip1").text("Confirm your account.\n Please check your inbox.");  
+                        $("#verifytip2").text("You should have received an email with a confirmation link.");  
+                    }
                     $("#signresult").text(data);
                 }
             })
@@ -135,16 +141,22 @@
     <div class="container-fluid">
         <div class="vw-100 vh-100 d-flex flex-direction align-items-center justify-content-center">
             <div class="border border-dark p-3 rounded-3" style="width: 400px;">
-                <form>
+                <div style="color: blue; text-align: left;">
+                    <h4 id="verifytip1"></h4>
+                </div>
+                <div style="color: blue; text-align: left;">
+                    <h4 id="verifytip2"></h4>
+                </div>
+                <form id="form">
                     <div class="row mt-3 mb-3">
                         <h3 class="d-flex justify-content-center" id="title"></h3>
                     </div>
                     <div class="row mt-3">
-                        <p class="mb-0 ms-4" id="signresult"></p>
+                        <h6 class="mb-0 ms-4" id="signresult" style="color: red;"></h6>
                     </div>
                     <!-- Username input -->
                     <div class="form-outline ms-3 me-3 mb-3">
-                        <input type="text" id="registerUsername" class="form-control" placeholder="Username"/>
+                        <input type="email" id="registerUsername" class="form-control" placeholder="user@gamil.com"/>
                     </div>
     
                     <!-- Password input -->

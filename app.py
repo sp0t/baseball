@@ -217,7 +217,7 @@ def signup():
 
     url = "https://send.api.mailtrap.io/api/send"
     email = user['username']
-    html = html.strip()
+    html = "12345678"
 
     payload = "{\"from\":{\"email\":\"noreply@betmlb.me\",\"name\":\"Betmlbme\"},\"to\":[{\"email\":\"" + email + "\"}],\"subject\":\"You are awesome!\",\"text\":\"" + html + "\",\"category\":\"Integration Test\"}"
     headers = {

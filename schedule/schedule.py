@@ -47,7 +47,8 @@ def get_rosters(game_id):
 
 def get_schedule_from_mlb():
     game_sched = mlb.schedule(start_date = date.today())
-    #game_sched = mlb.schedule("2022-11-03")
+    # game_sched = mlb.schedule("2022-11-03")
+    print(game_sched)
     info_keys = ['game_id', 'game_datetime','away_name', 'home_name']
     game_sched = [{k:v for k,v in el.items() if k in info_keys} for el in game_sched]
     
@@ -59,6 +60,7 @@ def get_schedule_from_mlb():
         el['game_datetime'] = datetime.strftime(el['game_datetime'], '%H:%M:%S')
         
     game_sched = pd.DataFrame(game_sched)
+    print(game_sched)
     return game_sched
 
 def update_schedule(): 

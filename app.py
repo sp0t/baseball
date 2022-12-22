@@ -142,10 +142,12 @@ def index():
     except:
         pass
 
-    today_schedule = schedule.get_schedule()                                                                                                                                                                                                                                                                                                                                                                                                                                                 
+    today_schedule = schedule.get_schedule()  
+    print(today_schedule)                                                                                                                                                                                                                                                                                                                                                                                                                                               
     engine = database.connect_to_db()
     last_update = pd.read_sql("SELECT * FROM updates", con = engine).iloc[-1]
 
+    print(last_update)
     last_date, last_time, last_record = last_update["update_date"], last_update["update_time"], last_update["last_record"]
 
     return render_template("index.html", schedule = today_schedule, last_record = last_record, 
@@ -172,7 +174,7 @@ def login():
 
     if sha256_crypt.verify(user["password"], res[0][1]) == True:
         session.permanent = True
-        app.permanent_session_lifetime = timedelta(minutes=1)
+        app.permanent_session_lifetime = timedelta(hours=1)
         session["username"] = user['username']
         if res[0][2] == "0":
             session["state"] = 0

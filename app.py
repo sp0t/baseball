@@ -207,10 +207,10 @@ def signup():
 
     confirm_url = url_for('confirm_email', token=token, _external=True)
 
-    html = render_template('activate.html', confirm_url=confirm_url)
+    #html = render_template('activate.html', confirm_url=confirm_url)
     # print(html.strip())
 
-    # html = "To verify your mail click here. " + confirm_url
+    html = "To verify your mail click here. " + confirm_url
 
     url = "https://send.api.mailtrap.io/api/send"
     email = user['username']

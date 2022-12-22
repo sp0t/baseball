@@ -205,11 +205,11 @@ def signup():
 
     token = generate_confirmation_token(user['username'])
 
-    confirm_url = "https://betmlb.me/confirm/"
+    confirm_url = "https://betmlb.me/confirm/" + token
 
     # print(html.strip())
 
-    html = "To verify your mail click here. " + token
+    html = "To verify your mail click here. " + confirm_url
 
     url = "https://send.api.mailtrap.io/api/send"
     email = user['username']

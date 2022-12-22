@@ -94,7 +94,6 @@ def login_required(func):
     return secure_function
 
 @app.route('/confirm/<token>')
-@login_required
 def confirm_email(token):
     email = None
     try:
@@ -215,7 +214,7 @@ def signup():
     url = "https://send.api.mailtrap.io/api/send"
     email = user['username']
 
-    payload = "{\"from\":{\"email\":\"lucamaurelli@betmlb.me\",\"name\":\"BetMLB\"},\"to\":[{\"email\":\"" + email + "\"}],\"subject\":\"Confrim your mail!\",\"text\":\"" + html + "\",\"category\":\"Integration Test\"}"
+    payload = "{\"from\":{\"email\":\"lucamaurelli@betmlb.me\",\"name\":\"BetMLB\"},\"to\":[{\"email\":\"" + email + "\"}],\"subject\":\"Confirm your mail!\",\"text\":\"" + html + "\",\"category\":\"Integration Test\"}"
     headers = {
     "Authorization": "Bearer fcc5c29e1926dd91538201eaef322987",
     "Content-Type": "application/json"

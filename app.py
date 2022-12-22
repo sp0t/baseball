@@ -205,20 +205,16 @@ def signup():
 
     token = generate_confirmation_token(user['username'])
 
-    confirm_url = url_for('confirm_email', token=token, _external=True)
+    confirm_url = "https://betmlb.me/confirm/"
 
-    html = render_template('activate.html', confirm_url=confirm_url)
     # print(html.strip())
 
-    html = "<!DOCTYPE html><html lang='en'><head><meta charset='UTF-8'><meta http-equiv='X-UA-Compatible' content='IE=edge'>"\
-        "<meta name='viewport' content='width=device-width, initial-scale=1.0'><title>BetMLB</title></head><body><p>Welcome! Thanks for signing up. Please follow this link to activate your account:</p>"\
-        "<p><a href=" + confirm_url + ">" + confirm_url + "</a></p>"\
-        "<br><p>Cheers!</p></body></html>"
+    html = "To verify your mail click here. " + token
 
     url = "https://send.api.mailtrap.io/api/send"
     email = user['username']
 
-    payload = "{\"from\":{\"email\":\"noreply@betmlb.me\",\"name\":\"Betmlbme\"},\"to\":[{\"email\":\"" + email + "\"}],\"subject\":\"You are awesome!\",\"text\":\"" + html + "\",\"category\":\"Integration Test\"}"
+    payload = "{\"from\":{\"email\":\"lucamaurelli@gmail.com\",\"name\":\"BetMLB\"},\"to\":[{\"email\":\"" + email + "\"}],\"subject\":\"Confrim your mail!\",\"text\":\"" + html + "\",\"category\":\"Integration Test\"}"
     headers = {
     "Authorization": "Bearer fcc5c29e1926dd91538201eaef322987",
     "Content-Type": "application/json"

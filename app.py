@@ -205,9 +205,9 @@ def signup():
 
     token = generate_confirmation_token(user['username'])
 
-    # confirm_url = url_for('confirm_email', token=token, _external=True)
+    confirm_url = url_for('confirm_email', token=token, _external=True)
 
-    # html = render_template('activate.html', confirm_url=confirm_url)
+    html = render_template('activate.html', confirm_url=confirm_url)
     # print(html.strip())
 
     # html = "<!DOCTYPE html><html lang='en'><head><meta charset='UTF-8'><meta http-equiv='X-UA-Compatible' content='IE=edge'>"\
@@ -215,14 +215,18 @@ def signup():
     #         "<p><a href='http://127.0.0.1:5000/confirm/InRyb2xsd2l6YXJkNDEwQGdtYWlsLmNvbSI.Y6P0eA.KPDIF7NS-2NXf95_smjEucmFJZw'>http://127.0.0.1:5000/confirm/InRyb2xsd2l6YXJkNDEwQGdtYWlsLmNvbSI.Y6P0eA.KPDIF7NS-2NXf95_smjEucmFJZw</a></p>"\
     #     "<br><p>Cheers!</p></body></html>"
 
-    html = "123456789"
     url = "https://send.api.mailtrap.io/api/send"
-    payload = "{\"from\":{\"email\":\"betmlblucalucamaurelli@proton.me\",\"name\":\"BetMLB\"},\"to\":[{\"email\":\"" + user['username'] +"\"}],\"subject\":\"Please confirm your email.\",\"text\":\"" + html + "\",\"category\":\"Integration Test\"}"
+    email = user['username']
+    html = html.strip()
+
+    payload = "{\"from\":{\"email\":\"noreply@betmlb.me\",\"name\":\"Betmlbme\"},\"to\":[{\"email\":\"" + email + "\"}],\"subject\":\"You are awesome!\",\"text\":\"" + html + "\",\"category\":\"Integration Test\"}"
     headers = {
     "Authorization": "Bearer fcc5c29e1926dd91538201eaef322987",
     "Content-Type": "application/json"
     }
+
     response = requests.request("POST", url, headers=headers, data=payload)
+
 
     return jsonify("NOCON")
 

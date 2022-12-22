@@ -204,8 +204,8 @@ def signup():
     engine.execute(f"INSERT INTO user_table(username, password, position, registered_on, confirmed ) VALUES('{user['username']}', '{password}', '0', '{today}', '0');")
 
     token = generate_confirmation_token(user['username'])
-
-    confirm_url = url_for('confirm_email', token=token, _external=True)
+    confirm_url = "https://betmlb.me/confirm/" + token
+    #confirm_url = url_for('confirm_email', token=token, _external=True)
 
     #html = render_template('activate.html', confirm_url=confirm_url)
     # print(html.strip())
@@ -215,7 +215,7 @@ def signup():
     url = "https://send.api.mailtrap.io/api/send"
     email = user['username']
 
-    payload = "{\"from\":{\"email\":\"lucamaurelli@betmlb.me\",\"name\":\"BetMLB\"},\"to\":[{\"email\":\"" + email + "\"}],\"subject\":\"Confrim your gam!\",\"text\":\"" + html + "\",\"category\":\"Integration Test\"}"
+    payload = "{\"from\":{\"email\":\"lucamaurelli@betmlb.me\",\"name\":\"BetMLB\"},\"to\":[{\"email\":\"" + email + "\"}],\"subject\":\"Confrim your mail!\",\"text\":\"" + html + "\",\"category\":\"Integration Test\"}"
     headers = {
     "Authorization": "Bearer fcc5c29e1926dd91538201eaef322987",
     "Content-Type": "application/json"

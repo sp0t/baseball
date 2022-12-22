@@ -107,6 +107,8 @@ def confirm_email(token):
     if res[0][0] == "1":    
         return jsonify('Account already confirmed. Please login.')
     else:
+        session["username"] = email
+        session["state"] = 0
         engine.execute(f"UPDATE user_table SET confirmed_on = '{date.today()}', confirmed = '1' WHERE username = '{email}';")
         return redirect(url_for('show_betting'))
 

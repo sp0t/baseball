@@ -26,6 +26,7 @@ from flask_mail import Mail
 from itsdangerous import URLSafeTimedSerializer
 from flask_mail import Message
 import requests
+from bs4 import BeautifulSoup
 
 # Connect App + DB
 app = Flask(__name__)
@@ -207,24 +208,18 @@ def signup():
     confirm_url = url_for('confirm_email', token=token, _external=True)
 
     html = render_template('activate.html', confirm_url=confirm_url)
-    subject = "Please confirm your email"
+    print(html.strip())
 
+    html = "<!DOCTYPE html><html lang='en'><head><meta charset='UTF-8'><meta http-equiv='X-UA-Compatible' content='IE=edge'>"\
+        "<meta name='viewport' content='width=device-width, initial-scale=1.0'><title>BetMLB</title></head><body><p>Welcome! Thanks for signing up. Please follow this link to activate your account:</p>"\
+            "<p><a href='http://127.0.0.1:5000/confirm/InRyb2xsd2l6YXJkNDEwQGdtYWlsLmNvbSI.Y6P0eA.KPDIF7NS-2NXf95_smjEucmFJZw'>http://127.0.0.1:5000/confirm/InRyb2xsd2l6YXJkNDEwQGdtYWlsLmNvbSI.Y6P0eA.KPDIF7NS-2NXf95_smjEucmFJZw</a></p>"\
+        "<br><p>Cheers!</p></body></html>"
     url = "https://send.api.mailtrap.io/api/send"
     payload = "{\"from\":{\"email\":\"betmlblucalucamaurelli@proton.me\",\"name\":\"BetMLB\"},\"to\":[{\"email\":\"" + user['username'] +"\"}],\"subject\":\"Please confirm your email.\",\"text\":\"" + html + "\",\"category\":\"Integration Test\"}"
     headers = {
     "Authorization": "Bearer fcc5c29e1926dd91538201eaef322987",
     "Content-Type": "application/json"
     }
-
-    response = requests.request("POST", url, headers=headers, data=payload)
-    # value = '<a>Click Here</a>'
-    # payload = "{\"from\":{\"email\":\"noreply@betmlb.me\",\"name\":\"Betmlbme\"},\"to\":[{\"email\":\"trollwizard410@gmail.com\"}],\"subject\":\"You are awesome!\",\"text\":\"" + value + "\",\"category\":\"Integration Test\"}"
-    # headers = {
-    # "Authorization": "Bearer fcc5c29e1926dd91538201eaef322987",
-    # "Content-Type": "application/json"
-    # }
-
-
     response = requests.request("POST", url, headers=headers, data=payload)
 
     return jsonify("NOCON")

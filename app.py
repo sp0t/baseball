@@ -25,6 +25,7 @@ from datetime import timedelta
 from flask_mail import Mail
 from itsdangerous import URLSafeTimedSerializer
 from flask_mail import Message
+import requests
 
 # Connect App + DB
 app = Flask(__name__)
@@ -208,8 +209,13 @@ def signup():
     html = render_template('activate.html', confirm_url=confirm_url)
     subject = "Please confirm your email"
 
-    print("receiver", user['username'])
-    send_email(user['username'], subject, html)
+    url = "https://send.api.mailtrap.io/api/send"
+    payload = "{\"from\":{\"email\":\"betmlblucalucamaurelli@proton.me\",\"name\":\"BetMLB\"},\"to\":[{\"email\":\"" + user['username'] +"\"}],\"subject\":\"Please confirm your email.\",\"text\":\"" + html + "\",\"category\":\"Integration Test\"}"
+    headers = {
+    "Authorization": "Bearer fcc5c29e1926dd91538201eaef322987",
+    "Content-Type": "application/json"
+    }
+    response = requests.request("POST", url, headers=headers, data=payload)
 
     return jsonify("NOCON")
 

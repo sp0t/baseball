@@ -67,8 +67,8 @@
                     for([key, val] of Object.entries(data['game_date'])) {
                         console.log(key, val);
                         away_head+=`<th class="border border-black">${key}</th>`;
-                        away_pos+=`<td class="border border-black">${val=='0'?`@${data['home_abbr']}`:`vs ${data['home_abbr']}`}</td>`;
-                        home_pos+=`<td class="border border-black">${val=='0'?`vs${data['away_abbr']}`:`@ ${data['away_abbr']}`}</td>`;
+                        away_pos+=`<td class="border border-black">${val=='0'?`@ ${data['home_abbr']}`:`vs ${data['home_abbr']}`}</td>`;
+                        home_pos+=`<td class="border border-black">${val=='0'?`vs ${data['away_abbr']}`:`@ ${data['away_abbr']}`}</td>`;
                     }
                     home_head = away_head;
 

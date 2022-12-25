@@ -495,6 +495,69 @@ def get_pitcher_csv_data():
         mimetype="text/csv",
         headers={"Content-disposition":
                  f"attachment; filename = pitcher_data.csv"})
+
+
+@app.route('/friend_page', methods = ["GET", "POST"]) 
+def friend_page():  
+    engine = database.connect_to_db()
+
+    if request.method == 'GET':
+        res = mlb.get('teams', params={'sportId':1})['teams']
+        team_dict = [{k:v for k,v in el.items() if k in ['name', 'abbreviation']} for el in res]
+        sorted(team_dict, key = lambda user: (user['name'], user['abbreviation']))
+        return render_template("friend_team.html", data = team_dict)
+
+    if request.method == 'POST':
+        team_data = request.get_json()
+
+        away_id = mlb.lookup_team(team_data['away_name'])[0]['id']
+        home_id = mlb.lookup_team(team_data['home_name'])[0]['id']
+
+        away_roster = mlb.get('team_roster', params = {'teamId':away_id, 'date':date.today()})['roster']
+        away_roster = [el['person'] for el in away_roster]
+        away_roster = [{k:v for k,v in el.items() if k!='link'} for el in away_roster]
+
+        home_roster = mlb.get('team_roster', params = {'teamId':home_id, 'date':date.today()})['roster']
+        home_roster = [el['person'] for el in home_roster]
+        home_roster = [{k:v for k,v in el.items() if k!='link'} for el in home_roster]
+
+        data = {}
+
+        game_table = pd.read_sql(f"SELECT * FROM (SELECT game_id, game_date, ('0')pos FROM game_table WHERE away_team = '{team_data['away_team']}' AND home_team = '{team_data['home_team']}' UNION SELECT game_id, game_date, ('1')pos FROM game_table WHERE away_team = '{team_data['home_team']}' AND home_team = '{team_data['away_team']}' ORDER BY game_date DESC LIMIT 7)a ORDER BY game_date;", con = engine).to_dict('records')
+
+        game_date = {}
+
+        for el in game_table:
+            game_date[el['game_date']] = el['pos']
+
+        away_batters = {}
+        for item1 in away_roster:
+            away_batters[item1['fullName']] = {}
+            for item2 in game_table:
+                state = pd.read_sql(f"SELECT playerid, atbats FROM batter_table WHERE (game_id LIKE '{item2['game_id']}%%' AND playerid LIKE '{item1['id']}%%');", con = engine).to_dict('records')
+                if state == []:
+                    away_batters[item1['fullName']][item2['game_date']] = 'N'
+                else:
+                    away_batters[item1['fullName']][item2['game_date']] = state[0]['atbats']
+
+        home_batters = {}
+        for item1 in home_roster:
+            home_batters[item1['fullName']] = {}
+            for item2 in game_table:
+                state = pd.read_sql(f"SELECT playerid, atbats FROM batter_table WHERE (game_id LIKE '{item2['game_id']}%%' AND playerid LIKE '{item1['id']}%%');", con = engine).to_dict('records')
+                if state == []:
+                    home_batters[item1['fullName']][item2['game_date']] = 'N'
+                else:
+                    home_batters[item1['fullName']][item2['game_date']] = state[0]['atbats']
+
+        data['game_date'] = game_date
+        data['away_batters'] = away_batters
+        data['home_batters'] = home_batters
+        data['away_name'] = team_data['away_name']
+        data['home_name'] = team_data['home_name']
+        data['away_abbr'] = team_data['away_team']
+        data['home_abbr'] = team_data['home_team']
+        return data
       
 
 # model_1a = None

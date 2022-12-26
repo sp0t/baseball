@@ -65,7 +65,6 @@
                     away_pos='<tr><td class="border border-black"></td>';
                     home_pos = away_pos
                     for([key, val] of Object.entries(data['game_date'])) {
-                        console.log(key, val);
                         away_head+=`<th class="border border-black">${key}</th>`;
                         away_pos+=`<td class="border border-black">${val=='0'?`@ ${data['home_abbr']}`:`vs ${data['home_abbr']}`}</td>`;
                         home_pos+=`<td class="border border-black">${val=='0'?`vs ${data['away_abbr']}`:`@ ${data['away_abbr']}`}</td>`;
@@ -133,9 +132,6 @@
 
                     home_html+='</tbody>'
 
-                    console.log(away_html);
-                    console.log(home_html);
-
                     $("#away_page").html(away_html);
                     $("#home_page").html(home_html);
                 }
@@ -145,7 +141,7 @@
     </script>
 </head>
 <body>
-    <div class="container-fluid">
+    <div class="container-fluid w-auto">
         <div class="mt-14">
             <div>
                 <h1 class="text-5xl ml-24">Friend-teams</h1>

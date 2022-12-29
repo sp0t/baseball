@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BetMLB</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+    <script>
+         function changeData() {
+            var away_name, home_name, away_abbr, home_abbr;
+            var data = {};
+      
+            away_name = $("#away_team option:selected").text();
+            home_name = $("#home_team option:selected").text();
+            away_abbr = $("#away_team").val();
+            home_abbr = $("#home_team").val();
+
+             if(away_name.length == 0)
+            {
+                alert("Please select away_team");
+                return;
+            }
+            if(home_name.length == 0)
+            {
+                alert("Please select home_team");
+                return;
+            }
+
+            if(home_name == away_name)
+            {
+                alert("Please select different 2 teams");
+                return;
+            }
+
+            data['away_name'] = away_name;
+            data['home_name'] = home_name;
+            data['away_team'] = away_abbr;
+            data['home_team'] = home_abbr;
+
+            $.ajax({
+                url: '/friend_page', 
+                type: 'POST', 
+                data: JSON.stringify(data),
+                dataType: 'json',
+                contentType: 'application/json',
+                beforeSend: function (){ 
+                    document.getElementById('pageloader').style.display = 'block';
+                },
+
+                success: function (data){ 
+
+                    document.getElementById('pageloader').style.display = 'none';
+
+                    var away_html='', home_html='';
+                    var away_head='', home_head='';
+                    var away_pos='', home_pos='';
+
+                    away_html+='<thead><tr">';
+                    home_html+=away_html;
+                    away_html+=`<th class="border border-black">${data['away_name']}</th>`;
+                    home_html+=`<th class="border border-black">${data['home_name']}</th>`;
+
+
+                    away_pos='<tr><td class="border border-black"></td>';
+                    home_pos = away_pos
+                    for([key, val] of Object.entries(data['game_date'])) {
+                        away_head+=`<th class="border border-black">${key}</th>`;
+                        away_pos+=`<td class="border border-black">${val=='0'?`@ ${data['home_abbr']}`:`vs ${data['home_abbr']}`}</td>`;
+                        home_pos+=`<td class="border border-black">${val=='0'?`vs ${data['away_abbr']}`:`@ ${data['away_abbr']}`}</td>`;
+                    }
+                    home_head = away_head;
+
+                    away_html+=`${away_head}</tr></thead border border-black><tbody>${away_pos}</tr>`;
+                    home_html+=`${home_head}</tr></thead border border-black><tbody>${home_pos}</tr>`;
+
+                    jQuery.each( data['away_batters'], function( i, val ) {
+                        away_html+='<tr class="border border-black">';
+
+                        away_html+=`<td class="border border-black">${i}</td>`;
+
+                        for([key, value] of Object.entries(val) ){
+                            
+                            if(value == 'N'){
+                                away_html+=`<td class="border border-black bg-rose-500"></td>`;
+                            }
+                            else if(parseInt(value) == 0)
+                            {
+                                away_html+=`<td class="border border-black bg-orange-500"}>0</td>`;
+                            }
+                            else if(parseInt(value) == 1)
+                            {
+                                away_html+=`<td class="border border-black bg-yellow-300"}>1</td>`;
+                            }
+                            else
+                            {
+                                away_html+=`<td class="border border-black bg-green-500"}>${parseInt(value)}</td>`;
+                            }
+                        }
+
+                        away_html+='</tr>'
+                    });
+
+                    away_html+='</tbody>'
+
+                    jQuery.each( data['home_batters'], function( i, val ) {
+                        home_html+='<tr class="border border-black">';
+
+                        home_html+=`<td class="border border-black">${i}</td>`;
+
+                        for([key, value] of Object.entries(val) ){
+
+                            if(value == 'N'){
+                                home_html+=`<td class="border border-black bg-rose-500"}></td>`;
+                            }
+                            else if(parseInt(value) == 0)
+                            {
+                                home_html+=`<td class="border border-black bg-orange-500"}>0</td>`;
+                            }
+                            else if(parseInt(value) == 1)
+                            {
+                                home_html+=`<td class="border border-black bg-yellow-300"}>1</td>`;
+                            }
+                            else
+                            {
+                                home_html+=`<td class="border border-black bg-green-500"}>${parseInt(value)}</td>`;
+                            }
+                        }
+
+                        home_html+='</tr>'
+                    });
+
+                    home_html+='</tbody>'
+
+                    $("#away_page").html(away_html);
+                    $("#home_page").html(home_html);
+                }
+            })
+
+        }
+    </script>
+</head>
+<body>
+    <div class="container-fluid" style="width: 1920px;">
+        <div class="mt-14">
+            <div>
+                <h1 class="text-5xl ml-24">Friend-teams</h1>
+            </div>
+            <div class="flex justify-end">
+                <a href="/" class="mr-20 text-3xl text-sky-500" onMouseOver="this.style.color='red'"
+                onMouseOut="this.style.color='blue'">HOME</a>
+            </div>
+            <hr class="border-orange-300 mt-1.5">
+            <div>
+                <p class="text-2xl mt-4 ml-10">Please select friend-teams...</p>
+            </div>
+            <div class="mt-12 flex">
+                <div class="w-2/4 flex justify-center text-2xl space-x-7">
+                    <label for="away_name" class="text-red-700">Away_team:</label>
+
+                    <select class="bg-cyan-100 border-black" name="away_name" id="away_team" onchange="changeData()">
+                        <option value="blank"></option>
+                        {% for team in data %}
+                        <option value="{{team.abbreviation}}">{{team.name}}</option>
+                        {% endfor %}
+                    </select>   
+                </div>
+                <div class="w-2/4 flex justify-center text-2xl space-x-7">
+                    <label for="home_name" class="text-red-700">Home_team:</label>
+
+                    <select class="bg-cyan-100 border-black" name="home_name" id="home_team" onchange="changeData()">
+                        <option value="blank"></option>
+                        {% for team in data %}
+                        <option value="{{team.abbreviation}}">{{team[0]}}</option>
+                        {% endfor %}
+                    </select>   
+                </div>
+            </div>
+            <div class="flex mt-12">
+                <div class="w-2/4 flex justify-center">
+                    <table class="border-collapse border border-black border-collapse text-center scroll-smooth scroll-auto" id="away_page">
+                    </table>
+                </div>
+                <div id="pageloader" style="display: none;"><img style="width: 50px;" src="/static/loader.gif"/></div>
+                <div class="w-2/4 flex justify-center">
+                    <table class="border-collapse border border-black border-collapse text-center scroll-smooth scroll-auto" id="home_page">
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

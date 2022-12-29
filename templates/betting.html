@@ -98,9 +98,7 @@
         date.setDate(date.getDate() + 1);
         dispdate = date.toDispStr();
         document.getElementById('gamedate').innerHTML = dispdate;
-        console.log(date);
         newdate = date.yyyymmdd();
-        console.log(newdate);
         $(".form-control").val(newdate);
         var data = {};
         data["gamedate"] = newdate;

@@ -142,12 +142,9 @@ def index():
     except:
         pass
 
-    today_schedule = schedule.get_schedule()  
-    print(today_schedule)                                                                                                                                                                                                                                                                                                                                                                                                                                               
+    today_schedule = schedule.get_schedule()                                                                                                                                                                                                                                                                                                                                                                                                                                             
     engine = database.connect_to_db()
     last_update = pd.read_sql("SELECT * FROM updates", con = engine).iloc[-1]
-
-    print(last_update)
     last_date, last_time, last_record = last_update["update_date"], last_update["update_time"], last_update["last_record"]
 
     return render_template("index.html", schedule = today_schedule, last_record = last_record, 
@@ -161,8 +158,6 @@ def login():
 
     user = request.get_json()
     engine = database.connect_to_db()
-
-    print(user['username'])
 
     res = engine.execute(f"SELECT username, password, position, confirmed FROM user_table WHERE username = '{user['username']}';").fetchall()
 
@@ -192,8 +187,6 @@ def signup():
 
     engine = database.connect_to_db()
     res = engine.execute(f"SELECT username, confirmed FROM user_table WHERE username = '{user['username']}';").fetchall()
-
-    print(res)
 
     if res !=[]:
         if res[0][1] == '0':
@@ -502,61 +495,48 @@ def friend_page():
     engine = database.connect_to_db()
 
     if request.method == 'GET':
-        res = mlb.get('teams', params={'sportId':1})['teams']
-        team_dict = [{k:v for k,v in el.items() if k in ['name', 'abbreviation']} for el in res]
-        sorted(team_dict, key = lambda user: (user['name'], user['abbreviation']))
-        return render_template("friend_team.html", data = team_dict)
+        game_table = pd.read_sql(f"SELECT (team_name)tname, (team_abbr)abbreviation FROM team_table ORDER BY team_name;", con = engine).to_dict('records')
+        return render_template("friend_team.html", data = game_table)
 
     if request.method == 'POST':
         team_data = request.get_json()
-
-        away_id = mlb.lookup_team(team_data['away_name'])[0]['id']
-        home_id = mlb.lookup_team(team_data['home_name'])[0]['id']
-
-        away_roster = mlb.get('team_roster', params = {'teamId':away_id, 'date':date.today()})['roster']
-        away_roster = [el['person'] for el in away_roster]
-        away_roster = [{k:v for k,v in el.items() if k!='link'} for el in away_roster]
-
-        home_roster = mlb.get('team_roster', params = {'teamId':home_id, 'date':date.today()})['roster']
-        home_roster = [el['person'] for el in home_roster]
-        home_roster = [{k:v for k,v in el.items() if k!='link'} for el in home_roster]
-
         data = {}
 
-        game_table = pd.read_sql(f"SELECT * FROM (SELECT game_id, game_date, ('0')pos FROM game_table WHERE away_team = '{team_data['away_team']}' AND home_team = '{team_data['home_team']}' UNION SELECT game_id, game_date, ('1')pos FROM game_table WHERE away_team = '{team_data['home_team']}' AND home_team = '{team_data['away_team']}' ORDER BY game_date DESC LIMIT 7)a ORDER BY game_date;", con = engine).to_dict('records')
+        count = 0
+        if int(team_data['count']) > 180:
+            count = 180
+        else:
+            count = int(team_data['count'])
+
+        today = date.today()
+        year = today.year
+
+        date_table = pd.read_sql(f"SELECT * FROM(SELECT game_id, game_date, (CASE away_team WHEN '{team_data['abbr']}' THEN '1' ELSE '0' END)pos, \
+                        (CASE away_team WHEN '{team_data['abbr']}' THEN home_team ELSE away_team END)oppoteam FROM game_table \
+                        WHERE (away_team = '{team_data['abbr']}' OR home_team = '{team_data['abbr']}') AND game_date LIKE '{year}%%' \
+                        ORDER BY game_date DESC LIMIT '{count}')a ORDER BY game_date;", con = engine).to_dict('records')
+
+        game_table = pd.read_sql(f"SELECT p_name, atbats FROM(SELECT * FROM (SELECT * FROM (SELECT game_id, game_date, (CASE away_team WHEN '{team_data['abbr']}' THEN '1' ELSE '0' END)pos, \
+                        (CASE away_team WHEN '{team_data['abbr']}' THEN home_team ELSE away_team END)oppoteam FROM game_table \
+                        WHERE (away_team = '{team_data['abbr']}' OR home_team = '{team_data['abbr']}') AND game_date LIKE '{year}%%' \
+                        ORDER BY game_date DESC LIMIT '{count}')game_schudle CROSS JOIN (SELECT player_table.p_name, player_table.p_id FROM player_table INNER JOIN team_table ON player_table.t_id = team_table.team_id \
+                        WHERE team_table.team_name = '{team_data['name']}')player)table1 LEFT JOIN batter_table ON (table1.p_id = batter_table.playerid AND table1.game_id = batter_table.game_id))t ORDER BY p_name, game_date;", con = engine).to_dict('records')
 
         game_date = {}
 
-        for el in game_table:
-            game_date[el['game_date']] = el['pos']
+        i=0
 
-        away_batters = {}
-        for item1 in away_roster:
-            away_batters[item1['fullName']] = {}
-            for item2 in game_table:
-                state = pd.read_sql(f"SELECT playerid, atbats FROM batter_table WHERE (game_id LIKE '{item2['game_id']}%%' AND playerid LIKE '{item1['id']}%%');", con = engine).to_dict('records')
-                if state == []:
-                    away_batters[item1['fullName']][item2['game_date']] = 'N'
-                else:
-                    away_batters[item1['fullName']][item2['game_date']] = state[0]['atbats']
-
-        home_batters = {}
-        for item1 in home_roster:
-            home_batters[item1['fullName']] = {}
-            for item2 in game_table:
-                state = pd.read_sql(f"SELECT playerid, atbats FROM batter_table WHERE (game_id LIKE '{item2['game_id']}%%' AND playerid LIKE '{item1['id']}%%');", con = engine).to_dict('records')
-                if state == []:
-                    home_batters[item1['fullName']][item2['game_date']] = 'N'
-                else:
-                    home_batters[item1['fullName']][item2['game_date']] = state[0]['atbats']
-
+        for el in date_table:
+            game_date[str(i)] = {}
+            game_date[str(i)]['oppoteam'] = el['oppoteam']
+            game_date[str(i)]['pos'] = el['pos']
+            game_date[str(i)]['game_date'] = el['game_date']
+            i+=1
+        data={}
         data['game_date'] = game_date
-        data['away_batters'] = away_batters
-        data['home_batters'] = home_batters
-        data['away_name'] = team_data['away_name']
-        data['home_name'] = team_data['home_name']
-        data['away_abbr'] = team_data['away_team']
-        data['home_abbr'] = team_data['home_team']
+        data['game_table'] = game_table
+        data['name'] = team_data['name']
+        data['abbr'] = team_data['abbr']
         return data
       
 
@@ -585,9 +565,43 @@ def print_date_time():
         engine.execute(f"UPDATE betting_table SET regstate = '1', betindex = '{betIndex + 1}' WHERE betid = '{bet['betid']}';")
         smartContract.createBetData(bet)
 
+def update_P_T_table():
+    engine = database.connect_to_db()
+
+    res = mlb.get('teams', params={'sportId':1})['teams']
+    team_dict = [{k:v for k,v in el.items() if k in ['name', 'abbreviation']} for el in res]
+
+    engine.execute("DROP TABLE IF EXISTS team_table;")
+    engine.execute("DROP TABLE IF EXISTS player_table;")
+
+    engine.execute("CREATE TABLE IF NOT EXISTS team_table(team_id TEXT, team_name TEXT, team_abbr TEXT);")
+    engine.execute("CREATE TABLE IF NOT EXISTS player_table(p_id TEXT, p_name TEXT, t_id TEXT);")
+
+
+    # team_data = request.get_json()
+
+    for el in team_dict:
+        team_id = mlb.lookup_team(el['name'])[0]['id']
+
+        engine.execute(f"INSERT INTO team_table(team_id, team_name, team_abbr) VALUES('{team_id}', '{el['name']}', '{el['abbreviation']}');") 
+        
+        team_roster = {}
+        team_roster = mlb.get('team_roster', params = {'teamId':team_id, 'date':date.today()})['roster']
+        team_roster = [el['person'] for el in team_roster]
+        team_roster = [{k:v for k,v in el.items() if k!='link'} for el in team_roster]
+
+        for item in team_roster:
+            p_name = item['fullName'].replace("'", " ")
+            engine.execute(f"INSERT INTO player_table(p_id, p_name, t_id) VALUES('{item['id']}', '{p_name}','{team_id}');") 
+
+
 scheduler = BackgroundScheduler()
 scheduler.add_job(func=print_date_time, trigger="interval", seconds=600)
 scheduler.start()
+
+schedulertable = BackgroundScheduler()
+schedulertable.add_job(func=update_P_T_table, trigger="interval", days=1)
+schedulertable.start()
 # Shut down the scheduler when exiting the app
 atexit.register(lambda: scheduler.shutdown())
 

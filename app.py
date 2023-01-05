@@ -509,8 +509,7 @@ def friend_page():
             count = int(team_data['count'])
 
         today = date.today()
-        year = today.year
-
+        year = team_data['year']
         date_table = pd.read_sql(f"SELECT * FROM(SELECT game_id, game_date, (CASE away_team WHEN '{team_data['abbr']}' THEN '1' ELSE '0' END)pos, \
                         (CASE away_team WHEN '{team_data['abbr']}' THEN home_team ELSE away_team END)oppoteam FROM game_table \
                         WHERE (away_team = '{team_data['abbr']}' OR home_team = '{team_data['abbr']}') AND game_date LIKE '{year}%%' \

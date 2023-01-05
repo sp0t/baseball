@@ -84,6 +84,12 @@
             team_abbr = $("#team").val();
             count = $("#count option:selected").text();
 
+            if($("#season").val() > 2099 || $("#season").val() < 1900)
+            {
+                alert("Invalid year! Retype year.");
+                return;
+            }
+
             if(team_name.length == 0)
             {
                 alert("Please select team");
@@ -93,6 +99,7 @@
             data['name'] = team_name;
             data['abbr'] = team_abbr;
             data['count'] = count;
+            data['year'] = $("#season").val();
 
             $.ajax({
                 url: '/friend_page', 
@@ -241,6 +248,12 @@
                         <option>150</option>
                         <option>180</option>
                     </select>   
+                </div>
+                <div class="w-3/12 flex justify-center text-xl space-x-7">
+                    <label for="season" class="text-red-700">Year:</label>
+
+                    <input class="bg-cyan-100 border-black px-5" type="number" id="season" min="1900" max="2099" step="1" value="2023" onchange="changeData()">
+                    </input>   
                 </div>
             </div>
             

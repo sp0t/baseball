@@ -76,6 +76,7 @@ for el in data:
     score2 = scores[1].find('td', attrs = {'data-col':'0'}).find('div').text
 
     db.execute(f"UPDATE game_table SET away_score='{score1}', home_score = '{score2}' WHERE game_id='{el['game_id']}';")
+    print(score1, score2)
 
     for i in range(len(atbats_tables)):
         team_name = atbats_tables[i].find('thead').find('tr').find('th', attrs = {'data-col':'0'})

@@ -566,16 +566,18 @@ def print_date_time():
 
 def update_P_T_table():
     engine = database.connect_to_db()
+    print('crone-start')
 
     exec(open("./modify_atbat.py").read(), globals())
 
     res = mlb.get('teams', params={'sportId':1})['teams']
-    team_dict = [{k:v for k,v in el.items() if k in ['name', 'abbreviation']} for el in res]
+
+    team_dict = [{k:v for k,v in el.items() if k in ['name', 'abbreviation', 'clubName']} for el in res]
 
     engine.execute("DROP TABLE IF EXISTS team_table;")
     engine.execute("DROP TABLE IF EXISTS player_table;")
 
-    engine.execute("CREATE TABLE IF NOT EXISTS team_table(team_id TEXT, team_name TEXT, team_abbr TEXT);")
+    engine.execute("CREATE TABLE IF NOT EXISTS team_table(team_id TEXT, team_name TEXT, team_abbr TEXT, club_name TEXT);")
     engine.execute("CREATE TABLE IF NOT EXISTS player_table(p_id TEXT, p_name TEXT, t_id TEXT);")
 
 
@@ -584,7 +586,7 @@ def update_P_T_table():
     for el in team_dict:
         team_id = mlb.lookup_team(el['name'])[0]['id']
 
-        engine.execute(f"INSERT INTO team_table(team_id, team_name, team_abbr) VALUES('{team_id}', '{el['name']}', '{el['abbreviation']}');") 
+        engine.execute(f"INSERT INTO team_table(team_id, team_name, team_abbr, club_name) VALUES('{team_id}', '{el['name']}', '{el['abbreviation']}', '{el['clubName']}');") 
         
         team_roster = {}
         team_roster = mlb.get('team_roster', params = {'teamId':team_id, 'date':date.today()})['roster']
@@ -601,7 +603,7 @@ scheduler.add_job(func=print_date_time, trigger="interval", seconds=600)
 scheduler.start()
 
 schedulertable = BackgroundScheduler()
-schedulertable.add_job(func=update_P_T_table, trigger="interval", days=1)
+schedulertable.add_job(func=update_P_T_table, trigger = 'cron', hour= '12', minute= '20')
 schedulertable.start()
 # Shut down the scheduler when exiting the app
 atexit.register(lambda: scheduler.shutdown())

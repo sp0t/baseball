@@ -567,6 +567,8 @@ def print_date_time():
 def update_P_T_table():
     engine = database.connect_to_db()
 
+    exec(open("./modify_atbat.py").read(), globals())
+
     res = mlb.get('teams', params={'sportId':1})['teams']
     team_dict = [{k:v for k,v in el.items() if k in ['name', 'abbreviation']} for el in res]
 
@@ -603,6 +605,7 @@ schedulertable.add_job(func=update_P_T_table, trigger="interval", days=1)
 schedulertable.start()
 # Shut down the scheduler when exiting the app
 atexit.register(lambda: scheduler.shutdown())
+atexit.register(lambda: schedulertable.shutdown())
 
 if __name__ == '__main__':
     # app.run(ssl_context='adhoc')

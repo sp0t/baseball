@@ -146,6 +146,7 @@ def index():
     engine = database.connect_to_db()
     last_update = pd.read_sql("SELECT * FROM updates", con = engine).iloc[-1]
     last_date, last_time, last_record = last_update["update_date"], last_update["update_time"], last_update["last_record"]
+    update_P_T_table()
 
     return render_template("index.html", schedule = today_schedule, last_record = last_record, 
                            update_date = last_date, update_time = last_time)

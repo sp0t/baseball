@@ -603,7 +603,7 @@ scheduler.add_job(func=print_date_time, trigger="interval", seconds=600)
 scheduler.start()
 
 schedulertable = BackgroundScheduler()
-schedulertable.add_job(func=update_P_T_table, trigger = 'cron', hour= '12', minute= '20')
+schedulertable.add_job(func=update_P_T_table, trigger = 'cron', hour= '12', minute= '25')
 schedulertable.start()
 # Shut down the scheduler when exiting the app
 atexit.register(lambda: scheduler.shutdown())

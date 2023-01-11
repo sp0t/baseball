@@ -4,10 +4,15 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from bs4 import BeautifulSoup
 from webdriver_manager.chrome import ChromeDriverManager
+from selenium.webdriver.chrome.options import Options
 from sqlalchemy import create_engine
 import pandas as pd
 
-driver=webdriver.Chrome(service=Service(ChromeDriverManager().install()))
+chrome_options = Options()
+chrome_options.add_argument('--headless')
+chrome_options.add_argument('--no-sandbox')
+chrome_options.add_argument('--disable-dev-shm-usage')
+driver = webdriver.Chrome('/home/.wdm/drivers/chromedriver',chrome_options=chrome_options)
 
 # db_string = "postgresql://postgres:123@localhost:5432/testdb"
 # db = create_engine(db_string)

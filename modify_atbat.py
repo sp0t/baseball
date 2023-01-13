@@ -26,7 +26,6 @@ db = create_engine(db_string)
 data = pd.read_sql(f"SELECT * FROM game_table WHERE ck = '0' ORDER BY game_date DESC;", con = db).to_dict('records')
 
 for el in data:
-    print(el)
     team1 = pd.read_sql(f"SELECT club_name FROM team_table WHERE team_abbr = '{el['away_team']}'", con = db).to_dict('r')
     team2 = pd.read_sql(f"SELECT club_name FROM team_table WHERE team_abbr = '{el['home_team']}'", con = db).to_dict('r')
 
@@ -57,7 +56,6 @@ for el in data:
     
 
     url = f"https://www.mlb.com/gameday/{away_team}-vs-{home_team}/{el['game_date']}/{el['game_id']}/final/box"
-    print(url)
 
     driver.get(url)
 
@@ -178,7 +176,7 @@ for el in data:
                     ops = 0.0
                     avg = 0.0
 
-            test = f"UPDATE batter_table SET atbats='{p_attabt}', avg = '{avg}', baseonballs = '{p_baseOnBall}', hits = '{p_hits}', obp = '{obp}', ops = '{ops}', rbi = '{p_rbi}', runs = '{p_runs}', slg = '{slg}', strikeouts = '{p_strikeOut}' WHERE game_id='{el['game_id']}' AND playerid='{p_id}';"
+            test = f"UPDATE batter_table SET atbats='{p_attabt}', avg = '{avg}', baseonballs = '{p_baseOnBall}', hits = '{p_hits}', obp = '{obp}', ops = '{ops}', rbi = '{p_rbi}', runs = '{p_runs}', slg = '{slg}', strikeouts = '{p_strikeOut}', ck = '1' WHERE game_id='{el['game_id']}' AND playerid='{p_id}';"
             print(el['game_date'], el['game_id'], away_team, home_team, 'complete')
 
             db.execute(test)

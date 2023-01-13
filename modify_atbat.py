@@ -56,7 +56,11 @@ for el in data:
     
 
     url = f"https://www.mlb.com/gameday/{away_team}-vs-{home_team}/{el['game_date']}/{el['game_id']}/final/box"
-
+    print('###################################################')
+    print('##                                               ##')
+    print(f'##   {url}                                      ')
+    print('##                                               ##')
+    print('###################################################')
     driver.get(url)
 
     wait = WebDriverWait(driver, 10)

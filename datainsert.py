@@ -78,7 +78,7 @@ for i in data:
                          '\'' + str(data[i]['away_b' + str(j) + '_strikeouts'] if np.isnan(data[i]['away_b' + str(j) + '_strikeouts']) else int(data[i]['away_b' + str(j) + '_strikeouts'])) + '\'' +  ',' + '\'' + str(data[i]['away_b' + str(j) + '_triples'] if np.isnan(data[i]['away_b' + str(j) + '_triples']) else int(data[i]['away_b' + str(j) + '_triples'])) + '\'' + ',' + '\'' + '0' + '\'' + ');'
         else:
             batter_table_sql = 'INSERT INTO batter_table( game_id, playerid, team, position, atbats, avg, baseonballs, doubles, hits, homeruns, '\
-                         'obp, ops, rbi, runs, slg, strikeouts, triples) VALUES (' + \
+                         'obp, ops, rbi, runs, slg, strikeouts, triples, ck) VALUES (' + \
                          '\'' + str(i) + '\'' + ',' +  '\'' + str(data[i]['home_b' + str(j-9) +'_playerid'] if np.isnan(data[i]['home_b' + str(j-9) +'_playerid']) else int(data[i]['home_b' + str(j-9) +'_playerid'])) + '\'' +  ',' + \
                          '\'' + 'home' + '\'' + ',' + '\'' +  str(j-9) + '\'' +  ',' +\
                          '\'' + str(data[i]['home_b' + str(j-9) + '_atbats'] if np.isnan(data[i]['home_b' + str(j-9) + '_atbats']) else int(data[i]['home_b' + str(j-9) + '_atbats'])) + '\'' +  ',' + '\'' + str(data[i]['home_b' + str(j-9) + '_avg']) + '\'' +  ',' + \

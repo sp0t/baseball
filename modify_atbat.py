@@ -100,9 +100,9 @@ for el in data:
                 doubles = stats[i].text.split(';')
                 for i in range(len(doubles)):
                     name = doubles[i].split(' ')
-                    if name.find('`') != -1:
+                    if name[1].find('`') != -1:
                         continue
-                    if name.find('\'') != -1:
+                    if name[1].find('\'') != -1:
                         continue
                     playerid = pd.read_sql(f"SELECT * FROM player_table WHERE p_name LIKE '%%{name[1]}%%';", con = db).to_dict('records')
 
@@ -118,9 +118,9 @@ for el in data:
                 triples = stats[i].text.split(';')
                 for i in range(len(doubles)):
                     name = doubles[i].split(' ')
-                    if name.find('`') != -1:
+                    if name[1].find('`') != -1:
                         continue
-                    if name.find('\'') != -1:
+                    if name[1].find('\'') != -1:
                         continue
                     playerid = pd.read_sql(f"SELECT * FROM player_table WHERE p_name LIKE '%%{name[1]}%%';", con = db).to_dict('records')
                     if playerid != []:
@@ -135,9 +135,9 @@ for el in data:
                 homeruns = stats[i].text.split(';')
                 for i in range(len(doubles)):
                     name = doubles[i].split(' ')
-                    if name.find('`') != -1:
+                    if name[1].find('`') != -1:
                         continue
-                    if name.find('\'') != -1:
+                    if name[1].find('\'') != -1:
                         continue
                     playerid = pd.read_sql(f"SELECT * FROM player_table WHERE p_name LIKE '%%{name[1]}%%';", con = db).to_dict('records')
                     if playerid != []:

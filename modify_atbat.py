@@ -182,6 +182,6 @@ for el in data:
             db.execute(test)
             
     db.execute(f"UPDATE game_table SET ck = '1' WHERE game_id='{el['game_id']}';")
-driver.quit()
+    driver.quit()
 
 print("success!")

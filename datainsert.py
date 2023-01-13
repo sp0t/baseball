@@ -17,7 +17,7 @@ data = df.set_index('game_id').T.to_dict('dict')
 
 
 #create tables
-# db.execute("DROP TABLE IF EXISTS game_table;")
+db.execute("DROP TABLE IF EXISTS game_table;")
 db.execute("DROP TABLE IF EXISTS batter_table;")
 # db.execute("DROP TABLE IF EXISTS pitcher_table;")
 # db.execute("DROP TABLE IF EXISTS schedule;")

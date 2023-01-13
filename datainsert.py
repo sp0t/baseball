@@ -3,6 +3,7 @@ import pandas as pd
 import statsapi as mlb
 from datetime import date, time, datetime, timedelta
 from pytz import timezone
+import numpy as np
 
 
 #csv file
@@ -29,6 +30,8 @@ db.execute("CREATE TABLE IF NOT EXISTS batter_table(game_id TEXT, playerid TEXT,
 # db.execute("CREATE TABLE IF NOT EXISTS schedule();")
           
 for i in data:
+    print(i, '################') 
+
 #game_table insert query
     # game_table_sql = 'INSERT INTO game_table( game_id, game_date, away_team, home_team, away_score, home_score, winner) VALUES (' + \
     #                  '\'' + str(i) + '\'' + ',' +  '\'' + data[i]['game_date'] + '\'' +  ',' + '\'' +  data[i]['away_team'] + '\'' +  ',' + \
@@ -63,33 +66,29 @@ for i in data:
 #batter_table insert query
     for j in range(1, 19):
         if(j < 10):
-            if i == 533792:
-        #     print(batter_table_sql)
-                print(int(data[i]['away_b' + str(j) + '_atbats']))
             batter_table_sql = 'INSERT INTO batter_table( game_id, playerid, team, position, atbats, avg, baseonballs, doubles, hits, homeruns, '\
                          'obp, ops, rbi, runs, slg, strikeouts, triples) VALUES (' + \
-                         '\'' + str(i) + '\'' + ',' +  '\'' + str(int(data[i]['away_b' + str(j) +'_playerid'])) + '\'' +  ',' + \
+                         '\'' + str(i) + '\'' + ',' +  '\'' + str(data[i]['away_b' + str(j) +'_playerid'] if np.isnan(data[i]['away_b' + str(j) +'_playerid']) else int(data[i]['away_b' + str(j) +'_playerid'])) + '\'' +  ',' + \
                          '\'' + 'away' + '\'' + ',' + '\'' +  str(j) + '\'' +  ',' +\
-                         '\'' + str(int(data[i]['away_b' + str(j) + '_atbats'])) + '\'' +  ',' + '\'' + str(data[i]['away_b' + str(j) + '_avg']) + '\'' +  ',' + \
-                         '\'' + str(int(data[i]['away_b' + str(j) + '_baseonballs'])) + '\'' +  ',' + '\'' + str(int(data[i]['away_b' + str(j) + '_doubles'])) + '\'' +  ',' + \
-                         '\'' + str(int(data[i]['away_b' + str(j) + '_hits'])) + '\'' +  ',' + '\'' + str(int(data[i]['away_b' + str(j) + '_homeruns'])) + '\'' +  ',' + \
+                         '\'' + str(data[i]['away_b' + str(j) + '_atbats'] if np.isnan(data[i]['away_b' + str(j) + '_atbats']) else int(data[i]['away_b' + str(j) + '_atbats'])) + '\'' +  ',' + '\'' + str(data[i]['away_b' + str(j) + '_avg']) + '\'' +  ',' + \
+                         '\'' + str(data[i]['away_b' + str(j) + '_baseonballs'] if np.isnan(data[i]['away_b' + str(j) + '_baseonballs']) else int(data[i]['away_b' + str(j) + '_baseonballs'])) + '\'' +  ',' + '\'' + str(data[i]['away_b' + str(j) + '_doubles'] if np.isnan(data[i]['away_b' + str(j) + '_doubles']) else int(data[i]['away_b' + str(j) + '_doubles'])) + '\'' +  ',' + \
+                         '\'' + str(data[i]['away_b' + str(j) + '_hits'] if np.isnan(data[i]['away_b' + str(j) + '_hits']) else int(data[i]['away_b' + str(j) + '_hits'])) + '\'' +  ',' + '\'' + str(data[i]['away_b' + str(j) + '_homeruns'] if np.isnan(data[i]['away_b' + str(j) + '_homeruns']) else int(data[i]['away_b' + str(j) + '_homeruns'])) + '\'' +  ',' + \
                          '\'' + str(data[i]['away_b' + str(j) + '_obp']) + '\'' +  ',' + '\'' + str(data[i]['away_b' + str(j) + '_ops']) + '\'' +  ',' + \
-                         '\'' + str(int(data[i]['away_b' + str(j) + '_rbi'])) + '\'' +  ',' + '\'' + str(int(data[i]['away_b' + str(j) + '_runs'])) + '\'' +  ',' + '\'' + str(data[i]['away_b' + str(j) + '_slg']) + '\'' +  ',' + \
-                         '\'' + str(int(data[i]['away_b' + str(j) + '_strikeouts'])) + '\'' +  ',' + '\'' + str(int(data[i]['away_b' + str(j) + '_triples'])) + '\'' + ');'
+                         '\'' + str(data[i]['away_b' + str(j) + '_rbi'] if np.isnan(data[i]['away_b' + str(j) + '_rbi']) else int(data[i]['away_b' + str(j) + '_rbi'])) + '\'' +  ',' + '\'' + str(data[i]['away_b' + str(j) + '_runs'] if np.isnan(data[i]['away_b' + str(j) + '_runs']) else int(data[i]['away_b' + str(j) + '_runs'])) + '\'' +  ',' + '\'' + str(data[i]['away_b' + str(j) + '_slg']) + '\'' +  ',' + \
+                         '\'' + str(data[i]['away_b' + str(j) + '_strikeouts'] if np.isnan(data[i]['away_b' + str(j) + '_strikeouts']) else int(data[i]['away_b' + str(j) + '_strikeouts'])) + '\'' +  ',' + '\'' + str(data[i]['away_b' + str(j) + '_triples'] if np.isnan(data[i]['away_b' + str(j) + '_triples']) else int(data[i]['away_b' + str(j) + '_triples'])) + '\'' + ');'
         else:
             batter_table_sql = 'INSERT INTO batter_table( game_id, playerid, team, position, atbats, avg, baseonballs, doubles, hits, homeruns, '\
                          'obp, ops, rbi, runs, slg, strikeouts, triples) VALUES (' + \
-                         '\'' + str(i) + '\'' + ',' +  '\'' + str(int(data[i]['home_b' + str(j-9) +'_playerid'])) + '\'' +  ',' + \
+                         '\'' + str(i) + '\'' + ',' +  '\'' + str(data[i]['home_b' + str(j-9) +'_playerid'] if np.isnan(data[i]['home_b' + str(j-9) +'_playerid']) else int(data[i]['home_b' + str(j-9) +'_playerid'])) + '\'' +  ',' + \
                          '\'' + 'home' + '\'' + ',' + '\'' +  str(j-9) + '\'' +  ',' +\
-                         '\'' + str(int(data[i]['home_b' + str(j-9) + '_atbats'])) + '\'' +  ',' + '\'' + str(data[i]['home_b' + str(j-9) + '_avg']) + '\'' +  ',' + \
-                         '\'' + str(int(data[i]['home_b' + str(j-9) + '_baseonballs'])) + '\'' +  ',' + '\'' + str(int(data[i]['home_b' + str(j-9) + '_doubles'])) + '\'' +  ',' + \
-                         '\'' + str(int(data[i]['home_b' + str(j-9) + '_hits'])) + '\'' +  ',' + '\'' + str(int(data[i]['home_b' + str(j-9) + '_homeruns'])) + '\'' +  ',' + \
+                         '\'' + str(data[i]['home_b' + str(j-9) + '_atbats'] if np.isnan(data[i]['home_b' + str(j-9) + '_atbats']) else int(data[i]['home_b' + str(j-9) + '_atbats'])) + '\'' +  ',' + '\'' + str(data[i]['home_b' + str(j-9) + '_avg']) + '\'' +  ',' + \
+                         '\'' + str(data[i]['home_b' + str(j-9) + '_baseonballs'] if np.isnan(data[i]['home_b' + str(j-9) + '_baseonballs']) else int(data[i]['home_b' + str(j-9) + '_baseonballs'])) + '\'' +  ',' + '\'' + str(data[i]['home_b' + str(j-9) + '_doubles'] if np.isnan(data[i]['home_b' + str(j-9) + '_doubles']) else int(data[i]['home_b' + str(j-9) + '_doubles'])) + '\'' +  ',' + \
+                         '\'' + str(data[i]['home_b' + str(j-9) + '_hits'] if np.isnan(data[i]['home_b' + str(j-9) + '_hits']) else int(data[i]['home_b' + str(j-9) + '_hits'])) + '\'' +  ',' + '\'' + str(data[i]['home_b' + str(j-9) + '_homeruns'] if np.isnan(data[i]['home_b' + str(j-9) + '_homeruns']) else int(data[i]['home_b' + str(j-9) + '_homeruns'])) + '\'' +  ',' + \
                          '\'' + str(data[i]['home_b' + str(j-9) + '_obp']) + '\'' +  ',' + '\'' + str(data[i]['home_b' + str(j-9) + '_ops']) + '\'' +  ',' + \
-                         '\'' + str(data[i]['away_b' + str(j-9) + '_rbi']) + '\'' +  ',' + '\'' + str(int(data[i]['home_b' + str(j-9) + '_runs'])) + '\'' +  ',' + '\'' + str(data[i]['home_b' + str(j-9) + '_slg']) + '\'' +  ',' + \
-                         '\'' + str(int(data[i]['home_b' + str(j-9) + '_strikeouts'])) + '\'' +  ',' + '\'' + str(int(data[i]['home_b' + str(j-9) + '_triples'])) + '\'' + ');'
+                         '\'' + str(data[i]['home_b' + str(j-9) + '_rbi'] if np.isnan(data[i]['home_b' + str(j-9) + '_rbi']) else int(data[i]['home_b' + str(j-9) + '_rbi'])) + '\'' +  ',' + '\'' + str(data[i]['home_b' + str(j-9) + '_runs'] if np.isnan(data[i]['home_b' + str(j-9) + '_runs']) else int(data[i]['home_b' + str(j-9) + '_runs'])) + '\'' +  ',' + '\'' + str(data[i]['home_b' + str(j-9) + '_slg']) + '\'' +  ',' + \
+                         '\'' + str(data[i]['home_b' + str(j-9) + '_strikeouts'] if np.isnan(data[i]['home_b' + str(j-9) + '_strikeouts']) else int(data[i]['home_b' + str(j-9) + '_strikeouts'])) + '\'' +  ',' + '\'' + str(data[i]['home_b' + str(j-9) + '_triples'] if np.isnan(data[i]['home_b' + str(j-9) + '_triples']) else int(data[i]['home_b' + str(j-9) + '_triples'])) + '\'' + ');'
         
-        # if i == 533792:
+        # if i == 534161:
         #     print(batter_table_sql)
-        db.execute(batter_table_sql)         
-    print(i)
+        db.execute(batter_table_sql)        
 print('end')

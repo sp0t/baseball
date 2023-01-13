@@ -78,9 +78,9 @@ for el in data:
     scores = table_score.find('tbody').find_all('tr')
     score1 = scores[0].find('td', attrs = {'data-col':'0'}).find('div').text
     score2 = scores[1].find('td', attrs = {'data-col':'0'}).find('div').text
-    wins = '0'
+    wins = '1'
     if int(score1) > int(score2):
-        wins = '1'
+        wins = '0'
 
     db.execute(f"UPDATE game_table SET away_score='{score1}', home_score = '{score2}', winner = '{wins}' WHERE game_id='{el['game_id']}';")
     k=0

@@ -26,6 +26,8 @@ data = pd.read_sql(f"SELECT b.* FROM (SELECT * FROM game_table) b LEFT JOIN (SEL
 print(data)
 
 for el in data:
+    if el['game_date'].find('2022') == -1:
+        continue
     team1 = pd.read_sql(f"SELECT club_name FROM team_table WHERE team_abbr = '{el['away_team']}'", con = db).to_dict('r')
     team2 = pd.read_sql(f"SELECT club_name FROM team_table WHERE team_abbr = '{el['home_team']}'", con = db).to_dict('r')
 

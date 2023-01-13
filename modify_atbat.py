@@ -22,7 +22,7 @@ db = create_engine('postgresql://postgres:123@ec2-18-180-226-162.ap-northeast-1.
                                 connect_args = {'connect_timeout': 10}, 
                                 echo=False, pool_size=20, max_overflow=0)
 
-data = pd.read_sql(f"SELECT b.* FROM (SELECT * FROM game_table) b LEFT JOIN (SELECT game_id FROM batter_table WHERE avg = '0.0' AND obp = '0.0' AND ops = '0.0' AND slg = '0.0' GROUP BY game_id)a ON a.game_id = b.game_id;", con = db).to_dict('records')
+data = pd.read_sql(f"SELECT a.num, b.* FROM (SELECT * FROM game_table) b LEFT JOIN (SELECT game_id, COUNT(*)num FROM batter_table WHERE avg = '0.0' AND obp = '0.0' AND ops = '0.0' AND slg = '0.0' GROUP BY game_id)a ON a.game_id = b.game_id WHERE a.num = '18' ORDER BY b.game_date;", con = db).to_dict('records')
 print(data)
 
 for el in data:

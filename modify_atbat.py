@@ -15,19 +15,18 @@ chrome_options.add_argument('--disable-dev-shm-usage')
 driver = webdriver.Chrome('/home/.wdm/drivers/chromedriver',chrome_options=chrome_options)
 # driver=webdriver.Chrome(service=Service(ChromeDriverManager().install()))
 
-# db_string = "postgresql://postgres:123@localhost:5432/testdb"
-# db = create_engine(db_string)
+db_string = "postgresql://postgres:123@localhost:5432/betmlb"
+db = create_engine(db_string)
 
-db = create_engine('postgresql://postgres:123@ec2-18-180-226-162.ap-northeast-1.compute.amazonaws.com:5432/betmlb', 
-                                connect_args = {'connect_timeout': 10}, 
-                                echo=False, pool_size=20, max_overflow=0)
+# db = create_engine('postgresql://postgres:123@ec2-18-180-226-162.ap-northeast-1.compute.amazonaws.com:5432/betmlb', 
+#                                 connect_args = {'connect_timeout': 10}, 
+#                                 echo=False, pool_size=20, max_overflow=0)
 
-data = pd.read_sql(f"SELECT a.num, b.* FROM (SELECT * FROM game_table) b LEFT JOIN (SELECT game_id, COUNT(*)num FROM batter_table WHERE avg = '0.0' AND obp = '0.0' AND ops = '0.0' AND slg = '0.0' GROUP BY game_id)a ON a.game_id = b.game_id WHERE a.num = '18' ORDER BY b.game_date;", con = db).to_dict('records')
-print(data)
+# data = pd.read_sql(f"SELECT a.num, b.* FROM (SELECT * FROM game_table) b LEFT JOIN (SELECT game_id, COUNT(*)num FROM batter_table WHERE avg = '0.0' AND obp = '0.0' AND ops = '0.0' AND slg = '0.0' GROUP BY game_id)a ON a.game_id = b.game_id WHERE a.num = '18' ORDER BY b.game_date;", con = db).to_dict('records')
+data = pd.read_sql(f"SELECT * FROM game_table WHERE ck = '0' ORDER BY game_date DESC;", con = db).to_dict('records')
 
 for el in data:
-    if el['game_date'].find('2022') == -1:
-        continue
+    print(el)
     team1 = pd.read_sql(f"SELECT club_name FROM team_table WHERE team_abbr = '{el['away_team']}'", con = db).to_dict('r')
     team2 = pd.read_sql(f"SELECT club_name FROM team_table WHERE team_abbr = '{el['home_team']}'", con = db).to_dict('r')
 
@@ -89,6 +88,16 @@ for el in data:
         team_name = atbats_tables[i].find('thead').find('tr').find('th', attrs = {'data-col':'0'})
         tbody = atbats_tables[i].find('tbody').find_all('tr')
 
+        name_id = {}
+
+        for i in range(len(tbody)):
+            purl = tbody[i].find('td', attrs = {'data-col':'0'}).find('div').find('span').find('a').get('href')
+            if purl == None:
+                continue
+            p_id = purl.split("/")[-1]
+            text = tbody[i].find('td', attrs = {'data-col':'0'}).find('div').find('span').find('a').text
+            name_id[text] = p_id
+
         while k < 7:
             if hit_stats[k].find('span').text == 'BATTING':
                 break
@@ -96,60 +105,45 @@ for el in data:
 
         stats = hit_stats[k].find_all('div')
         for i in range(len(stats)):
+            playerid = []
+
             if stats[i].find('span').text == '2B':
                 doubles = stats[i].text.split(';')
-                for i in range(len(doubles)):
+                for j in range(len(doubles)):
                     
-                    name = doubles[i].split(' ')
-                    print(name[1])
-
-                    if name[1].find('`') != -1:
-                        continue
-                    if name[1].find('\'') != -1:
-                        continue
-                    print('pass')
-                    playerid = pd.read_sql(f"SELECT * FROM player_table WHERE p_name LIKE '%%{name[1]}%%';", con = db).to_dict('records')
-
-                    if playerid != []:
-                        if(len(name[2]) == 1) and (name[2]).isnumeric():
-                            double = int(name[2])
-                        else:
-                            double = '1'
-
-                        db.execute(f"UPDATE batter_table SET doubles='{double}' WHERE game_id='{el['game_id']}' AND playerid='{playerid[0]['p_id']}';")
-
+                    for key in name_id:
+                        if doubles[j].find(key) != -1:
+                            playerid = name_id[key]
+                            num = '1'
+                            if doubles[j][doubles[j].find(key) + len(key) + 1].isnumeric():
+                                num = doubles[j][doubles[j].find(key) + len(key) + 1]
+                            db.execute(f"UPDATE batter_table SET doubles='{num}' WHERE game_id='{el['game_id']}' AND playerid='{playerid}';")
+                            break
             if stats[i].find('span').text == '3B':
                 triples = stats[i].text.split(';')
-                for i in range(len(triples)):
-                    name = triples[i].split(' ')
-                    if name[1].find('`') != -1:
-                        continue
-                    if name[1].find('\'') != -1:
-                        continue
-                    playerid = pd.read_sql(f"SELECT * FROM player_table WHERE p_name LIKE '%%{name[1]}%%';", con = db).to_dict('records')
-                    if playerid != []:
-                        if(len(name[2]) == 1) and (name[2]).isnumeric():
-                            triple = int(name[2])
-                        else:
-                            triple = '1'
+                for j in range(len(triples)):
+                    for key in name_id:
+                        if triples[j].find(key) != -1:
+                            playerid = name_id[key]
+                            num = '1'
+                            if triples[j][triples[j].find(key) + len(key) + 1].isnumeric():
+                                num = triples[j][triples[j].find(key) + len(key) + 1]
+                            db.execute(f"UPDATE batter_table SET triples='{num}' WHERE game_id='{el['game_id']}' AND playerid='{playerid}';")
+                            break
 
-                        db.execute(f"UPDATE batter_table SET triples='{triple}' WHERE game_id='{el['game_id']}' AND playerid='{playerid[0]['p_id']}';")
 
             if stats[i].find('span').text == 'HR':
                 homeruns = stats[i].text.split(';')
-                for i in range(len(homeruns)):
-                    name = homeruns[i].split(' ')
-                    if name[1].find('`') != -1:
-                        continue
-                    if name[1].find('\'') != -1:
-                        continue
-                    playerid = pd.read_sql(f"SELECT * FROM player_table WHERE p_name LIKE '%%{name[1]}%%';", con = db).to_dict('records')
-                    if playerid != []:
-                        if(len(name[2]) == 1) and (name[2]).isnumeric():
-                            homerun = int(name[2])
-                        else:
-                            homerun = '1'
-                        db.execute(f"UPDATE batter_table SET homeruns='{homerun}' WHERE game_id='{el['game_id']}' AND playerid='{playerid[0]['p_id']}';")
+                for j in range(len(homeruns)):
+                    for key in name_id:
+                        if homeruns[j].find(key) != -1:
+                            playerid = name_id[key]
+                            num = '1'
+                            if homeruns[j][homeruns[j].find(key) + len(key) + 1].isnumeric():
+                                num = homeruns[j][homeruns[j].find(key) + len(key) + 1]
+                            db.execute(f"UPDATE batter_table SET homeruns='{num}' WHERE game_id='{el['game_id']}' AND playerid='{playerid}';")
+                            break
+
         k += 1
 
         for i in range(9):
@@ -185,6 +179,7 @@ for el in data:
                     avg = 0.0
 
             test = f"UPDATE batter_table SET atbats='{p_attabt}', avg = '{avg}', baseonballs = '{p_baseOnBall}', hits = '{p_hits}', obp = '{obp}', ops = '{ops}', rbi = '{p_rbi}', runs = '{p_runs}', slg = '{slg}', strikeouts = '{p_strikeOut}' WHERE game_id='{el['game_id']}' AND playerid='{p_id}';"
+            print(el['game_date'], el['game_id'], away_team, home_team, 'complete')
 
             db.execute(test)
             

@@ -23,7 +23,7 @@ db = create_engine(db_string)
 #                                 echo=False, pool_size=20, max_overflow=0)
 
 # data = pd.read_sql(f"SELECT a.num, b.* FROM (SELECT * FROM game_table) b LEFT JOIN (SELECT game_id, COUNT(*)num FROM batter_table WHERE avg = '0.0' AND obp = '0.0' AND ops = '0.0' AND slg = '0.0' GROUP BY game_id)a ON a.game_id = b.game_id WHERE a.num = '18' ORDER BY b.game_date;", con = db).to_dict('records')
-data = pd.read_sql(f"SELECT * FROM game_table ORDER BY game_date DESC;", con = db).to_dict('records')
+data = pd.read_sql(f"SELECT * FROM game_table WHERE ck = '0' ORDER BY game_date;", con = db).to_dict('records')
 
 for el in data:
     team1 = pd.read_sql(f"SELECT club_name FROM team_table WHERE team_abbr = '{el['away_team']}'", con = db).to_dict('r')
@@ -178,6 +178,7 @@ for el in data:
 
             test = f"UPDATE batter_table SET atbats='{p_attabt}', avg = '{avg}', baseonballs = '{p_baseOnBall}', hits = '{p_hits}', obp = '{obp}', ops = '{ops}', rbi = '{p_rbi}', runs = '{p_runs}', slg = '{slg}', strikeouts = '{p_strikeOut}' WHERE game_id='{el['game_id']}' AND playerid='{p_id}';"
             db.execute(test)
+            print(test)
             
     db.execute(f"UPDATE game_table SET ck = '1' WHERE game_id='{el['game_id']}';")
     print(el['game_date'], el['game_id'], away_team, home_team, 'complete')

@@ -99,11 +99,15 @@ for el in data:
             if stats[i].find('span').text == '2B':
                 doubles = stats[i].text.split(';')
                 for i in range(len(doubles)):
+                    
                     name = doubles[i].split(' ')
+                    print(name[1])
+
                     if name[1].find('`') != -1:
                         continue
                     if name[1].find('\'') != -1:
                         continue
+                    print('pass')
                     playerid = pd.read_sql(f"SELECT * FROM player_table WHERE p_name LIKE '%%{name[1]}%%';", con = db).to_dict('records')
 
                     if playerid != []:
@@ -116,8 +120,8 @@ for el in data:
 
             if stats[i].find('span').text == '3B':
                 triples = stats[i].text.split(';')
-                for i in range(len(doubles)):
-                    name = doubles[i].split(' ')
+                for i in range(len(triples)):
+                    name = triples[i].split(' ')
                     if name[1].find('`') != -1:
                         continue
                     if name[1].find('\'') != -1:
@@ -133,8 +137,8 @@ for el in data:
 
             if stats[i].find('span').text == 'HR':
                 homeruns = stats[i].text.split(';')
-                for i in range(len(doubles)):
-                    name = doubles[i].split(' ')
+                for i in range(len(homeruns)):
+                    name = homeruns[i].split(' ')
                     if name[1].find('`') != -1:
                         continue
                     if name[1].find('\'') != -1:

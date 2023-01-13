@@ -22,11 +22,12 @@ db = create_engine('postgresql://postgres:123@ec2-18-180-226-162.ap-northeast-1.
                                 connect_args = {'connect_timeout': 10}, 
                                 echo=False, pool_size=20, max_overflow=0)
 
-data = pd.read_sql(f"SELECT b.* FROM game_table b LEFT JOIN (SELECT game_id FROM batter_table WHERE avg = '0.0' AND obp = '0.0' AND ops = '0.0' AND slg = '0.0' GROUP BY game_id)a ON a.game_id = b.game_id;", con = db).to_dict('records')
+data = pd.read_sql(f"SELECT b.* FROM (SELECT * FROM game_table) b LEFT JOIN (SELECT game_id FROM batter_table WHERE avg = '0.0' AND obp = '0.0' AND ops = '0.0' AND slg = '0.0' GROUP BY game_id)a ON a.game_id = b.game_id;", con = db).to_dict('records')
+print(data)
 
 for el in data:
-    team1 = pd.read_sql(f"SELECT club_name FROM team_table WHERE team_abbr = '{el['away_team']}'", con = db).to_dict('records')
-    team2 = pd.read_sql(f"SELECT club_name FROM team_table WHERE team_abbr = '{el['home_team']}'", con = db).to_dict('records')
+    team1 = pd.read_sql(f"SELECT club_name FROM team_table WHERE team_abbr = '{el['away_team']}'", con = db).to_dict('r')
+    team2 = pd.read_sql(f"SELECT club_name FROM team_table WHERE team_abbr = '{el['home_team']}'", con = db).to_dict('r')
 
     if team1 == []:
         if el['away_team'] == 'ARI':
@@ -97,6 +98,8 @@ for el in data:
                 doubles = stats[i].text.split(';')
                 for i in range(len(doubles)):
                     name = doubles[i].split(' ')
+                    if len(name[1].split('`')) > 1:
+                        break 
                     playerid = pd.read_sql(f"SELECT * FROM player_table WHERE p_name LIKE '%%{name[1]}%%';", con = db).to_dict('records')
 
                     if playerid != []:
@@ -111,6 +114,8 @@ for el in data:
                 triples = stats[i].text.split(';')
                 for i in range(len(doubles)):
                     name = doubles[i].split(' ')
+                    if len(name[1].split('`')) > 1:
+                        break
                     playerid = pd.read_sql(f"SELECT * FROM player_table WHERE p_name LIKE '%%{name[1]}%%';", con = db).to_dict('records')
                     if playerid != []:
                         if(len(name[2]) == 1) and (name[2]).isnumeric():
@@ -124,6 +129,8 @@ for el in data:
                 homeruns = stats[i].text.split(';')
                 for i in range(len(doubles)):
                     name = doubles[i].split(' ')
+                    if len(name[1].split('`')) > 1:
+                        break
                     playerid = pd.read_sql(f"SELECT * FROM player_table WHERE p_name LIKE '%%{name[1]}%%';", con = db).to_dict('records')
                     if playerid != []:
                         if(len(name[2]) == 1) and (name[2]).isnumeric():

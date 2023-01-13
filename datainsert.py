@@ -7,7 +7,7 @@ from pytz import timezone
 
 #csv file
 csv_path = 'betmlb_db.csv'
-db_string = "postgresql://postgres:123@localhost:5432/testdb"
+db_string = "postgresql://postgres:123@localhost:5432/betmlb"
 
 db = create_engine(db_string)
 
@@ -63,30 +63,33 @@ for i in data:
 #batter_table insert query
     for j in range(1, 19):
         if(j < 10):
+            if i == 533792:
+        #     print(batter_table_sql)
+                print(int(data[i]['away_b' + str(j) + '_atbats']))
             batter_table_sql = 'INSERT INTO batter_table( game_id, playerid, team, position, atbats, avg, baseonballs, doubles, hits, homeruns, '\
                          'obp, ops, rbi, runs, slg, strikeouts, triples) VALUES (' + \
-                         '\'' + str(i) + '\'' + ',' +  '\'' + str(data[i]['away_b' + str(j) +'_playerid']) + '\'' +  ',' + \
+                         '\'' + str(i) + '\'' + ',' +  '\'' + str(int(data[i]['away_b' + str(j) +'_playerid'])) + '\'' +  ',' + \
                          '\'' + 'away' + '\'' + ',' + '\'' +  str(j) + '\'' +  ',' +\
-                         '\'' + str(data[i]['away_b' + str(j) + '_atbats']) + '\'' +  ',' + '\'' + str(data[i]['away_b' + str(j) + '_avg']) + '\'' +  ',' + \
-                         '\'' + str(data[i]['away_b' + str(j) + '_baseonballs']) + '\'' +  ',' + '\'' + str(data[i]['away_b' + str(j) + '_doubles']) + '\'' +  ',' + \
-                         '\'' + str(data[i]['away_b' + str(j) + '_hits']) + '\'' +  ',' + '\'' + str(data[i]['away_b' + str(j) + '_homeruns']) + '\'' +  ',' + \
+                         '\'' + str(int(data[i]['away_b' + str(j) + '_atbats'])) + '\'' +  ',' + '\'' + str(data[i]['away_b' + str(j) + '_avg']) + '\'' +  ',' + \
+                         '\'' + str(int(data[i]['away_b' + str(j) + '_baseonballs'])) + '\'' +  ',' + '\'' + str(int(data[i]['away_b' + str(j) + '_doubles'])) + '\'' +  ',' + \
+                         '\'' + str(int(data[i]['away_b' + str(j) + '_hits'])) + '\'' +  ',' + '\'' + str(int(data[i]['away_b' + str(j) + '_homeruns'])) + '\'' +  ',' + \
                          '\'' + str(data[i]['away_b' + str(j) + '_obp']) + '\'' +  ',' + '\'' + str(data[i]['away_b' + str(j) + '_ops']) + '\'' +  ',' + \
-                         '\'' + str(data[i]['away_b' + str(j) + '_rbi']) + '\'' +  ',' + '\'' + str(data[i]['away_b' + str(j) + '_runs']) + '\'' +  ',' + '\'' + str(data[i]['away_b' + str(j) + '_slg']) + '\'' +  ',' + \
-                         '\'' + str(data[i]['away_b' + str(j) + '_strikeouts']) + '\'' +  ',' + '\'' + str(data[i]['away_b' + str(j) + '_triples']) + '\'' + ');'
+                         '\'' + str(int(data[i]['away_b' + str(j) + '_rbi'])) + '\'' +  ',' + '\'' + str(int(data[i]['away_b' + str(j) + '_runs'])) + '\'' +  ',' + '\'' + str(data[i]['away_b' + str(j) + '_slg']) + '\'' +  ',' + \
+                         '\'' + str(int(data[i]['away_b' + str(j) + '_strikeouts'])) + '\'' +  ',' + '\'' + str(int(data[i]['away_b' + str(j) + '_triples'])) + '\'' + ');'
         else:
             batter_table_sql = 'INSERT INTO batter_table( game_id, playerid, team, position, atbats, avg, baseonballs, doubles, hits, homeruns, '\
                          'obp, ops, rbi, runs, slg, strikeouts, triples) VALUES (' + \
-                         '\'' + str(i) + '\'' + ',' +  '\'' + str(data[i]['home_b' + str(j-9) +'_playerid']) + '\'' +  ',' + \
+                         '\'' + str(i) + '\'' + ',' +  '\'' + str(int(data[i]['home_b' + str(j-9) +'_playerid'])) + '\'' +  ',' + \
                          '\'' + 'home' + '\'' + ',' + '\'' +  str(j-9) + '\'' +  ',' +\
-                         '\'' + str(data[i]['home_b' + str(j-9) + '_atbats']) + '\'' +  ',' + '\'' + str(data[i]['home_b' + str(j-9) + '_avg']) + '\'' +  ',' + \
-                         '\'' + str(data[i]['home_b' + str(j-9) + '_baseonballs']) + '\'' +  ',' + '\'' + str(data[i]['home_b' + str(j-9) + '_doubles']) + '\'' +  ',' + \
-                         '\'' + str(data[i]['home_b' + str(j-9) + '_hits']) + '\'' +  ',' + '\'' + str(data[i]['home_b' + str(j-9) + '_homeruns']) + '\'' +  ',' + \
+                         '\'' + str(int(data[i]['home_b' + str(j-9) + '_atbats'])) + '\'' +  ',' + '\'' + str(data[i]['home_b' + str(j-9) + '_avg']) + '\'' +  ',' + \
+                         '\'' + str(int(data[i]['home_b' + str(j-9) + '_baseonballs'])) + '\'' +  ',' + '\'' + str(int(data[i]['home_b' + str(j-9) + '_doubles'])) + '\'' +  ',' + \
+                         '\'' + str(int(data[i]['home_b' + str(j-9) + '_hits'])) + '\'' +  ',' + '\'' + str(int(data[i]['home_b' + str(j-9) + '_homeruns'])) + '\'' +  ',' + \
                          '\'' + str(data[i]['home_b' + str(j-9) + '_obp']) + '\'' +  ',' + '\'' + str(data[i]['home_b' + str(j-9) + '_ops']) + '\'' +  ',' + \
-                         '\'' + str(data[i]['away_b' + str(j-9) + '_rbi']) + '\'' +  ',' + '\'' + str(data[i]['home_b' + str(j-9) + '_runs']) + '\'' +  ',' + '\'' + str(data[i]['home_b' + str(j-9) + '_slg']) + '\'' +  ',' + \
-                         '\'' + str(data[i]['home_b' + str(j-9) + '_strikeouts']) + '\'' +  ',' + '\'' + str(data[i]['home_b' + str(j-9) + '_triples']) + '\'' + ');'
+                         '\'' + str(data[i]['away_b' + str(j-9) + '_rbi']) + '\'' +  ',' + '\'' + str(int(data[i]['home_b' + str(j-9) + '_runs'])) + '\'' +  ',' + '\'' + str(data[i]['home_b' + str(j-9) + '_slg']) + '\'' +  ',' + \
+                         '\'' + str(int(data[i]['home_b' + str(j-9) + '_strikeouts'])) + '\'' +  ',' + '\'' + str(int(data[i]['home_b' + str(j-9) + '_triples'])) + '\'' + ');'
         
-        db.execute(batter_table_sql)
-    
+        # if i == 533792:
+        #     print(batter_table_sql)
+        db.execute(batter_table_sql)         
     print(i)
-               
 print('end')

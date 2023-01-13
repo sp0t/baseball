@@ -177,11 +177,11 @@ for el in data:
                     avg = 0.0
 
             test = f"UPDATE batter_table SET atbats='{p_attabt}', avg = '{avg}', baseonballs = '{p_baseOnBall}', hits = '{p_hits}', obp = '{obp}', ops = '{ops}', rbi = '{p_rbi}', runs = '{p_runs}', slg = '{slg}', strikeouts = '{p_strikeOut}' WHERE game_id='{el['game_id']}' AND playerid='{p_id}';"
-            print(el['game_date'], el['game_id'], away_team, home_team, 'complete')
-
             db.execute(test)
             
     db.execute(f"UPDATE game_table SET ck = '1' WHERE game_id='{el['game_id']}';")
-    driver.quit()
+    print(el['game_date'], el['game_id'], away_team, home_team, 'complete')
+
+driver.quit()
 
 print("success!")

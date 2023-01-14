@@ -150,6 +150,7 @@ for el in data:
         k += 1
 
         for i in range(len(tbody) - 1):
+            print(i)
             url = tbody[i].find('td', attrs = {'data-col':'0'}).find('div').find('span').find('a').get('href')
             p_attabt = tbody[i].find('td', attrs = {'data-col':'1'}).find('span').text
             p_runs = tbody[i].find('td', attrs = {'data-col':'2'}).find('span').text
@@ -158,8 +159,10 @@ for el in data:
             p_baseOnBall = tbody[i].find('td', attrs = {'data-col':'5'}).find('span').text
             p_strikeOut = tbody[i].find('td', attrs = {'data-col':'6'}).find('span').text
             p_id = url.split("/")[-1]
+            print(p_id)
 
             hits = pd.read_sql(f"SELECT doubles, triples, homeruns FROM batter_table WHERE game_id='{el['game_id']}' AND playerid='{p_id}';", con = db).to_dict('records')
+            print(hits)
 
             if hits == []:
                 break

@@ -165,7 +165,7 @@ for el in data:
             print(hits)
 
             if hits == []:
-                break
+                continue
             slg, obp, ops, avg = 0.0, 0.0, 0.0, 0.0
             if float(p_attabt) != 0.0:
                 slg = ((float(p_hits) - float(hits[0]['doubles']) - float(hits[0]['triples']) - float(hits[0]['homeruns']))+ 4 * float(hits[0]['doubles']) + 5 * float(hits[0]['triples']) + 4 * float(hits[0]['homeruns'])) / float(p_attabt)

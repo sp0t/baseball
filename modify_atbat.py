@@ -22,10 +22,11 @@ db = create_engine(db_string)
 #                                 connect_args = {'connect_timeout': 10}, 
 #                                 echo=False, pool_size=20, max_overflow=0)
 
-# data = pd.read_sql(f"SELECT a.num, b.* FROM (SELECT * FROM game_table) b LEFT JOIN (SELECT game_id, COUNT(*)num FROM batter_table WHERE avg = '0.0' AND obp = '0.0' AND ops = '0.0' AND slg = '0.0' GROUP BY game_id)a ON a.game_id = b.game_id WHERE a.num = '18' ORDER BY b.game_date;", con = db).to_dict('records')
-data = pd.read_sql(f"SELECT * FROM game_table WHERE ck = '0' ORDER BY game_date DESC;", con = db).to_dict('records')
+data = pd.read_sql(f"SELECT a.num, b.* FROM (SELECT * FROM game_table) b LEFT JOIN (SELECT game_id, COUNT(*)num FROM batter_table WHERE avg = '0.0' AND obp = '0.0' AND ops = '0.0' AND slg = '0.0' GROUP BY game_id)a ON a.game_id = b.game_id WHERE a.num = '18' ORDER BY b.game_date;", con = db).to_dict('records')
+#data = pd.read_sql(f"SELECT * FROM game_table WHERE game_id = '715761';", con = db).to_dict('records')
 
 for el in data:
+
     team1 = pd.read_sql(f"SELECT club_name FROM team_table WHERE team_abbr = '{el['away_team']}'", con = db).to_dict('r')
     team2 = pd.read_sql(f"SELECT club_name FROM team_table WHERE team_abbr = '{el['home_team']}'", con = db).to_dict('r')
 
@@ -164,7 +165,7 @@ for el in data:
                 break
             slg, obp, ops, avg = 0.0, 0.0, 0.0, 0.0
             if float(p_attabt) != 0.0:
-                slg = (float(p_baseOnBall) + 2 * float(hits[0]['doubles']) + 3 * float(hits[0]['triples']) + 4 * float(hits[0]['homeruns'])) / float(p_attabt)
+                slg = ((float(p_hits) - float(hits[0]['doubles']) - float(hits[0]['triples']) - float(hits[0]['homeruns']))+ 4 * float(hits[0]['doubles']) + 5 * float(hits[0]['triples']) + 4 * float(hits[0]['homeruns'])) / float(p_attabt)
                 obp = (float(p_hits) + float(p_baseOnBall)) / (float(p_attabt) + float(p_baseOnBall))
                 ops = float(obp) + float(slg)
                 avg = float(p_hits) / float(p_attabt)

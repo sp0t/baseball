@@ -93,7 +93,7 @@ for el in data:
 
         name_id = {}
 
-        for i in range(len(tbody)):
+        for i in range(len(tbody) - 1):
             purl = tbody[i].find('td', attrs = {'data-col':'0'}).find('div').find('span').find('a').get('href')
             if purl == None:
                 continue
@@ -149,7 +149,7 @@ for el in data:
 
         k += 1
 
-        for i in range(len(tbody)):
+        for i in range(len(tbody) - 1):
             url = tbody[i].find('td', attrs = {'data-col':'0'}).find('div').find('span').find('a').get('href')
             p_attabt = tbody[i].find('td', attrs = {'data-col':'1'}).find('span').text
             p_runs = tbody[i].find('td', attrs = {'data-col':'2'}).find('span').text

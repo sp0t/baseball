@@ -2,6 +2,7 @@ input_team_name_2 = 'Philadelphia Phillies'
 input_team_name_1 = 'Houston Astros'
 team = "away"
 player_name = 'Ranger Suarez'
+game_id = '715720'
 
 from datetime import date, time, datetime, timedelta
 import numpy as np
@@ -11,8 +12,8 @@ from sqlalchemy import create_engine
 
 
 engine = create_engine('postgresql://postgres:123@ec2-18-180-226-162.ap-northeast-1.compute.amazonaws.com:5432/betmlb', connect_args = {'connect_timeout': 10}, echo=False, pool_size=20, max_overflow=0)
-res = pd.read_sql(f"SELECT * FROM schedule WHERE away_name = '{input_team_name_1}' and home_name = '{input_team_name_2}'", con = engine).iloc[0]
-game_id = res['game_id']
+# res = pd.read_sql(f"SELECT * FROM schedule WHERE away_name = '{input_team_name_1}' and home_name = '{input_team_name_2}'", con = engine).iloc[0]
+# game_id = res['game_id']
 
 data = mlb.boxscore_data(game_id)
 

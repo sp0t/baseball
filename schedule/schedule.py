@@ -19,8 +19,14 @@ def get_schedule():
     team_dict = {el['name']:el['teamName'] for el in team_dict}
     
     for game in schedule: 
-        game['home_name'] = team_dict[game['home_name']]
-        game['away_name'] = team_dict[game['away_name']]
+        if game['home_name'] != 'Northeastern Huskies' and game['away_name'] != 'Northeastern Huskies':
+            game['home_name'] = team_dict[game['home_name']]
+            game['away_name'] = team_dict[game['away_name']]
+        else:
+            if game['away_name'] == 'Northeastern Huskies':
+                game['away_name'] = 'Huskies'
+            else:
+                game['home_name'] = 'Huskies'
         
     
     return schedule

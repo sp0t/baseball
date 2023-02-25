@@ -146,7 +146,7 @@ def index():
     engine = database.connect_to_db()
     last_update = pd.read_sql("SELECT * FROM updates", con = engine).iloc[-1]
     last_date, last_time, last_record = last_update["update_date"], last_update["update_time"], last_update["last_record"]
-    update_P_T_table()
+    # update_P_T_table()
 
     return render_template("index.html", schedule = today_schedule, last_record = last_record, 
                            update_date = last_date, update_time = last_time)
@@ -569,7 +569,7 @@ def update_P_T_table():
     engine = database.connect_to_db()
     print('crone-start')
 
-    exec(open("./modify_atbat.py").read(), globals())
+    # exec(open("./modify_atbat.py").read(), globals())
 
     res = mlb.get('teams', params={'sportId':1})['teams']
 
@@ -603,12 +603,12 @@ scheduler = BackgroundScheduler()
 scheduler.add_job(func=print_date_time, trigger="interval", seconds=600)
 scheduler.start()
 
-schedulertable = BackgroundScheduler()
-schedulertable.add_job(func=update_P_T_table, trigger = 'cron', day = '1', hour= '12', minute= '25')
-schedulertable.start()
+# schedulertable = BackgroundScheduler()
+# schedulertable.add_job(func=update_P_T_table, trigger = 'cron', day = '1', hour= '12', minute= '25')
+# schedulertable.start()
 # Shut down the scheduler when exiting the app
 atexit.register(lambda: scheduler.shutdown())
-atexit.register(lambda: schedulertable.shutdown())
+# atexit.register(lambda: schedulertable.shutdown())
 
 if __name__ == '__main__':
     # app.run(ssl_context='adhoc')

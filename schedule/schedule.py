@@ -25,8 +25,10 @@ def get_schedule():
         else:
             if game['away_name'] == 'Northeastern Huskies':
                 game['away_name'] = 'Huskies'
+                game['home_name'] = team_dict[game['home_name']]
             else:
                 game['home_name'] = 'Huskies'
+                game['away_name'] = team_dict[game['away_name']]
         
     
     return schedule

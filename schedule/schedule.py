@@ -19,28 +19,22 @@ def get_schedule():
     team_dict = {el['name']:el['teamName'] for el in team_dict}
     
     for game in schedule: 
-        if game['home_name'] != 'Northeastern Huskies' and game['away_name'] != 'Northeastern Huskies':
+        if game['home_name'] != 'Northeastern Huskies' and game['away_name'] != 'Northeastern Huskies' and game['home_name'] != 'West Virginia Mountaineers' and game['away_name'] != 'West Virginia Mountaineers':
             game['home_name'] = team_dict[game['home_name']]
             game['away_name'] = team_dict[game['away_name']]
         else:
             if game['away_name'] == 'Northeastern Huskies':
                 game['away_name'] = 'Huskies'
                 game['home_name'] = team_dict[game['home_name']]
-            else:
+            if game['home_name'] == 'Northeastern Huskies':
                 game['home_name'] = 'Huskies'
                 game['away_name'] = team_dict[game['away_name']]
-
-        if game['home_name'] != 'West Virginia Mountaineers' and game['away_name'] != 'West Virginia Mountaineers':
-            game['home_name'] = team_dict[game['home_name']]
-            game['away_name'] = team_dict[game['away_name']]
-        else:
             if game['away_name'] == 'West Virginia Mountaineers':
                 game['away_name'] = 'Mountaineers'
                 game['home_name'] = team_dict[game['home_name']]
-            else:
+            if game['home_name'] == 'West Virginia Mountaineers':
                 game['home_name'] = 'Mountaineers'
                 game['away_name'] = team_dict[game['away_name']]
-        
     
     return schedule
 

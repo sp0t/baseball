@@ -29,6 +29,17 @@ def get_schedule():
             else:
                 game['home_name'] = 'Huskies'
                 game['away_name'] = team_dict[game['away_name']]
+
+        if game['home_name'] != 'West Virginia Mountaineers' and game['away_name'] != 'West Virginia Mountaineers':
+            game['home_name'] = team_dict[game['home_name']]
+            game['away_name'] = team_dict[game['away_name']]
+        else:
+            if game['away_name'] == 'West Virginia Mountaineers':
+                game['away_name'] = 'Mountaineers'
+                game['home_name'] = team_dict[game['home_name']]
+            else:
+                game['home_name'] = 'Mountaineers'
+                game['away_name'] = team_dict[game['away_name']]
         
     
     return schedule

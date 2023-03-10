@@ -4,9 +4,11 @@ import pandas as pd
 import statsapi as mlb
 from sqlalchemy import create_engine
 
-engine = create_engine('postgresql://postgres:123@ec2-18-180-226-162.ap-northeast-1.compute.amazonaws.com:5432/betmlb', 
+engine = create_engine('postgresql://postgres:lucamlb123@ec2-3-115-115-146.ap-northeast-1.compute.amazonaws.com:5432/betmlb', 
                                 connect_args = {'connect_timeout': 10}, 
                                 echo=False, pool_size=20, max_overflow=0)
+
+        
 
 away_name = 'West Virginia Mountaineers'
 home_name = 'Arizona Diamondbacks'

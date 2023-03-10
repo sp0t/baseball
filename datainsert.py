@@ -8,7 +8,7 @@ import numpy as np
 
 #csv file
 csv_path = 'betmlb_db.csv'
-db_string = "postgresql://postgres:123@localhost:5432/betmlb"
+db_string = "postgresql://postgres:lucamlb123@localhost:5432/betmlb"
 
 db = create_engine(db_string)
 

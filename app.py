@@ -160,6 +160,8 @@ def login():
     user = request.get_json()
     engine = database.connect_to_db()
 
+    print(user)
+
     res = engine.execute(f"SELECT username, password, position, confirmed FROM user_table WHERE username = '{user['username']}';").fetchall()
 
     if res == []:

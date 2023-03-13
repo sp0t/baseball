@@ -262,12 +262,17 @@ def make_prediction():
         params = {'away_batters': form_data['away_batters'], 
                   'home_batters': form_data['home_batters'], 
                   'away_starter': form_data['away_starter'], 
-                  'home_starter': form_data['home_starter']}
+                  'home_starter': form_data['home_starter'],
+                  }
         
+        gameId = form_data['game_id']
+
         # Fixing Names
         matchup = form_data['matchup'].split(" @ ")
         away_full_name, home_full_name = matchup[0], matchup[1]
         res = mlb.get('teams', params = {'sportId': 1})['teams']
+
+        params['game_id'] = gameId
 
         team_dict = [{k:v for k,v in el.items() if k in ['name', 'teamName', 'abbreviation']} for el in res]
         team_dict = {el['name']:el['abbreviation'] for el in team_dict}
@@ -286,7 +291,10 @@ def make_prediction():
         preds_1b = {'away_prob': preds_1b[0], 'home_prob': preds_1b[1]}
         
         prediction = {'1a': preds_1a, '1b': preds_1b}
-        
+
+        engine = database.connect_to_db()
+
+        engine.execute(f"INSERT INTO predict_table(game_id, la_away_prob, la_home_prob, lb_away_prob, lb_home_prob) VALUES('{gameId}', '{preds_1a['away_prob']}', '{preds_1a['home_prob']}','{preds_1b['away_prob']}', '{preds_1b['home_prob']}') ON CONFLICT (game_id) DO UPDATE SET la_away_prob = excluded.la_away_prob, la_home_prob = excluded.la_home_prob, lb_away_prob = excluded.lb_away_prob, lb_home_prob = excluded.lb_home_prob;") 
         prediction = jsonify(prediction)
     
     return prediction

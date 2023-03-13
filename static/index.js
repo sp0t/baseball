@@ -1,11 +1,11 @@
 function openCard(buttonId){ 
-    var gameId = buttonId.replace("game_button_", ""); 
+    var gameId = buttonId.replace("game_button_", "");
     $.ajax({
         type: 'POST', 
         url: '/get_game_info', 
         data: {'data' : gameId},
         beforeSend: function(){ 
-            $('#large-card').show();
+            $('.large-card').show();
             $('#large-card-wrapper').hide();
             $('#loader').show();
 
@@ -15,9 +15,10 @@ function openCard(buttonId){
 
         },
         success: function (data){ 
-            
             // Away Form
             var awayRoster = data['rosters']['away']; 
+            var newCard = document.getElementsByClassName('.large-card');
+            newCard.id = buttonId;
             for (i = 1; i < 10; i++){
                 var newSelect = document.getElementsByName('ab_' + i)[0]; 
                 for (n = 0; n < awayRoster.length; n++){
@@ -69,18 +70,10 @@ function openCard(buttonId){
             if (!!$('#large-card-wrapper')){ 
                 $('#large-card-wrapper').show()
             }
-
-
-
-
             console.log("Request Success!")
             document.getElementById('large-card-title').textContent = data['matchup'];
             document.getElementById('large-game-date').textContent = data['time'];
 
-
-
-
-            
         }, 
     })
 }
@@ -93,11 +86,13 @@ function closeCard(){
     });
 
 
-    $('#large-card').hide(); 
+    $('.large-card').hide(); 
 
 }
 
 function makePrediction(){ 
+
+    gameId = document.getElementsByClassName('.large-card').id.replace('game_button_', '');
 
     // Get Form Data
     var awayBatters = []
@@ -114,13 +109,13 @@ function makePrediction(){
     var homeStarter = document.getElementsByName('home_starter')[0].value
     var matchup = document.getElementById('large-card-title').textContent
 
-
     var formData = {
         'away_batters': awayBatters, 
         'home_batters': homeBatters, 
         'away_starter': awayStarter, 
         'home_starter': homeStarter,
         'matchup': matchup,
+        'game_id': gameId,
     }
 
 
@@ -145,8 +140,6 @@ function makePrediction(){
             document.getElementsByName('home_prob')[0].textContent = data['1a']['home_prob'] + '%'
             document.getElementsByName('home_prob_1')[0].textContent = data['1a']['home_prob'] + '%'
             document.getElementsByName('home_prob_2')[0].textContent = data['1b']['home_prob'] + '%'
-
-
 
         }
 

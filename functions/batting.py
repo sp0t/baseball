@@ -15,7 +15,7 @@ def get_batter_df(team_batter):
     df = pd.read_sql("SELECT b.game_id, b.game_date, b.home_team, b.away_team, b.home_score, b.away_score, (a.atbats)atBats, a.avg, "
             "(a.baseonballs)baseonBalls, a.doubles, a.hits, (a.homeruns)homeRuns, a.obp, a.ops, "
             "(a.playerid)playerId, a.rbi, a.runs, a.slg, (a.strikeouts)strikeOuts, "
-            "a.triples FROM batter_table a LEFT JOIN game_table b ON a.game_id = b.game_id WHERE a.playerid = '%s' ORDER BY game_date DESC LIMIT 15;" %(team_batter), con = engine)
+            "a.triples FROM batter_table a LEFT JOIN game_table b ON a.game_id = b.game_id WHERE a.playerid = '%s';" %(team_batter), con = engine)
 
     string_cols = [col for col in df.columns if 'id' in col.lower()] + ['game_date', 'away_team', 'home_team']
 
@@ -75,7 +75,7 @@ def process_recent_batter_data(player_df, game_date, batter_stat_list):
         
     return recent_data, recent_games, games
 
-def process_career_batter_data(player_id, games, recent_games, batter_stat_list, game_date): 
+def process_career_batter_data(games, recent_games, batter_stat_list): 
     
     # Get Seasons 
     games['season']=games['game_date'].dt.year
@@ -95,12 +95,12 @@ def process_career_batter_data(player_id, games, recent_games, batter_stat_list,
         s_list, weights = [s0], [2/3]
     # Case #2: 2nd Year
     elif len(seasons)==2: 
-        s1=seasons[1]
+        s1=seasons[0]
         s_list = [s0,s1] if season_game_count>15 else [s1]
         weights = [2/3,1/6] if season_game_count>15 else [1]        
     # Case #3: 3+ Years
     elif len(seasons)==3: 
-        s1,s2 = seasons[1], seasons[2]
+        s1,s2 = seasons[1], seasons[0]
         s_list = [s0,s1,s2] if season_game_count>15 else [s1,s2]
         weights = [2/3,1/6,1/6] if season_game_count>15 else [1/2,1/2]
     else: 
@@ -123,23 +123,25 @@ def process_career_batter_data(player_id, games, recent_games, batter_stat_list,
             s_data = s_df.mean().to_dict()
             all_s_data.append(s_data)
     career_data=pd.DataFrame(all_s_data).mul(weights,axis=0).sum().to_dict()
-    
-    
+
     return career_data
 
 def process_team_batter_data(team_batters, team, game_date): 
     
-    batter_stat_list = ['runs', 'doubles', 'triples', 'homeRuns', 'strikeOuts', 'baseOnBalls',
-                     'hits', 'atBats', 'rbi', 'singles', 'avg', 'slg', 'obp', 'ops']
+    batter_stat_list = ['home_score', 'away_score', 'atBats', 'runs', 'avg', 'baseOnBalls', 'doubles', 'hits', 'homeRuns', 'triples', 'obp', 'ops', 
+                       'playerId', 'rbi', 'runs', 'slg', 'strikeOuts', 'triples', 'season', 'singles']
 
     team_batter_data = {}
+    team_recent_data = {}
+    team_career_data = {}
+
     for team_batter in team_batters: 
         order = team_batters.index(team_batter)+1
         player_df = get_batter_df(team_batter)
         if len(player_df) > 0 : 
             
             recent_data, recent_games, games = process_recent_batter_data(player_df, game_date, batter_stat_list)
-            career_data = process_career_batter_data(team_batter, games, recent_games, batter_stat_list, game_date)
+            career_data = process_career_batter_data(games, recent_games, batter_stat_list)
         else: 
             recent_data = dict(zip(batter_stat_list, np.repeat(np.nan, len(batter_stat_list))))
             career_data = dict(zip(batter_stat_list, np.repeat(np.nan, len(batter_stat_list))))
@@ -147,7 +149,10 @@ def process_team_batter_data(team_batters, team, game_date):
         recent_data = {f'{team}_recent_b{order}_{k}':v for k,v in recent_data.items()}
         career_data = {f'{team}_career_b{order}_{k}':v for k,v in career_data.items()}
             
-        team_batter_data.update(recent_data)
-        team_batter_data.update(career_data)
+        team_recent_data.update(recent_data)
+        team_career_data.update(career_data)
+            
+    team_batter_data.update(team_career_data)
+    team_batter_data.update(team_recent_data)
 
     return team_batter_data

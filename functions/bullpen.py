@@ -94,12 +94,12 @@ def process_career_bullpen_data(player_id, games, recent_games, pitcher_stat_lis
         s_list, weights = [s0], [2/3]
     # Case #2: 2nd Year
     elif len(seasons)==2: 
-        s1=seasons[1]
+        s1=seasons[0]
         s_list = [s0,s1] if season_game_count > 15 else [s1]
         weights = [2/3,1/6] if season_game_count > 15 else [1]        
     # Case #3: 3+ Years
     elif len(seasons)==3: 
-        s1,s2 = seasons[1], seasons[2]
+        s1,s2 = seasons[1], seasons[0]
         s_list = [s0,s1,s2] if season_game_count>15 else [s1,s2]
         weights = [2/3,1/6,1/6] if season_game_count>15 else [1/2,1/2]
     else: 
@@ -130,9 +130,9 @@ def process_career_bullpen_data(player_id, games, recent_games, pitcher_stat_lis
 def process_bullpen_data(team_name, team, game_date): 
     
     pitcher_stat_list=[
-        'runs', 'doubles', 'triples', 'homeRuns', 'strikeOuts', 'baseOnBalls', 'hits', 'atBats', 
+        'runs', 'doubles', 'triples', 'atBats', 'era', 'homeRuns', 'strikeOuts', 'baseOnBalls', 'hits', 
         'stolenBases', 'inningsPitched', 'wins', 'losses', 'holds', 'blownSave',
-        'pitchesThrown', 'strikes', 'rbi', 'era', 'whip', 'obp']
+        'pitchesThrown', 'strikes', 'rbi', 'whip', 'obp']
     
     bullpen_df = get_bullpen_df(team_name)
     
@@ -148,7 +148,7 @@ def process_bullpen_data(team_name, team, game_date):
     career_data = {f'{team}_bullpen_career_{k}':v for k,v in career_data.items()}
 
     team_bullpen_data = {}
-    team_bullpen_data.update(recent_data)
     team_bullpen_data.update(career_data)
+    team_bullpen_data.update(recent_data)
     
     return team_bullpen_data

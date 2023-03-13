@@ -67,7 +67,7 @@ a{
 }
 .card{
 	width:280px;
-	height: 155px;
+	height: 250px;
 	background-color: #FFF;
 	border-radius: 5px;
 	box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
@@ -93,6 +93,7 @@ a{
     box-shadow: none;
     color: #FCFCFC; 
     font-size: 16px;
+	margin-top: 15px;
 }
 .small-solid-button:hover{
     background-color: var(--light-blue);
@@ -476,4 +477,17 @@ table {
 	color: #78909C;
 	font-weight: 400;
 	font-size: 0.75rem;
+}
+
+.card-table{
+	width: 110px;
+}
+
+.model-content{
+	font-size: 17px;
+    color: red;
+}
+
+.model-title{
+	font-size: 10px;
 }

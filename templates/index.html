@@ -51,13 +51,55 @@
                 <div class="card" id ="{{game.game_id}}">
                     <span class="card-title">{{game.away_name}} @ {{game.home_name}}</span>
                     <p class="game-date">{{game.game_datetime}} EST</p>
+                    <div class="form-wrapper">
+                        <div class="form-left">
+                            <span>Win Prob</span>
+                            <hr>
+                            <div class="form-left-wrapper">
+                                <table class = 'card-table'>
+                                    <tr>
+                                        <td class="model-title">Model la</td>
+                                        {% if game.la_away_prob != None %}
+                                        <td class="model-content">{{game.la_away_prob}}%</td>
+                                        {% endif %}
+                                    </tr>
+                                    <tr>
+                                        <td class="model-title">Model lb</td>
+                                        {% if game.lb_away_prob != None %}
+                                        <td class="model-content">{{game.lb_away_prob}}%</td>
+                                        {% endif %}
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="form-right">
+                            <span>Win Prob</span>
+                            <hr>
+                            <div class="form-right-wrapper">
+                                <table class="card-table">
+                                    <tr>
+                                        <td class="model-title">Model la</td>
+                                        {% if game.la_home_prob != None %}
+                                        <td class="model-content">{{game.la_home_prob}}%</td>
+                                        {% endif %}
+                                    </tr>
+                                    <tr>
+                                        <td class="model-title">Model lb</td>
+                                        {% if game.lb_home_prob != None %}
+                                        <td class="model-content">{{game.lb_home_prob}}%</td>
+                                        {% endif %}
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
                     <button class="small-solid-button" id="game_button_{{game.game_id}}" onclick="openCard(this.id)">Set Lineups</button>
                 </div>
                 {% endfor %}
             </div>
 
             <!-- Large Card -->
-            <div class="large-card" id="large-card" style = "display: none">
+            <div class="large-card" style = "display: none">
                 <button class="close-button" onclick="closeCard()">Close</button>
                 <div id="large-card-wrapper">
                     <span class="large-card-title" id="large-card-title"></span>

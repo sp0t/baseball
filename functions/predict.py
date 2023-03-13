@@ -32,7 +32,7 @@ pitcher_id_cols = ['away_starter_playerId', 'home_starter_playerId']
 away_batter_id_cols = [col for col in batter_id_cols if 'away' in col]
 home_batter_id_cols = [col for col in batter_id_cols if 'home' in col]
 
-def save_batter_data(engine, row, away_batters, home_batters): 
+def save_batter_data(engine, row, away_batters, home_batters, gameId): 
 
     d_list = []
     for i in range(1,10): 
@@ -47,7 +47,8 @@ def save_batter_data(engine, row, away_batters, home_batters):
         d_list.append(player_stats)
     away_batter_df = pd.DataFrame(d_list)
     away_batter_df.insert(0, 'batterOrder', [f"Batter {i}" for i in range(1,10)])
-    away_batter_df.insert(1, 'playerId', away_batters)
+    away_batter_df.insert(1, 'gameId', gameId)
+    away_batter_df.insert(2, 'playerId', away_batters)
     away_batter_df=away_batter_df.set_index('batterOrder')
 
     # Home Batters
@@ -64,22 +65,23 @@ def save_batter_data(engine, row, away_batters, home_batters):
         d_list.append(player_stats)
     home_batter_df = pd.DataFrame(d_list)
     home_batter_df.insert(0, 'batterOrder', [f"Batter {i}" for i in range(1,10)])
-    home_batter_df.insert(1, 'playerId', home_batters)
+    home_batter_df.insert(1, 'gameId', gameId)
+    home_batter_df.insert(2, 'playerId', home_batters)
     home_batter_df=home_batter_df.set_index('batterOrder')
 
     
     away_batter_df.index = ['Away ' + el for el in away_batter_df.index]
     home_batter_df.index = ['Home ' + el for el in home_batter_df.index]
 
-    blank_row = pd.DataFrame(dict(zip(list(away_batter_df.columns), np.repeat('//', len(away_batter_df.columns)))), index = ['//'])
-    batter_df = pd.concat([away_batter_df, blank_row])
-    batter_df = pd.concat([batter_df, home_batter_df])
+    # blank_row = pd.DataFrame(dict(zip(list(away_batter_df.columns), np.repeat('//', len(away_batter_df.columns)))), index = ['//'])
+    # batter_df = pd.concat([away_batter_df, blank_row])
+    batter_df = pd.concat([away_batter_df, home_batter_df])
     
-    batter_df.to_sql("current_game_batters", con = engine, index = True, if_exists = "replace")
+    batter_df.to_sql("current_game_batters", con = engine, index = True, if_exists = "append")
     
     return 
 
-def save_pitcher_data(engine, row, away_starter, home_starter): 
+def save_pitcher_data(engine, row, away_starter, home_starter, gameId): 
     away_recent_cols = [col for col in row.columns if 'away_starter_recent' in col]
     away_career_cols = [col for col in row.columns if 'away_starter_career' in col]
     player_stats = row[away_career_cols+away_recent_cols].to_dict('records')[0]
@@ -87,7 +89,6 @@ def save_pitcher_data(engine, row, away_starter, home_starter):
     away_df = pd.DataFrame(player_stats, index = ["Away_Starter"])
     away_df.insert(0, 'playerId', away_starter)
 
-    print("1")
     home_recent_cols = [col for col in row.columns if 'home_starter_recent' in col]
     home_career_cols = [col for col in row.columns if 'home_starter_career' in col]
     player_stats = row[home_career_cols+home_recent_cols].to_dict('records')[0]
@@ -95,11 +96,10 @@ def save_pitcher_data(engine, row, away_starter, home_starter):
     home_df = pd.DataFrame(player_stats, index = ["Home Starter"])
     home_df.insert(0, 'playerId', home_starter)
 
-    print("2")
     pitcher_df = pd.concat([away_df,home_df]).T.astype(str)
-    print("2_1")
-    pitcher_df.to_sql("current_game_pitchers", con = engine, index = True, if_exists = "replace")
-    print("2_2")
+    pitcher_df.insert(0, 'gameId', gameId)
+    pitcher_df.to_sql("current_game_pitchers", con = engine, index = True, if_exists = "append")
+ 
     return pitcher_df
 
 def get_df(engine, batter_id_cols, pitcher_id_cols): 
@@ -163,6 +163,7 @@ def get_probabilities(params):
     away_batters, home_batters = [str(el) for el in params['away_batters']], [str(el) for el in params['home_batters']]
     away_starter, home_starter = str(params['away_starter']), str(params['home_starter'])
     away_name, home_name = params['away_name'], params['home_name']
+    game_id = params['game_id']
     
     # Get Data
     game_date = datetime.today()
@@ -182,28 +183,27 @@ def get_probabilities(params):
     print("Player Data Processed")
     # Combine 
     game_data = {}
-    game_data.update(away_batter_data)
-    game_data.update(home_batter_data)
-
-    game_data.update(away_starter_data)
-    game_data.update(home_starter_data)
-
     game_data.update(away_bullpen_data)
+    game_data.update(away_batter_data)
+    game_data.update(away_starter_data)
+
     game_data.update(home_bullpen_data)
+    game_data.update(home_batter_data)
+    game_data.update(home_starter_data)
     
     X_test = pd.DataFrame(game_data, index = [0])
 
     X_test = feature_selection(X_test, fill_null = True)
     X_test, column_names = addBattersFaced(X_test, bullpen = False)
-    save_batter_data(engine, X_test, away_batters, home_batters)
-    save_pitcher_data(engine, X_test, away_starter, home_starter)
+    save_batter_data(engine, X_test, away_batters, home_batters, game_id)
+    save_pitcher_data(engine, X_test, away_starter, home_starter, game_id)
 
     X_test = standardizeData(X_test, column_names)
     X_test.to_csv('X_test.csv')
 
     X_test_b = X_test[[col for col in X_test.columns if 'bullpen' not in col]]
     print("Game Row Processed")
-    
+
     # Make Prediciton    
     pred_1a = pickle.load(open('algorithms/model_1a_v10.sav', 'rb')).predict_proba(X_test)
     pred_1b = pickle.load(open('algorithms/model_1b_v10.sav', 'rb')).predict_proba(X_test_b)

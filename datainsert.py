@@ -19,15 +19,18 @@ data = df.set_index('game_id').T.to_dict('dict')
 #create tables
 db.execute("DROP TABLE IF EXISTS game_table;")
 db.execute("DROP TABLE IF EXISTS batter_table;")
-# db.execute("DROP TABLE IF EXISTS pitcher_table;")
-# db.execute("DROP TABLE IF EXISTS schedule;")
+db.execute("DROP TABLE IF EXISTS pitcher_table;")
+db.execute("DROP TABLE IF EXISTS schedule;")
+db.execute("DROP TABLE IF EXISTS predict_table;")
 db.execute("CREATE TABLE IF NOT EXISTS game_table(game_id TEXT, game_date TEXT, away_team TEXT, home_team TEXT, away_score TEXT, home_score TEXT, winner TEXT, ck TEXT);")
 db.execute("CREATE TABLE IF NOT EXISTS batter_table(game_id TEXT, playerid TEXT, team TEXT, position TEXT, atbats TEXT, avg TEXT, baseonballs TEXT, doubles TEXT, "\
            "hits TEXT, homeruns TEXT, obp TEXT, ops TEXT, rbi TEXT, runs TEXT, slg TEXT, strikeouts TEXT, triples TEXT);")
-# db.execute("CREATE TABLE IF NOT EXISTS pitcher_table(game_id TEXT, team TEXT, role TEXT, playerid TEXT, atbats TEXT, baseonballs TEXT, blownsaves TEXT, doubles TEXT, earnedruns TEXT, era TEXT, "\
-#            "hits TEXT, holds TEXT, homeruns TEXT, inningspitched TEXT, losses TEXT, pitchesthrown TEXT, rbi TEXT, runs TEXT, strikeouts TEXT, strikes TEXT, triples TEXT, "\
-#            "whip TEXT, wins TEXT);")
-# db.execute("CREATE TABLE IF NOT EXISTS schedule();")
+db.execute("CREATE TABLE IF NOT EXISTS pitcher_table(game_id TEXT, team TEXT, role TEXT, playerid TEXT, atbats TEXT, baseonballs TEXT, blownsaves TEXT, doubles TEXT, earnedruns TEXT, era TEXT, "\
+           "hits TEXT, holds TEXT, homeruns TEXT, inningspitched TEXT, losses TEXT, pitchesthrown TEXT, rbi TEXT, runs TEXT, strikeouts TEXT, strikes TEXT, triples TEXT, "\
+           "whip TEXT, wins TEXT);")
+db.execute("CREATE TABLE IF NOT EXISTS predict_table(game_id TEXT, la_away_prob TEXT, la_home_prob TEXT, lb_away_prob TEXT, lb_home_prob TEXT);")
+
+db.execute("CREATE TABLE IF NOT EXISTS schedule();")
           
 for i in data:
     print(i, '################') 

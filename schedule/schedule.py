@@ -33,15 +33,14 @@ def get_schedule():
             home_state = False
 
         if away_state == False or home_state == False:
-            return schedule
             game['away_name'], game['home_name'] = insert_newTeam(game['game_id'], game['away_name'], game['home_name'], away_state, home_state)
             if away_state:
                 game['away_name'] = team_dict[game['away_name']]
             if home_state:
                 game['home_name'] = team_dict[game['home_name']]
-        else:
-        game['away_name'] = team_dict[game['away_name']]
-        game['home_name'] = team_dict[game['home_name']]
+            else:
+                game['away_name'] = team_dict[game['away_name']]
+                game['home_name'] = team_dict[game['home_name']]
 
     return schedule
 

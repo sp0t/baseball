@@ -159,9 +159,6 @@ def login():
 
     user = request.get_json()
     engine = database.connect_to_db()
-
-    print(user)
-
     res = engine.execute(f"SELECT username, password, position, confirmed FROM user_table WHERE username = '{user['username']}';").fetchall()
 
     if res == []:
@@ -295,7 +292,6 @@ def make_prediction():
         prediction = {'1a': preds_1a, '1b': preds_1b}
 
         engine = database.connect_to_db()
-
         engine.execute(f"INSERT INTO predict_table(game_id, la_away_prob, la_home_prob, lb_away_prob, lb_home_prob) VALUES('{gameId}', '{preds_1a['away_prob']}', '{preds_1a['home_prob']}','{preds_1b['away_prob']}', '{preds_1b['home_prob']}') ON CONFLICT (game_id) DO UPDATE SET la_away_prob = excluded.la_away_prob, la_home_prob = excluded.la_home_prob, lb_away_prob = excluded.lb_away_prob, lb_home_prob = excluded.lb_home_prob;") 
         prediction = jsonify(prediction)
     
@@ -494,7 +490,6 @@ def get_batter_csv_data():
 @app.route('/download_pitcher_data', methods = ["POST"])
 def get_pitcher_csv_data(): 
     game_id = str(json.loads(request.form['data']))
-    print(game_id)
     engine = database.connect_to_db()
     csv = pd.read_sql(f"SELECT * FROM current_game_pitchers WHERE game_id = '{game_id}';", con = engine).to_csv()
     return Response(

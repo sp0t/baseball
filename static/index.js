@@ -362,10 +362,12 @@ function updateTeam(){
 }
 
 function  downLoadBatterData(id){
-    gameId = id.replace('load_batter_', '');
-
+    gameId = ''
+    
     if(id == 0)
         gameId = document.getElementsByClassName('.large-card').id.replace('game_button_', '');
+    else
+        gameId = id.replace('load_batter_', '');
         
     $.ajax({
         type: 'POST', 
@@ -386,10 +388,12 @@ function  downLoadBatterData(id){
 }
 
 function  downLoadPitcherData(id){
-    gameId = id.replace('load_pitcher_', '');
+    gameId = ''
 
     if(id == 0)
         gameId = document.getElementsByClassName('.large-card').id.replace('game_button_', '');        
+    else
+        gameId = id.replace('load_pitcher_', '');
     
     $.ajax({
         type: 'POST', 

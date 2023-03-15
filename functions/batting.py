@@ -53,12 +53,11 @@ def process_recent_batter_data(player_df, game_date, batter_stat_list):
         recent_data = dict(zip(batter_stat_list, np.repeat(np.nan, len(batter_stat_list))))
         
     else: 
-        
         if len(games) >= 15: 
             recent_df = games.tail(15)
             weights = [0.01,0.02,0.03,0.04,0.05,0.05,0.06,0.07,0.08,0.08,0.09,0.09,0.1,0.11,0.12]
             
-        else: 
+        else:
             recent_df = games
             weights = list(np.repeat(1/int(len((recent_df))), int(len(recent_df))))
             
@@ -72,7 +71,6 @@ def process_recent_batter_data(player_df, game_date, batter_stat_list):
         recent_df = recent_df.drop(drop_cols,axis = 1,errors = 'ignore').astype(float)
         recent_data = recent_df.mul(weights,axis = 0).sum().to_dict()
         recent_games = list(recent_df.index)
-        
     return recent_data, recent_games, games
 
 def process_career_batter_data(games, recent_games, batter_stat_list): 
@@ -128,24 +126,27 @@ def process_career_batter_data(games, recent_games, batter_stat_list):
 
 def process_team_batter_data(team_batters, team, game_date): 
     
-    batter_stat_list = ['home_score', 'away_score', 'atBats', 'runs', 'avg', 'baseOnBalls', 'doubles', 'hits', 'homeRuns', 'triples', 'obp', 'ops', 
-                       'playerId', 'rbi', 'runs', 'slg', 'strikeOuts', 'triples', 'season', 'singles']
+    batter_stat_list = ['home_score', 'away_score', 'atBats', 'avg', 'baseOnBalls', 'doubles', 'hits', 'homeRuns', 'obp', 'ops', 'playerId', 'rbi', 'runs', 
+                        'slg', 'strikeOuts', 'triples', 'season', 'singles']
 
     team_batter_data = {}
     team_recent_data = {}
     team_career_data = {}
 
-    for team_batter in team_batters: 
-        order = team_batters.index(team_batter)+1
+    # for team_batter in team_batters: 
+    for i in range(9):
+        # order = team_batters.index(team_batter)+1
+        order = i + 1
+        team_batter = team_batters[i]
         player_df = get_batter_df(team_batter)
+
         if len(player_df) > 0 : 
-            
             recent_data, recent_games, games = process_recent_batter_data(player_df, game_date, batter_stat_list)
             career_data = process_career_batter_data(games, recent_games, batter_stat_list)
         else: 
             recent_data = dict(zip(batter_stat_list, np.repeat(np.nan, len(batter_stat_list))))
             career_data = dict(zip(batter_stat_list, np.repeat(np.nan, len(batter_stat_list))))
-            
+
         recent_data = {f'{team}_recent_b{order}_{k}':v for k,v in recent_data.items()}
         career_data = {f'{team}_career_b{order}_{k}':v for k,v in career_data.items()}
             

@@ -27,7 +27,7 @@ def get_schedule():
             schedule0.append(el.copy())
 
     for game in schedule0: 
-        betting = list(pd.read_sql(f"SELECT place, odds, stake, wins, status, site FROM betting_table WHERE place = '{game['away_name']}' OR place = '{game['home_name']}';", con = engine).T.to_dict().values())
+        betting = list(pd.read_sql(f"SELECT place, odds, stake, wins, status, site FROM betting_table WHERE (place = '{game['away_name']}' OR place = '{game['home_name']}') AND betdate = '{date.today()}';", con = engine).T.to_dict().values())
         
         for bett in betting:
             if bett['place'] == game['away_name']:
@@ -91,9 +91,7 @@ def update_schedule():
     engine.execute("DELETE FROM schedule")
     
     new_schedule = get_schedule_from_mlb()
-    print(new_schedule)
     new_schedule.to_sql("schedule", con = engine, index = False, if_exists = 'replace')
-    
     
     return
 

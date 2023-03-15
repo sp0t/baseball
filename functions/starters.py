@@ -46,7 +46,6 @@ def process_recent_starter_data(player_df, game_date, pitcher_stat_list):
     games = player_df[player_df['game_date'] < game_date]
     games = games.sort_values('game_date')
     
-    
     if len(games) == 0: 
         recent_games = []
         recent_data = dict(zip(pitcher_stat_list, np.repeat(np.nan, len(pitcher_stat_list))))
@@ -129,9 +128,8 @@ def process_career_starter_data(player_id, games, recent_games, pitcher_stat_lis
 def process_starter_data(team_starter, team, game_date): 
     
     pitcher_stat_list=[
-        'runs', 'doubles', 'triples', 'era', 'homeRuns', 'strikeOuts', 'baseOnBalls', 'hits', 'atBats', 
-        'stolenBases', 'inningsPitched', 'wins', 'losses', 'holds', 'blownSave',
-        'pitchesThrown', 'strikes', 'rbi', 'whip', 'obp']
+        'atBats', 'baseOnBalls', 'blownSave', 'doubles', 'earnedRuns', 'era', 'hits', 'holds', 'homeRuns', 'inningsPitched', 
+        'losses', 'pitchesThrown', 'playerId', 'rbi', 'runs', 'strikeOuts', 'strikes', 'triples', 'whip',  'wins']
     
     
     player_df = get_starter_df(team_starter)

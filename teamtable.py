@@ -20,9 +20,6 @@ data = mlb.boxscore_data(game_id)
 away_Id = data['teamInfo']['away']['id']
 home_Id = data['teamInfo']['home']['id']
 
-print(away_Id)
-print(home_Id)
-
 
 away_abbr = data['teamInfo']['away']['abbreviation']
 home_abbr = data['teamInfo']['home']['abbreviation']

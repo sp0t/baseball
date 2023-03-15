@@ -129,10 +129,8 @@ def process_career_bullpen_data(player_id, games, recent_games, pitcher_stat_lis
 
 def process_bullpen_data(team_name, team, game_date): 
     
-    pitcher_stat_list=[
-        'runs', 'doubles', 'triples', 'atBats', 'era', 'homeRuns', 'strikeOuts', 'baseOnBalls', 'hits', 
-        'stolenBases', 'inningsPitched', 'wins', 'losses', 'holds', 'blownSave',
-        'pitchesThrown', 'strikes', 'rbi', 'whip', 'obp']
+    pitcher_stat_list=['atBats', 'baseOnBalls', 'blownSave', 'doubles', 'earnedRuns', 'era', 'hits', 'holds', 'homeRuns', 'inningsPitched', 
+        'losses', 'pitchesThrown', 'playerId', 'rbi', 'runs', 'strikeOuts', 'strikes', 'triples', 'whip',  'wins']
     
     bullpen_df = get_bullpen_df(team_name)
     

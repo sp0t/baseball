@@ -77,6 +77,7 @@ def save_batter_data(engine, row, away_batters, home_batters, gameId):
     # batter_df = pd.concat([away_batter_df, blank_row])
     batter_df = pd.concat([away_batter_df, home_batter_df])
     
+    engine.execute(f"DELETE FROM current_game_batters WHERE game_id = '{gameId}';")
     batter_df.to_sql("current_game_batters", con = engine, index = True, if_exists = "append")
     
     return 
@@ -98,6 +99,7 @@ def save_pitcher_data(engine, row, away_starter, home_starter, gameId):
 
     pitcher_df = pd.concat([away_df,home_df]).T.astype(str)
     pitcher_df.insert(0, 'game_id', gameId)
+    engine.execute(f"DELETE FROM current_game_pitchers WHERE game_id = '{gameId}';")
     pitcher_df.to_sql("current_game_pitchers", con = engine, index = True, if_exists = "append")
  
     return pitcher_df
@@ -167,11 +169,19 @@ def get_probabilities(params):
     
     # Get Data
     game_date = datetime.today()
+    
+    team_batter = []
+    team_home = []
+
+    for el in away_batters:
+        team_batter.append(el)
+
+    for el in home_batters:
+        team_home.append(el)
 
     # Batters 
-    away_batter_data = batting.process_team_batter_data(away_batters, 'away', game_date)
-    home_batter_data = batting.process_team_batter_data(home_batters, 'home', game_date)
-    
+    away_batter_data = batting.process_team_batter_data(team_batter, 'away', game_date)
+    home_batter_data = batting.process_team_batter_data(team_home, 'home', game_date)
     # Starters 
     away_starter_data = starters.process_starter_data(away_starter, 'away', game_date)
     home_starter_data = starters.process_starter_data(home_starter, 'home', game_date)
@@ -180,7 +190,7 @@ def get_probabilities(params):
     away_bullpen_data = bullpen.process_bullpen_data(away_name, 'away', game_date)
     home_bullpen_data = bullpen.process_bullpen_data(home_name, 'home', game_date)
 
-    print("Player Data Processed")
+
     # Combine 
     game_data = {}
     game_data.update(away_bullpen_data)
@@ -195,6 +205,7 @@ def get_probabilities(params):
 
     X_test = feature_selection(X_test, fill_null = True)
     X_test, column_names = addBattersFaced(X_test, bullpen = False)
+
     save_batter_data(engine, X_test, away_batters, home_batters, game_id)
     save_pitcher_data(engine, X_test, away_starter, home_starter, game_id)
 

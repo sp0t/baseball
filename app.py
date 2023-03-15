@@ -480,20 +480,23 @@ def get_batter_csv_table():
         headers={"Content-disposition":
                  f"attachment; filename = batter_table.csv"})        
 
-@app.route('/download_batter_data')
-def get_batter_csv_data(): 
+@app.route('/download_batter_data', methods = ["POST"])
+def get_batter_csv_data():
+    game_id = str(json.loads(request.form['data']))
     engine = database.connect_to_db()
-    csv = pd.read_sql("SELECT * FROM current_game_batters", con = engine).to_csv()
+    csv = pd.read_sql(f"SELECT * FROM current_game_batters WHERE game_id = '{game_id}';", con = engine).to_csv()
     return Response(
         csv,
         mimetype="text/csv",
         headers={"Content-disposition":
                  f"attachment; filename = batter_data.csv"})
   
-@app.route('/download_pitcher_data')
+@app.route('/download_pitcher_data', methods = ["POST"])
 def get_pitcher_csv_data(): 
+    game_id = str(json.loads(request.form['data']))
+    print(game_id)
     engine = database.connect_to_db()
-    csv = pd.read_sql("SELECT * FROM current_game_pitchers", con = engine).to_csv()
+    csv = pd.read_sql(f"SELECT * FROM current_game_pitchers WHERE game_id = '{game_id}';", con = engine).to_csv()
     return Response(
         csv,
         mimetype="text/csv",
@@ -548,7 +551,43 @@ def friend_page():
         data['name'] = team_data['name']
         data['abbr'] = team_data['abbr']
         return data
-      
+
+@app.route('/updateTeam', methods = ["POST"])
+def update_P_T_table():
+    engine = database.connect_to_db()
+
+    # exec(open("./modify_atbat.py").read(), globals())
+
+    res = mlb.get('teams', params={'sportId':1})['teams']
+
+    team_dict = [{k:v for k,v in el.items() if k in ['name', 'abbreviation', 'clubName']} for el in res]
+
+    engine.execute("DROP TABLE IF EXISTS team_table;")
+    engine.execute("DROP TABLE IF EXISTS player_table;")
+
+    engine.execute("CREATE TABLE IF NOT EXISTS team_table(team_id TEXT, team_name TEXT, team_abbr TEXT, club_name TEXT);")
+    engine.execute("CREATE TABLE IF NOT EXISTS player_table(p_id TEXT, p_name TEXT, t_id TEXT);")
+
+
+    # team_data = request.get_json()
+
+    for el in team_dict:
+        print('============cron==========')
+        print(el)
+        team_id = mlb.lookup_team(el['name'])[0]['id']
+
+        engine.execute(f"INSERT INTO team_table(team_id, team_name, team_abbr, club_name) VALUES('{team_id}', '{el['name']}', '{el['abbreviation']}', '{el['clubName']}');") 
+        
+        team_roster = {}
+        team_roster = mlb.get('team_roster', params = {'teamId':team_id, 'date':date.today()})['roster']
+        team_roster = [el['person'] for el in team_roster]
+        team_roster = [{k:v for k,v in el.items() if k!='link'} for el in team_roster]
+
+        for item in team_roster:
+            p_name = item['fullName'].replace("'", " ")
+            engine.execute(f"INSERT INTO player_table(p_id, p_name, t_id) VALUES('{item['id']}', '{p_name}','{team_id}');")
+
+    return 'OK'      
 
 # model_1a = None
 # model_1b = None
@@ -574,40 +613,6 @@ def print_date_time():
         betIndex = smartContract.betIndex
         engine.execute(f"UPDATE betting_table SET regstate = '1', betindex = '{betIndex + 1}' WHERE betid = '{bet['betid']}';")
         smartContract.createBetData(bet)
-
-def update_P_T_table():
-    engine = database.connect_to_db()
-    print('crone-start')
-
-    # exec(open("./modify_atbat.py").read(), globals())
-
-    res = mlb.get('teams', params={'sportId':1})['teams']
-
-    team_dict = [{k:v for k,v in el.items() if k in ['name', 'abbreviation', 'clubName']} for el in res]
-
-    engine.execute("DROP TABLE IF EXISTS team_table;")
-    engine.execute("DROP TABLE IF EXISTS player_table;")
-
-    engine.execute("CREATE TABLE IF NOT EXISTS team_table(team_id TEXT, team_name TEXT, team_abbr TEXT, club_name TEXT);")
-    engine.execute("CREATE TABLE IF NOT EXISTS player_table(p_id TEXT, p_name TEXT, t_id TEXT);")
-
-
-    # team_data = request.get_json()
-
-    for el in team_dict:
-        team_id = mlb.lookup_team(el['name'])[0]['id']
-
-        engine.execute(f"INSERT INTO team_table(team_id, team_name, team_abbr, club_name) VALUES('{team_id}', '{el['name']}', '{el['abbreviation']}', '{el['clubName']}');") 
-        
-        team_roster = {}
-        team_roster = mlb.get('team_roster', params = {'teamId':team_id, 'date':date.today()})['roster']
-        team_roster = [el['person'] for el in team_roster]
-        team_roster = [{k:v for k,v in el.items() if k!='link'} for el in team_roster]
-
-        for item in team_roster:
-            p_name = item['fullName'].replace("'", " ")
-            engine.execute(f"INSERT INTO player_table(p_id, p_name, t_id) VALUES('{item['id']}', '{p_name}','{team_id}');") 
-
 
 scheduler = BackgroundScheduler()
 scheduler.add_job(func=print_date_time, trigger="interval", seconds=600)

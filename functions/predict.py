@@ -47,8 +47,8 @@ def save_batter_data(engine, row, away_batters, home_batters, gameId):
         d_list.append(player_stats)
     away_batter_df = pd.DataFrame(d_list)
     away_batter_df.insert(0, 'batterOrder', [f"Batter {i}" for i in range(1,10)])
-    away_batter_df.insert(1, 'gameId', gameId)
-    away_batter_df.insert(2, 'playerId', away_batters)
+    away_batter_df.insert(1, 'game_id', gameId)
+    away_batter_df.insert(2, 'player_id', away_batters)
     away_batter_df=away_batter_df.set_index('batterOrder')
 
     # Home Batters
@@ -65,8 +65,8 @@ def save_batter_data(engine, row, away_batters, home_batters, gameId):
         d_list.append(player_stats)
     home_batter_df = pd.DataFrame(d_list)
     home_batter_df.insert(0, 'batterOrder', [f"Batter {i}" for i in range(1,10)])
-    home_batter_df.insert(1, 'gameId', gameId)
-    home_batter_df.insert(2, 'playerId', home_batters)
+    home_batter_df.insert(1, 'game_id', gameId)
+    home_batter_df.insert(2, 'player_id', home_batters)
     home_batter_df=home_batter_df.set_index('batterOrder')
 
     
@@ -87,17 +87,17 @@ def save_pitcher_data(engine, row, away_starter, home_starter, gameId):
     player_stats = row[away_career_cols+away_recent_cols].to_dict('records')[0]
     player_stats = dict(zip([el.replace('away_starter_', '') for el in player_stats], player_stats.values()))
     away_df = pd.DataFrame(player_stats, index = ["Away_Starter"])
-    away_df.insert(0, 'playerId', away_starter)
+    away_df.insert(0, 'player_id', away_starter)
 
     home_recent_cols = [col for col in row.columns if 'home_starter_recent' in col]
     home_career_cols = [col for col in row.columns if 'home_starter_career' in col]
     player_stats = row[home_career_cols+home_recent_cols].to_dict('records')[0]
     player_stats = dict(zip([el.replace('home_starter_', '') for el in player_stats], player_stats.values()))
     home_df = pd.DataFrame(player_stats, index = ["Home Starter"])
-    home_df.insert(0, 'playerId', home_starter)
+    home_df.insert(0, 'player_id', home_starter)
 
     pitcher_df = pd.concat([away_df,home_df]).T.astype(str)
-    pitcher_df.insert(0, 'gameId', gameId)
+    pitcher_df.insert(0, 'game_id', gameId)
     pitcher_df.to_sql("current_game_pitchers", con = engine, index = True, if_exists = "append")
  
     return pitcher_df

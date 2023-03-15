@@ -16,8 +16,7 @@
     </head>
     <body>
         <div class="nav">
-            <input type="checkbox" id="nav-check">
-            <div class="nav-header"><div class="nav-title">BetMLB</div></div>
+            <div class="nav-header"><div class="nav-title" style="font-size: 50px;">BetMLB</div></div>
             <div class="nav-btn">
               <label for="nav-check">
                 <span></span>
@@ -27,11 +26,11 @@
             </div>
             
             <div class="nav-links">
-              <a href="/">Home</a>
-              <a href="/teams">Teams</a>
-              <a href="/database">Database</a>
-              <a href="/showbetting">Accounting</a>
-              <a href="/friend_page">Friend-teams</a>
+              <a href="/" style="font-size: 25px; padding: 10px;">Home</a>
+              <a href="/teams" style="font-size: 25px; padding: 10px;">Teams</a>
+              <a href="/database" style="font-size: 25px; padding: 10px;">Database</a>
+              <a href="/showbetting" style="font-size: 25px; padding: 10px;">Accounting</a>
+              <a href="/friend_page" style="font-size: 25px; padding: 10px;">Friend-teams</a>
             </div>
           </div>
         <div class="container">
@@ -60,17 +59,18 @@
                                     <tr>
                                         <td class="model-title">Model la</td>
                                         {% if game.la_away_prob != None %}
-                                        <td class="model-content">{{game.la_away_prob}}%</td>
+                                            <td class="model-content">{{game.la_away_prob}}%</td>
                                         {% endif %}
                                     </tr>
                                     <tr>
                                         <td class="model-title">Model lb</td>
                                         {% if game.lb_away_prob != None %}
-                                        <td class="model-content">{{game.lb_away_prob}}%</td>
+                                            <td class="model-content">{{game.lb_away_prob}}%</td>
                                         {% endif %}
                                     </tr>
                                 </table>
                             </div>
+                            <hr>
                         </div>
                         <div class="form-right">
                             <span>Win Prob</span>
@@ -91,9 +91,170 @@
                                     </tr>
                                 </table>
                             </div>
+                            <hr>
                         </div>
                     </div>
+                    <div class="betting-title">
+                        Betting State
+                    </div>
+                    <div class="betting-wrapper">
+                        <div class="betting-col">
+                            <span>Site</span>
+                            <hr>
+                            <table class = 'betting-table'>
+                                <tr>
+                                    <td class="model-title">ps3838.com</td>
+                                </tr>
+                                <tr>
+                                    <td class="model-title">bet487.org</td>
+                                </tr>
+                                <tr>
+                                    <td class="model-title">sports411.ag</td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="betting-col">
+                            <span>Place</span>
+                            <hr>
+                            <table class = 'betting-table'>
+                                <tr>
+                                    {% for bett in game['betting'] %}
+                                        {% if game.away_name == bett.place and bett.site == 'ps3838.com'%}
+                                            <td class="betting-content">away</td>
+                                        {% elif game.home_name == bett.place and bett.site == 'ps3838.com'%}
+                                            <td class="betting-content">home</td>
+                                        {% endif %}
+                                    {% endfor %}
+                                </tr>
+                                <tr>
+                                    {% for bett in game['betting'] %}
+                                        {% if game.away_name == bett.place and bett.site == 'bet487.org' %}
+                                            <td class="betting-content">away</td>
+                                        {% elif game.home_name == bett.place and bett.site == 'bet487.org' %}
+                                            <td class="betting-content">home</td>
+                                        {% endif %}
+                                    {% endfor %}
+                                </tr>
+                                <tr>
+                                    {% for bett in game['betting'] %}
+                                        {% if game.away_name == bett.place and bett.site == 'sports411.ag' %}
+                                            <td class="betting-content">away</td>
+                                        {% elif game.home_name == bett.place and bett.site == 'sports411.ag' %}
+                                            <td class="betting-content">home</td>
+                                        {% endif %}
+                                    {% endfor %}
+                                </tr>
+                                
+                            </table>
+                        </div>
+                        <div class="betting-col">
+                            <span>Odds</span>
+                            <hr>
+                            <table class = 'betting-table'>
+                                <tr>
+                                    {% for bett in game['betting'] %}
+                                        {% if bett.site == 'ps3838.com'%}
+                                            <td class="betting-content">{{bett.odds}}</td>
+                                        {% endif %}
+                                    {% endfor %}
+                                </tr>
+                                <tr>
+                                    {% for bett in game['betting'] %}
+                                        {% if bett.site == 'bet487.org'%}
+                                            <td class="betting-content">{{bett.odds}}</td>
+                                        {% endif %}
+                                    {% endfor %}
+                                </tr>
+                                <tr>
+                                    {% for bett in game['betting'] %}
+                                        {% if bett.site == 'sports411.ag'%}
+                                            <td class="betting-content">{{bett.odds}}</td>
+                                        {% endif %}
+                                    {% endfor %}
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="betting-col">
+                            <span>Stake</span>
+                            <hr>
+                            <table class = 'betting-table'>
+                                <tr>
+                                    {% for bett in game['betting'] %}
+                                        {% if bett.site == 'ps3838.com' %}
+                                            <td class="betting-content">{{bett.stake}}</td>
+                                        {% endif %}
+                                    {% endfor %}
+                                </tr>
+                                <tr>
+                                    {% for bett in game['betting'] %}
+                                        {% if bett.site == 'bet487.org'%}
+                                            <td class="betting-content">{{bett.stake}}</td>
+                                        {% endif %}
+                                    {% endfor %}
+                                </tr>
+                                <tr>
+                                    {% for bett in game['betting'] %}
+                                        {% if bett.site == 'sports411.ag'%}
+                                            <td class="betting-content">{{bett.stake}}</td>
+                                        {% endif %}
+                                    {% endfor %}
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="betting-col">
+                            <span>Status</span>
+                            <hr>
+                            <table class = 'betting-table'>
+                                <tr>
+                                    {% for bett in game['betting'] %}
+                                        {% if bett.site == 'ps3838.com' and bett.status == '2'%}
+                                            <td class="betting-content" style="color: crimson;">+{{bett.wins}}</td>
+                                        {% elif bett.site == 'ps3838.com' and bett.status == '1'%}
+                                            <td class="betting-content" style="color: black;">-{{bett.stake}}</td>
+                                        {% elif bett.site == 'ps3838.com' and bett.status == '0' %}
+                                            <td class="betting-content">Pending</td>
+                                        {% endif %}
+                                    {% endfor %}
+                                </tr>
+                                <tr>
+                                    {% for bett in game['betting'] %}
+                                        {% if bett.site == 'bet487.org' and bett.status == '2'%}
+                                            <td class="betting-content" style="color: crimson;">+{{bett.wins}}</td>
+                                        {% elif bett.site == 'bet487.org' and bett.status == '1'%}
+                                            <td class="betting-content" style="color: black;">-{{bett.stake}}</td>
+                                        {% elif bett.site == 'bet487.org' and bett.status == '0' %}
+                                            <td class="betting-content">Pending</td>
+                                        {% endif %}
+                                    {% endfor %}
+                                </tr>
+                                <tr>
+                                    {% for bett in game['betting'] %}
+                                        {% if bett.site == 'sports411.ag' and bett.status == '2'%}
+                                            <td class="betting-content" style="color: crimson;">+{{bett.wins}}</td>
+                                        {% elif bett.site == 'sports411.ag' and bett.status == '1'%}
+                                            <td class="betting-content" style="color: black;">-{{bett.stake}}</td>
+                                        {% elif bett.site == 'sports411.ag' and bett.status == '0' %}
+                                            <td class="betting-content">Pending</td>
+                                        {% endif %}
+                                    {% endfor %}
+                                </tr>
+                            </table>
+                        </div>
+                        
+                    </div>
                     <button class="small-solid-button" id="game_button_{{game.game_id}}" onclick="openCard(this.id)">Set Lineups</button>
+                    <div style="margin-top: 10px;">
+                        {% if game.la_away_prob != None %}
+                            <a id = "load_batter_{{game.game_id}}" href="#" onclick="downLoadBatterData(this.id)">Download Batter Data</a>
+                            <br>
+                            <a id = "load_pitcher_{{game.game_id}}" href="#" onclick="downLoadPitcherData(this.id)">Download Pitcher Data</a>
+                        {% endif %}  
+                        {% if game.la_away_prob == None %}
+                            <a id = "load_batter_{{game.game_id}}" href="#" style="color: grey; cursor: default;">Download Batter Data</a>
+                            <br>
+                            <a id = "load_pitcher_{{game.game_id}}" href="#" style="color: grey; cursor: default;">Download Pitcher Data</a>
+                        {% endif %}                        
+                    </div>
                 </div>
                 {% endfor %}
             </div>
@@ -318,9 +479,9 @@
                         
                             </div>
                         </div>
-                        <a href="/download_batter_data">Download Batter Data</a>
+                        <a href="#" onclick="downLoadBatterData(0)">Download Batter Data</a>
                         <br>
-                        <a href="/download_pitcher_data">Download Pitcher Data</a>
+                        <a href="#" onclick="downLoadPitcherData(0)">Download Pitcher Data</a>
                     </form>
 
                     

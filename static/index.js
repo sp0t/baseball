@@ -343,8 +343,70 @@ function updateDatabase(){
             // document.getElementById('last-time').textContent = 'Last Updated ' + data['update_data']['time']
         }
     })
+}
 
+function updateTeam(){ 
+    $.ajax({
+        url: '/updateTeam', 
+        type: 'POST', 
+        beforeSend: function (){ 
+            alert('Updating Teamtable. This should take < 30 seconds. Press Enter or click OK.'); 
+        },
+        success: function (data){ 
+            alert('Update Complete!')
+            document.location.reload()
+            // document.getElementById('last-record').textContent = 'Last Record: ' + data['update_data']['record']
+            // document.getElementById('last-time').textContent = 'Last Updated ' + data['update_data']['time']
+        }
+    })
+}
 
+function  downLoadBatterData(id){
+    gameId = id.replace('load_batter_', '');
+
+    if(id == 0)
+        gameId = document.getElementsByClassName('.large-card').id.replace('game_button_', '');
+        
+    $.ajax({
+        type: 'POST', 
+        url: '/download_batter_data', 
+        data: {'data' : gameId},
+        beforeSend: function(){ 
+            console.log('before sending');
+        },
+        success: function (data){ 
+            var a = document.createElement('a');
+            a.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(data);
+            a.download = `BatterData_${gameId}.csv`;
+            document.body.append(a);
+            a.click();
+            a.remove();
+        }
+    })
+}
+
+function  downLoadPitcherData(id){
+    gameId = id.replace('load_pitcher_', '');
+
+    if(id == 0)
+        gameId = document.getElementsByClassName('.large-card').id.replace('game_button_', '');        
+    
+    $.ajax({
+        type: 'POST', 
+        url: '/download_pitcher_data', 
+        data: {'data' : gameId},
+        beforeSend: function(){ 
+            console.log('before sending');
+        },
+        success: function (data){ 
+            var a = document.createElement('a');
+            a.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(data);
+            a.download = `PitcherData_${gameId}.csv`;
+            document.body.append(a);
+            a.click();
+            a.remove();
+        }
+    })
 }
 
 

@@ -66,8 +66,8 @@ a{
     text-align: center;
 }
 .card{
-	width:280px;
-	height: 250px;
+	width:350px;
+	height: 470px;
 	background-color: #FFF;
 	border-radius: 5px;
 	box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
@@ -134,6 +134,26 @@ a{
     display:grid;
     grid-template-columns: 1fr 1fr;
 }
+
+.betting-wrapper{
+	display:grid;
+    grid-template-columns: auto auto auto auto auto;
+	margin-top: 8px;
+}
+
+.betting-col{
+    display: block;
+    text-align: center;
+    width: 70px;
+}
+
+.betting-title{
+	text-align: center;
+    color: #555;
+    font-weight: bold;
+    margin-top: 16px;
+}
+
 .form-left{
     display:block;
     border-right:solid var(--blue) 2px;
@@ -483,9 +503,18 @@ table {
 	width: 110px;
 }
 
+.betting-table{
+	width: 70px;
+}
+
 .model-content{
 	font-size: 17px;
     color: red;
+}
+
+.betting-content{
+	font-size: 15px;
+    color: blue;
 }
 
 .model-title{

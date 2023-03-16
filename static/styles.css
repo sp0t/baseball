@@ -75,6 +75,7 @@ a{
     padding: 20px 0;
     margin: 20px;
     display: inline-block;
+	border: solid;
 }
 .card-title{
     font-weight: 500;
@@ -93,7 +94,7 @@ a{
     box-shadow: none;
     color: #FCFCFC; 
     font-size: 16px;
-	margin-top: 15px;
+	margin-top: 8px;
 }
 .small-solid-button:hover{
     background-color: var(--light-blue);
@@ -139,6 +140,8 @@ a{
 	display:grid;
     grid-template-columns: auto auto auto auto auto;
 	margin-top: 8px;
+	position: relative;
+    left: -3px;
 }
 
 .betting-col{
@@ -158,10 +161,14 @@ a{
     display:block;
     border-right:solid var(--blue) 2px;
 	text-align: center;
+	padding-top: 5px;
+    padding-bottom: 5px
 }
 .form-right{
     display:block;	
 	text-align: center;
+	padding-top: 5px;
+    padding-bottom: 5px
 }
 .form-row{
     display: block; 
@@ -169,7 +176,7 @@ a{
     font-size: 15px;
 }
 hr{
-	height: 2px;
+	height: 1px;
 	background-color: var(--blue);
 	border: none;
 }

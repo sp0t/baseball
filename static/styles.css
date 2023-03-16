@@ -80,6 +80,7 @@ a{
 .card-title{
     font-weight: 500;
     font-size: 20px;
+	color: black;
 }
 .game-date{
 	font-size:16px;

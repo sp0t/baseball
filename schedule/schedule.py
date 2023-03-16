@@ -76,11 +76,6 @@ def get_schedule_from_mlb():
         el['game_id'] = str(el['game_id'])
         el['game_datetime'] = datetime.strptime(el['game_datetime'], '%H:%M:%S')-timedelta(hours = 3)
         el['game_datetime'] = datetime.strftime(el['game_datetime'], '%H:%M:%S')
-        el['la_away_prob'] = None
-        el['la_home_prob'] = None
-        el['lb_away_prob'] = None
-        el['lb_home_prob'] = None
-        el['betting'] = []
         
     game_sched = pd.DataFrame(game_sched)
     return game_sched

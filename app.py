@@ -330,7 +330,6 @@ def team(team_abbreviation):
 
 @app.route('/update_data', methods = ["POST"])
 def update_data(): 
-    
     update_date, update_time, last_record, num_games_added = database.update_database()
     update_data = {'update_date': update_date, 'update_time': update_time, 'last_record': last_record, 'games_added': num_games_added}
     schedule.update_schedule()

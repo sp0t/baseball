@@ -446,8 +446,10 @@ def season_state():
 
 @app.route('/betting', methods = ["POST"])    
 def betting_proc(): 
+    print('betting=====================>')
     if request.method == 'POST':
         betting_data = request.get_json()
+        print(betting_data)
         engine = database.connect_to_db()
         for betting in betting_data:
             current_GMT = time.gmtime()

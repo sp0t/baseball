@@ -225,7 +225,7 @@
             </div>
             <div class="mt-2 flex">
                 <div class="w-3/12 flex justify-center text-xl space-x-7">
-                    <label for="team_name" class="text-red-700">Team:</label>
+                    <label class="home_label" for="team_name" class="text-red-700">Team:</label>
 
                     <select class="bg-cyan-100 border-black" name="team_name" id="team" onchange="changeData()">
                         <option value="blank"></option>
@@ -235,7 +235,7 @@
                     </select>   
                 </div>
                 <div class="w-3/12 flex justify-center text-xl space-x-7">
-                    <label for="count" class="text-red-700">Count:</label>
+                    <label class="home_label" for="count" class="text-red-700">Count:</label>
 
                     <select class="bg-cyan-100 border-black px-5" id="count" onchange="changeData()">
                         <option>5</option>
@@ -250,9 +250,9 @@
                     </select>   
                 </div>
                 <div class="w-3/12 flex justify-center text-xl space-x-7">
-                    <label for="season" class="text-red-700">Year:</label>
+                    <label class="home_label" for="season" class="text-red-700">Year:</label>
 
-                    <input class="bg-cyan-100 border-black px-5" type="number" id="season" min="1900" max="2099" step="1" value="2023" onchange="changeData()">
+                    <input class="home_input" class="bg-cyan-100 border-black px-5" type="number" id="season" min="1900" max="2099" step="1" value="2023" onchange="changeData()">
                     </input>   
                 </div>
             </div>

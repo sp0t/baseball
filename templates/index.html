@@ -17,12 +17,6 @@
     <body>
         <div class="nav">
             <div class="nav-header"><div class="nav-title" style="font-size: 50px;">BetMLB</div></div>
-            <div class="nav-btn">
-              <label for="nav-check">
-                <span></span>
-                <span></span>
-                <span></span>
-              </label>
             </div>
             
             <div class="nav-links">
@@ -115,12 +109,12 @@
                             <hr>
                             <table class = 'kelly-table'>
                                 <tr>
-                                    {% if game.predict.la_away_betsize  != null %}
+                                    {% if game.predict.la_away_betsize  != null and game.predict.la_away_betsize  != None %}
                                         <td class="betting-content">{{game.predict.la_away_betsize}}</td>
                                     {% endif %}
                                 </tr>
                                 <tr>
-                                    {% if game.predict.la_home_betsize  != null %}
+                                    {% if game.predict.la_home_betsize  != null and game.predict.la_home_betsize  != None %}
                                         <td class="betting-content">{{game.predict.la_home_betsize}}</td>
                                     {% endif %}
                                 </tr>            
@@ -131,12 +125,12 @@
                             <hr>
                             <table class = 'kelly-table'>
                                 <tr>
-                                    {% if game.predict.lb_away_betsize  != null %}
+                                    {% if game.predict.lb_away_betsize  != null and game.predict.lb_away_betsize  != None %}
                                         <td class="betting-content">{{game.predict.lb_away_betsize}}</td>
                                     {% endif %}
                                 </tr>
                                 <tr>
-                                    {% if game.predict.lb_home_betsize  != null %}
+                                    {% if game.predict.lb_home_betsize  != null and game.predict.lb_home_betsize  != None %}
                                         <td class="betting-content">{{game.predict.lb_home_betsize}}</td>
                                     {% endif %}
                                 </tr>            
@@ -144,6 +138,26 @@
                         </div>
                         
                     </div>
+                    <hr>
+                    <div style="display: flex; padding-top: 10px;">
+                        <div style="flex: 1;">
+                            <input type="radio" class = 'kelly_input', id="html" name="fav_language" value="HTML">
+                            <label for="html" class="kelly_label">HTML</label><br>
+                            <input type="radio" class = 'kelly_input' id="css" name="fav_language" value="CSS">
+                            <label for="css" class="kelly_label">CSS</label><br>
+                        </div>
+                        <div style="flex: 1;">
+                            <input type="radio" class = 'kelly_input', id="html" name="fav_language" value="HTML">
+                            <label for="html" class="kelly_label">HTML</label><br>
+                            <input type="radio" class = 'kelly_input' id="css" name="fav_language" value="CSS">
+                            <label for="css" class="kelly_label">CSS</label><br>
+                        </div>
+                        <div style="flex: 1;">
+                            <label for="fname">First name:</label>
+                            <input type="number" id="fname" name="fname" style="width: 100px;"><br><br>
+                        </div>
+                    </div>
+                    <hr>
                     <div class="betting-title">
                         Betting State
                     </div>
@@ -325,7 +339,7 @@
                                 <hr>
                                 {% for i in range(1,10) %}
                                 <div class="form-row">
-                                    <label for="ab_{{i}}" class="select-label">Batter #{{i}}</label>
+                                    <label for="ab_{{i}}" class="home_label select-label">Batter #{{i}}</label>
                                     <select name="ab_{{i}}" style="width: 125px;" required>
                                         <option value="">—</option>
                                     </select>
@@ -333,7 +347,7 @@
                                 {% endfor %}
                                 <hr>
                                 <div class="form-row" style="margin: 20px 0 0 20px;">
-                                    <label for="away_starter" class="select-label">Starter</label>
+                                    <label for="away_starter" class="home_label select-label">Starter</label>
                                     <select name="away_starter" required>
                                         <option value="">—</option>
                                     </select>
@@ -346,7 +360,7 @@
                                 <hr>
                                 {% for i in range(1,10) %}
                                 <div class="form-row">
-                                    <label for="hb_{{i}}" class="select-label">Batter #{{i}}</label>
+                                    <label for="hb_{{i}}" class="home_label select-label">Batter #{{i}}</label>
                                     <select name="hb_{{i}}" style="width: 125px" required>
                                         <option value="">—</option>
                                     </select>
@@ -354,7 +368,7 @@
                                 {% endfor %}
                                 <hr>
                                 <div class="form-row" style="margin: 20px 0 0 20px;">
-                                    <label for="home_starter" class="select-label">Starter</label>
+                                    <label for="home_starter" class="home_label select-label">Starter</label>
                                     <select name="home_starter" required>
                                         <option value="">—</option>
                                     </select>
@@ -389,12 +403,12 @@
                                             <td>Model</td>
                                             <td>
                                               <div>
-                                                <input onchange="getAwayBet()" type="radio" id="away_model_1a" name="away_model_type" value="away_model_1a" checked>
-                                                <label for="away_model_1a">Model 1a</label>
+                                                <input onchange="getAwayBet()" class="home_input" type="radio" id="away_model_1a" name="away_model_type" value="away_model_1a" checked>
+                                                <label class ="home_label"  for="away_model_1a">Model 1a</label>
                                               </div>
                                               <div>
-                                                <input onchange="getAwayBet()" type="radio" id="away_model_1b" name="away_model_type" value="away_model_1b">
-                                                <label for="away_model_1b">Model 1b</label></td>
+                                                <input onchange="getAwayBet()" class="home_input" type="radio" id="away_model_1b" name="away_model_type" value="away_model_1b">
+                                                <label class ="home_label" for="away_model_1b">Model 1b</label></td>
                                               </div>
                                           </tr>
                                           <tr></tr>
@@ -471,12 +485,12 @@
                                             <td>Model</td>
                                             <td>
                                               <div>
-                                                <input onchange="getHomeBet()" type="radio" id="home_model_1a" name="home_model_type" value="home_model_1a" checked>
-                                                <label for="home_model_1a">Model 1a</label>
+                                                <input onchange="getHomeBet()" class="home_input" type="radio" id="home_model_1a" name="home_model_type" value="home_model_1a" checked>
+                                                <label for="home_model_1a" class="home_label">Model 1a</label>
                                               </div>
                                               <div>
-                                                <input onchange="getHomeBet()" type="radio" id="home_model_1b" name="home_model_type" value="home_model_1b">
-                                                <label for="home_model_1b">Model 1b</label></td>
+                                                <input onchange="getHomeBet()" class="home_input" type="radio" id="home_model_1b" name="home_model_type" value="home_model_1b">
+                                                <label for="home_model_1b" class="home_label">Model 1b</label></td>
                                               </div>
                                           </tr>
                                           <tr></tr>

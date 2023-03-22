@@ -405,17 +405,8 @@ body {
 	margin-right: auto;
 	padding-top: 4rem;
 }
-label {
-	font-size: 0.75rem;
-	font-weight: 400;
-	display: block;
-	margin-bottom: 0.5rem;
-	color: #B0BEC5;
-	border: 1px solid #ECEFF1;
-	padding: 0.5rem 0.75rem;
-	border-radius: 0.5rem;
-}
-input {
+
+.home_input{
 	font-family: 'Roboto', sans-serif;
 	display:block;
 	border: none;
@@ -428,6 +419,18 @@ input {
 	width: 100%;
 	margin-top: 0.5rem;
 }
+
+.home_label{
+	font-size: 0.75rem;
+	font-weight: 400;
+	display: block;
+	margin-bottom: 0.5rem;
+	color: #B0BEC5;
+	border: 1px solid #ECEFF1;
+	padding: 0.5rem 0.75rem;
+	border-radius: 0.5rem;
+}
+
 input:focus {outline: none;}
 #ui-datepicker-div {
 	display: none;

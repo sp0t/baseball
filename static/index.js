@@ -196,6 +196,13 @@ function getAwayBet(){
 
         var awayBetSize = 0.05*(((awayOddsDecimal*awayProbValue)-(1-awayProbValue))/awayProbValue)
         awayBetSize = awayBetSize.toFixed(3)
+
+        var data;
+
+        if(awayModelType == 'away_model_1a')
+            data = {'game_id':gameId, 'team':'away', 'modal':'A', 'Ev': awayEV * 100, 'betSize': awayBetSize * 100}
+        else
+            data = {'game_id':gameId, 'team':'away', 'modal':'B', 'Ev': awayEV * 100, 'betSize': awayBetSize * 100}
     }
     else{ 
         var awayBetSize = 'No Bet!'
@@ -204,13 +211,6 @@ function getAwayBet(){
     // Fill in new values 
     document.getElementsByName('away_edge')[0].textContent = awayEV; 
     document.getElementsByName('away_bet_size')[0].textContent = awayBetSize
-
-    var data;
-
-    if(awayModelType == 'away_model_1a')
-        data = {'game_id':gameId, 'team':'away', 'modal':'A', 'Ev': awayEV, 'betSize': awayBetSize}
-    else
-        data = {'game_id':gameId, 'team':'away', 'modal':'B', 'Ev': awayEV, 'betSize': awayBetSize}
 
     $.ajax({
         url: '/update_predicdata', 
@@ -277,6 +277,13 @@ function getHomeBet(){
 
         var homeBetSize = 0.05*(((homeOddsDecimal*homeProbValue)-(1-homeProbValue))/homeProbValue)
         homeBetSize = homeBetSize.toFixed(3)
+
+        var data;
+
+        if(homeModelType == 'home_model_1a')
+            data = {'game_id':gameId, 'team':'home', 'modal':'A','Ev': homeEV * 100, 'betSize': homeBetSize * 100}
+        else
+            data = {'game_id':gameId, 'team':'home', 'modal':'B','Ev': homeEV * 100, 'betSize': homeBetSize * 100}
     }
     else{ 
         var homeBetSize = 'No Bet!'
@@ -285,13 +292,6 @@ function getHomeBet(){
     // Fill in new values 
     document.getElementsByName('home_edge')[0].textContent = homeEV; 
     document.getElementsByName('home_bet_size')[0].textContent = homeBetSize
-
-    var data;
-
-    if(homeModelType == 'home_model_1a')
-        data = {'game_id':gameId, 'team':'home', 'modal':'A','Ev': homeEV, 'betSize': homeBetSize}
-    else
-        data = {'game_id':gameId, 'team':'home', 'modal':'B','Ev': homeEV, 'betSize': homeBetSize}
 
     $.ajax({
         url: '/update_predicdata', 

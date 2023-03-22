@@ -6,15 +6,15 @@ from pytz import timezone
 
 
 def get_schedule(): 
-    
-    away_state = True
-    home_state = True
-
     engine = database.connect_to_db()
     try: 
-        schedule = list(pd.read_sql('SELECT schedule.*, predict_table.la_away_prob, predict_table.la_home_prob, predict_table.lb_away_prob, predict_table.lb_home_prob FROM schedule LEFT JOIN predict_table ON schedule.game_id = predict_table.game_id;', con = engine).T.to_dict().values())
+        schedule = list(pd.read_sql('SELECT * FROM schedule;', con = engine).T.to_dict().values())
     except: 
         schedule = get_schedule_from_mlb()
+        for game in schedule: 
+            game['betting'] = []
+            game['predict'] = []
+
         return "Today's schedule can't be found. Try force-updating or waiting a few minutes to refresh!"
     
     res = mlb.get('teams', params = {'sportId': 1})['teams']
@@ -28,6 +28,7 @@ def get_schedule():
 
     for game in schedule0: 
         betting = list(pd.read_sql(f"SELECT place, odds, stake, wins, status, site FROM betting_table WHERE (place = '{game['away_name']}' OR place = '{game['home_name']}') AND betdate = '{date.today()}';", con = engine).T.to_dict().values())
+        predict = list(pd.read_sql(f"SELECT * FROM predict_table WHERE game_id = '{game['game_id']}';", con = engine).T.to_dict().values())
         
         for bett in betting:
             if bett['place'] == game['away_name']:
@@ -38,7 +39,11 @@ def get_schedule():
         game['away_name'] = team_dict[game['away_name']]
         game['home_name'] = team_dict[game['home_name']]
         game['betting'] = betting
-    
+        if predict != []:
+            game['predict'] = predict[0]
+        else:
+            game['predict'] = []
+
     return schedule0
 
 def get_rosters(game_id):
@@ -130,6 +135,4 @@ def insert_newTeam(game_id, away_name, home_name, away_state, home_state):
 
         home_name = home_club
     return away_name, home_name     
-
-
 

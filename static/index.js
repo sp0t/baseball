@@ -149,6 +149,8 @@ function makePrediction(){
 
 function getAwayBet(){ 
 
+    gameId = document.getElementsByClassName('.large-card').id.replace('game_button_', '');
+
     // Get Which Model 
     var awayModelType = document.querySelector('input[name="away_model_type"]:checked').value;
     if (awayModelType == 'away_model_1a'){ 
@@ -203,6 +205,22 @@ function getAwayBet(){
     document.getElementsByName('away_edge')[0].textContent = awayEV; 
     document.getElementsByName('away_bet_size')[0].textContent = awayBetSize
 
+    var data;
+
+    if(awayModelType == 'away_model_1a')
+        data = {'game_id':gameId, 'team':'away', 'modal':'A', 'Ev': awayEV, 'betSize': awayBetSize}
+    else
+        data = {'game_id':gameId, 'team':'away', 'modal':'B', 'Ev': awayEV, 'betSize': awayBetSize}
+
+    $.ajax({
+        url: '/update_predicdata', 
+        type: 'POST', 
+        data: { 'data' : JSON.stringify(data)},
+        error: function (error) {
+            alert('error; ' + eval(error));
+        }
+    })
+
     // Change Color 
     if (awayBetSize != 'No Bet!'){ 
         document.getElementsByName('away_bet_size')[0].style.color = 'green'
@@ -214,6 +232,7 @@ function getAwayBet(){
 }
 
 function getHomeBet(){ 
+    gameId = document.getElementsByClassName('.large-card').id.replace('game_button_', '');
 
     var homeModelType = document.querySelector('input[name="home_model_type"]:checked').value;
     if (homeModelType == 'home_model_1a'){ 
@@ -266,6 +285,23 @@ function getHomeBet(){
     // Fill in new values 
     document.getElementsByName('home_edge')[0].textContent = homeEV; 
     document.getElementsByName('home_bet_size')[0].textContent = homeBetSize
+
+    var data;
+
+    if(homeModelType == 'home_model_1a')
+        data = {'game_id':gameId, 'team':'home', 'modal':'A','Ev': homeEV, 'betSize': homeBetSize}
+    else
+        data = {'game_id':gameId, 'team':'home', 'modal':'B','Ev': homeEV, 'betSize': homeBetSize}
+
+    $.ajax({
+        url: '/update_predicdata', 
+        type: 'POST', 
+        data: { 'data' : JSON.stringify(data)},
+        error: function (error) {
+            alert('error; ' + eval(error));
+        }
+    })
+
 
     // Change Color 
     if (homeBetSize != 'No Bet!'){ 

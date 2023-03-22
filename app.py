@@ -336,6 +336,24 @@ def update_data():
     update_data = jsonify(update_data = update_data)
     return update_data
 
+@app.route('/update_predicdata', methods = ["POST"])
+def update_predicdata(): 
+    modify_data = json.loads(request.form['data'])
+    engine = database.connect_to_db()
+
+    if modify_data['team'] == 'away':
+        if modify_data['modal'] == 'A':
+            engine.execute(f"INSERT INTO predict_table(game_id, la_away_edge, la_away_betsize) VALUES('{modify_data['game_id']}', '{modify_data['Ev']}', '{modify_data['betSize']}') ON CONFLICT (game_id) DO UPDATE SET la_away_edge = excluded.la_away_edge, la_away_betsize = excluded.la_away_betsize;") 
+        elif modify_data['modal'] == 'B':
+            engine.execute(f"INSERT INTO predict_table(game_id, lb_away_edge, lb_away_betsize) VALUES('{modify_data['game_id']}', '{modify_data['Ev']}', '{modify_data['betSize']}') ON CONFLICT (game_id) DO UPDATE SET lb_away_edge = excluded.lb_away_edge, lb_away_betsize = excluded.lb_away_betsize;") 
+    if modify_data['team'] == 'home':
+        if modify_data['modal'] == 'A':
+            engine.execute(f"INSERT INTO predict_table(game_id, la_home_edge, la_home_betsize) VALUES('{modify_data['game_id']}', '{modify_data['Ev']}', '{modify_data['betSize']}') ON CONFLICT (game_id) DO UPDATE SET la_home_edge = excluded.la_home_edge, la_home_betsize = excluded.la_home_betsize;") 
+        elif modify_data['modal'] == 'B':
+            engine.execute(f"INSERT INTO predict_table(game_id, lb_home_edge, lb_home_betsize) VALUES('{modify_data['game_id']}', '{modify_data['Ev']}', '{modify_data['betSize']}') ON CONFLICT (game_id) DO UPDATE SET lb_home_edge = excluded.lb_home_edge, lb_home_betsize = excluded.lb_home_betsize;") 
+
+    return 'Success'
+
 @app.route('/database', methods = ["GET", "POST"])
 @login_required
 def show_database(): 

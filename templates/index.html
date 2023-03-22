@@ -58,14 +58,14 @@
                                 <table class = 'card-table'>
                                     <tr>
                                         <td class="model-title">Model la</td>
-                                        {% if game.la_away_prob != None %}
-                                            <td class="model-content">{{game.la_away_prob}}%</td>
+                                        {% if game.predict.la_away_prob != null %}
+                                            <td class="model-content">{{game.predict.la_away_prob}}%</td>
                                         {% endif %}
                                     </tr>
                                     <tr>
                                         <td class="model-title">Model lb</td>
-                                        {% if game.lb_away_prob != None %}
-                                            <td class="model-content">{{game.lb_away_prob}}%</td>
+                                        {% if game.predict.lb_away_prob != null %}
+                                            <td class="model-content">{{game.predict.lb_away_prob}}%</td>
                                         {% endif %}
                                     </tr>
                                 </table>
@@ -79,20 +79,102 @@
                                 <table class="card-table">
                                     <tr>
                                         <td class="model-title">Model la</td>
-                                        {% if game.la_home_prob != None %}
-                                        <td class="model-content">{{game.la_home_prob}}%</td>
+                                        {% if game.predict.la_home_prob != null %}
+                                        <td class="model-content">{{game.predict.la_home_prob}}%</td>
                                         {% endif %}
                                     </tr>
                                     <tr>
                                         <td class="model-title">Model lb</td>
-                                        {% if game.lb_home_prob != None %}
-                                        <td class="model-content">{{game.lb_home_prob}}%</td>
+                                        {% if game.predict.lb_home_prob != null %}
+                                        <td class="model-content">{{game.predict.lb_home_prob}}%</td>
                                         {% endif %}
                                     </tr>
                                 </table>
                             </div>
                             <hr>
                         </div>
+                    </div>
+                    <div class="betting-title">
+                        Kelly Prediction
+                    </div>
+                    <div class="betting-wrapper">
+                        <div class="betting-col">
+                            <span>Team</span>
+                            <hr>
+                            <table class = 'betting-table'>
+                                <tr>
+                                    <td class="model-title">away</td>
+                                </tr>
+                                <tr>
+                                    <td class="model-title">home</td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="betting-col">
+                            <span>la_Edge</span>
+                            <hr>
+                            <table class = 'betting-table'>
+                                <tr>
+                                    {% if game.predict.la_away_edge  != null %}
+                                        <td class="betting-content">{{game.predict.la_away_edge}}</td>
+                                    {% endif %}
+                                </tr>
+                                <tr>
+                                    {% if game.predict.la_home_edge  != null %}
+                                        <td class="betting-content">{{game.predict.la_home_edge}}</td>
+                                    {% endif %}
+                                </tr>            
+                            </table>
+                        </div>
+                        <div class="betting-col">
+                            <span>la_betSize</span>
+                            <hr>
+                            <table class = 'betting-table'>
+                                <tr>
+                                    {% if game.predict.la_away_betsize  != null %}
+                                        <td class="betting-content">{{game.predict.la_away_betsize}}</td>
+                                    {% endif %}
+                                </tr>
+                                <tr>
+                                    {% if game.predict.la_home_betsize  != null %}
+                                        <td class="betting-content">{{game.predict.la_home_betsize}}</td>
+                                    {% endif %}
+                                </tr>            
+                            </table>
+                        </div>
+                        <div class="betting-col">
+                            <span>lb_Edge</span>
+                            <hr>
+                            <table class = 'betting-table'>
+                                <tr>
+                                    {% if game.predict.lb_away_edge  != null %}
+                                        <td class="betting-content">{{game.predict.lb_away_edge}}</td>
+                                    {% endif %}
+                                </tr>
+                                <tr>
+                                    {% if game.predict.lb_home_edge  != null %}
+                                        <td class="betting-content">{{game.predict.lb_home_edge}}</td>
+                                    {% endif %}
+                                </tr>            
+                            </table>
+                        </div>
+                        <div class="betting-col">
+                            <span>lb_betSize</span>
+                            <hr>
+                            <table class = 'betting-table'>
+                                <tr>
+                                    {% if game.predict.lb_away_betsize  != null %}
+                                        <td class="betting-content">{{game.predict.lb_away_betsize}}</td>
+                                    {% endif %}
+                                </tr>
+                                <tr>
+                                    {% if game.predict.lb_home_betsize  != null %}
+                                        <td class="betting-content">{{game.predict.lb_home_betsize}}</td>
+                                    {% endif %}
+                                </tr>            
+                            </table>
+                        </div>
+                        
                     </div>
                     <div class="betting-title">
                         Betting State
@@ -364,13 +446,13 @@
 
                                         <tr>
                                             <td>Min Edge</td>
-                                            <td><input type="text" class="input-box" name="away_min_edge" value="3%" onchange="getHomeBet()"></td>
+                                            <td><input type="text" class="input-box" name="away_min_edge" value="3%" onchange="getAwayBet()"></td>
                                         </tr>
                                         <tr></tr>
 
                                         <tr>
                                             <td>Min Prob</td>
-                                            <td><input type="text" class="input-box" name="away_min_prob" value="48%" onchange="getHomeBet()"></td>
+                                            <td><input type="text" class="input-box" name="away_min_prob" value="48%" onchange="getAwayBet()"></td>
                                         </tr>
                                         <tr></tr>
 

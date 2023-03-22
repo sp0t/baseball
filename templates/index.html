@@ -97,39 +97,23 @@
                     <div class="betting-title">
                         Kelly Prediction
                     </div>
-                    <div class="betting-wrapper">
-                        <div class="betting-col">
+                    <div class="kelly-wrapper">
+                        <div class="kelly-col">
                             <span>Team</span>
                             <hr>
-                            <table class = 'betting-table'>
+                            <table class = 'kelly-table'>
                                 <tr>
-                                    <td class="model-title" style="font-size: 16px;">away</td>
+                                    <td class="model-title" style="font-size: 16px;">{{game.away_name}}</td>
                                 </tr>
                                 <tr>
-                                    <td class="model-title" style="font-size: 16px;">home</td>
+                                    <td class="model-title" style="font-size: 16px;">{{game.home_name}}</td>
                                 </tr>
                             </table>
                         </div>
-                        <div class="betting-col">
-                            <span>la_Edge</span>
+                        <div class="kelly-col">
+                            <span>modal A</span>
                             <hr>
-                            <table class = 'betting-table'>
-                                <tr>
-                                    {% if game.predict.la_away_edge  != null %}
-                                        <td class="betting-content">{{game.predict.la_away_edge}}</td>
-                                    {% endif %}
-                                </tr>
-                                <tr>
-                                    {% if game.predict.la_home_edge  != null %}
-                                        <td class="betting-content">{{game.predict.la_home_edge}}</td>
-                                    {% endif %}
-                                </tr>            
-                            </table>
-                        </div>
-                        <div class="betting-col">
-                            <span>la_betSize</span>
-                            <hr>
-                            <table class = 'betting-table'>
+                            <table class = 'kelly-table'>
                                 <tr>
                                     {% if game.predict.la_away_betsize  != null %}
                                         <td class="betting-content">{{game.predict.la_away_betsize}}</td>
@@ -142,26 +126,10 @@
                                 </tr>            
                             </table>
                         </div>
-                        <div class="betting-col">
-                            <span>lb_Edge</span>
+                        <div class="kelly-col">
+                            <span>modal B</span>
                             <hr>
-                            <table class = 'betting-table'>
-                                <tr>
-                                    {% if game.predict.lb_away_edge  != null %}
-                                        <td class="betting-content">{{game.predict.lb_away_edge}}</td>
-                                    {% endif %}
-                                </tr>
-                                <tr>
-                                    {% if game.predict.lb_home_edge  != null %}
-                                        <td class="betting-content">{{game.predict.lb_home_edge}}</td>
-                                    {% endif %}
-                                </tr>            
-                            </table>
-                        </div>
-                        <div class="betting-col">
-                            <span>lb_betSize</span>
-                            <hr>
-                            <table class = 'betting-table'>
+                            <table class = 'kelly-table'>
                                 <tr>
                                     {% if game.predict.lb_away_betsize  != null %}
                                         <td class="betting-content">{{game.predict.lb_away_betsize}}</td>

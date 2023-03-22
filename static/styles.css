@@ -66,7 +66,7 @@ a{
     text-align: center;
 }
 .card{
-	width: 390px;
+	width: 360px;
     height: 590px;
 	background-color: #FFF;
 	border-radius: 5px;
@@ -145,10 +145,18 @@ a{
     left: -3px;
 }
 
-.betting-col{
+.kelly-wrapper{
+	display:grid;
+    grid-template-columns: auto auto auto;
+	margin-top: 8px;
+	position: relative;
+    left: -3px;
+}
+
+.kelly-col{
     display: block;
     text-align: center;
-    width: 70px;
+    width: 118px;
 }
 
 .betting-title{
@@ -512,6 +520,10 @@ table {
 
 .betting-table{
 	width: 70px;
+}
+
+.kelly-table{
+	width: 118px;
 }
 
 .model-content{

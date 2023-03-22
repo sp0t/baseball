@@ -210,7 +210,6 @@ def get_probabilities(params):
     save_pitcher_data(engine, X_test, away_starter, home_starter, game_id)
 
     X_test = standardizeData(X_test, column_names)
-    X_test.to_csv('X_test.csv')
 
     X_test_b = X_test[[col for col in X_test.columns if 'bullpen' not in col]]
     print("Game Row Processed")

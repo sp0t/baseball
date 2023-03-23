@@ -27,13 +27,21 @@ def get_schedule():
             schedule0.append(el.copy())
 
     for game in schedule0: 
-        betting = list(pd.read_sql(f"SELECT place, odds, stake, wins, status, site FROM betting_table WHERE (place = '{game['away_name']}' OR place = '{game['home_name']}') AND betdate = '{date.today()}';", con = engine).T.to_dict().values())
+        betting = list(pd.read_sql(f"SELECT team1, team2, betdate, SUM(stake) AS total_stake, SUM(wins) AS total_wins FROM betting_table WHERE (place = '{game['away_name']}' OR place = '{game['home_name']}') AND betdate = '{date.today()}' GROUP BY team1, team2, betdate;", con = engine).T.to_dict().values())
         predict = list(pd.read_sql(f"SELECT * FROM predict_table WHERE game_id = '{game['game_id']}';", con = engine).T.to_dict().values())
         
         for bett in betting:
-            if bett['place'] == game['away_name']:
+            teamInfor = list(pd.read_sql(f"SELECT * FROM betting_table WHERE team1 = '{bett['team1']}' AND team2 = '{bett['team2']}' AND betdate = '{bett['betdate']}';", con = engine).T.to_dict().values())
+            bett['site'] = teamInfor[0]['site']
+            bett['place'] = teamInfor[0]['place']
+            bett['site'] = teamInfor[0]['site']
+            bett['status'] = teamInfor[0]['status']
+            bett['odds'] = teamInfor[0]['odds']
+            bett['stake'] = bett['total_stake']
+            bett['wins'] = bett['total_wins']
+            if teamInfor[0]['place'] == game['away_name']:
                 bett['place'] = team_dict[game['away_name']]
-            if bett['place'] == game['home_name']:
+            if teamInfor[0]['place'] == game['home_name']:
                 bett['place'] = team_dict[game['home_name']]
 
         game['away_name'] = team_dict[game['away_name']]
@@ -89,6 +97,7 @@ def update_schedule():
     
     engine = database.connect_to_db()
     engine.execute("DELETE FROM schedule")
+    engine.execute("DELETE FROM predict_table")
     
     new_schedule = get_schedule_from_mlb()
     new_schedule.to_sql("schedule", con = engine, index = False, if_exists = 'replace')

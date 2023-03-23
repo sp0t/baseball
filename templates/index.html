@@ -184,27 +184,27 @@
                                 <tr>
                                     {% for bett in game['betting'] %}
                                         {% if game.away_name == bett.place and bett.site == 'ps3838.com'%}
-                                            <td class="betting-content">away</td>
+                                            <td class="betting-content">{{game.away_name}}</td>
                                         {% elif game.home_name == bett.place and bett.site == 'ps3838.com'%}
-                                            <td class="betting-content">home</td>
+                                            <td class="betting-content">{{game.home_name}}</td>
                                         {% endif %}
                                     {% endfor %}
                                 </tr>
                                 <tr>
                                     {% for bett in game['betting'] %}
                                         {% if game.away_name == bett.place and bett.site == 'bet487.org' %}
-                                            <td class="betting-content">away</td>
+                                            <td class="betting-content">{{game.away_name}}</td>
                                         {% elif game.home_name == bett.place and bett.site == 'bet487.org' %}
-                                            <td class="betting-content">home</td>
+                                            <td class="betting-content">{{game.home_name}}</td>
                                         {% endif %}
                                     {% endfor %}
                                 </tr>
                                 <tr>
                                     {% for bett in game['betting'] %}
                                         {% if game.away_name == bett.place and bett.site == 'sports411.ag' %}
-                                            <td class="betting-content">away</td>
+                                            <td class="betting-content">{{game.away_name}}</td>
                                         {% elif game.home_name == bett.place and bett.site == 'sports411.ag' %}
-                                            <td class="betting-content">home</td>
+                                            <td class="betting-content">{{game.home_name}}</td>
                                         {% endif %}
                                     {% endfor %}
                                 </tr>

@@ -245,21 +245,21 @@
                                 <tr>
                                     {% for bett in game['betting'] %}
                                         {% if bett.site == 'ps3838.com' %}
-                                            <td class="betting-content">{{bett.total_stake}}</td>
+                                            <td class="betting-content">{{bett.stake}}</td>
                                         {% endif %}
                                     {% endfor %}
                                 </tr>
                                 <tr>
                                     {% for bett in game['betting'] %}
                                         {% if bett.site == 'bet487.org'%}
-                                            <td class="betting-content">{{bett.total_stake}}</td>
+                                            <td class="betting-content">{{bett.stake}}</td>
                                         {% endif %}
                                     {% endfor %}
                                 </tr>
                                 <tr>
                                     {% for bett in game['betting'] %}
                                         {% if bett.site == 'sports411.ag'%}
-                                            <td class="betting-content">{{bett.total_stake}}</td>
+                                            <td class="betting-content">{{bett.stake}}</td>
                                         {% endif %}
                                     {% endfor %}
                                 </tr>
@@ -272,9 +272,9 @@
                                 <tr>
                                     {% for bett in game['betting'] %}
                                         {% if bett.site == 'ps3838.com' and bett.status == '2'%}
-                                            <td class="betting-content" style="color: crimson;">+{{bett.totoal_wins}}</td>
+                                            <td class="betting-content" style="color: crimson;">+{{bett.wins}}</td>
                                         {% elif bett.site == 'ps3838.com' and bett.status == '1'%}
-                                            <td class="betting-content" style="color: black;">-{{bett.total_stake}}</td>
+                                            <td class="betting-content" style="color: black;">-{{bett.stake}}</td>
                                         {% elif bett.site == 'ps3838.com' and bett.status == '0' %}
                                             <td class="betting-content">Pending</td>
                                         {% endif %}
@@ -283,9 +283,9 @@
                                 <tr>
                                     {% for bett in game['betting'] %}
                                         {% if bett.site == 'bet487.org' and bett.status == '2'%}
-                                            <td class="betting-content" style="color: crimson;">+{{bett.totoal_wins}}</td>
+                                            <td class="betting-content" style="color: crimson;">+{{bett.wins}}</td>
                                         {% elif bett.site == 'bet487.org' and bett.status == '1'%}
-                                            <td class="betting-content" style="color: black;">-{{bett.total_stake}}</td>
+                                            <td class="betting-content" style="color: black;">-{{bett.stake}}</td>
                                         {% elif bett.site == 'bet487.org' and bett.status == '0' %}
                                             <td class="betting-content">Pending</td>
                                         {% endif %}
@@ -294,9 +294,9 @@
                                 <tr>
                                     {% for bett in game['betting'] %}
                                         {% if bett.site == 'sports411.ag' and bett.status == '2'%}
-                                            <td class="betting-content" style="color: crimson;">+{{bett.totoal_wins}}</td>
+                                            <td class="betting-content" style="color: crimson;">+{{bett.wins}}</td>
                                         {% elif bett.site == 'sports411.ag' and bett.status == '1'%}
-                                            <td class="betting-content" style="color: black;">-{{bett.total_stake}}</td>
+                                            <td class="betting-content" style="color: black;">-{{bett.stake}}</td>
                                         {% elif bett.site == 'sports411.ag' and bett.status == '0' %}
                                             <td class="betting-content">Pending</td>
                                         {% endif %}

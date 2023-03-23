@@ -27,7 +27,7 @@ def get_schedule():
             schedule0.append(el.copy())
 
     for game in schedule0: 
-        betting = list(pd.read_sql(f"SELECT place, odds, stake, wins, status, site FROM betting_table WHERE (place = '{game['away_name']}' OR place = '{game['home_name']}') AND betdate = '{date.today()}';", con = engine).T.to_dict().values())
+        betting = list(pd.read_sql(f"SELECT place, odds, SUM(stake) AS total_stake, SUM(wins) AS totoal_wins, status, site FROM betting_table WHERE (place = '{game['away_name']}' OR place = '{game['home_name']}') AND betdate = '{date.today()}' GROUP BY away_name, home_name, betdate;", con = engine).T.to_dict().values())
         predict = list(pd.read_sql(f"SELECT * FROM predict_table WHERE game_id = '{game['game_id']}';", con = engine).T.to_dict().values())
         
         for bett in betting:

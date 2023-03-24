@@ -27,18 +27,18 @@ def get_schedule():
             schedule0.append(el.copy())
 
     for game in schedule0: 
-        betting = list(pd.read_sql(f"SELECT team1, team2, betdate, SUM(stake) AS total_stake, SUM(wins) AS total_wins FROM betting_table WHERE (place = '{game['away_name']}' OR place = '{game['home_name']}') AND betdate = '{date.today()}' GROUP BY team1, team2, betdate;", con = engine).T.to_dict().values())
+        betting = list(pd.read_sql(f"SELECT team1, team2, betdate, site, SUM(stake) AS total_stake, SUM(wins) AS total_wins FROM betting_table WHERE team1 LIKE '{game['away_name']}%%' AND team2 LIKE '{game['home_name']}%%' AND betdate = '{date.today()}' GROUP BY team1, team2, betdate, site;", con = engine).T.to_dict().values())
         predict = list(pd.read_sql(f"SELECT * FROM predict_table WHERE game_id = '{game['game_id']}';", con = engine).T.to_dict().values())
         
         for bett in betting:
-            data = list(pd.read_sql(f"SELECT * FROM betting_table WHERE team1 = '{bett['team1']}' AND team2 = '{bett['team2']}' AND betdate = '{bett['betdate']}';", con = engine).T.to_dict().values())
+            data = list(pd.read_sql(f"SELECT * FROM betting_table WHERE team1 = '{bett['team1']}' AND team2 = '{bett['team2']}' AND betdate = '{bett['betdate']}' AND site = '{bett['site']}';", con = engine).T.to_dict().values())
             if data[0]['place'] == game['away_name']:
                 bett['place'] = team_dict[game['away_name']]
             if data[0]['place'] == game['home_name']:
                 bett['place'] = team_dict[game['home_name']]
             
             bett['status'] = data[0]['status']
-            bett['site'] = data[0]['site']
+            bett['site'] = bett['site']
             bett['odds'] = data[0]['odds']
             bett['stake'] = bett['total_stake']
             bett['wins'] = bett['total_wins']
@@ -50,6 +50,8 @@ def get_schedule():
             game['predict'] = predict[0]
         else:
             game['predict'] = []
+
+        print(game)
 
     return schedule0
 

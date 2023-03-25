@@ -411,7 +411,7 @@ def show_betting():
             bet["wins"] = "PENDING"
         elif bet["status"] == "1":
             bet["status"] = "L"
-            bet["wins"] = bet["stake"]
+            bet["wins"] = -bet["stake"]
         elif bet["status"] == "2":
             bet["status"] = "W"
 
@@ -427,13 +427,11 @@ def season_state():
     stake, profit, losses = 0, 0, 0
 
     for item in seasondata:
-        fwins = (item["wins"]).replace(",", "")
-        fstake = (item["stake"]).replace(",", "") 
-        stake += float(fstake)
+        stake += item["stake"]
         if(item["status"] == "1"):
-            losses += float(fstake)
+            losses += float(item["stake"])
         elif(item["status"] == "2"):
-            profit += float(fwins)
+            profit += float(item["wins"])
     data = {}
     data["stake"] = f'{stake:.2f}'
     data["profit"] = f'{profit:.2f}'

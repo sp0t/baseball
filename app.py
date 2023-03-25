@@ -365,9 +365,6 @@ def show_database():
     cols = ['game_id', 'game_date', 'away_team', 'home_team', 'away_score', 'home_score']
     res_15_cols = res_15[cols]
     
-    
-    
-    
     return render_template("database.html", data = list(res_15_cols.T.to_dict().values()))
 
 @app.route('/showbetting', methods = ["GET", "POST"])
@@ -388,7 +385,7 @@ def show_betting():
         if betstate[0]['regstate'] == '0':
             Index = smartContract.betIndex
             engine.execute(f"UPDATE betting_table SET regstate = '1', betindex = '{Index + 1}' WHERE betid = '{modify_data['betid']}';")
-            smartContract.createBetData(betstate)
+            smartContract.createBetData(betstate[0])
 
         res = engine.execute(f"SELECT betindex FROM betting_table WHERE betid = '{modify_data['betid']}';").fetchall()
         betIndex = int(res[0][0])
@@ -414,7 +411,7 @@ def show_betting():
             bet["wins"] = "PENDING"
         elif bet["status"] == "1":
             bet["status"] = "L"
-            bet["wins"] = "(" + bet["stake"] + ")"
+            bet["wins"] = bet["stake"]
         elif bet["status"] == "2":
             bet["status"] = "W"
 

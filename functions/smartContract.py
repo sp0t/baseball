@@ -10,7 +10,6 @@ deployed_contract = w3.eth.contract(address=contractAddress, abi=abi)
 betIndex = deployed_contract.functions.betIndex().call()
 
 def createBetData(betData):
-  print(betData)
   _betDate = betData["betdate"]
   _game = betData["game"].lower()
   if(betData["team1"] == betData["team2"]):

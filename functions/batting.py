@@ -90,12 +90,12 @@ def process_career_batter_data(games, recent_games, batter_stat_list):
     
     # Case #1: Rookie
     if len(seasons)==1: 
-        s_list, weights = [s0], [2/3]
+        s_list, weights = [s0], [1]
     # Case #2: 2nd Year
     elif len(seasons)==2: 
         s1=seasons[0]
         s_list = [s0,s1] if season_game_count>15 else [s1]
-        weights = [2/3,1/6] if season_game_count>15 else [1]        
+        weights = [2/3,1/3] if season_game_count>15 else [1]        
     # Case #3: 3+ Years
     elif len(seasons)==3: 
         s1,s2 = seasons[1], seasons[0]

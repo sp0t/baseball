@@ -65,15 +65,15 @@
                 <thead style="font-size: 30px;color: black; font-weight: bold; height: 80px;">
                     <tr>
                         <td>Total Stake</td>
-                        <td>Current Profit</td>
-                        <td>Current Losses</td>
+                        <td style="padding-left: 40px; padding-right: 40px;">P/L</td>
+                        <td>Yield</td>
                     </tr>
                 </thead>
                 <tbody style="font-size: 30px; height: 60px;">
                     <tr>
                         <td style="color: rgba(0, 38, 255, 0.784);">{{data['stake']}}</td>
-                        <td style="color: rgb(255, 1, 1);">{{data['profit']}}</td>
-                        <td style="color: rgb(0, 0, 0);">{{data['losses']}}</td>
+                        <td style="color: rgb(255, 1, 1);">{{data['pl']}}</td>
+                        <td style="color: rgb(0, 0, 0);">{{data['yield']}}%</td>
                     </tr>
                 </tbody>
             </table>

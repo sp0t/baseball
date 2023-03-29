@@ -433,9 +433,11 @@ def season_state():
         elif(item["status"] == "2"):
             profit += float(item["wins"])
     data = {}
-    data["stake"] = f'{stake:.2f}'
-    data["profit"] = f'{profit:.2f}'
-    data["losses"] = f'{losses:.2f}'
+    data["stake"] = round(stake, 2)
+    data["pl"] = round(profit - losses, 2)
+    yd = (profit - losses) / stake * 100
+    print(yd)
+    data["yield"] = round(yd, 2)
 
     return render_template("season.html", data = data)
 

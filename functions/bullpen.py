@@ -94,12 +94,12 @@ def process_career_bullpen_data(player_id, games, recent_games, pitcher_stat_lis
         s_list, weights = [s0], [2/3]
     # Case #2: 2nd Year
     elif len(seasons)==2: 
-        s1=seasons[1]
+        s1=seasons[0]
         s_list = [s0,s1] if season_game_count > 15 else [s1]
         weights = [2/3,1/6] if season_game_count > 15 else [1]        
     # Case #3: 3+ Years
     elif len(seasons)==3: 
-        s1,s2 = seasons[1], seasons[2]
+        s1,s2 = seasons[1], seasons[0]
         s_list = [s0,s1,s2] if season_game_count>15 else [s1,s2]
         weights = [2/3,1/6,1/6] if season_game_count>15 else [1/2,1/2]
     else: 

@@ -51,8 +51,6 @@ def get_schedule():
         else:
             game['predict'] = []
 
-        print(game)
-
     return schedule0
 
 def get_rosters(game_id):

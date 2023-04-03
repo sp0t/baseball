@@ -66,7 +66,17 @@ def get_box_score(game_id):
 
 def get_batting_box_score(data, team): 
 
-    team_batters = [str(el) for el in data[team]['batters'][:9]]
+    key = team + 'Batters'
+    data_info = data[key]
+    num = 1
+    team_batters = []
+    for el in data_info:
+        if el['battingOrder'] == str(num * 100):
+            team_batters.append(el['personId'])
+            num = num + 1
+
+    if len(team_batters) != 9:
+        return
     team_box_score = {}
     for team_batter in team_batters: 
         order = team_batters.index(team_batter)+1
@@ -149,10 +159,7 @@ def get_pitching_box_score(data, team):
     
     return team_box_score
 
-db_string = "postgresql://postgres:123@localhost:5432/testdb"
-db = create_engine(db_string)
-
-game_sched = mlb.schedule(start_date = '2023-03-09')
+game_sched = mlb.schedule(start_date = '2023-03-30')
 
 info_keys = ['game_id', 'game_datetime','away_name', 'home_name']
 game_sched = [{k:v for k,v in el.items() if k in info_keys} for el in game_sched]
@@ -167,15 +174,20 @@ for el in game_sched:
 
 box_list = []
 
-for el in game_sched: 
+# 533792 718772 718763
+# get_box_score('718772')
 
-    team1 = list(pd.read_sql(f"SELECT * FROM team_table WHERE team_name = '{el['away_name']}'", con = db).T.to_dict().values())
-    team2 = list(pd.read_sql(f"SELECT * FROM team_table WHERE team_name = '{el['home_name']}'", con = db).T.to_dict().values())
+for el in game_sched: 
+    if el['game_id'] != '718772':
+        continue
+
+    team1 = list(pd.read_sql(f"SELECT * FROM team_table WHERE team_name = '{el['away_name']}'", con = engine).T.to_dict().values())
+    team2 = list(pd.read_sql(f"SELECT * FROM team_table WHERE team_name = '{el['home_name']}'", con = engine).T.to_dict().values())
+
+    print('search gameid', el['game_id'])
 
     if team1 == [] or team2 == []:
         continue
-
-    print(team1[0]['team_abbr'], team2[0]['team_abbr'])
 
     box = get_box_score(el['game_id'])
     if box is None: 
@@ -200,8 +212,7 @@ for index, row in new_games.iterrows():
             '\'' + str(row[0]) + '\'' + ',' +  '\'' + row[1] + '\'' +  ',' + '\'' +  row[2] + '\'' +  ',' + \
             '\'' + str(row[3]) + '\'' +  ',' + '\'' +  str(row[4]) + '\'' +  ','  + '\'' + str(row[5])\
             + '\'' + ',' + '\'' +str(row[338]) + '\'' + ');'
-    
-    print(game_table_sql)
+
     engine.execute(game_table_sql)
     
     #pitcher_table insert query

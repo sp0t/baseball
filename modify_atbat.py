@@ -13,9 +13,9 @@ chrome_options.add_argument('--headless')
 chrome_options.add_argument('--no-sandbox')
 chrome_options.add_argument('--disable-dev-shm-usage')
 driver = webdriver.Chrome('/home/.wdm/drivers/chromedriver',chrome_options=chrome_options)
-# driver=webdriver.Chrome(service=Service(ChromeDriverManager().install()))
+driver=webdriver.Chrome(service=Service(ChromeDriverManager().install()))
 
-db_string = "postgresql://postgres:lucamlb123@localhost:5432/betmlb"
+db_string = "postgresql://postgres:lucamlb123@ec2-3-115-115-146.ap-northeast-1.compute.amazonaws.com:5432/betmlb"
 db = create_engine(db_string)
 
 # db = create_engine('postgresql://postgres:123@ec2-18-180-226-162.ap-northeast-1.compute.amazonaws.com:5432/betmlb', 

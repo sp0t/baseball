@@ -55,7 +55,18 @@ def get_game_id_list(start_date, end_date, show_progress = False):
 
 def get_batting_box_score(data, team): 
 
-    team_batters = [str(el) for el in data[team]['batters'][:9]]
+    key = team + 'Batters'
+    data_info = data[key]
+    num = 1
+    team_batters = []
+    for el in data_info:
+        if el['battingOrder'] == str(num * 100):
+            team_batters.append(el['personId'])
+            num = num + 1
+
+    if len(team_batters) != 9:
+        return
+    
     team_box_score = {}
     for team_batter in team_batters: 
         order = team_batters.index(team_batter)+1
@@ -301,4 +312,3 @@ def update_database():
     print('DB Updated')
     return last_update_date, last_update_time, new_last_record, len(game_id_list)
     
-

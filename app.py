@@ -542,7 +542,7 @@ def friend_page():
                         (CASE away_team WHEN '{team_data['abbr']}' THEN home_team ELSE away_team END)oppoteam FROM game_table \
                         WHERE (away_team = '{team_data['abbr']}' OR home_team = '{team_data['abbr']}') AND game_date LIKE '{year}%%' \
                         ORDER BY game_date DESC LIMIT '{count}')game_schudle CROSS JOIN (SELECT player_table.p_name, player_table.p_id FROM player_table INNER JOIN team_table ON player_table.t_id = team_table.team_id \
-                        WHERE team_table.team_name = '{team_data['name']}')player)table1 LEFT JOIN batter_table ON (table1.p_id = batter_table.playerid AND table1.game_id = batter_table.game_id))t ORDER BY p_name, game_date;", con = engine).to_dict('records')
+                        WHERE team_table.team_name = '{team_data['name']}')player)table1 LEFT JOIN batter_table ON (table1.p_id = batter_table.playerid AND table1.game_id = batter_table.game_id))t GROUP BY game_date, p_id, game_id, p_name, atbats, position, substitution ORDER BY p_name, game_date;", con = engine).to_dict('records')
 
         game_date = {}
 

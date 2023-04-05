@@ -146,7 +146,7 @@ def index():
     engine = database.connect_to_db()
     last_update = pd.read_sql("SELECT * FROM updates", con = engine).iloc[-1]
     last_date, last_time, last_record = last_update["update_date"], last_update["update_time"], last_update["last_record"]
-    print_date_time()
+    # print_date_time()
 
     return render_template("index.html", schedule = today_schedule, last_record = last_record, 
                            update_date = last_date, update_time = last_time)
@@ -538,7 +538,7 @@ def friend_page():
                         WHERE (away_team = '{team_data['abbr']}' OR home_team = '{team_data['abbr']}') AND game_date LIKE '{year}%%' \
                         ORDER BY game_date DESC LIMIT '{count}')a ORDER BY game_date;", con = engine).to_dict('records')
 
-        game_table = pd.read_sql(f"SELECT p_name, atbats FROM(SELECT * FROM (SELECT * FROM (SELECT game_id, game_date, (CASE away_team WHEN '{team_data['abbr']}' THEN '1' ELSE '0' END)pos, \
+        game_table = pd.read_sql(f"SELECT p_name, atbats, position, substitution FROM(SELECT * FROM (SELECT * FROM (SELECT game_id, game_date, (CASE away_team WHEN '{team_data['abbr']}' THEN '1' ELSE '0' END)pos, \
                         (CASE away_team WHEN '{team_data['abbr']}' THEN home_team ELSE away_team END)oppoteam FROM game_table \
                         WHERE (away_team = '{team_data['abbr']}' OR home_team = '{team_data['abbr']}') AND game_date LIKE '{year}%%' \
                         ORDER BY game_date DESC LIMIT '{count}')game_schudle CROSS JOIN (SELECT player_table.p_name, player_table.p_id FROM player_table INNER JOIN team_table ON player_table.t_id = team_table.team_id \

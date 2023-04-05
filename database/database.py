@@ -18,9 +18,6 @@ def connect_to_db():
         # engine = create_engine('postgresql://postgres:123@localhost:5432/testdb', 
         #                        connect_args = {'connect_timeout': 10}, 
         #                        echo=False, pool_size=20, max_overflow=0)
-        # engine = create_engine('postgresql://postgres:123@localhost:5432/test', 
-        #                        connect_args = {'connect_timeout': 10}, 
-        #                        echo=False, pool_size=20, max_overflow=0)
         print('Connection Initiated')
     except:
         raise ValueError("Can't connect to Heroku PostgreSQL! You must be so embarrassed")
@@ -57,21 +54,32 @@ def get_batting_box_score(data, team):
 
     key = team + 'Batters'
     data_info = data[key]
-    num = 1
     team_batters = []
+    subinfo = {}
+    num = 1
     for el in data_info:
-        if el['battingOrder'] == str(num * 100):
-            team_batters.append(el['personId'])
-            num = num + 1
+        if el['personId'] != 0:    
+            if el['substitution']:
+                if el['battingOrder'] == str((num - 1) * 100 + 1):
+                    subinfo[str(el['personId'])] = {}
+                    team_batters.append(el['personId'])
+                    subinfo[str(el['personId'])]['position'] = num - 1
+                    subinfo[str(el['personId'])]['substitution'] = 1
+            else:
+                subinfo[str(el['personId'])] = {}
+                team_batters.append(el['personId'])
+                subinfo[str(el['personId'])]['position'] = num
+                subinfo[str(el['personId'])]['substitution'] = 0
+                num = num + 1
 
-    if len(team_batters) != 9:
-        return
-    
-    team_box_score = {}
+    team_box_score = []
+ 
     for team_batter in team_batters: 
         order = team_batters.index(team_batter)+1
         pbs = data[team]['players'][f'ID{team_batter}']['stats']['batting']
         pbs.update({'playerId': team_batter})
+        pbs.update({'position': subinfo[str(team_batter)]['position']})
+        pbs.update({'substitution': subinfo[str(team_batter)]['substitution']})
 
         # Calculate AVG, OBP, SLG, OPS
         atBats = pbs['atBats']
@@ -86,10 +94,7 @@ def get_batting_box_score(data, team):
             'slg': slg, 
             'ops': obp + slg
         })
-
-        pbs = {f'{team}_b{order}_{k}':v for k,v in pbs.items() if k not in ['leftOnBase', 'stolenBases']}
-        team_box_score.update(pbs)
-
+        team_box_score.append(pbs)
     return team_box_score
 
 def get_pitching_box_score(data, team): 
@@ -122,8 +127,7 @@ def get_pitching_box_score(data, team):
         'whip': whip, 
     })
 
-    team_starter_data = {f'{team}_starter_{k}':v for k,v in team_starter_data.items() if k not in ['leftOnBase', 'stolenBases', 'note', 'notes','numberOfPitches']}
-
+    team_starter_data = {k:v for k,v in team_starter_data.items() if k not in ['leftOnBase', 'stolenBases', 'note', 'notes','numberOfPitches']}
 
     team_reliever_data_list = []
     for team_reliever in team_relievers: 
@@ -140,12 +144,11 @@ def get_pitching_box_score(data, team):
 
         team_reliever_data = {k:v for k,v in team_reliever_data.items() if k not in ['leftOnBase', 'stolenBases', 'note', 'notes','numberOfPitches']}
         team_reliever_data_list.append(team_reliever_data)
+
     team_bullpen_data = pd.DataFrame(team_reliever_data_list).mean().to_dict()
-    team_bullpen_data = {f'{team}_bullpen_{k}':v for k,v in team_bullpen_data.items()}
     
-    team_box_score.update(team_starter_data)
-    team_box_score.update(team_bullpen_data)
-    
+    team_box_score['starter'] = team_starter_data
+    team_box_score['bullpen'] = team_bullpen_data
     
     return team_box_score
 
@@ -171,23 +174,29 @@ def get_box_score(game_id):
     }
 
     # Batting Data
+    batter_data = {}
     away_batter_data = get_batting_box_score(data, 'away')
+    batter_data['away'] = away_batter_data
     home_batter_data = get_batting_box_score(data, 'home')
-    box_score.update(away_batter_data)
-    box_score.update(home_batter_data)
+    batter_data['home'] = home_batter_data
+
+    if away_batter_data is None or home_batter_data is None: 
+        return None
+    
+    box_score['batter'] = batter_data
     
     # Pitching Data
+    pitcher_data = {}
     away_pitcher_data = get_pitching_box_score(data, 'away')
+    pitcher_data['away'] = away_pitcher_data
     home_pitcher_data = get_pitching_box_score(data, 'home')
+    pitcher_data['home'] = home_pitcher_data
     
     if away_pitcher_data is None or home_pitcher_data is None: 
         return None
-    box_score.update(away_pitcher_data)
-    box_score.update(home_pitcher_data)
     
-    box_score = {box_score['game_id']:box_score}
+    box_score['pitcher'] = pitcher_data
         
-    
     return box_score
 
 def update_database(): 
@@ -228,70 +237,55 @@ def update_database():
             for box in box_list: 
                 df = pd.concat([df, pd.DataFrame(box).T])
             df = df.drop([col for col in df.columns if 'note' in col], axis = 1)
-            meta_cols = ['game_id','game_date', 'away_team', 'home_team', 'away_score', 'home_score']
-            df1 = df[meta_cols]
-            df2 = df[[col for col in df.columns if col not in meta_cols]]
-            df = pd.concat([df1, df2], axis = 1)
-            df['winner'] = df.apply(lambda row: 1 if row['home_score'] > row['away_score'] else 0, axis = 1)
-            df = df.astype(str).reset_index(drop = True)
-            df.columns = df.columns.str.lower()
-            new_games = df
-            new_last_record = new_games['game_date'].max()
-            for index, row in new_games.iterrows():
-                #game_table
-                game_table_sql = 'INSERT INTO game_table( game_id, game_date, away_team, home_team, away_score, home_score, winner) VALUES (' + \
-                        '\'' + str(row[0]) + '\'' + ',' +  '\'' + row[1] + '\'' +  ',' + '\'' +  row[2] + '\'' +  ',' + \
-                        '\'' + str(row[3]) + '\'' +  ',' + '\'' +  str(row[4]) + '\'' +  ','  + '\'' + str(row[5])\
-                        + '\'' + ',' + '\'' +str(row[338]) + '\'' + ');'
-                engine.execute(game_table_sql)
-                
-                #pitcher_table insert query
-                for k in range(1, 5):
-                    if k % 4 == 0:
-                        key, team, role = 298, 'home', 'bullpen'
-                    elif k % 4 == 1:
-                        key, team, role = 152, 'away', 'starter'
-                    elif k % 4 == 2:
-                        key, team, role = 132, 'away', 'bullpen'
-                    elif k % 4 == 3:
-                        key, team, role = 318, 'home', 'starter'
 
-                    pitcher_table_sql = 'INSERT INTO pitcher_table( game_id, playerid, team, role, atbats, baseonballs, blownsaves, doubles, earnedruns, era,' \
-                                'hits, holds, homeruns, inningspitched, losses, pitchesthrown, rbi, runs, strikeouts, strikes, triples, whip, wins) VALUES (' + \
-                                '\'' + str(row[0]) + '\'' + ',' +  '\'' + str(row[key+12]) + '\'' +  ',' + '\'' +  team + '\'' +  ',' + '\'' + role + '\'' +  ',' + \
-                                '\'' + str(row[key+0]) + '\'' +  ',' + '\'' + str(row[key+1]) + '\'' +  ',' + '\'' + str(row[key+2]) + '\'' +  ',' + \
-                                '\'' + str(row[key+3]) + '\'' +  ',' + '\'' + str(row[key+4]) + '\'' +  ',' + '\'' + str(row[key+5]) + '\'' + ',' + \
-                                '\'' + str(row[key+6]) + '\'' +  ',' + '\'' + str(row[key+7]) + '\'' +  ',' + '\'' + str(row[key+8]) + '\'' +  ',' + \
-                                '\'' + str(row[key+9]) + '\'' +  ',' + '\'' + str(row[key+10]) + '\'' +  ',' + '\'' + str(row[key+11]) + '\'' +  ',' + \
-                                '\'' + str(row[key+13]) + '\'' +  ',' + '\'' + str(row[key+14]) + '\'' +  ',' + '\'' + str(row[key+15]) + '\'' +  ',' + \
-                                '\'' + str(row[key+16]) + '\'' +  ',' + '\'' + str(row[key+17]) + '\'' +  ',' + '\'' + str(row[key+18]) + '\'' +  ',' + \
-                                '\'' + str(row[key+19]) + '\'' + ');'
-                    engine.execute(pitcher_table_sql)
-                #batter_table insert query
-                for j in range(1, 19):
-                    if(j < 10):
-                        batter_table_sql = 'INSERT INTO batter_table( game_id, playerid, team, position, atbats, avg, baseonballs, doubles, hits, homeruns, '\
-                                    'obp, ops, rbi, runs, slg, strikeouts, triples) VALUES (' + \
-                                    '\'' + str(row[0]) + '\'' + ',' +  '\'' + str(row[6 + (j - 1) * 14 + 8]) + '\'' +  ',' + \
-                                    '\'' + 'away' + '\'' + ',' + '\'' +  str(j) + '\'' +  ',' +\
-                                    '\'' + str(row[6 + (j - 1) * 14 + 0]) + '\'' +  ',' + '\'' + str(row[6 + (j - 1) * 14 + 1]) + '\'' +  ',' + \
-                                    '\'' + str(row[6 + (j - 1) * 14 + 2]) + '\'' +  ',' + '\'' + str(row[6 + (j - 1) * 14 + 3]) + '\'' +  ',' + \
-                                    '\'' + str(row[6 + (j - 1) * 14 + 4]) + '\'' +  ',' + '\'' + str(row[6 + (j - 1) * 14 + 5]) + '\'' +  ',' + \
-                                    '\'' + str(row[6 + (j - 1) * 14 + 6]) + '\'' +  ',' + '\'' + str(row[6 + (j - 1) * 14 + 7]) + '\'' +  ',' + \
-                                    '\'' + str(row[6 + (j - 1) * 14 + 9]) + '\'' +  ',' + '\'' + str(row[6 + (j - 1) * 14 + 10]) + '\'' +  ',' + '\'' + str(row[6 + (j - 1) * 14 + 11]) + '\'' +  ',' + \
-                                    '\'' + str(row[6 + (j - 1) * 14 + 12]) + '\'' +  ',' + '\'' + str(row[6 + (j - 1) * 14 + 13]) + '\'' + ');'
-                    else:
-                        batter_table_sql = 'INSERT INTO batter_table( game_id, playerid, team, position, atbats, avg, baseonballs, doubles, hits, homeruns, '\
-                                    'obp, ops, rbi, runs, slg, strikeouts, triples) VALUES (' + \
-                                    '\'' + str(row[0]) + '\'' + ',' +  '\'' + str(row[172 + (j - 10) * 14 + 8]) + '\'' +  ',' + \
-                                    '\'' + 'home' + '\'' + ',' + '\'' +  str(j - 9) + '\'' +  ',' +\
-                                    '\'' + str(row[172 + (j - 10) * 14 + 0]) + '\'' +  ',' + '\'' + str(row[172 + (j - 10) * 14 + 1]) + '\'' +  ',' + \
-                                    '\'' + str(row[172 + (j - 10) * 14 + 2]) + '\'' +  ',' + '\'' + str(row[172 + (j - 10) * 14 + 3]) + '\'' +  ',' + \
-                                    '\'' + str(row[172 + (j - 10) * 14 + 4]) + '\'' +  ',' + '\'' + str(row[172 + (j - 10) * 14 + 5]) + '\'' +  ',' + \
-                                    '\'' + str(row[172 + (j - 10) * 14 + 6]) + '\'' +  ',' + '\'' + str(row[172 + (j - 10) * 14 + 7]) + '\'' +  ',' + \
-                                    '\'' + str(row[172 + (j - 10) * 14 + 9]) + '\'' +  ',' + '\'' + str(row[172 + (j - 10) * 14 + 10]) + '\'' +  ',' + '\'' + str(row[6 + (j - 10) * 14 + 11]) + '\'' +  ',' + \
-                                    '\'' + str(row[172 + (j - 12) * 14 + 11]) + '\'' +  ',' + '\'' + str(row[172 + (j - 10) * 14 + 13]) + '\'' + ');'
-                    engine.execute(batter_table_sql)
+            if df is None:
+                new_last_record = pd.read_sql("SELECT * FROM updates", con = engine).iloc[-1]['last_record']
+            else:
+                for el in box_list:
+                    if el['away_score'] < el['home_score']:
+                        winner = 1
+                    else:   
+                        winner = 0
+                    # game_table
+                    game_table_sql = 'INSERT INTO game_table( game_id, game_date, away_team, home_team, away_score, home_score, winner) VALUES (' + \
+                            '\'' + el['game_id'] + '\'' + ',' +  '\'' + el['game_date'] + '\'' +  ',' + '\'' +  el['away_team'] + '\'' +  ',' + \
+                            '\'' + el['home_team'] + '\'' +  ',' + '\'' +  el['away_score'] + '\'' +  ','  + '\'' + el['home_score']\
+                            + '\'' + ',' + '\'' + str(winner) + '\'' + ');'
+                    engine.execute(game_table_sql)
+                    
+                    # pitcher_table insert query
+                    teams = ['away', 'home']
+                    roles = ['starter', 'bullpen']
+
+                    for team in teams:
+                        for role in roles:
+                            pitcher_table_sql = 'INSERT INTO pitcher_table( game_id, playerid, team, role, atbats, baseonballs, blownsaves, doubles, earnedruns, era,' \
+                                        'hits, holds, homeruns, inningspitched, losses, pitchesthrown, rbi, runs, strikeouts, strikes, triples, whip, wins) VALUES (' + \
+                                        '\'' + el['game_id'] + '\'' + ',' +  '\'' + str(el['pitcher'][team][role]['playerId']) + '\'' +  ',' + '\'' + team + '\'' + ',' + '\'' + role + '\'' + ',' + \
+                                        '\'' + str(el['pitcher'][team][role]['atBats']) + '\'' +  ',' + '\'' + str(el['pitcher'][team][role]['baseOnBalls']) + '\'' +  ',' + '\'' + str(el['pitcher'][team][role]['blownSaves']) + '\'' +  ',' + \
+                                        '\'' + str(el['pitcher'][team][role]['doubles']) + '\'' +  ',' + '\'' + str(el['pitcher'][team][role]['earnedRuns']) + '\'' +  ',' + '\'' + str(el['pitcher'][team][role]['era']) + '\'' + ',' + \
+                                        '\'' + str(el['pitcher'][team][role]['hits']) + '\'' +  ',' + '\'' + str(el['pitcher'][team][role]['holds']) + '\'' +  ',' + '\'' + str(el['pitcher'][team][role]['homeRuns']) + '\'' +  ',' + \
+                                        '\'' + str(el['pitcher'][team][role]['inningsPitched']) + '\'' +  ',' + '\'' + str(el['pitcher'][team][role]['losses']) + '\'' +  ',' + '\'' + str(el['pitcher'][team][role]['pitchesThrown']) + '\'' +  ',' + \
+                                        '\'' + str(el['pitcher'][team][role]['rbi']) + '\'' +  ',' + '\'' + str(el['pitcher'][team][role]['runs']) + '\'' +  ',' + '\'' + str(el['pitcher'][team][role]['strikeOuts']) + '\'' +  ',' + \
+                                        '\'' + str(el['pitcher'][team][role]['strikes']) + '\'' +  ',' + '\'' + str(el['pitcher'][team][role]['triples']) + '\'' +  ',' + '\'' + str(el['pitcher'][team][role]['whip']) + '\'' +  ',' + \
+                                        '\'' + str(el['pitcher'][team][role]['wins']) + '\'' + ');'
+                            engine.execute(pitcher_table_sql)
+
+                    # batter_table insert query
+                    for team in teams:
+                        for batter in el['batter'][team]:
+                            batter_table_sql = 'INSERT INTO batter_table( game_id, playerid, team, position, atbats, avg, baseonballs, doubles, hits, homeruns, '\
+                                        'obp, ops, rbi, runs, slg, strikeouts, triples, substitution) VALUES (' + \
+                                        '\'' + el['game_id'] + '\'' + ',' +  '\'' + str(batter['playerId']) + '\'' +  ',' + \
+                                        '\'' + team + '\'' + ',' + '\'' +  str(batter['position']) + '\'' +  ',' +\
+                                        '\'' + str(batter['atBats']) + '\'' +  ',' + '\'' + str(batter['avg']) + '\'' +  ',' + \
+                                        '\'' + str(batter['baseOnBalls']) + '\'' +  ',' + '\'' + str(batter['doubles']) + '\'' +  ',' + \
+                                        '\'' + str(batter['hits']) + '\'' +  ',' + '\'' + str(batter['homeRuns']) + '\'' +  ',' + \
+                                        '\'' + str(batter['obp']) + '\'' +  ',' + '\'' + str(batter['ops']) + '\'' +  ',' + \
+                                        '\'' + str(batter['rbi']) + '\'' +  ',' + '\'' + str(batter['runs']) + '\'' +  ',' + '\'' + str(batter['slg']) + '\'' +  ',' + \
+                                        '\'' + str(batter['strikeOuts']) + '\'' +  ',' + '\'' + str(batter['triples']) + '\'' + ',' + '\'' + str(batter['substitution']) + '\'' + ');'
+                            engine.execute(batter_table_sql)
+                    new_last_record = el['game_date']
     else: 
         new_last_record = pd.read_sql("SELECT * FROM updates", con = engine).iloc[-1]['last_record']
         

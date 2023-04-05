@@ -143,15 +143,24 @@
                         }
                         else if(parseInt(value['atbats']) == 0)
                         {
-                            html+=`<td class="border border-black bg-orange-500"}>0</td>`;
+                            if(parseInt(value['substitution']) == 0)
+                                html+=`<td class="border border-black bg-orange-500"}>0 </td>`;
+                            else if(parseInt(value['substitution']) == 1)
+                                html+=`<td class="border border-black bg-orange-300"}>0(s)</td>`;
                         }
                         else if(parseInt(value['atbats']) == 1)
                         {
-                            html+=`<td class="border border-black bg-yellow-300"}>1</td>`;
+                            if(parseInt(value['substitution']) == 0)
+                                html+=`<td class="border border-black bg-yellow-300"}>1 </td>`;
+                            else if(parseInt(value['substitution']) == 1)
+                                html+=`<td class="border border-black bg-yellow-200"}>1(s)</td>`;
                         }
                         else
                         {
-                            html+=`<td class="border border-black bg-green-500"}>${parseInt(value['atbats'])}</td>`;
+                            if(parseInt(value['substitution']) == 0)
+                                html+=`<td class="border border-black bg-green-500"}>${parseInt(value['atbats'])} </td>`;
+                            else if(parseInt(value['substitution']) == 1)
+                                html+=`<td class="border border-black bg-green-300"}>${parseInt(value['atbats'])}(s)</td>`;
                         }
                     });
 

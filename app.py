@@ -146,7 +146,7 @@ def index():
     engine = database.connect_to_db()
     last_update = pd.read_sql("SELECT * FROM updates", con = engine).iloc[-1]
     last_date, last_time, last_record = last_update["update_date"], last_update["update_time"], last_update["last_record"]
-    # print_date_time()
+    print_date_time()
 
     return render_template("index.html", schedule = today_schedule, last_record = last_record, 
                            update_date = last_date, update_time = last_time)
@@ -635,6 +635,7 @@ def print_date_time():
     for bet in betdata:
         betIndex = smartContract.betIndex()
         engine.execute(f"UPDATE betting_table SET regstate = '1', betindex = '{betIndex + 1}' WHERE betid = '{bet['betid']}';")
+        print('create=====', betIndex)
         smartContract.createBetData(bet)
 
 scheduler = BackgroundScheduler()

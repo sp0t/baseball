@@ -450,8 +450,6 @@ def betting_proc():
             stake = betting["stake"].replace(',', '')
             wins = betting["wins"].replace(',', '')
 
-            print('betting_data', stake, wins)
-            
             current_GMT = time.gmtime()
             regtime = calendar.timegm(current_GMT)
 
@@ -459,7 +457,7 @@ def betting_proc():
                                 'VALUES (' + \
                                 '\'' + betting["gamedate"] + '\'' + ',' + '\'' + betting["game"].lower() + '\'' + ','+  '\'' + betting["team1"] + '\'' +  ',' + \
                                 '\'' + betting["team2"] + '\'' +  ',' + '\'' + betting["market"] + '\'' +  ',' + '\'' + betting["place"] + '\'' +  ','\
-                                '\'' + str(betting["odds"]) + '\'' +  ',' + '\'' + betting["stake"] + '\'' +  ',' + '\'' + betting["wins"] + '\'' +  ',' + \
+                                '\'' + str(betting["odds"]) + '\'' +  ',' + '\'' + stake + '\'' +  ',' + '\'' + wins + '\'' +  ',' + \
                                 '\'' + '0' + '\'' +  ',' + '\'' + betting["site"] + '\'' +  ',' + '\'' + str(regtime) + '\'' +  ',' + '\'' + "0" + '\'' +  ',' + '\'' + "0" + '\''+ ');'
             engine.execute(betting_table_sql)
     ret = "ok"

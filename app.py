@@ -142,7 +142,6 @@ def index():
     except:
         pass
 
-    print_date_time()
     today_schedule = schedule.get_schedule()                                                                                                                                                                                                                                                                                                                                                                                                                                             
     engine = database.connect_to_db()
     last_update = pd.read_sql("SELECT * FROM updates", con = engine).iloc[-1]

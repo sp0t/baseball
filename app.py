@@ -445,6 +445,7 @@ def season_state():
 def betting_proc(): 
     if request.method == 'POST':
         betting_data = request.get_json()
+        print('betting_data', betting_data)
         engine = database.connect_to_db()
         for betting in betting_data:
             current_GMT = time.gmtime()
@@ -619,6 +620,7 @@ def update_P_T_table():
     return 
 
 def print_date_time():
+    print('start======print_date_time')
     current_GMT = time.gmtime()
 
     time_stamp = calendar.timegm(current_GMT)

@@ -445,7 +445,9 @@ def season_state():
 def betting_proc(): 
     if request.method == 'POST':
         betting_data = request.get_json()
-        print('betting_data', betting_data)
+        stake = betting["stake"].replace(',', '')
+        wins = betting["wins"].replace(',', '')
+        print('betting_data', stake, wins)
         engine = database.connect_to_db()
         for betting in betting_data:
             current_GMT = time.gmtime()

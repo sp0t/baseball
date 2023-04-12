@@ -448,14 +448,16 @@ def betting_proc():
         for betting in betting_data:
             stake = betting["stake"].replace(',', '')
             wins = betting["wins"].replace(',', '')
+            away = betting["team1"].replace('Action', '')
+            home = betting["team2"].replace('Action', '')
 
             current_GMT = time.gmtime()
             regtime = calendar.timegm(current_GMT)
 
             betting_table_sql = 'INSERT INTO betting_table(betdate, game, team1, team2, market, place, odds, stake, wins, status, site, regtime, regstate, betindex) '\
                                 'VALUES (' + \
-                                '\'' + betting["gamedate"] + '\'' + ',' + '\'' + betting["game"].lower() + '\'' + ','+  '\'' + betting["team1"] + '\'' +  ',' + \
-                                '\'' + betting["team2"] + '\'' +  ',' + '\'' + betting["market"] + '\'' +  ',' + '\'' + betting["place"] + '\'' +  ','\
+                                '\'' + betting["gamedate"] + '\'' + ',' + '\'' + betting["game"].lower() + '\'' + ','+  '\'' + away + '\'' +  ',' + \
+                                '\'' + home + '\'' +  ',' + '\'' + betting["market"] + '\'' +  ',' + '\'' + betting["place"] + '\'' +  ','\
                                 '\'' + str(betting["odds"]) + '\'' +  ',' + '\'' + stake + '\'' +  ',' + '\'' + wins + '\'' +  ',' + \
                                 '\'' + '0' + '\'' +  ',' + '\'' + betting["site"] + '\'' +  ',' + '\'' + str(regtime) + '\'' +  ',' + '\'' + "0" + '\'' +  ',' + '\'' + "0" + '\''+ ');'
             engine.execute(betting_table_sql)

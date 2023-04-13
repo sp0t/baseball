@@ -40,7 +40,7 @@ def createBetData(betData):
   add_tx = deployed_contract.functions.createBetData(_betDate, _game, _teams, _market, _place, _stake, _odds, _profitloss, _status, _site)
   nonce = w3.eth.get_transaction_count(public_key)
   gasprice = w3.eth.gas_price
-  add_tx = add_tx.buildTransaction({'from': public_key, 'chainId': chainId, 'gasPrice': gasprice, 'nonce': nonce})
+  add_tx = add_tx.build_transaction({'from': public_key, 'chainId': chainId, 'gasPrice': gasprice, 'nonce': nonce})
   tx_create = w3.eth.account.sign_transaction(add_tx, private_key)
   txn_hash = w3.eth.sendRawTransaction(tx_create.rawTransaction)
   w3.eth.wait_for_transaction_receipt(txn_hash)

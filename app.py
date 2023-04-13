@@ -142,6 +142,8 @@ def index():
     except:
         pass
 
+    print_date_time()
+
     today_schedule = schedule.get_schedule()                                                                                                                                                                                                                                                                                                                                                                                                                                             
     engine = database.connect_to_db()
     last_update = pd.read_sql("SELECT * FROM updates", con = engine).iloc[-1]
@@ -633,6 +635,7 @@ def print_date_time():
     betdata = res.to_dict('records')
     
     for bet in betdata:
+        print(bet)
         betIndex = smartContract.betIndex()
         print(betIndex)
         engine.execute(f"UPDATE betting_table SET regstate = '1', betindex = '{betIndex + 1}' WHERE betid = '{bet['betid']}';")

@@ -250,6 +250,13 @@ def get_game_info():
     data = jsonify(data)
     return data
 
+@app.route('/get_betting_info', methods = ["POST"])
+def get_betting_info(): 
+    engine = database.connect_to_db()
+    year = request.form['year']
+    res = pd.read_sql(f"SELECT betdate, SUM(stake) stake, SUM(CASE WHEN status = '2' THEN wins ELSE 0 END) wins, SUM(CASE WHEN status = '1' THEN stake ELSE 0 END) losses FROM betting_table WHERE betdate LIKE '{year}%%' GROUP BY betdate ORDER BY betdate;", con = engine).to_dict('records')
+    return res
+
 @app.route('/make_prediction', methods = ["POST"])
 def make_prediction():
     if request.method == 'POST': 
@@ -414,7 +421,13 @@ def show_betting():
         elif bet["status"] == "2":
             bet["status"] = "W"
 
-    return betdata
+    stake = pd.read_sql(f"SELECT betdate, SUM(stake) stake, SUM(CASE WHEN status = '2' THEN wins ELSE 0 END) wins, SUM(CASE WHEN status = '1' THEN stake ELSE 0 END) losses FROM betting_table WHERE betdate = '{daystr}' GROUP BY betdate ORDER BY betdate;", con = engine).to_dict('records')
+    
+    data = {}
+    data['bet'] = betdata
+    data['stake'] = stake
+
+    return data
 
 @app.route('/season', methods = ["GET"]) 
 @login_required
@@ -432,10 +445,13 @@ def season_state():
         elif(item["status"] == "2"):
             profit += float(item["wins"])
     data = {}
-    data["stake"] = round(stake, 2)
-    data["pl"] = round(profit - losses, 2)
+    data["stake"] = "${:,.2f}".format(stake)
+    data["pl"] = "${:,.2f}".format(profit - losses)
+    if (profit - losses) >= 0:
+        data["color"] = "green"
+    else:
+        data["color"] = "red"
     yd = (profit - losses) / stake * 100
-    print(yd)
     data["yield"] = round(yd, 2)
 
     return render_template("season.html", data = data)
@@ -528,7 +544,7 @@ def friend_page():
     if request.method == 'POST':
         team_data = request.get_json()
         data = {}
-
+        
         count = 0
         if int(team_data['count']) > 180:
             count = 180
@@ -542,21 +558,38 @@ def friend_page():
                         WHERE (away_team = '{team_data['abbr']}' OR home_team = '{team_data['abbr']}') AND game_date LIKE '{year}%%' \
                         ORDER BY game_date DESC LIMIT '{count}')a ORDER BY game_date;", con = engine).to_dict('records')
       
-        game_table = pd.read_sql(f"SELECT p_name, atbats, position, substitution FROM ( \
-	                    SELECT table1.game_date, table1.game_id, table1.p_id, table1.p_name, batter_table.atbats, batter_table.position, batter_table.substitution \
-	                    FROM \
-		                (SELECT * \
-		                FROM \
-			            (SELECT game_id, game_date, (CASE away_team WHEN '{team_data['abbr']}' THEN '1' ELSE '0' END)pos, (CASE away_team WHEN '{team_data['abbr']}' THEN home_team ELSE away_team END)oppoteam \
-                        FROM game_table WHERE (away_team = '{team_data['abbr']}' OR home_team = '{team_data['abbr']}') AND game_date LIKE '{year}%%' ORDER BY game_date DESC LIMIT '{count}') game_schudle \
-                        CROSS JOIN \
-                        (SELECT player_table.p_name, player_table.p_id FROM player_table INNER JOIN team_table ON player_table.t_id = team_table.team_id WHERE team_table.team_name = '{team_data['name']}')player \
-		                ) table1 \
-                        LEFT JOIN batter_table \
-                        ON (table1.p_id = batter_table.playerid AND table1.game_id = batter_table.game_id) \
-                        ) t \
-                        GROUP BY game_date, game_id, p_id, p_name, atbats, position, substitution \
-                        ORDER BY p_name, game_date;", con = engine).to_dict('records')
+        if team_data['player'] == 'batter':
+            game_table = pd.read_sql(f"SELECT p_name, atbats, position, substitution FROM ( \
+                            SELECT table1.game_date, table1.game_id, table1.p_id, table1.p_name, batter_table.atbats, batter_table.position, batter_table.substitution \
+                            FROM \
+                            (SELECT * \
+                            FROM \
+                            (SELECT game_id, game_date, (CASE away_team WHEN '{team_data['abbr']}' THEN '1' ELSE '0' END)pos, (CASE away_team WHEN '{team_data['abbr']}' THEN home_team ELSE away_team END)oppoteam \
+                            FROM game_table WHERE (away_team = '{team_data['abbr']}' OR home_team = '{team_data['abbr']}') AND game_date LIKE '{year}%%' ORDER BY game_date DESC LIMIT '{count}') game_schudle \
+                            CROSS JOIN \
+                            (SELECT player_table.p_name, player_table.p_id FROM player_table INNER JOIN team_table ON player_table.t_id = team_table.team_id WHERE team_table.team_name = '{team_data['name']}')player \
+                            ) table1 \
+                            LEFT JOIN batter_table \
+                            ON (table1.p_id = batter_table.playerid AND table1.game_id = batter_table.game_id) \
+                            ) t \
+                            GROUP BY game_date, game_id, p_id, p_name, atbats, position, substitution \
+                            ORDER BY p_name, game_date;", con = engine).to_dict('records')
+        elif team_data['player'] == 'pitcher':
+            game_table = pd.read_sql(f"SELECT p_name, atbats, pitchesthrown, role FROM ( \
+                            SELECT table1.game_date, table1.game_id, table1.p_id, table1.p_name, pitcher_table.atbats, pitcher_table.pitchesthrown, pitcher_table.role \
+                            FROM \
+                            (SELECT * \
+                            FROM \
+                            (SELECT game_id, game_date, (CASE away_team WHEN '{team_data['abbr']}' THEN '1' ELSE '0' END)pos, (CASE away_team WHEN '{team_data['abbr']}' THEN home_team ELSE away_team END)oppoteam \
+                            FROM game_table WHERE (away_team = '{team_data['abbr']}' OR home_team = '{team_data['abbr']}') AND game_date LIKE '{year}%%' ORDER BY game_date DESC LIMIT '{count}') game_schudle \
+                            CROSS JOIN \
+                            (SELECT player_table.p_name, player_table.p_id FROM player_table INNER JOIN team_table ON player_table.t_id = team_table.team_id WHERE team_table.team_name = '{team_data['name']}')player \
+                            ) table1 \
+                            LEFT JOIN pitcher_table \
+                            ON (table1.p_id = pitcher_table.playerid AND table1.game_id = pitcher_table.game_id) \
+                            ) t \
+                            GROUP BY game_date, game_id, p_id, p_name, atbats, pitchesthrown, role \
+                            ORDER BY p_name, game_date;", con = engine).to_dict('records')
 
         game_date = {}
 

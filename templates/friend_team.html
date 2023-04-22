@@ -82,6 +82,7 @@
       
             team_name = $("#team option:selected").text();
             team_abbr = $("#team").val();
+            player = $("#player").val();
             count = $("#count option:selected").text();
 
             if($("#season").val() > 2099 || $("#season").val() < 1900)
@@ -99,7 +100,9 @@
             data['name'] = team_name;
             data['abbr'] = team_abbr;
             data['count'] = count;
+            data['player'] = player;
             data['year'] = $("#season").val();
+
 
             $.ajax({
                 url: '/friend_page', 
@@ -129,39 +132,76 @@
 
                     name = ''
 
-                    $.each(data['game_table'],function(index,value){ 
-                        if(value['p_name'] != name)
-                        {
-                            if(name != '')
-                                html+='</tr><tr class="border border-black">'
-                            html+=`<td class="border border-black bodyth">${value['p_name']}</td>`;
-                            name = value['p_name'];
-                        }
+                    $.each(data['game_table'],function(index,value){
+                        if(player == 'batter'){
+                            if(value['p_name'] != name)
+                            {
+                                if(name != '')
+                                    html+='</tr><tr class="border border-black">'
+                                html+=`<td class="border border-black bodyth">${value['p_name']}</td>`;
+                                name = value['p_name'];
+                            }
 
-                        if(value['atbats'] == null){
-                            html+=`<td class="border border-black bg-rose-500"></td>`;
+                            if(value['atbats'] == null){
+                                html+=`<td class="border border-black bg-rose-500"></td>`;
+                            }
+                            else if(parseInt(value['atbats']) == 0)
+                            {
+                                if(parseInt(value['substitution']) == 0)
+                                    html+=`<td class="border border-black bg-orange-500"}>0 </td>`;
+                                else if(parseInt(value['substitution']) == 1)
+                                    html+=`<td class="border border-black bg-orange-300"}>0(sub)</td>`;
+                            }
+                            else if(parseInt(value['atbats']) == 1)
+                            {
+                                if(parseInt(value['substitution']) == 0)
+                                    html+=`<td class="border border-black bg-yellow-300"}>1 </td>`;
+                                else if(parseInt(value['substitution']) == 1)
+                                    html+=`<td class="border border-black bg-yellow-200"}>1(sub)</td>`;
+                            }
+                            else
+                            {
+                                if(parseInt(value['substitution']) == 0)
+                                    html+=`<td class="border border-black bg-green-500"}>${parseInt(value['atbats'])} </td>`;
+                                else if(parseInt(value['substitution']) == 1)
+                                    html+=`<td class="border border-black bg-green-300"}>${parseInt(value['atbats'])}(sub)</td>`;
+                            }
                         }
-                        else if(parseInt(value['atbats']) == 0)
-                        {
-                            if(parseInt(value['substitution']) == 0)
-                                html+=`<td class="border border-black bg-orange-500"}>0 </td>`;
-                            else if(parseInt(value['substitution']) == 1)
-                                html+=`<td class="border border-black bg-orange-300"}>0(sub)</td>`;
-                        }
-                        else if(parseInt(value['atbats']) == 1)
-                        {
-                            if(parseInt(value['substitution']) == 0)
-                                html+=`<td class="border border-black bg-yellow-300"}>1 </td>`;
-                            else if(parseInt(value['substitution']) == 1)
-                                html+=`<td class="border border-black bg-yellow-200"}>1(sub)</td>`;
-                        }
-                        else
-                        {
-                            if(parseInt(value['substitution']) == 0)
-                                html+=`<td class="border border-black bg-green-500"}>${parseInt(value['atbats'])} </td>`;
-                            else if(parseInt(value['substitution']) == 1)
-                                html+=`<td class="border border-black bg-green-300"}>${parseInt(value['atbats'])}(sub)</td>`;
-                        }
+                        else if(player == 'pitcher'){
+                            if(value['p_name'] != name)
+                            {
+                                if(name != '')
+                                    html+='</tr><tr class="border border-black">'
+                                html+=`<td class="border border-black bodyth">${value['p_name']}</td>`;
+                                name = value['p_name'];
+                            }
+
+                            if(value['pitchesthrown'] == null){
+                                html+=`<td class="border border-black bg-rose-500"></td>`;
+                            }
+                            else if(parseInt(value['pitchesthrown']) <= 10)
+                            {
+                                if(value['role'] == 'starter')
+                                    html+=`<td class="border border-black bg-orange-500"}>${parseInt(value['pitchesthrown'])}</td>`;
+                                else if(value['role'] == 'bullpen')
+                                    html+=`<td class="border border-black bg-orange-300"}>${parseInt(value['pitchesthrown'])}(bul)</td>`;
+                            }
+                            else if(parseInt(value['pitchesthrown']) > 10 && parseInt(value['pitchesthrown']) <= 20)
+                            {
+                                if(value['role'] == 'starter')
+                                    html+=`<td class="border border-black bg-yellow-300"}>${parseInt(value['pitchesthrown'])}</td>`;
+                                else if(value['role'] == 'bullpen')
+                                    html+=`<td class="border border-black bg-yellow-200"}>${parseInt(value['pitchesthrown'])}(bul)</td>`;
+                            }
+                            else
+                            {
+                                if(value['role'] == 'starter')
+                                    html+=`<td class="border border-black bg-green-500"}>${parseInt(value['pitchesthrown'])} </td>`;
+                                else if(value['role'] == 'bullpen')
+                                    html+=`<td class="border border-black bg-green-300"}>${parseInt(value['pitchesthrown'])}(bul)</td>`;
+                            }
+                        } 
+                            
                     });
 
                     html+='</tr>'
@@ -235,8 +275,8 @@
             <div class="mt-2 flex">
                 <div class="w-3/12 flex justify-center text-xl space-x-7">
                     <label class="home_label" for="team_name" class="text-red-700">Team:</label>
-
-                    <select class="bg-cyan-100 border-black" name="team_name" id="team" onchange="changeData()">
+                    
+                    <select class="bg-cyan-100 border-black" style="border: solid 1px" name="team_name" id="team" onchange="changeData()">
                         <option value="blank"></option>
                         {% for team in data %}
                         <option value="{{team.abbreviation}}">{{team.tname}}</option>
@@ -244,9 +284,17 @@
                     </select>   
                 </div>
                 <div class="w-3/12 flex justify-center text-xl space-x-7">
+                    <label class="home_label" for="player" class="text-red-700">Player:</label>
+
+                    <select class="bg-cyan-100 border-black px-5" style="border: solid 1px" id="player" onchange="changeData()">
+                        <option value="batter">Batters</option>
+                        <option value="pitcher">Pitchers</option>
+                    </select>   
+                </div>
+                <div class="w-3/12 flex justify-center text-xl space-x-7">
                     <label class="home_label" for="count" class="text-red-700">Count:</label>
 
-                    <select class="bg-cyan-100 border-black px-5" id="count" onchange="changeData()">
+                    <select class="bg-cyan-100 border-black px-5" style="border: solid 1px" id="count" onchange="changeData()">
                         <option>5</option>
                         <option>10</option>
                         <option>20</option>
@@ -261,7 +309,7 @@
                 <div class="w-3/12 flex justify-center text-xl space-x-7">
                     <label class="home_label" for="season" class="text-red-700">Year:</label>
 
-                    <input class="home_input" class="bg-cyan-100 border-black px-5" type="number" id="season" min="1900" max="2099" step="1" value="2023" onchange="changeData()">
+                    <input class="home_input" class="bg-cyan-100 border-black px-5"  style="border: solid 1px" type="number" id="season" min="1900" max="2099" step="1" value="2023" onchange="changeData()">
                     </input>   
                 </div>
             </div>

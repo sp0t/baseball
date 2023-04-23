@@ -619,12 +619,11 @@ def update_P_T_table():
 
     team_dict = [{k:v for k,v in el.items() if k in ['name', 'abbreviation', 'clubName']} for el in res]
 
-    with engine.begin() as connection:
-        connection.execute(text("DROP TABLE IF EXISTS team_table;"))
-        connection.execute(text("DROP TABLE IF EXISTS player_table;"))
+    engine.execute(text("DROP TABLE IF EXISTS team_table;"))
+    engine.execute(text("DROP TABLE IF EXISTS player_table;"))
 
-        connection.execute(text("CREATE TABLE IF NOT EXISTS team_table(team_id TEXT, team_name TEXT, team_abbr TEXT, club_name TEXT);"))
-        connection.execute(text("CREATE TABLE IF NOT EXISTS player_table(p_id TEXT, p_name TEXT, t_id TEXT);"))
+    engine.execute(text("CREATE TABLE IF NOT EXISTS team_table(team_id TEXT, team_name TEXT, team_abbr TEXT, club_name TEXT);"))
+    engine.execute(text("CREATE TABLE IF NOT EXISTS player_table(p_id TEXT, p_name TEXT, t_id TEXT);"))
 
 
     # team_data = request.get_json()
@@ -636,8 +635,7 @@ def update_P_T_table():
 
         query1 = f"INSERT INTO team_table(team_id, team_name, team_abbr, club_name) VALUES('{team_id}', '{el['name']}', '{el['abbreviation']}', '{el['clubName']}');"
 
-        with engine.begin() as connection:
-            connection.execute(text(query1)) 
+        engine.execute(text(query1)) 
         
         team_roster = {}
         team_roster = mlb.get('team_roster', params = {'teamId':team_id, 'date':date.today()})['roster']
@@ -647,8 +645,8 @@ def update_P_T_table():
         for item in team_roster:
             p_name = item['fullName'].replace("'", " ")
             query2 = f"INSERT INTO player_table(p_id, p_name, t_id) VALUES('{item['id']}', '{p_name}','{team_id}');"
-            with engine.begin() as connection:
-                connection.execute(text(query2))
+
+            engine.execute(text(query2))
 
     return 'OK'      
 

@@ -217,7 +217,7 @@ def get_box_score(game_id):
 
 def update_database(): 
     engine = connect_to_db()
-    res = engine.execute("SELECT game_id,game_date FROM game_table WHERE game_date = '2023/04/22';").fetchall()
+    res = engine.execute("SELECT game_id,game_date FROM game_table;").fetchall()
 
     current_game_list = [el[0] for el in res]
     last_record = max([el[1] for el in res])

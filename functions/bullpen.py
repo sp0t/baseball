@@ -15,7 +15,7 @@ def get_bullpen_df(team_name):
             "(a.baseonballs)baseonBalls, a.blownsaves, a.doubles, (a.earnedruns)earnedRuns, a.era, a.hits, a.holds, (a.homeruns)homeRuns, "
             "(a.inningspitched)inningsPitched, a.losses, (a.pitchesthrown)pitchesThrown, (a.playerid)playerId, a.rbi, a.runs, (a.strikeouts)strikeOuts, "
             "a.strikes, a.triples, a.whip, a.wins FROM pitcher_table a LEFT JOIN game_table b ON a.game_id = b.game_id WHERE ((b.away_team = '%s' AND a.team = 'away') OR "
-            "(b.home_team = '%s' AND a.team = 'home')) AND a.role = 'bullpen' ORDER BY game_date DESC LIMIT 15;" %(team_name, team_name), con = engine)
+            "(b.home_team = '%s' AND a.team = 'home')) AND a.role = 'bullpenAvg' AND a.batter = '0';" %(team_name, team_name), con = engine)
 
     string_cols = [col for col in df.columns if 'id' in col.lower()] + ['game_date', 'away_team', 'home_team']
 

@@ -142,7 +142,7 @@
                                 name = value['p_name'];
                             }
 
-                            if(value['atbats'] == null){
+                            if(value['atbats'] == null || parseInt(value['pitcher'] ) == 1){
                                 html+=`<td class="border border-black bg-rose-500"></td>`;
                             }
                             else if(parseInt(value['atbats']) == 0)
@@ -168,6 +168,7 @@
                             }
                         }
                         else if(player == 'pitcher'){
+                            console.log(value)
                             if(value['p_name'] != name)
                             {
                                 if(name != '')
@@ -176,7 +177,7 @@
                                 name = value['p_name'];
                             }
 
-                            if(value['pitchesthrown'] == null){
+                            if(value['pitchesthrown'] == null || parseInt(value['batter']) != 0){
                                 html+=`<td class="border border-black bg-rose-500"></td>`;
                             }
                             else if(parseInt(value['pitchesthrown']) <= 10)

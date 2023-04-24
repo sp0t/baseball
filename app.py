@@ -560,8 +560,8 @@ def friend_page():
                         ORDER BY game_date DESC LIMIT '{count}')a ORDER BY game_date;", con = engine).to_dict('records')
       
         if team_data['player'] == 'batter':
-            game_table = pd.read_sql(f"SELECT p_name, atbats, position, substitution FROM ( \
-                            SELECT table1.game_date, table1.game_id, table1.p_id, table1.p_name, batter_table.atbats, batter_table.position, batter_table.substitution \
+            game_table = pd.read_sql(f"SELECT p_name, atbats, position, substitution, pitcher FROM ( \
+                            SELECT table1.game_date, table1.game_id, table1.p_id, table1.p_name, batter_table.atbats, batter_table.position, batter_table.substitution, batter_table.pitcher \
                             FROM \
                             (SELECT * \
                             FROM \
@@ -573,11 +573,11 @@ def friend_page():
                             LEFT JOIN batter_table \
                             ON (table1.p_id = batter_table.playerid AND table1.game_id = batter_table.game_id) \
                             ) t \
-                            GROUP BY game_date, game_id, p_id, p_name, atbats, position, substitution \
+                            GROUP BY game_date, game_id, p_id, p_name, atbats, position, substitution, pitcher \
                             ORDER BY p_name, game_date;", con = engine).to_dict('records')
         elif team_data['player'] == 'pitcher':
-            game_table = pd.read_sql(f"SELECT p_name, atbats, pitchesthrown, role FROM ( \
-                            SELECT table1.game_date, table1.game_id, table1.p_id, table1.p_name, pitcher_table.atbats, pitcher_table.pitchesthrown, pitcher_table.role \
+            game_table = pd.read_sql(f"SELECT p_name, atbats, pitchesthrown, role, batter FROM ( \
+                            SELECT table1.game_date, table1.game_id, table1.p_id, table1.p_name, pitcher_table.atbats, pitcher_table.pitchesthrown, pitcher_table.role, pitcher_table.batter \
                             FROM \
                             (SELECT * \
                             FROM \
@@ -589,7 +589,7 @@ def friend_page():
                             LEFT JOIN pitcher_table \
                             ON (table1.p_id = pitcher_table.playerid AND table1.game_id = pitcher_table.game_id) \
                             ) t \
-                            GROUP BY game_date, game_id, p_id, p_name, atbats, pitchesthrown, role \
+                            GROUP BY game_date, game_id, p_id, p_name, atbats, pitchesthrown, role, batter \
                             ORDER BY p_name, game_date;", con = engine).to_dict('records')
 
         game_date = {}

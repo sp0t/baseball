@@ -114,7 +114,7 @@ def get_pitching_box_score(data, team):
                 team_relievers.append(str(el['personId']))
     team_box_score = {}
 
-    if len(team_starter) == 0: 
+    if team_starter == '': 
         return None, '', []
     elif team_starter == []:
         team_reliever_data_list = None

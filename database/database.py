@@ -102,6 +102,7 @@ def get_pitching_box_score(data, team):
     key = team + 'Pitchers'
     data_info = data[key]
     team_relievers = []
+    team_starter = ''
     starter = True
 
     for el in data_info:
@@ -115,7 +116,7 @@ def get_pitching_box_score(data, team):
 
     if len(team_starter) == 0: 
         return None, '', []
-    elif len(team_relievers) == 0:
+    elif team_starter == []:
         team_reliever_data_list = None
         team_bullpen_data = None
 

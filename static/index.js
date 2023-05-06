@@ -17,7 +17,11 @@ function openCard(buttonId){
         success: function (data){ 
             // Away Form
             var awayRoster = data['rosters']['away']; 
+            var position = data['rosters']['position']
+            var pitcher = data['rosters']['pitcher']
             var newCard = document.getElementsByClassName('.large-card');
+            var playerId;
+
             newCard.id = buttonId;
             for (i = 1; i < 10; i++){
                 var newSelect = document.getElementsByName('ab_' + i)[0]; 
@@ -26,6 +30,11 @@ function openCard(buttonId){
                     newOption.value = awayRoster[n]['id']; 
                     newOption.className = 'option'
                     newOption.innerHTML = awayRoster[n]['fullName'];
+
+                    playerId = awayRoster[n]['id'];
+
+                    if(position['away'][playerId] == i)
+                        newOption.setAttribute('selected', true);
                     newSelect.append(newOption)
                 }
             }
@@ -35,6 +44,12 @@ function openCard(buttonId){
                 newOption.value = awayRoster[n]['id'];
                 newOption.className = 'option' 
                 newOption.innerHTML = awayRoster[n]['fullName'];
+                
+                playerId = awayRoster[n]['id'];
+
+                if(pitcher['away'][playerId] == 'starter')
+                    newOption.setAttribute('selected', true);
+
                 newSelect.append(newOption)
             }
 
@@ -48,6 +63,12 @@ function openCard(buttonId){
                     newOption.value = homeRoster[n]['id']; 
                     newOption.className = 'option'
                     newOption.innerHTML = homeRoster[n]['fullName'];
+
+                    playerId = homeRoster[n]['id']; 
+
+                    if(position['home'][playerId] == i)
+                        newOption.setAttribute('selected', true);
+
                     newSelect.append(newOption)
                 }
             }
@@ -57,6 +78,12 @@ function openCard(buttonId){
                 newOption.value = homeRoster[n]['id']; 
                 newOption.className = 'option'
                 newOption.innerHTML = homeRoster[n]['fullName'];
+
+                playerId = homeRoster[n]['id']; 
+
+                if(pitcher['home'][playerId] == 'starter')
+                    newOption.setAttribute('selected', true);
+
                 newSelect.append(newOption)
             }
 

@@ -70,8 +70,34 @@ def get_rosters(game_id):
     # home_roster = mlb.get('team_roster', params = {'teamId':home_team_id,'date':"2022-10-14"})['roster']
     home_roster = [el['person'] for el in home_roster]
     home_roster = [{k:v for k,v in el.items() if k!='link'} for el in home_roster]
+
+    teams = ['away', 'home']
+    position = {}
+    pitcher = {}
+    for team in teams:
+        key = team + 'Batters'
+        player_info = data[key]
+        position[team] = {}
+        num = 1
+        for el in player_info:
+            if el['personId'] != 0:    
+                if el['substitution'] == False:
+                    position[team][el['personId']] = num
+                    num = num + 1
+        
+    for team in teams:
+        key = team + 'Pitchers'
+        player_info = data[key]
+        pitcher[team] = {}
+        num = 1
+        starter = True
+        for el in player_info:
+            if el['personId'] != 0: 
+                if starter == True:
+                    pitcher[team][el['personId']] = 'starter'
+                    starter = False
     
-    rosters = {'home': home_roster, 'away': away_roster}
+    rosters = {'home': home_roster, 'away': away_roster, 'position': position, 'pitcher':pitcher }
     
     return rosters
 

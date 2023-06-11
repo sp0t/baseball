@@ -461,6 +461,7 @@ def season_state():
 def betting_proc(): 
     if request.method == 'POST':
         betting_data = request.get_json()
+        print('=====================>betting_data', betting_data)
         engine = database.connect_to_db()
         for betting in betting_data:
             stake = betting["stake"].replace(',', '')

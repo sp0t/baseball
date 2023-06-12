@@ -12,7 +12,7 @@ dir_list = os.listdir(dir)
 # engine.execute(text("CREATE TABLE IF NOT EXISTS pitcher_stats(game_id TEXT, game_date TEXT, player_id TEXT, career_era float8, career_homeRuns float8, career_whip float8, career_battersFaced float8, recent_era float8, recent_homeRuns float8, recent_whip float8, recent_battersFaced float8);"))
 
 today = date.today()
-gamedate = today.d.strftime("%yyyy/%m/%d")
+gamedate = today.d.strftime("%yyyy/%m/%D")
 print(gamedate)
 # for filename in dir_list:
 #     pathbreak = filename.split('_')

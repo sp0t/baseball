@@ -440,7 +440,10 @@ function  downLoadBatterData(id){
             console.log('before sending');
         },
         success: function (data){ 
-            alert(data)
+            if (data == 'OK')
+                alert('Success')
+            else if (data == 'NO')
+                alert('No data')
             // var a = document.createElement('a');
             // a.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(data);
             // a.download = `BatterData_${gameId}.csv`;
@@ -467,7 +470,10 @@ function  downLoadPitcherData(id){
             console.log('before sending');
         },
         success: function (data){ 
-            alert(data)
+            if (data == 'OK')
+                alert('Success')
+            else if (data == 'NO')
+                alert('No data')
             // var a = document.createElement('a');
             // a.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(data);
             // a.download = `PitcherData_${gameId}.csv`;

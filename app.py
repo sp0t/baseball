@@ -523,7 +523,9 @@ def get_batter_csv_data():
         return 'No'
     else:
         csv.drop(csv.iloc[:, 0:2], inplace=True, axis=1)
-        print(csv)
+        for index, row in csv.iterrows():
+            engine.execute(text(f"INSERT INTO batter_stats(game_id, game_date, player_id, career_atBats, career_avg, career_homeRuns, career_obp, career_ops, career_rbi, career_slg, career_strikeOuts, recent_atBats, recent_avg, recent_homeRuns, recent_obp, recent_ops, recent_rbi, recent_slg, recent_strikeOuts) \
+                                VALUES('{game_id}', '{gamedate}', '{int(row['player_id'])}', '{round(row['career_atBats'], 3)}', '{round(row['career_avg'], 3)}', '{round(row['career_homeRuns'], 3)}', '{round(row['career_obp'], 3)}', '{round(row['career_ops'], 3)}', '{round(row['career_rbi'], 3)}', '{round(row['career_slg'], 3)}', '{round(row['career_strikeOuts'], 3)}', '{round(row['recent_atBats'], 3)}', '{round(row['recent_avg'], 3)}', '{round(row['recent_homeRuns'], 3)}', '{round(row['recent_obp'], 3)}', '{round(row['recent_ops'], 3)}', '{round(row['recent_rbi'], 3)}', '{round(row['recent_slg'], 3)}', '{round(row['recent_strikeOuts'], 3)}');"))
         return 'OK'
   
 @app.route('/download_pitcher_data', methods = ["POST"])
@@ -538,7 +540,9 @@ def get_pitcher_csv_data():
     else:
         csv.drop(csv.iloc[:, 0:2], inplace=True, axis=1)
         pitchers = csv.T
-        print(pitchers)
+        for index, row in pitchers.iterrows():
+            engine.execute(text(f"INSERT INTO pitcher_stats(game_id, game_date, player_id, career_era, career_homeRuns, career_whip, career_battersFaced, recent_era, recent_homeRuns, recent_whip, recent_battersFaced) \
+                                VALUES('{game_id}', '{gamedate}', '{int(row['player_id'])}', '{round(row['career_era'], 3)}', '{round(row['career_homeRuns'], 3)}', '{round(row['career_whip'], 3)}', '{round(row['career_battersFaced'], 3)}', '{round(row['recent_era'], 3)}', '{round(row['recent_homeRuns'], 3)}', '{round(row['recent_whip'], 3)}', '{round(row['recent_battersFaced'], 3)}');"))
         return 'OK'
     
 @app.route('/friend_page', methods = ["GET", "POST"]) 

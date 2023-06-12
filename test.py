@@ -15,7 +15,6 @@ engine.execute(text("CREATE TABLE IF NOT EXISTS pitcher_stats(game_id TEXT, game
 # gamedate = today.strftime("%Y/%m/%d")
 # print(gamedate)
 for filename in dir_list:
-    print(filename)
     pathbreak = filename.split('_')
     role = pathbreak[0]
     idbreak = pathbreak[1].split('.')
@@ -31,13 +30,14 @@ for filename in dir_list:
     if role == 'BatterData':
         data.drop(data.iloc[:, 0:3], inplace=True, axis=1)
         for index, row in data.iterrows():
-            print(row)
             engine.execute(text(f"INSERT INTO batter_stats(game_id, game_date, player_id, career_atBats, career_avg, career_homeRuns, career_obp, career_ops, career_rbi, career_slg, career_strikeOuts, recent_atBats, recent_avg, recent_homeRuns, recent_obp, recent_ops, recent_rbi, recent_slg, recent_strikeOuts) \
                                 VALUES('{gameid}', '{gamedate}', '{int(row['player_id'])}', '{row['career_atBats']}', '{row['career_avg']}', '{row['career_homeRuns']}', '{row['career_obp']}', '{row['career_ops']}', '{row['career_rbi']}', '{row['career_slg']}', '{row['career_strikeOuts']}', '{row['recent_atBats']}', '{row['recent_avg']}', '{row['recent_homeRuns']}', '{row['recent_obp']}', '{row['recent_ops']}', '{row['recent_rbi']}', '{row['recent_slg']}', '{row['recent_strikeOuts']}');"))
 
-        if role == 'PitcherData':
-            data.drop(data.iloc[:, 0:3], inplace=True, axis=1)
-            pitchers = data.T
-            for index, row in pitchers.iterrows():
-                engine.execute(text(f"INSERT INTO pitcher_stats(game_id, game_date, player_id, career_era, career_homeRuns, career_whip, career_battersFaced, recent_era, recent_homeRuns, recent_whip, recent_battersFaced) \
-                                  VALUES('{gameid}', '{gamedate}', '{int(row['player_id'])}', '{row['career_era']}', '{row['career_homeRuns']}', '{row['career_whip']}', '{row['career_battersFaced']}', '{row['recent_era']}', '{row['recent_homeRuns']}', '{row['recent_whip']}', '{row['recent_battersFaced']}');"))
+    if role == 'PitcherData':
+        data.drop(data.iloc[:, 0:3], inplace=True, axis=1)
+        pitchers = data.T
+        for index, row in pitchers.iterrows():
+            insertquery = f"INSERT INTO pitcher_stats(game_id, game_date, player_id, career_era, career_homeRuns, career_whip, career_battersFaced, recent_era, recent_homeRuns, recent_whip, recent_battersFaced)"
+            print(insertquery)
+            engine.execute(text(f"INSERT INTO pitcher_stats(game_id, game_date, player_id, career_era, career_homeRuns, career_whip, career_battersFaced, recent_era, recent_homeRuns, recent_whip, recent_battersFaced) \
+                                VALUES('{gameid}', '{gamedate}', '{int(row['player_id'])}', '{row['career_era']}', '{row['career_homeRuns']}', '{row['career_whip']}', '{row['career_battersFaced']}', '{row['recent_era']}', '{row['recent_homeRuns']}', '{row['recent_whip']}', '{row['recent_battersFaced']}');"))

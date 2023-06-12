@@ -519,9 +519,12 @@ def get_batter_csv_data():
     game_id = str(json.loads(request.form['data']))
     engine = database.connect_to_db()
     csv = pd.read_sql(f"SELECT * FROM current_game_batters WHERE game_id = '{game_id}';", con = engine, index_col = 'index')
-    csv.drop(csv.iloc[:, 0:2], inplace=True, axis=1)
-    print(csv)
-    return 'OK'
+    if csv.empty:
+        return 'No'
+    else:
+        csv.drop(csv.iloc[:, 0:2], inplace=True, axis=1)
+        print(csv)
+        return 'OK'
   
 @app.route('/download_pitcher_data', methods = ["POST"])
 def get_pitcher_csv_data(): 
@@ -530,12 +533,14 @@ def get_pitcher_csv_data():
     game_id = str(json.loads(request.form['data']))
     engine = database.connect_to_db()
     csv = pd.read_sql(f"SELECT * FROM current_game_pitchers WHERE game_id = '{game_id}';", con = engine, index_col = 'index')
-    csv.drop(csv.iloc[:, 0:2], inplace=True, axis=1)
-    pitchers = csv.T
-    print(pitchers)
-    return 'OK'
-
-
+    if csv.empty:
+        return 'No'
+    else:
+        csv.drop(csv.iloc[:, 0:2], inplace=True, axis=1)
+        pitchers = csv.T
+        print(pitchers)
+        return 'OK'
+    
 @app.route('/friend_page', methods = ["GET", "POST"]) 
 def friend_page():  
     engine = database.connect_to_db()

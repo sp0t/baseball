@@ -38,6 +38,5 @@ for filename in dir_list:
         pitchers = data.T
         for index, row in pitchers.iterrows():
             insertquery = f"INSERT INTO pitcher_stats(game_id, game_date, player_id, career_era, career_homeRuns, career_whip, career_battersFaced, recent_era, recent_homeRuns, recent_whip, recent_battersFaced)"
-            print(insertquery)
             engine.execute(text(f"INSERT INTO pitcher_stats(game_id, game_date, player_id, career_era, career_homeRuns, career_whip, career_battersFaced, recent_era, recent_homeRuns, recent_whip, recent_battersFaced) \
                                 VALUES('{gameid}', '{gamedate}', '{int(row['player_id'])}', '{round(row['career_era'], 3)}', '{round(row['career_homeRuns'], 3)}', '{round(row['career_whip'], 3)}', '{round(row['career_battersFaced'], 3)}', '{round(row['recent_era'], 3)}', '{round(row['recent_homeRuns'], 3)}', '{round(row['recent_whip'], 3)}', '{round(row['recent_battersFaced'], 3)}');"))

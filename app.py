@@ -514,22 +514,26 @@ def get_batter_csv_table():
 
 @app.route('/download_batter_data', methods = ["POST"])
 def get_batter_csv_data():
+    today = date.today()
+    gamedate = today.strftime("%Y/%m/%d")
     game_id = str(json.loads(request.form['data']))
     engine = database.connect_to_db()
     csv = pd.read_sql(f"SELECT * FROM current_game_batters WHERE game_id = '{game_id}';", con = engine, index_col = 'index')
-    return Response(
-        csv,
-        mimetype="text/csv",
-        headers={"Content-disposition":
-                 f"attachment; filename = batter_data.csv"})
+    csv.drop(csv.iloc[:, 0:2], inplace=True, axis=1)
+    print(csv)
+    return 'OK'
   
 @app.route('/download_pitcher_data', methods = ["POST"])
 def get_pitcher_csv_data(): 
+    today = date.today()
+    gamedate = today.strftime("%Y/%m/%d")
     game_id = str(json.loads(request.form['data']))
     engine = database.connect_to_db()
-    csv = pd.read_sql(f"SELECT * FROM current_game_pitchers WHERE game_id = '{game_id}';", con = engine)
-    print(csv)
-    return
+    csv = pd.read_sql(f"SELECT * FROM current_game_pitchers WHERE game_id = '{game_id}';", con = engine, index_col = 'index')
+    csv.drop(csv.iloc[:, 0:2], inplace=True, axis=1)
+    pitchers = csv.T
+    print(pitchers)
+    return 'OK'
 
 
 @app.route('/friend_page', methods = ["GET", "POST"]) 

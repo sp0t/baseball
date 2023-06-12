@@ -14,10 +14,10 @@ import uuid
 def connect_to_db(): 
     
     try: 
-        engine = create_engine('postgresql://postgres:lucamlb123@localhost:5432/betmlb', connect_args = {'connect_timeout': 10}, echo=False, pool_size=20, max_overflow=0)
-        # engine = create_engine('postgresql://postgres:123@localhost:5432/testdb', 
-        #                        connect_args = {'connect_timeout': 10}, 
-        #                        echo=False, pool_size=20, max_overflow=0)
+        # engine = create_engine('postgresql://postgres:lucamlb123@localhost:5432/betmlb', connect_args = {'connect_timeout': 10}, echo=False, pool_size=20, max_overflow=0)
+        engine = create_engine('postgresql://postgres:123@localhost:5432/testdb', 
+                               connect_args = {'connect_timeout': 10}, 
+                               echo=False, pool_size=20, max_overflow=0)
         print('Connection Initiated')
     except:
         raise ValueError("Can't connect to Heroku PostgreSQL! You must be so embarrassed")

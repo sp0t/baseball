@@ -516,7 +516,7 @@ def get_batter_csv_table():
 def get_batter_csv_data():
     game_id = str(json.loads(request.form['data']))
     engine = database.connect_to_db()
-    csv = pd.read_sql(f"SELECT * FROM current_game_batters WHERE game_id = '{game_id}';", con = engine).to_csv()
+    csv = pd.read_sql(f"SELECT * FROM current_game_batters WHERE game_id = '{game_id}';", con = engine, index_col = 'index')
     return Response(
         csv,
         mimetype="text/csv",
@@ -527,12 +527,9 @@ def get_batter_csv_data():
 def get_pitcher_csv_data(): 
     game_id = str(json.loads(request.form['data']))
     engine = database.connect_to_db()
-    csv = pd.read_sql(f"SELECT * FROM current_game_pitchers WHERE game_id = '{game_id}';", con = engine).to_csv()
-    return Response(
-        csv,
-        mimetype="text/csv",
-        headers={"Content-disposition":
-                 f"attachment; filename = pitcher_data.csv"})
+    csv = pd.read_sql(f"SELECT * FROM current_game_pitchers WHERE game_id = '{game_id}';", con = engine)
+    print(csv)
+    return
 
 
 @app.route('/friend_page', methods = ["GET", "POST"]) 

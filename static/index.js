@@ -441,7 +441,7 @@ function  downLoadBatterData(id){
         },
         success: function (data){ 
             if (data == 'OK')
-                alert('Success')
+                alert('Success Batter Data Added')
             else if (data == 'NO')
                 alert('No data')
             // var a = document.createElement('a');
@@ -471,7 +471,7 @@ function  downLoadPitcherData(id){
         },
         success: function (data){ 
             if (data == 'OK')
-                alert('Success')
+                alert('Success Pitcher Data Added')
             else if (data == 'NO')
                 alert('No data')
             // var a = document.createElement('a');

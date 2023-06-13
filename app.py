@@ -519,11 +519,17 @@ def get_batter_csv_data():
     game_id = str(json.loads(request.form['data']))
     engine = database.connect_to_db()
     csv = pd.read_sql(f"SELECT * FROM current_game_batters WHERE game_id = '{game_id}';", con = engine, index_col = 'index')
+    print(csv)
     if csv.empty:
         return 'No'
     else:
         csv.drop(csv.iloc[:, 0:2], inplace=True, axis=1)
         for index, row in csv.iterrows():
+            insertQuery = f"INSERT INTO batter_stats(game_id, game_date, player_id, career_atBats, career_avg, career_homeRuns, career_obp, career_ops, career_rbi, career_slg, career_strikeOuts, recent_atBats, recent_avg, recent_homeRuns, recent_obp, recent_ops, recent_rbi, recent_slg, recent_strikeOuts) \
+                                VALUES('{game_id}', '{gamedate}', '{int(row['player_id'])}', '{round(row['career_atBats'], 3)}', '{round(row['career_avg'], 3)}', '{round(row['career_homeRuns'], 3)}', '{round(row['career_obp'], 3)}', '{round(row['career_ops'], 3)}', '{round(row['career_rbi'], 3)}', '{round(row['career_slg'], 3)}', '{round(row['career_strikeOuts'], 3)}', '{round(row['recent_atBats'], 3)}', '{round(row['recent_avg'], 3)}', '{round(row['recent_homeRuns'], 3)}', '{round(row['recent_obp'], 3)}', '{round(row['recent_ops'], 3)}', '{round(row['recent_rbi'], 3)}', '{round(row['recent_slg'], 3)}', '{round(row['recent_strikeOuts'], 3)}') \
+                                    ON CONFLICT (game_id, player_id)  DO UPDATE SET game_date = excluded.game_date, career_atBats = excluded.career_atBats, career_avg = excluded.career_avg, career_homeRuns = excluded.career_homeRuns, career_obp = excluded.career_obp, career_ops = excluded.career_ops, career_rbi = excluded.career_rbi, career_slg = excluded.career_slg, career_strikeOuts = excluded.career_strikeOuts \
+                                    recent_atBats = excluded.recent_atBats, recent_avg = excluded.recent_avg, recent_homeRuns = excluded.recent_homeRuns, recent_obp = excluded.recent_obp, recent_ops = excluded.recent_ops, recent_rbi = excluded.recent_rbi, recent_slg = excluded.recent_slg, recent_strikeOuts = excluded.recent_strikeOuts;"
+            print(insertQuery)
             engine.execute(text(f"INSERT INTO batter_stats(game_id, game_date, player_id, career_atBats, career_avg, career_homeRuns, career_obp, career_ops, career_rbi, career_slg, career_strikeOuts, recent_atBats, recent_avg, recent_homeRuns, recent_obp, recent_ops, recent_rbi, recent_slg, recent_strikeOuts) \
                                 VALUES('{game_id}', '{gamedate}', '{int(row['player_id'])}', '{round(row['career_atBats'], 3)}', '{round(row['career_avg'], 3)}', '{round(row['career_homeRuns'], 3)}', '{round(row['career_obp'], 3)}', '{round(row['career_ops'], 3)}', '{round(row['career_rbi'], 3)}', '{round(row['career_slg'], 3)}', '{round(row['career_strikeOuts'], 3)}', '{round(row['recent_atBats'], 3)}', '{round(row['recent_avg'], 3)}', '{round(row['recent_homeRuns'], 3)}', '{round(row['recent_obp'], 3)}', '{round(row['recent_ops'], 3)}', '{round(row['recent_rbi'], 3)}', '{round(row['recent_slg'], 3)}', '{round(row['recent_strikeOuts'], 3)}') \
                                     ON CONFLICT (game_id, player_id)  DO UPDATE SET game_date = excluded.game_date, career_atBats = excluded.career_atBats, career_avg = excluded.career_avg, career_homeRuns = excluded.career_homeRuns, career_obp = excluded.career_obp, career_ops = excluded.career_ops, career_rbi = excluded.career_rbi, career_slg = excluded.career_slg, career_strikeOuts = excluded.career_strikeOuts \

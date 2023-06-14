@@ -514,9 +514,9 @@ def get_batter_csv_table():
 
 @app.route('/download_batter_data', methods = ["POST"])
 def get_batter_csv_data():
-    today = date.today()
-    gamedate = today.strftime("%Y/%m/%d")
     game_id = str(json.loads(request.form['data']))
+    data = mlb.boxscore_data(game_id)
+    gamedate = data['gameId'][:10]
     engine = database.connect_to_db()
     csv = pd.read_sql(f"SELECT * FROM current_game_batters WHERE game_id = '{game_id}';", con = engine, index_col = 'index')
     if csv.empty:
@@ -532,9 +532,9 @@ def get_batter_csv_data():
   
 @app.route('/download_pitcher_data', methods = ["POST"])
 def get_pitcher_csv_data(): 
-    today = date.today()
-    gamedate = today.strftime("%Y/%m/%d")
     game_id = str(json.loads(request.form['data']))
+    data = mlb.boxscore_data(game_id)
+    gamedate = data['gameId'][:10]
     engine = database.connect_to_db()
     csv = pd.read_sql(f"SELECT * FROM current_game_pitchers WHERE game_id = '{game_id}';", con = engine, index_col = 'index')
     if csv.empty:

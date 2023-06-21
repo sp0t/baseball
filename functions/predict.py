@@ -81,6 +81,8 @@ def save_batter_data(engine, row, away_batters, home_batters, gameId):
     batter_df.to_sql("current_game_batters", con = engine, index = True, if_exists = "append")
     batter_df.drop(batter_df.iloc[:, 0:1], inplace=True, axis=1)
     print(batter_df)
+    for index, row in batter_df.iterrows():
+        print(index)
     
     return 
 
@@ -106,6 +108,8 @@ def save_pitcher_data(engine, row, away_starter, home_starter, gameId):
     pitchers = pitcher_df.T
     pitcher = pitchers.iloc[0].T
     print(pitcher)
+    for index, row in pitcher.iterrows():
+        print(index)
  
     return pitcher_df
 

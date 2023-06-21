@@ -76,6 +76,8 @@ def save_batter_data(engine, row, away_batters, home_batters, gameId):
     # blank_row = pd.DataFrame(dict(zip(list(away_batter_df.columns), np.repeat('//', len(away_batter_df.columns)))), index = ['//'])
     # batter_df = pd.concat([away_batter_df, blank_row])
     batter_df = pd.concat([away_batter_df, home_batter_df])
+    print('batter stats data==================>')
+    print(batter_df)
     
     engine.execute(f"DELETE FROM current_game_batters WHERE game_id = '{gameId}';")
     batter_df.to_sql("current_game_batters", con = engine, index = True, if_exists = "append")

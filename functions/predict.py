@@ -104,9 +104,9 @@ def save_pitcher_data(engine, row, away_starter, home_starter, gameId):
     engine.execute(f"DELETE FROM current_game_pitchers WHERE game_id = '{gameId}';")
     pitcher_df.to_sql("current_game_pitchers", con = engine, index = True, if_exists = "append")
     pitchers = pitcher_df.T
-    pitchers['game_id'] = pitchers.iloc[0].values
-    pitchers = pitchers.drop(0)
-    print(pitchers)
+    # pitchers['game_id'] = pitchers.iloc[0].values
+    # pitchers = pitchers.drop(0)
+    print(pitchers.iloc[0].values)
     # pitcher = pitchers.iloc[0].T
     # print(pitcher)
     # for index, row in pitcher.iterrows():

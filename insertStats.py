@@ -4,8 +4,8 @@ from sqlalchemy import text
 import pandas as pd
 from datetime import date
 
-dir = './MLB Games 2023'
-dir_list = os.listdir(dir)
+# dir = './MLB Games 2023'
+# dir_list = os.listdir(dir)
 engine = database.connect_to_db()
 
 # engine.execute(text("CREATE TABLE IF NOT EXISTS batter_stats(game_id TEXT, game_date TEXT, position TEXT, player_id TEXT, career_atBats float8, career_avg float8, career_homeRuns float8, career_obp float8, career_ops float8, career_rbi float8, career_slg float8, career_strikeOuts float8, recent_atBats float8, recent_avg float8, recent_homeRuns float8, recent_obp float8, recent_ops float8, recent_rbi float8, recent_slg float8, recent_strikeOuts float8);"))

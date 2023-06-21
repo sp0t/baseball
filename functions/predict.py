@@ -107,7 +107,7 @@ def save_pitcher_data(engine, row, away_starter, home_starter, gameId):
     gameid = ''
     if len(pitchers.iloc[0].values) > 0:
         gameid = pitchers.iloc[0].values[0]
-    pitchers = pitchers.drop(0)
+    pitchers = pitchers.drop(pitchers.index[0])
     print(pitchers, gameid)
     # pitcher = pitchers.iloc[0].T
     # print(pitcher)

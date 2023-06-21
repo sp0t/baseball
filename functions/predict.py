@@ -79,8 +79,6 @@ def save_batter_data(engine, row, away_batters, home_batters, gameId):
     
     engine.execute(f"DELETE FROM current_game_batters WHERE game_id = '{gameId}';")
     batter_df.to_sql("current_game_batters", con = engine, index = True, if_exists = "append")
-    batter_df.drop(batter_df.iloc[:, 0:1], inplace=True, axis=1)
-    print(batter_df)
     for index, row in batter_df.iterrows():
         print(index)
     
@@ -106,6 +104,7 @@ def save_pitcher_data(engine, row, away_starter, home_starter, gameId):
     engine.execute(f"DELETE FROM current_game_pitchers WHERE game_id = '{gameId}';")
     pitcher_df.to_sql("current_game_pitchers", con = engine, index = True, if_exists = "append")
     pitchers = pitcher_df.T
+    print(pitchers)
     # pitcher = pitchers.iloc[0].T
     # print(pitcher)
     # for index, row in pitcher.iterrows():

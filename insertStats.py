@@ -10,7 +10,7 @@ engine = database.connect_to_db()
 
 # engine.execute(text("CREATE TABLE IF NOT EXISTS batter_stats(game_id TEXT, game_date TEXT, position TEXT, player_id TEXT, career_atBats float8, career_avg float8, career_homeRuns float8, career_obp float8, career_ops float8, career_rbi float8, career_slg float8, career_strikeOuts float8, recent_atBats float8, recent_avg float8, recent_homeRuns float8, recent_obp float8, recent_ops float8, recent_rbi float8, recent_slg float8, recent_strikeOuts float8);"))
 # engine.execute(text("CREATE TABLE IF NOT EXISTS pitcher_stats(game_id TEXT, game_date TEXT, position TEXT, player_id TEXT, career_era float8, career_homeRuns float8, career_whip float8, career_battersFaced float8, recent_era float8, recent_homeRuns float8, recent_whip float8, recent_battersFaced float8);"))
-engine.execute(text("CREATE TABLE IF NOT EXISTS win_percent(game_id TEXT, away_prob_a float8 default 0, home_prob_a float8 default 0, away_prob_b float8 default 0, home_prob_b float8 default 0);"))
+engine.execute(text("CREATE TABLE IF NOT EXISTS win_percent(game_id TEXT UNIQUE, away_prob_a float8 default 0, home_prob_a float8 default 0, away_prob_b float8 default 0, home_prob_b float8 default 0);"))
 
 # today = date.today()
 # gamedate = today.strftime("%Y/%m/%d")

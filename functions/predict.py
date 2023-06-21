@@ -11,6 +11,8 @@ from sklearn.preprocessing import StandardScaler
 from database import database
 import joblib
 import warnings 
+from sqlalchemy import text
+
 warnings.filterwarnings('ignore')
 
 
@@ -76,13 +78,19 @@ def save_batter_data(engine, row, away_batters, home_batters, gameId):
     # blank_row = pd.DataFrame(dict(zip(list(away_batter_df.columns), np.repeat('//', len(away_batter_df.columns)))), index = ['//'])
     # batter_df = pd.concat([away_batter_df, blank_row])
     batter_df = pd.concat([away_batter_df, home_batter_df])
+    print(batter_df)
+    # data = mlb.boxscore_data(gameId)
+    # gamedate = data['gameId'][:10]
     
-    engine.execute(f"DELETE FROM current_game_batters WHERE game_id = '{gameId}';")
-    batter_df.to_sql("current_game_batters", con = engine, index = True, if_exists = "append")
-    for index, row in batter_df.iterrows():
-        print(index)
+    # engine.execute(f"DELETE FROM current_game_batters WHERE game_id = '{gameId}';")
+    # batter_df.to_sql("current_game_batters", con = engine, index = True, if_exists = "append")
+    # for index, row in batter_df.iterrows():
+    #     engine.execute(text(f"INSERT INTO batter_stats(game_id, game_date, position, player_id, career_atBats, career_avg, career_homeRuns, career_obp, career_ops, career_rbi, career_slg, career_strikeOuts, recent_atBats, recent_avg, recent_homeRuns, recent_obp, recent_ops, recent_rbi, recent_slg, recent_strikeOuts) \
+    #                             VALUES('{gameId}', '{gamedate}', '{index}', '{int(row['player_id'])}', '{round(float(row['career_atBats']), 3)}', '{round(float(row['career_avg']), 3)}', '{round(float(row['career_homeRuns']), 3)}', '{round(float(row['career_obp']), 3)}', '{round(float(row['career_ops']), 3)}', '{round(float(row['career_rbi']), 3)}', '{round(float(row['career_slg']), 3)}', '{round(float(row['career_strikeOuts']), 3)}', '{round(float(row['recent_atBats']), 3)}', '{round(float(row['recent_avg']), 3)}', '{round(float(row['recent_homeRuns']), 3)}', '{round(float(row['recent_obp']), 3)}', '{round(float(row['recent_ops']), 3)}', '{round(float(row['recent_rbi']), 3)}', '{round(float(row['recent_slg']), 3)}', '{round(float(row['recent_strikeOuts']), 3)}') \
+    #                                 ON CONFLICT ON CONSTRAINT unique_game_player DO UPDATE SET game_date = excluded.game_date, career_atBats = excluded.career_atBats, career_avg = excluded.career_avg, career_homeRuns = excluded.career_homeRuns, career_obp = excluded.career_obp, career_ops = excluded.career_ops, career_rbi = excluded.career_rbi, career_slg = excluded.career_slg, career_strikeOuts = excluded.career_strikeOuts, \
+    #                                 recent_atBats = excluded.recent_atBats, recent_avg = excluded.recent_avg, recent_homeRuns = excluded.recent_homeRuns, recent_obp = excluded.recent_obp, recent_ops = excluded.recent_ops, recent_rbi = excluded.recent_rbi, recent_slg = excluded.recent_slg, recent_strikeOuts = excluded.recent_strikeOuts;"))
     
-    return 
+    return batter_df
 
 def save_pitcher_data(engine, row, away_starter, home_starter, gameId): 
     away_recent_cols = [col for col in row.columns if 'away_starter_recent' in col]
@@ -100,19 +108,18 @@ def save_pitcher_data(engine, row, away_starter, home_starter, gameId):
     home_df.insert(0, 'player_id', home_starter)
 
     pitcher_df = pd.concat([away_df,home_df]).T.astype(str)
+    print(pitcher_df)
     pitcher_df.insert(0, 'game_id', gameId)
     engine.execute(f"DELETE FROM current_game_pitchers WHERE game_id = '{gameId}';")
     pitcher_df.to_sql("current_game_pitchers", con = engine, index = True, if_exists = "append")
-    pitchers = pitcher_df.T
-    gameid = ''
-    if len(pitchers.iloc[0].values) > 0:
-        gameid = pitchers.iloc[0].values[0]
-    pitchers = pitchers.drop(pitchers.index[0])
-    print(pitchers, gameid)
-    # pitcher = pitchers.iloc[0].T
-    # print(pitcher)
-    # for index, row in pitcher.iterrows():
-    #     print(index)
+    # pitchers = pitcher_df.T
+    # pitchers = pitchers.drop(pitchers.index[0])
+    # data = mlb.boxscore_data(gameId)
+    # gamedate = data['gameId'][:10]
+    # for index, row in pitchers.iterrows():
+    #     engine.execute(text(f"INSERT INTO pitcher_stats(game_id, game_date, position, player_id, career_era, career_homeRuns, career_whip, career_battersFaced, recent_era, recent_homeRuns, recent_whip, recent_battersFaced) \
+    #                             VALUES('{gameId}', '{gamedate}', '{index}', '{int(row['player_id'])}', '{round(float(row['career_era']), 3)}', '{round(float(row['career_homeRuns']), 3)}', '{round(float(row['career_whip']), 3)}', '{round(float(row['career_battersFaced']), 3)}', '{round(float(row['recent_era']), 3)}', '{round(float(row['recent_homeRuns']), 3)}', '{round(float(row['recent_whip']), 3)}', '{round(float(row['recent_battersFaced']), 3)}') \
+    #                             ON CONFLICT ON CONSTRAINT unique_pitcher_player DO UPDATE SET game_date = excluded.game_date, career_era = excluded.career_era, career_homeRuns = excluded.career_homeRuns, career_whip = excluded.career_whip, career_battersFaced = excluded.career_battersFaced, recent_era = excluded.recent_era, recent_homeRuns = excluded.recent_homeRuns, recent_whip = excluded.recent_whip, recent_battersFaced = excluded.recent_battersFaced;"))
  
     return pitcher_df
 

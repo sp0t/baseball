@@ -329,7 +329,7 @@
                                 </tr>
                                 <tr>
                                     {% for bett in game['betting'] %}
-                                        {% if bett.site == 'shiba.ag's and bett.status == '2'%}
+                                        {% if bett.site == 'shiba.ag' and bett.status == '2'%}
                                             <td class="betting-content" style="color: crimson;">+{{bett.wins}}</td>
                                         {% elif bett.site == 'shiba.ag' and bett.status == '1'%}
                                             <td class="betting-content" style="color: black;">-{{bett.stake}}</td>

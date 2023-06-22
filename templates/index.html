@@ -307,18 +307,6 @@
                         
                     </div>
                     <button class="small-solid-button" id="game_button_{{game.game_id}}" onclick="openCard(this.id)">Set Lineups</button>
-                    <!-- <div style="margin-top: 10px;">
-                        {% if game.la_away_prob != None %}
-                            <a id = "load_batter_{{game.game_id}}" href="#" onclick="downLoadBatterData(this.id)">Save Batter Data</a>
-                            <br>
-                            <a id = "load_pitcher_{{game.game_id}}" href="#" onclick="downLoadPitcherData(this.id)">Save Pitcher Data</a>
-                        {% endif %}  
-                        {% if game.la_away_prob == None %}
-                            <a id = "load_batter_{{game.game_id}}" href="#" style="color: grey; cursor: default;">Save Batter Data</a>
-                            <br>
-                            <a id = "load_pitcher_{{game.game_id}}" href="#" style="color: grey; cursor: default;">Save Pitcher Data</a>
-                        {% endif %}                        
-                    </div> -->
                 </div>
                 {% endfor %}
             </div>
@@ -543,9 +531,6 @@
                         
                             </div>
                         </div>
-                        <!-- <a href="#" onclick="downLoadBatterData(0)">Save Batter Data</a>
-                        <br>
-                        <a href="#" onclick="downLoadPitcherData(0)">Save Pitcher Data</a> -->
                     </form>
 
                     

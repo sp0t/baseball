@@ -175,6 +175,9 @@
                                 <tr>
                                     <td class="model-title">sports411.ag</td>
                                 </tr>
+                                <tr>
+                                    <td class="model-title">shiba.ag</td>
+                                </tr>
                             </table>
                         </div>
                         <div class="betting-col">
@@ -208,7 +211,15 @@
                                         {% endif %}
                                     {% endfor %}
                                 </tr>
-                                
+                                <tr>
+                                    {% for bett in game['betting'] %}
+                                        {% if game.away_name == bett.place and bett.site == 'shiba.ag' %}
+                                            <td class="betting-content">{{game.away_name}}</td>
+                                        {% elif game.home_name == bett.place and bett.site == 'shiba.ag' %}
+                                            <td class="betting-content">{{game.home_name}}</td>
+                                        {% endif %}
+                                    {% endfor %}
+                                </tr>             
                             </table>
                         </div>
                         <div class="betting-col">
@@ -236,6 +247,13 @@
                                         {% endif %}
                                     {% endfor %}
                                 </tr>
+                                <tr>
+                                    {% for bett in game['betting'] %}
+                                        {% if bett.site == 'shiba.ag'%}
+                                            <td class="betting-content">{{bett.odds}}</td>
+                                        {% endif %}
+                                    {% endfor %}
+                                </tr>
                             </table>
                         </div>
                         <div class="betting-col">
@@ -259,6 +277,13 @@
                                 <tr>
                                     {% for bett in game['betting'] %}
                                         {% if bett.site == 'sports411.ag'%}
+                                            <td class="betting-content">{{bett.stake}}</td>
+                                        {% endif %}
+                                    {% endfor %}
+                                </tr>
+                                <tr>
+                                    {% for bett in game['betting'] %}
+                                        {% if bett.site == 'shiba.ag'%}
                                             <td class="betting-content">{{bett.stake}}</td>
                                         {% endif %}
                                     {% endfor %}
@@ -298,6 +323,17 @@
                                         {% elif bett.site == 'sports411.ag' and bett.status == '1'%}
                                             <td class="betting-content" style="color: black;">-{{bett.stake}}</td>
                                         {% elif bett.site == 'sports411.ag' and bett.status == '0' %}
+                                            <td class="betting-content">Pending</td>
+                                        {% endif %}
+                                    {% endfor %}
+                                </tr>
+                                <tr>
+                                    {% for bett in game['betting'] %}
+                                        {% if bett.site == 'shiba.ag's and bett.status == '2'%}
+                                            <td class="betting-content" style="color: crimson;">+{{bett.wins}}</td>
+                                        {% elif bett.site == 'shiba.ag' and bett.status == '1'%}
+                                            <td class="betting-content" style="color: black;">-{{bett.stake}}</td>
+                                        {% elif bett.site == 'shiba.ag' and bett.status == '0' %}
                                             <td class="betting-content">Pending</td>
                                         {% endif %}
                                     {% endfor %}

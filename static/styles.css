@@ -77,11 +77,52 @@ a{
     display: inline-block;
 	border: solid;
 }
+
+.batter-container {
+	display: grid;
+	grid-template-columns: auto auto auto auto auto auto auto auto auto auto auto auto auto auto auto auto auto auto auto;
+	gap: 1px;
+	background-color: white;
+	padding: 1px;
+}
+
+.pitcher-container {
+	display: grid;
+	grid-template-columns: auto auto auto auto auto auto auto auto auto auto auto;
+	gap: 1px;
+	background-color: white;
+	padding: 1px;
+}
+
+.batter-container > div {
+	background-color: gray;
+	text-align: center;
+	color: white;
+	padding: 10px 6px;
+	font-size: 13px;
+}
+  
+.pitcher-container > div {
+	background-color: gray;
+	text-align: center;
+	color: white;
+	padding: 10px 0;
+	font-size: 13px;
+}
+
 .card-title{
     font-weight: 500;
     font-size: 20px;
 	color: black;
 }
+
+.div-container {
+	position: absolute;
+	width: 100%;
+	display: none;
+	z-index: 1;
+  }
+
 .game-date{
 	font-size:16px;
 	color:var(--light-blue);

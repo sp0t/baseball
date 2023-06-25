@@ -513,6 +513,21 @@ def get_batter_csv_table():
         headers={"Content-disposition":
                  f"attachment; filename = batter_table.csv"})        
 
+@app.route('/get_PlayerStats', methods = ["POST"])
+def get_PlayerStats():
+    game_id = str(json.loads(request.form['data']))
+    print('===================================')
+    print(game_id)
+    engine = database.connect_to_db()
+    data = {}
+    batterData = pd.read_sql(f"SELECT * FROM batter_stats WHERE game_id = '{game_id}' ORDER BY position;", con = engine).to_dict('records')
+    pitcherData = pd.read_sql(f"SELECT * FROM pitcher_stats WHERE game_id = '{game_id}' ORDER BY position;", con = engine).to_dict('records')
+    data['batter'] = batterData
+    data['pitcher'] = pitcherData
+    print(data)
+    
+    return data
+
 @app.route('/download_batter_data', methods = ["POST"])
 def get_batter_csv_data():
     # game_id = str(json.loads(request.form['data']))

@@ -94,7 +94,7 @@ def save_pitcher_data(engine, row, away_starter, home_starter, gameId):
     away_career_cols = [col for col in row.columns if 'away_starter_career' in col]
     player_stats = row[away_career_cols+away_recent_cols].to_dict('records')[0]
     player_stats = dict(zip([el.replace('away_starter_', '') for el in player_stats], player_stats.values()))
-    away_df = pd.DataFrame(player_stats, index = ["Away_Starter"])
+    away_df = pd.DataFrame(player_stats, index = ["Away Starter"])
     away_df.insert(0, 'player_id', away_starter)
 
     home_recent_cols = [col for col in row.columns if 'home_starter_recent' in col]

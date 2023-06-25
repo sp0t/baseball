@@ -484,4 +484,111 @@ function  downLoadPitcherData(id){
     })
 }
 
+function  getPlayerStats(id){
+    $.ajax({
+        type: 'POST', 
+        url: '/get_PlayerStats', 
+        data: {'data' : id},
+        beforeSend: function(){ 
+            console.log('before sending');
+        },
+        success: function (data){ 
+            var html = '';
+                const divContainer = document.getElementById(id);
+                const divContent = document.getElementById('stats');
+        
+                const topPosition = divContainer.offsetTop;
+                const height = divContainer.offsetHeight;
+                const bottomPosition = topPosition + height;
+
+                divContent.style.top = `${bottomPosition}px`;
+                divContent.style.left = '160px';
+                divContent.style.width = `${window.innerWidth - 165 * 2}px`;
+
+                if(data.batter != undefined && data.batter.length > 0) {
+                    html += '<div class="batter-container">'
+                    html += '<div style="background-color:black">GameID</div>'
+                    html += '<div style="background-color:black">Position</div>'
+                    html += '<div style="background-color:black">PlayerID</div>'
+                    html += '<div style="background-color:black">CareerAtBats</div>'
+                    html += '<div style="background-color:black">CareerAvg</div>'
+                    html += '<div style="background-color:black">CareerHomeRuns</div>'
+                    html += '<div style="background-color:black">CareerObp</div>'
+                    html += '<div style="background-color:black">CareerOps</div>'
+                    html += '<div style="background-color:black">CareerRbi</div>'
+                    html += '<div style="background-color:black">CareerSlg</div>'
+                    html += '<div style="background-color:black">CareerStrikeouts</div>'
+                    html += '<div style="background-color:black">RecentAtBats</div>'
+                    html += '<div style="background-color:black">RecentAvg</div>'
+                    html += '<div style="background-color:black">RecentHomeRuns</div>'
+                    html += '<div style="background-color:black">RecentObp</div>'
+                    html += '<div style="background-color:black">RecentOps</div>'
+                    html += '<div style="background-color:black">RecentRbi</div>'
+                    html += '<div style="background-color:black">RecentSlg</div>'
+                    html += '<div style="background-color:black">RecentStrikeouts</div>'
+                    
+
+                    for(var x in data.batter) {
+                        html += `<div>${data.batter[x].game_id}</div>`
+                        html += `<div>${data.batter[x].position}</div>`
+                        html += `<div>${data.batter[x].player_id}</div>`
+                        html += `<div>${data.batter[x].career_atbats}</div>`
+                        html += `<div>${data.batter[x].career_avg}</div>`
+                        html += `<div>${data.batter[x].career_homeruns}</div>`
+                        html += `<div>${data.batter[x].career_obp}</div>`
+                        html += `<div>${data.batter[x].career_ops}</div>`
+                        html += `<div>${data.batter[x].career_rbi}</div>`
+                        html += `<div>${data.batter[x].career_slg}</div>`
+                        html += `<div>${data.batter[x].career_strikeouts}</div>`
+                        html += `<div>${data.batter[x].recent_atbats}</div>`
+                        html += `<div>${data.batter[x].recent_avg}</div>`
+                        html += `<div>${data.batter[x].recent_homeruns}</div>`
+                        html += `<div>${data.batter[x].recent_obp}</div>`
+                        html += `<div>${data.batter[x].recent_ops}</div>`
+                        html += `<div>${data.batter[x].recent_rbi}</div>`
+                        html += `<div>${data.batter[x].recent_slg}</div>`
+                        html += `<div>${data.batter[x].recent_strikeouts}</div>`
+                    }
+                    html += '</div>';
+                }
+
+                if(data.pitcher != undefined && data.pitcher.length > 0) {
+                    html += '<div class="pitcher-container">'
+                    html += '<div style="background-color:black">GameID</div>'
+                    html += '<div style="background-color:black">Position</div>'
+                    html += '<div style="background-color:black">PlayerID</div>'
+                    html += '<div style="background-color:black">CareerEra</div>'
+                    html += '<div style="background-color:black">CareerHomeRuns</div>'
+                    html += '<div style="background-color:black">CarrerWhip</div>'
+                    html += '<div style="background-color:black">CarrerBatersFaced</div>'
+                    html += '<div style="background-color:black">RecentEra</div>'
+                    html += '<div style="background-color:black">RecentHomeRuns</div>'
+                    html += '<div style="background-color:black">RecentWhip</div>'
+                    html += '<div style="background-color:black">RecentBatersFaced</div>'
+                    
+
+                    for(var y in data.pitcher) {
+                        html += `<div>${data.pitcher[y].game_id}</div>`
+                        html += `<div>${data.pitcher[y].position}</div>`
+                        html += `<div>${data.pitcher[y].player_id}</div>`
+                        html += `<div>${data.pitcher[y].career_era}</div>`
+                        html += `<div>${data.pitcher[y].career_homeruns}</div>`
+                        html += `<div>${data.pitcher[y].career_whip}</div>`
+                        html += `<div>${data.pitcher[y].career_battersfaced}</div>`
+                        html += `<div>${data.pitcher[y].recent_era}</div>`
+                        html += `<div>${data.pitcher[y].recent_homeruns}</div>`
+                        html += `<div>${data.pitcher[y].recent_whip}</div>`
+                        html += `<div>${data.pitcher[y].recent_battersfaced}</div>`
+                    }
+
+                    html += '</div>'
+                }
+              // Show the div container
+              divContent.innerHTML = html;
+              divContent.style.display = 'block';
+        },
+        error: function() {
+        }
+    })
+}
 

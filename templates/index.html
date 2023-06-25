@@ -12,6 +12,38 @@
         <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></script>
         <script type="text/javascript" src="{{ url_for('static', filename='index.js') }}"></script>
+        <script>
+            let isStatsCalled = false;
+            let statsDivState = false;
+
+            function sleep(ms) {
+                return new Promise(resolve => setTimeout(resolve, ms));
+            }
+
+            function setDivState(state) {
+                statsDivState = state;
+            }
+
+            function showDiv(id) {
+                var data = {};
+                if (!isStatsCalled) {
+                        isStatsCalled = true;
+                        getPlayerStats(id);
+                }
+            }
+        
+            async function hideDiv(state) {
+                if(!state) {
+                    await sleep(1000)
+                    if(statsDivState)
+                        return;
+                }
+                isStatsCalled = false;
+                statsDivState = false;
+                const divContent = document.getElementById('stats');
+                divContent.style.display = 'none';
+            }
+          </script>
         <!-- Latest compiled and minified CSS -->
     </head>
     <body>
@@ -41,309 +73,312 @@
             <!-- Card Grid -->
             <div class="card-grid">
                 {% for game in schedule %}
-                <div class="card" id ="{{game.game_id}}">
-                    <span class="card-title">{{game.away_name}} @ {{game.home_name}}</span>
-                    <p class="game-date">{{game.game_datetime}} EST</p>
-                    <div class="form-wrapper">
-                        <div class="form-left">
-                            <span>Win Prob</span>
-                            <hr>
-                            <div class="form-left-wrapper">
-                                <table class = 'card-table'>
+                    <div class="card" id ="{{game.game_id}}" onmouseover="showDiv('{{game.game_id}}', false)" onmouseleave="hideDiv(false)">
+                        <span class="card-title">{{game.away_name}} @ {{game.home_name}}</span>
+                        <p class="game-date">{{game.game_datetime}} EST</p>
+                        <div class="form-wrapper">
+                            <div class="form-left">
+                                <span>Win Prob</span>
+                                <hr>
+                                <div class="form-left-wrapper">
+                                    <table class = 'card-table'>
+                                        <tr>
+                                            <td class="model-title">Model la</td>
+                                            {% if game.predict.la_away_prob != null %}
+                                                <td class="model-content">{{game.predict.la_away_prob}}%</td>
+                                            {% endif %}
+                                        </tr>
+                                        <tr>
+                                            <td class="model-title">Model lb</td>
+                                            {% if game.predict.lb_away_prob != null %}
+                                                <td class="model-content">{{game.predict.lb_away_prob}}%</td>
+                                            {% endif %}
+                                        </tr>
+                                    </table>
+                                </div>
+                                <hr>
+                            </div>
+                            <div class="form-right">
+                                <span>Win Prob</span>
+                                <hr>
+                                <div class="form-right-wrapper">
+                                    <table class="card-table">
+                                        <tr>
+                                            <td class="model-title">Model la</td>
+                                            {% if game.predict.la_home_prob != null %}
+                                            <td class="model-content">{{game.predict.la_home_prob}}%</td>
+                                            {% endif %}
+                                        </tr>
+                                        <tr>
+                                            <td class="model-title">Model lb</td>
+                                            {% if game.predict.lb_home_prob != null %}
+                                            <td class="model-content">{{game.predict.lb_home_prob}}%</td>
+                                            {% endif %}
+                                        </tr>
+                                    </table>
+                                </div>
+                                <hr>
+                            </div>
+                        </div>
+                        <div class="betting-title">
+                            Kelly Prediction
+                        </div>
+                        <div class="kelly-wrapper">
+                            <div class="kelly-col">
+                                <span>Team</span>
+                                <hr>
+                                <table class = 'kelly-table'>
                                     <tr>
-                                        <td class="model-title">Model la</td>
-                                        {% if game.predict.la_away_prob != null %}
-                                            <td class="model-content">{{game.predict.la_away_prob}}%</td>
-                                        {% endif %}
+                                        <td class="model-title" style="font-size: 16px;">{{game.away_name}}</td>
                                     </tr>
                                     <tr>
-                                        <td class="model-title">Model lb</td>
-                                        {% if game.predict.lb_away_prob != null %}
-                                            <td class="model-content">{{game.predict.lb_away_prob}}%</td>
-                                        {% endif %}
+                                        <td class="model-title" style="font-size: 16px;">{{game.home_name}}</td>
                                     </tr>
                                 </table>
                             </div>
-                            <hr>
-                        </div>
-                        <div class="form-right">
-                            <span>Win Prob</span>
-                            <hr>
-                            <div class="form-right-wrapper">
-                                <table class="card-table">
+                            <div class="kelly-col">
+                                <span>modal A</span>
+                                <hr>
+                                <table class = 'kelly-table'>
                                     <tr>
-                                        <td class="model-title">Model la</td>
-                                        {% if game.predict.la_home_prob != null %}
-                                        <td class="model-content">{{game.predict.la_home_prob}}%</td>
+                                        {% if game.predict.la_away_betsize  != null and game.predict.la_away_betsize  != None %}
+                                            <td class="betting-content">{{game.predict.la_away_betsize}}</td>
                                         {% endif %}
                                     </tr>
                                     <tr>
-                                        <td class="model-title">Model lb</td>
-                                        {% if game.predict.lb_home_prob != null %}
-                                        <td class="model-content">{{game.predict.lb_home_prob}}%</td>
+                                        {% if game.predict.la_home_betsize  != null and game.predict.la_home_betsize  != None %}
+                                            <td class="betting-content">{{game.predict.la_home_betsize}}</td>
                                         {% endif %}
+                                    </tr>            
+                                </table>
+                            </div>
+                            <div class="kelly-col">
+                                <span>modal B</span>
+                                <hr>
+                                <table class = 'kelly-table'>
+                                    <tr>
+                                        {% if game.predict.lb_away_betsize  != null and game.predict.lb_away_betsize  != None %}
+                                            <td class="betting-content">{{game.predict.lb_away_betsize}}</td>
+                                        {% endif %}
+                                    </tr>
+                                    <tr>
+                                        {% if game.predict.lb_home_betsize  != null and game.predict.lb_home_betsize  != None %}
+                                            <td class="betting-content">{{game.predict.lb_home_betsize}}</td>
+                                        {% endif %}
+                                    </tr>            
+                                </table>
+                            </div>
+                            
+                        </div>
+                        <!-- <hr>
+                        <div style="display: flex; padding-top: 10px;">
+                            <div style="flex: 1;">
+                                <input type="radio" class = 'kelly_input', id="kelly_away">
+                                <label for="kelly_away" class="kelly_label">{{game.away_name}}</label><br>
+                                <input type="radio" class = 'kelly_input' id="kelly_home">
+                                <label for="kelly_home" class="kelly_label">{{game.home_name}}</label><br>
+                            </div>
+                            <div style="flex: 1;">
+                                <input type="radio" class = 'kelly_input', id="kelly_la">
+                                <label for="kelly_la" class="kelly_label">modal a</label><br>
+                                <input type="radio" class = 'kelly_input' id="kelly_lb">
+                                <label for="kelly_lb" class="kelly_label">modal b</label><br>
+                            </div>
+                            <div style="flex: 1;">
+                                <label for="kelly_odds">Odds</label>
+                                <input type="number" id="kelly_odds" name="kelly_odds" style="width: 100px;"><br><br>
+                            </div>
+                        </div>
+                        <hr> -->
+                        <div class="betting-title">
+                            Betting State
+                        </div>
+                        <div class="betting-wrapper">
+                            <div class="betting-col">
+                                <span>Site</span>
+                                <hr>
+                                <table class = 'betting-table'>
+                                    <tr>
+                                        <td class="model-title">ps3838.com</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="model-title">bet487.org</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="model-title">sports411.ag</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="model-title">shiba.ag</td>
                                     </tr>
                                 </table>
                             </div>
-                            <hr>
+                            <div class="betting-col">
+                                <span>Place</span>
+                                <hr>
+                                <table class = 'betting-table'>
+                                    <tr>
+                                        {% for bett in game['betting'] %}
+                                            {% if game.away_name == bett.place and bett.site == 'ps3838.com'%}
+                                                <td class="betting-content">{{game.away_name}}</td>
+                                            {% elif game.home_name == bett.place and bett.site == 'ps3838.com'%}
+                                                <td class="betting-content">{{game.home_name}}</td>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </tr>
+                                    <tr>
+                                        {% for bett in game['betting'] %}
+                                            {% if game.away_name == bett.place and bett.site == 'bet487.org' %}
+                                                <td class="betting-content">{{game.away_name}}</td>
+                                            {% elif game.home_name == bett.place and bett.site == 'bet487.org' %}
+                                                <td class="betting-content">{{game.home_name}}</td>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </tr>
+                                    <tr>
+                                        {% for bett in game['betting'] %}
+                                            {% if game.away_name == bett.place and bett.site == 'sports411.ag' %}
+                                                <td class="betting-content">{{game.away_name}}</td>
+                                            {% elif game.home_name == bett.place and bett.site == 'sports411.ag' %}
+                                                <td class="betting-content">{{game.home_name}}</td>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </tr>
+                                    <tr>
+                                        {% for bett in game['betting'] %}
+                                            {% if game.away_name == bett.place and bett.site == 'shiba.ag' %}
+                                                <td class="betting-content">{{game.away_name}}</td>
+                                            {% elif game.home_name == bett.place and bett.site == 'shiba.ag' %}
+                                                <td class="betting-content">{{game.home_name}}</td>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </tr>             
+                                </table>
+                            </div>
+                            <div class="betting-col">
+                                <span>Odds</span>
+                                <hr>
+                                <table class = 'betting-table'>
+                                    <tr>
+                                        {% for bett in game['betting'] %}
+                                            {% if bett.site == 'ps3838.com'%}
+                                                <td class="betting-content">{{bett.odds}}</td>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </tr>
+                                    <tr>
+                                        {% for bett in game['betting'] %}
+                                            {% if bett.site == 'bet487.org'%}
+                                                <td class="betting-content">{{bett.odds}}</td>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </tr>
+                                    <tr>
+                                        {% for bett in game['betting'] %}
+                                            {% if bett.site == 'sports411.ag'%}
+                                                <td class="betting-content">{{bett.odds}}</td>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </tr>
+                                    <tr>
+                                        {% for bett in game['betting'] %}
+                                            {% if bett.site == 'shiba.ag'%}
+                                                <td class="betting-content">{{bett.odds}}</td>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </tr>
+                                </table>
+                            </div>
+                            <div class="betting-col">
+                                <span>Stake</span>
+                                <hr>
+                                <table class = 'betting-table'>
+                                    <tr>
+                                        {% for bett in game['betting'] %}
+                                            {% if bett.site == 'ps3838.com' %}
+                                                <td class="betting-content">{{bett.stake}}</td>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </tr>
+                                    <tr>
+                                        {% for bett in game['betting'] %}
+                                            {% if bett.site == 'bet487.org'%}
+                                                <td class="betting-content">{{bett.stake}}</td>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </tr>
+                                    <tr>
+                                        {% for bett in game['betting'] %}
+                                            {% if bett.site == 'sports411.ag'%}
+                                                <td class="betting-content">{{bett.stake}}</td>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </tr>
+                                    <tr>
+                                        {% for bett in game['betting'] %}
+                                            {% if bett.site == 'shiba.ag'%}
+                                                <td class="betting-content">{{bett.stake}}</td>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </tr>
+                                </table>
+                            </div>
+                            <div class="betting-col">
+                                <span>Status</span>
+                                <hr>
+                                <table class = 'betting-table'>
+                                    <tr>
+                                        {% for bett in game['betting'] %}
+                                            {% if bett.site == 'ps3838.com' and bett.status == '2'%}
+                                                <td class="betting-content" style="color: crimson;">+{{bett.wins}}</td>
+                                            {% elif bett.site == 'ps3838.com' and bett.status == '1'%}
+                                                <td class="betting-content" style="color: black;">-{{bett.stake}}</td>
+                                            {% elif bett.site == 'ps3838.com' and bett.status == '0' %}
+                                                <td class="betting-content">Pending</td>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </tr>
+                                    <tr>
+                                        {% for bett in game['betting'] %}
+                                            {% if bett.site == 'bet487.org' and bett.status == '2'%}
+                                                <td class="betting-content" style="color: crimson;">+{{bett.wins}}</td>
+                                            {% elif bett.site == 'bet487.org' and bett.status == '1'%}
+                                                <td class="betting-content" style="color: black;">-{{bett.stake}}</td>
+                                            {% elif bett.site == 'bet487.org' and bett.status == '0' %}
+                                                <td class="betting-content">Pending</td>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </tr>
+                                    <tr>
+                                        {% for bett in game['betting'] %}
+                                            {% if bett.site == 'sports411.ag' and bett.status == '2'%}
+                                                <td class="betting-content" style="color: crimson;">+{{bett.wins}}</td>
+                                            {% elif bett.site == 'sports411.ag' and bett.status == '1'%}
+                                                <td class="betting-content" style="color: black;">-{{bett.stake}}</td>
+                                            {% elif bett.site == 'sports411.ag' and bett.status == '0' %}
+                                                <td class="betting-content">Pending</td>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </tr>
+                                    <tr>
+                                        {% for bett in game['betting'] %}
+                                            {% if bett.site == 'shiba.ag' and bett.status == '2'%}
+                                                <td class="betting-content" style="color: crimson;">+{{bett.wins}}</td>
+                                            {% elif bett.site == 'shiba.ag' and bett.status == '1'%}
+                                                <td class="betting-content" style="color: black;">-{{bett.stake}}</td>
+                                            {% elif bett.site == 'shiba.ag' and bett.status == '0' %}
+                                                <td class="betting-content">Pending</td>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </tr>
+                                </table>
+                            </div>
+                            
                         </div>
+                        <button class="small-solid-button" id="game_button_{{game.game_id}}" onclick="openCard(this.id)">Set Lineups</button>
+                        <div class="hover-div"></div>
                     </div>
-                    <div class="betting-title">
-                        Kelly Prediction
+                    <div class="div-container" id = "stats" onmouseover="setDivState(true)" onmouseleave="hideDiv(true)">
                     </div>
-                    <div class="kelly-wrapper">
-                        <div class="kelly-col">
-                            <span>Team</span>
-                            <hr>
-                            <table class = 'kelly-table'>
-                                <tr>
-                                    <td class="model-title" style="font-size: 16px;">{{game.away_name}}</td>
-                                </tr>
-                                <tr>
-                                    <td class="model-title" style="font-size: 16px;">{{game.home_name}}</td>
-                                </tr>
-                            </table>
-                        </div>
-                        <div class="kelly-col">
-                            <span>modal A</span>
-                            <hr>
-                            <table class = 'kelly-table'>
-                                <tr>
-                                    {% if game.predict.la_away_betsize  != null and game.predict.la_away_betsize  != None %}
-                                        <td class="betting-content">{{game.predict.la_away_betsize}}</td>
-                                    {% endif %}
-                                </tr>
-                                <tr>
-                                    {% if game.predict.la_home_betsize  != null and game.predict.la_home_betsize  != None %}
-                                        <td class="betting-content">{{game.predict.la_home_betsize}}</td>
-                                    {% endif %}
-                                </tr>            
-                            </table>
-                        </div>
-                        <div class="kelly-col">
-                            <span>modal B</span>
-                            <hr>
-                            <table class = 'kelly-table'>
-                                <tr>
-                                    {% if game.predict.lb_away_betsize  != null and game.predict.lb_away_betsize  != None %}
-                                        <td class="betting-content">{{game.predict.lb_away_betsize}}</td>
-                                    {% endif %}
-                                </tr>
-                                <tr>
-                                    {% if game.predict.lb_home_betsize  != null and game.predict.lb_home_betsize  != None %}
-                                        <td class="betting-content">{{game.predict.lb_home_betsize}}</td>
-                                    {% endif %}
-                                </tr>            
-                            </table>
-                        </div>
-                        
-                    </div>
-                    <!-- <hr>
-                    <div style="display: flex; padding-top: 10px;">
-                        <div style="flex: 1;">
-                            <input type="radio" class = 'kelly_input', id="kelly_away">
-                            <label for="kelly_away" class="kelly_label">{{game.away_name}}</label><br>
-                            <input type="radio" class = 'kelly_input' id="kelly_home">
-                            <label for="kelly_home" class="kelly_label">{{game.home_name}}</label><br>
-                        </div>
-                        <div style="flex: 1;">
-                            <input type="radio" class = 'kelly_input', id="kelly_la">
-                            <label for="kelly_la" class="kelly_label">modal a</label><br>
-                            <input type="radio" class = 'kelly_input' id="kelly_lb">
-                            <label for="kelly_lb" class="kelly_label">modal b</label><br>
-                        </div>
-                        <div style="flex: 1;">
-                            <label for="kelly_odds">Odds</label>
-                            <input type="number" id="kelly_odds" name="kelly_odds" style="width: 100px;"><br><br>
-                        </div>
-                    </div>
-                    <hr> -->
-                    <div class="betting-title">
-                        Betting State
-                    </div>
-                    <div class="betting-wrapper">
-                        <div class="betting-col">
-                            <span>Site</span>
-                            <hr>
-                            <table class = 'betting-table'>
-                                <tr>
-                                    <td class="model-title">ps3838.com</td>
-                                </tr>
-                                <tr>
-                                    <td class="model-title">bet487.org</td>
-                                </tr>
-                                <tr>
-                                    <td class="model-title">sports411.ag</td>
-                                </tr>
-                                <tr>
-                                    <td class="model-title">shiba.ag</td>
-                                </tr>
-                            </table>
-                        </div>
-                        <div class="betting-col">
-                            <span>Place</span>
-                            <hr>
-                            <table class = 'betting-table'>
-                                <tr>
-                                    {% for bett in game['betting'] %}
-                                        {% if game.away_name == bett.place and bett.site == 'ps3838.com'%}
-                                            <td class="betting-content">{{game.away_name}}</td>
-                                        {% elif game.home_name == bett.place and bett.site == 'ps3838.com'%}
-                                            <td class="betting-content">{{game.home_name}}</td>
-                                        {% endif %}
-                                    {% endfor %}
-                                </tr>
-                                <tr>
-                                    {% for bett in game['betting'] %}
-                                        {% if game.away_name == bett.place and bett.site == 'bet487.org' %}
-                                            <td class="betting-content">{{game.away_name}}</td>
-                                        {% elif game.home_name == bett.place and bett.site == 'bet487.org' %}
-                                            <td class="betting-content">{{game.home_name}}</td>
-                                        {% endif %}
-                                    {% endfor %}
-                                </tr>
-                                <tr>
-                                    {% for bett in game['betting'] %}
-                                        {% if game.away_name == bett.place and bett.site == 'sports411.ag' %}
-                                            <td class="betting-content">{{game.away_name}}</td>
-                                        {% elif game.home_name == bett.place and bett.site == 'sports411.ag' %}
-                                            <td class="betting-content">{{game.home_name}}</td>
-                                        {% endif %}
-                                    {% endfor %}
-                                </tr>
-                                <tr>
-                                    {% for bett in game['betting'] %}
-                                        {% if game.away_name == bett.place and bett.site == 'shiba.ag' %}
-                                            <td class="betting-content">{{game.away_name}}</td>
-                                        {% elif game.home_name == bett.place and bett.site == 'shiba.ag' %}
-                                            <td class="betting-content">{{game.home_name}}</td>
-                                        {% endif %}
-                                    {% endfor %}
-                                </tr>             
-                            </table>
-                        </div>
-                        <div class="betting-col">
-                            <span>Odds</span>
-                            <hr>
-                            <table class = 'betting-table'>
-                                <tr>
-                                    {% for bett in game['betting'] %}
-                                        {% if bett.site == 'ps3838.com'%}
-                                            <td class="betting-content">{{bett.odds}}</td>
-                                        {% endif %}
-                                    {% endfor %}
-                                </tr>
-                                <tr>
-                                    {% for bett in game['betting'] %}
-                                        {% if bett.site == 'bet487.org'%}
-                                            <td class="betting-content">{{bett.odds}}</td>
-                                        {% endif %}
-                                    {% endfor %}
-                                </tr>
-                                <tr>
-                                    {% for bett in game['betting'] %}
-                                        {% if bett.site == 'sports411.ag'%}
-                                            <td class="betting-content">{{bett.odds}}</td>
-                                        {% endif %}
-                                    {% endfor %}
-                                </tr>
-                                <tr>
-                                    {% for bett in game['betting'] %}
-                                        {% if bett.site == 'shiba.ag'%}
-                                            <td class="betting-content">{{bett.odds}}</td>
-                                        {% endif %}
-                                    {% endfor %}
-                                </tr>
-                            </table>
-                        </div>
-                        <div class="betting-col">
-                            <span>Stake</span>
-                            <hr>
-                            <table class = 'betting-table'>
-                                <tr>
-                                    {% for bett in game['betting'] %}
-                                        {% if bett.site == 'ps3838.com' %}
-                                            <td class="betting-content">{{bett.stake}}</td>
-                                        {% endif %}
-                                    {% endfor %}
-                                </tr>
-                                <tr>
-                                    {% for bett in game['betting'] %}
-                                        {% if bett.site == 'bet487.org'%}
-                                            <td class="betting-content">{{bett.stake}}</td>
-                                        {% endif %}
-                                    {% endfor %}
-                                </tr>
-                                <tr>
-                                    {% for bett in game['betting'] %}
-                                        {% if bett.site == 'sports411.ag'%}
-                                            <td class="betting-content">{{bett.stake}}</td>
-                                        {% endif %}
-                                    {% endfor %}
-                                </tr>
-                                <tr>
-                                    {% for bett in game['betting'] %}
-                                        {% if bett.site == 'shiba.ag'%}
-                                            <td class="betting-content">{{bett.stake}}</td>
-                                        {% endif %}
-                                    {% endfor %}
-                                </tr>
-                            </table>
-                        </div>
-                        <div class="betting-col">
-                            <span>Status</span>
-                            <hr>
-                            <table class = 'betting-table'>
-                                <tr>
-                                    {% for bett in game['betting'] %}
-                                        {% if bett.site == 'ps3838.com' and bett.status == '2'%}
-                                            <td class="betting-content" style="color: crimson;">+{{bett.wins}}</td>
-                                        {% elif bett.site == 'ps3838.com' and bett.status == '1'%}
-                                            <td class="betting-content" style="color: black;">-{{bett.stake}}</td>
-                                        {% elif bett.site == 'ps3838.com' and bett.status == '0' %}
-                                            <td class="betting-content">Pending</td>
-                                        {% endif %}
-                                    {% endfor %}
-                                </tr>
-                                <tr>
-                                    {% for bett in game['betting'] %}
-                                        {% if bett.site == 'bet487.org' and bett.status == '2'%}
-                                            <td class="betting-content" style="color: crimson;">+{{bett.wins}}</td>
-                                        {% elif bett.site == 'bet487.org' and bett.status == '1'%}
-                                            <td class="betting-content" style="color: black;">-{{bett.stake}}</td>
-                                        {% elif bett.site == 'bet487.org' and bett.status == '0' %}
-                                            <td class="betting-content">Pending</td>
-                                        {% endif %}
-                                    {% endfor %}
-                                </tr>
-                                <tr>
-                                    {% for bett in game['betting'] %}
-                                        {% if bett.site == 'sports411.ag' and bett.status == '2'%}
-                                            <td class="betting-content" style="color: crimson;">+{{bett.wins}}</td>
-                                        {% elif bett.site == 'sports411.ag' and bett.status == '1'%}
-                                            <td class="betting-content" style="color: black;">-{{bett.stake}}</td>
-                                        {% elif bett.site == 'sports411.ag' and bett.status == '0' %}
-                                            <td class="betting-content">Pending</td>
-                                        {% endif %}
-                                    {% endfor %}
-                                </tr>
-                                <tr>
-                                    {% for bett in game['betting'] %}
-                                        {% if bett.site == 'shiba.ag' and bett.status == '2'%}
-                                            <td class="betting-content" style="color: crimson;">+{{bett.wins}}</td>
-                                        {% elif bett.site == 'shiba.ag' and bett.status == '1'%}
-                                            <td class="betting-content" style="color: black;">-{{bett.stake}}</td>
-                                        {% elif bett.site == 'shiba.ag' and bett.status == '0' %}
-                                            <td class="betting-content">Pending</td>
-                                        {% endif %}
-                                    {% endfor %}
-                                </tr>
-                            </table>
-                        </div>
-                        
-                    </div>
-                    <button class="small-solid-button" id="game_button_{{game.game_id}}" onclick="openCard(this.id)">Set Lineups</button>
-                </div>
                 {% endfor %}
             </div>
 

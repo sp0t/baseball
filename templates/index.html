@@ -73,9 +73,11 @@
             <!-- Card Grid -->
             <div class="card-grid">
                 {% for game in schedule %}
-                    <div class="card" id ="{{game.game_id}}" onmouseover="showDiv('{{game.game_id}}', false)" onmouseleave="hideDiv(false)">
-                        <span class="card-title">{{game.away_name}} @ {{game.home_name}}</span>
-                        <p class="game-date">{{game.game_datetime}} EST</p>
+                    <div class="card" id ="{{game.game_id}}">
+                        <div onmouseover="showDiv('{{game.game_id}}', false)" onmouseleave="hideDiv(false)">
+                            <span class="card-title">{{game.away_name}} @ {{game.home_name}}</span>
+                            <p class="game-date">{{game.game_datetime}} EST</p>
+                        </div>
                         <div class="form-wrapper">
                             <div class="form-left">
                                 <span>Win Prob</span>

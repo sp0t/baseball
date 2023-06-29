@@ -25,11 +25,7 @@
             }
 
             function showDiv(id) {
-                var data = {};
-                if (!isStatsCalled) {
-                        isStatsCalled = true;
-                        getPlayerStats(id);
-                }
+                getPlayerStats(id);
             }
         
             async function hideDiv(state) {
@@ -74,7 +70,7 @@
                 {% for game in schedule %}
                     <div class="div-container">
                         <div class="card" id ="{{game.game_id}}">
-                            <div onmouseover="showDiv('{{game.game_id}}', false)" onmouseleave="hideDiv(false)">
+                            <div onmouseover="showDiv('{{game.game_id}}', false)">
                                 <span class="card-title">{{game.away_name}} @ {{game.home_name}}</span>
                                 <p class="game-date">{{game.game_datetime}} EST</p>
                             </div>
@@ -379,7 +375,7 @@
                             <button class="small-solid-button" id="game_button_{{game.game_id}}" onclick="openCard(this.id)">Set Lineups</button>
                             <div class="hover-div"></div>
                         </div>
-                        <div id = "stats" onmouseover="setDivState(true)" onmouseleave="hideDiv(true)">
+                        <div id = "stats_{{game.game_id}}">
                         </div>
                     </div>
                 {% endfor %}

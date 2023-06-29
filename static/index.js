@@ -495,7 +495,7 @@ function  getPlayerStats(id){
         success: function (data){ 
             var html = '';
                 const divContainer = document.getElementById(id);
-                const divContent = document.getElementById('stats');
+                const divContent = document.getElementById(`stats_${id}`);
         
                 const topPosition = divContainer.offsetTop;
                 const height = divContainer.offsetHeight;

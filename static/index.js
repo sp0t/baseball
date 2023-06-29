@@ -507,25 +507,25 @@ function  getPlayerStats(id){
 
                 if(data.batter != undefined && data.batter.length > 0) {
                     html += '<div class="batter-container">'
-                    html += '<div style="background-color:black">GameID</div>'
-                    html += '<div style="background-color:black">Position</div>'
-                    html += '<div style="background-color:black">PlayerID</div>'
-                    html += '<div style="background-color:black">CareerAtBats</div>'
-                    html += '<div style="background-color:black">CareerAvg</div>'
-                    html += '<div style="background-color:black">CareerHomeRuns</div>'
-                    html += '<div style="background-color:black">CareerObp</div>'
-                    html += '<div style="background-color:black">CareerOps</div>'
-                    html += '<div style="background-color:black">CareerRbi</div>'
-                    html += '<div style="background-color:black">CareerSlg</div>'
-                    html += '<div style="background-color:black">CareerStrikeouts</div>'
-                    html += '<div style="background-color:black">RecentAtBats</div>'
-                    html += '<div style="background-color:black">RecentAvg</div>'
-                    html += '<div style="background-color:black">RecentHomeRuns</div>'
-                    html += '<div style="background-color:black">RecentObp</div>'
-                    html += '<div style="background-color:black">RecentOps</div>'
-                    html += '<div style="background-color:black">RecentRbi</div>'
-                    html += '<div style="background-color:black">RecentSlg</div>'
-                    html += '<div style="background-color:black">RecentStrikeouts</div>'
+                    html += '<div style="background-color:black">GID</div>'
+                    html += '<div style="background-color:black">POS</div>'
+                    html += '<div style="background-color:black">PID</div>'
+                    html += '<div style="background-color:black">CAB</div>'
+                    html += '<div style="background-color:black">CAVG</div>'
+                    html += '<div style="background-color:black">CHR</div>'
+                    html += '<div style="background-color:black">COBP</div>'
+                    html += '<div style="background-color:black">COPS</div>'
+                    html += '<div style="background-color:black">CRBI</div>'
+                    html += '<div style="background-color:black">CSLG</div>'
+                    html += '<div style="background-color:black">CSO</div>'
+                    html += '<div style="background-color:black">RAB</div>'
+                    html += '<div style="background-color:black">RAVG</div>'
+                    html += '<div style="background-color:black">RHR</div>'
+                    html += '<div style="background-color:black">ROBP</div>'
+                    html += '<div style="background-color:black">ROPS</div>'
+                    html += '<div style="background-color:black">RRBI</div>'
+                    html += '<div style="background-color:black">RSLG</div>'
+                    html += '<div style="background-color:black">RSO</div>'
                     
 
                     for(var x in data.batter) {
@@ -554,17 +554,17 @@ function  getPlayerStats(id){
 
                 if(data.pitcher != undefined && data.pitcher.length > 0) {
                     html += '<div class="pitcher-container">'
-                    html += '<div style="background-color:black">GameID</div>'
-                    html += '<div style="background-color:black">Position</div>'
-                    html += '<div style="background-color:black">PlayerID</div>'
-                    html += '<div style="background-color:black">CareerEra</div>'
-                    html += '<div style="background-color:black">CareerHomeRuns</div>'
-                    html += '<div style="background-color:black">CarrerWhip</div>'
-                    html += '<div style="background-color:black">CarrerBatersFaced</div>'
-                    html += '<div style="background-color:black">RecentEra</div>'
-                    html += '<div style="background-color:black">RecentHomeRuns</div>'
-                    html += '<div style="background-color:black">RecentWhip</div>'
-                    html += '<div style="background-color:black">RecentBatersFaced</div>'
+                    html += '<div style="background-color:black">GID</div>'
+                    html += '<div style="background-color:black">POS</div>'
+                    html += '<div style="background-color:black">PID</div>'
+                    html += '<div style="background-color:black">CERA</div>'
+                    html += '<div style="background-color:black">CHR</div>'
+                    html += '<div style="background-color:black">CWHP</div>'
+                    html += '<div style="background-color:black">CBF</div>'
+                    html += '<div style="background-color:black">RERA</div>'
+                    html += '<div style="background-color:black">RHR</div>'
+                    html += '<div style="background-color:black">RWHP</div>'
+                    html += '<div style="background-color:black">RBF</div>'
                     
 
                     for(var y in data.pitcher) {
@@ -585,7 +585,6 @@ function  getPlayerStats(id){
                 }
               // Show the div container
               divContent.innerHTML = html;
-              divContent.style.display = 'block';
         },
         error: function() {
         }

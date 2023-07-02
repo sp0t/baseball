@@ -133,10 +133,13 @@ def process_team_batter_data(team_batters, team, game_date):
     team_recent_data = {}
     team_career_data = {}
 
+    print(team_batters)
+
     # for team_batter in team_batters: 
     for i in range(9):
         # order = team_batters.index(team_batter)+1
         order = i + 1
+        print(i)
         team_batter = team_batters[i]
         player_df = get_batter_df(team_batter, game_date)
 

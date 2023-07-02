@@ -10,8 +10,8 @@ engine = database.connect_to_db()
 gamedata = pd.read_sql(f"SELECT DISTINCT game_table.* FROM game_table INNER JOIN batter_stats ON game_table.game_id = batter_stats.game_id WHERE game_table.game_date >= '2023/06/23' ORDER BY game_table.game_date ASC;", con = engine).to_dict('records')
 
 for i in gamedata:
-    engine.execute(text(f"DELETE FROM batter_stats WHERE game_id = '{i['game_id']}';"))
-    engine.execute(text(f"DELETE FROM pitcher_stats WHERE game_id = '{i['game_id']}';"))
+    # engine.execute(text(f"DELETE FROM batter_stats WHERE game_id = '{i['game_id']}';"))
+    # engine.execute(text(f"DELETE FROM pitcher_stats WHERE game_id = '{i['game_id']}';"))
     print(i['game_date'], i['game_id'], i['away_team'], i['home_team'])
     batterData = pd.read_sql(f"SELECT * FROM batter_table WHERE game_id = '{i['game_id']}' ORDER BY team, position;", con = engine).to_dict('records')
     pitcherData = pd.read_sql(f"SELECT * FROM pitcher_table WHERE game_id = '{i['game_id']}' AND role = 'starter' ORDER BY team;", con = engine).to_dict('records')

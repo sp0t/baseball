@@ -53,7 +53,7 @@ for i in gamedata:
         if el['team'] == 'away':
             away_starter = el['playerid']
         if el['team'] == 'home':
-            team_home = el['playerid']
+            home_starter = el['playerid']
 
     # Batters 
     away_batter_data = batting.process_team_batter_data(team_batter, 'away', i['game_date'])

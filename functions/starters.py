@@ -38,6 +38,8 @@ def get_starter_df(player_id):
     player_df.columns = new_col_names
 
     player_df = player_df.reset_index(drop = True)
+    if player_id == "650911":
+        print(player_df)
     return player_df
 
 def process_recent_starter_data(player_df, game_date, pitcher_stat_list): 

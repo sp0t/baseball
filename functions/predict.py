@@ -82,14 +82,18 @@ def save_batter_data(engine, row, away_batters, home_batters, gameId, rosters):
     data = mlb.boxscore_data(gameId)
     gamedate = data['gameId'][:10]
 
-    state = True
+    state = False
 
     for el in rosters['position']['away']:
         if el != int(away_batters[rosters['position']['away'][el] - 1]):
             state = False
+        else:
+            state = True
     for el in rosters['position']['home']:
         if el != int(home_batters[rosters['position']['home'][el] - 1]):
             state = False
+        else:
+            state = True
 
     for index, row in batter_df.iterrows():
         if state:
@@ -120,14 +124,18 @@ def save_pitcher_data(engine, row, away_starter, home_starter, gameId, rosters):
     data = mlb.boxscore_data(gameId)
     gamedate = data['gameId'][:10]
 
-    state = True
+    state = False
 
     for el in rosters['pitcher']['away']:
         if el != int(away_starter):
             state = False
+        else:
+            state = True
     for el in rosters['pitcher']['home']:
         if el != int(home_starter):
             state = False
+        else:
+            state = True
     for index, row in pitchers.iterrows():
         if state:
             engine.execute(text(f"INSERT INTO pitcher_stats(game_id, game_date, position, player_id, career_era, career_homeRuns, career_whip, career_battersFaced, recent_era, recent_homeRuns, recent_whip, recent_battersFaced) \
@@ -248,10 +256,16 @@ def get_probabilities(params):
 
     X_test_b = X_test[[col for col in X_test.columns if 'bullpen' not in col]]
     print("Game Row Processed")
+    print('X_test=========================================>')
+    print(X_test)
+    print('X_test_b=========================================>')
+    print(X_test_b)
 
     # Make Prediciton    
     pred_1a = pickle.load(open('algorithms/model_1a_v10.sav', 'rb')).predict_proba(X_test)
+    print(pred_1a)
     pred_1b = pickle.load(open('algorithms/model_1b_v10.sav', 'rb')).predict_proba(X_test_b)
+    print(pred_1b)
     print("Prediction made")
     
     return {"1a": pred_1a, "1b": pred_1b}

@@ -115,13 +115,12 @@ def process_career_bullpen_data(player_id, games, recent_games, pitcher_stat_lis
         else: 
             s_df['era'] = s_df.apply(lambda x: 9*x['earnedRuns']/x['inningsPitched'] if x['inningsPitched']>0 else 0,axis=1)
             s_df['whip'] = s_df.apply(lambda x: (x['baseOnBalls']+x['hits'])/x['inningsPitched'] if x['inningsPitched']>0 else 0 ,axis=1)
-            s_df = s_df.drop('game_id', errors = 'ignore', axis = 1)
+            drop_cols = ['game_date', 'note', 'season','game_id', 'away_team', 'home_team', 'away_score', 'home_score']
+            s_df = s_df.drop(drop_cols, errors = 'ignore', axis = 1)
             s_data = s_df.mean().to_dict()
             all_s_data.append(s_data)
             
     career_df = pd.DataFrame(all_s_data)
-    drop_cols = ['game_date', 'note', 'game_id', 'away_team', 'season','home_team', 'away_score', 'home_score']
-    career_df = career_df.drop(drop_cols,axis = 1,errors = 'ignore')
     career_data = career_df.mul(weights,axis=0).sum().to_dict()
     
     

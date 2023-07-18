@@ -64,7 +64,26 @@
                     <div id="update-loader" style="display: none;"><img style="width: 50px;" src="/static/loader.gif"/></div>
                 </div>
             
-
+                <div>
+                    {% for el in average %}
+                        <div class="average-container">
+                            <div style="background-color:black">Season</div>
+                            <div style="background-color:black">AVG</div>
+                            <div style="background-color:black">OBP</div>
+                            <div style="background-color:black">SLG</div>
+                            <div style="background-color:black">OPS</div>
+                            <div style="background-color:black">ERA</div>
+                            <div style="background-color:black">WHIP</div>
+                            <div>{{el.year}}</div>
+                            <div>{{el.avg}}</div>
+                            <div>{{el.obp}}</div>
+                            <div>{{el.slg}}</div>
+                            <div>{{el.ops}}</div>
+                            <div>{{el.era}}</div>
+                            <div>{{el.whip}}</div>
+                        </div>
+                    {% endfor %}
+                </div>
             <!-- Card Grid -->
             <div class="card-grid">
                 {% for game in schedule %}

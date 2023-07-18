@@ -87,6 +87,14 @@ a{
 	margin-bottom: 8px;
 }
 
+.average-container {
+	display: grid;
+	grid-template-columns: auto auto auto auto auto auto auto;
+	gap: 1px;
+	background-color: white;
+	padding: 1px;
+}
+
 .batter-container {
 	display: grid;
 	grid-template-columns: auto auto auto auto auto auto auto auto auto auto auto auto auto auto auto auto auto auto auto;
@@ -101,6 +109,14 @@ a{
 	gap: 1px;
 	background-color: white;
 	padding: 1px;
+}
+
+.average-container > div {
+	background-color: gray;
+	text-align: center;
+	color: white;
+	padding: 10px 6px;
+	font-size: 13px;
 }
 
 .batter-container > div {

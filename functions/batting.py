@@ -117,7 +117,8 @@ def process_career_batter_data(games, recent_games, batter_stat_list):
             s_df['obp'] = s_df.apply(lambda x: (x['hits']+x['baseOnBalls'])/(x['atBats']+x['baseOnBalls']) if x['atBats']+x['baseOnBalls']>0 else 0,axis=1)
             s_df['slg'] = s_df.apply(lambda x: ((x['singles'])+2*(x['doubles'])+3*(x['triples'])+4*(x['homeRuns']))/x['atBats'] if x['atBats']>0 else 0,axis=1)
             s_df['ops'] = s_df['obp'] + s_df['slg']
-            s_df = s_df.drop('game_id', errors = 'ignore', axis = 1)
+            drop_cols = ['game_date', 'note', 'season','game_id', 'away_team', 'home_team', 'away_score', 'home_score']
+            s_df = s_df.drop(drop_cols, errors = 'ignore', axis = 1)
             s_data = s_df.mean().to_dict()
             all_s_data.append(s_data)
     career_data=pd.DataFrame(all_s_data).mul(weights,axis=0).sum().to_dict()
@@ -155,5 +156,6 @@ def process_team_batter_data(team_batters, team, game_date):
             
     team_batter_data.update(team_career_data)
     team_batter_data.update(team_recent_data)
+    print(team_batter_data)
 
     return team_batter_data

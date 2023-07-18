@@ -143,13 +143,15 @@ def index():
     except:
         pass
 
+    year = date.today().year
     today_schedule = schedule.get_schedule()                                                                                                                                                                                                                                                                                                                                                                                                                                             
     engine = database.connect_to_db()
     last_update = pd.read_sql("SELECT * FROM updates", con = engine).iloc[-1]
     last_date, last_time, last_record = last_update["update_date"], last_update["update_time"], last_update["last_record"]
+    average = pd.read_sql(f"SELECT * FROM league_average WHERE year = '{year}';", con = engine).to_dict('records')
 
     return render_template("index.html", schedule = today_schedule, last_record = last_record, 
-                           update_date = last_date, update_time = last_time)
+                           update_date = last_date, update_time = last_time, average = average)
 
 
 @app.route('/login', methods = ["GET", "POST"])
@@ -339,6 +341,7 @@ def team(team_abbreviation):
 @app.route('/update_data', methods = ["POST"])
 def update_data(): 
     update_date, update_time, last_record, num_games_added = database.update_database()
+    update_league_average()
     update_data = {'update_date': update_date, 'update_time': update_time, 'last_record': last_record, 'games_added': num_games_added}
     schedule.update_schedule()
     update_data = jsonify(update_data = update_data)
@@ -524,7 +527,6 @@ def get_PlayerStats():
     pitcherData = pd.read_sql(f"SELECT * FROM pitcher_stats WHERE game_id = '{game_id}' ORDER BY position;", con = engine).to_dict('records')
     data['batter'] = batterData
     data['pitcher'] = pitcherData
-    print(data)
     
     return data
 
@@ -660,7 +662,6 @@ def update_P_T_table():
 
     for el in team_dict:
         print('============cron==========')
-        print(el)
         team_id = mlb.lookup_team(el['name'])[0]['id']
 
         query1 = f"INSERT INTO team_table(team_id, team_name, team_abbr, club_name) VALUES('{team_id}', '{el['name']}', '{el['abbreviation']}', '{el['clubName']}');"
@@ -678,7 +679,92 @@ def update_P_T_table():
 
             engine.execute(text(query2))
 
-    return 'OK'      
+    return 'OK'   
+
+def update_league_average():
+    engine = database.connect_to_db()
+    year = date.today().year
+    print(year)
+    batter_df = pd.read_sql(f"SELECT b.game_id, b.game_date, b.home_team, b.away_team, b.home_score, b.away_score, (a.atbats)atBats, a.avg, \
+            (a.baseonballs)baseonBalls, a.doubles, a.hits, (a.homeruns)homeRuns, a.obp, a.ops, \
+            (a.playerid)playerId, a.rbi, a.runs, a.slg, (a.strikeouts)strikeOuts, \
+            a.triples FROM batter_table a LEFT JOIN game_table b ON a.game_id = b.game_id WHERE a.substitution = '0' AND b.game_date LIKE '{year}%%';", con = engine).to_dict('records')
+    
+    print(len(batter_df))
+    atbats = 0
+    hits = 0
+    doubles = 0
+    triples = 0
+    b_homeruns = 0
+    baseonballs = 0
+    era = 0
+    whip = 0
+    rbi = 0
+    strikeouts = 0
+
+    for row in batter_df:
+        atbats = atbats + float(row['atbats'])
+        hits = hits + float(row['hits'])
+        doubles = doubles + float(row['doubles'])
+        triples = triples + float(row['triples'])
+        b_homeruns = b_homeruns + float(row['homeruns'])
+        baseonballs = baseonballs + float(row['baseonballs'])
+        rbi = rbi + float(row['rbi'])
+        strikeouts = strikeouts + float(row['strikeouts'])
+
+    singles = hits-doubles-triples-b_homeruns
+    avg = hits/atbats if atbats>0 else 0
+    obp = (hits+baseonballs)/(atbats+baseonballs) if (atbats+baseonballs)>0 else 0
+    slg = (singles+2*doubles+3*triples+4*b_homeruns)/atbats if atbats>0 else 0
+    atbats = atbats / len(batter_df) if len(batter_df)>0 else 0
+    b_homeruns = b_homeruns / len(batter_df) if len(batter_df)>0 else 0
+    rbi = rbi / len(batter_df) if len(batter_df)>0 else 0
+    strikeouts = strikeouts / len(batter_df) if len(batter_df)>0 else 0
+    ops = obp + slg
+    atbats = round(atbats, 3)
+    rbi = round(rbi, 3)
+    strikeouts = round(strikeouts, 3)
+    b_homeruns = round(b_homeruns, 3)
+    avg = round(avg, 3)
+    obp = round(obp, 3)
+    slg = round(slg, 3)
+    ops = round(ops, 3)
+
+    print(atbats, rbi, strikeouts, b_homeruns, avg, obp, slg, ops)
+
+    pitcher_df = pd.read_sql(f"SELECT b.game_id, b.game_date, b.home_team, b.away_team, b.home_score, b.away_score, (a.atbats)atBats, \
+            (a.baseonballs)baseonBalls, a.blownsaves, a.doubles, (a.earnedruns)earnedRuns, a.era, a.hits, a.holds, (a.homeruns)homeRuns, \
+            (a.inningspitched)inningsPitched, a.losses, (a.pitchesthrown)pitchesThrown, (a.playerid)playerId, a.rbi, a.runs, (a.strikeouts)strikeOuts, \
+            a.strikes, a.triples, a.whip, a.wins FROM pitcher_table a LEFT JOIN game_table b ON a.game_id = b.game_id WHERE a.role = 'starter' AND a.batter = '0' AND b.game_date LIKE '{year}%%';", con = engine).to_dict('records')
+    
+    baseonballs = 0
+    hits = 0
+    inningspitched = 0
+    earnedruns = 0
+    battersfaced = 0
+    atbats = 0
+    p_homeruns = 0
+
+    for row in pitcher_df:
+        atbats = atbats + float(row['atbats'])
+        p_homeruns = p_homeruns + float(row['homeruns'])
+        hits = hits + float(row['hits'])
+        baseonballs = baseonballs + float(row['baseonballs'])
+        inningspitched = inningspitched + float(row['inningspitched'])
+        earnedruns = earnedruns + float(row['earnedruns'])
+
+    battersfaced = baseonballs + atbats
+    era = 9*earnedruns/inningspitched if inningspitched>0 else 0
+    whip = (baseonballs+hits)/inningspitched if inningspitched>0 else 0
+    battersfaced = battersfaced / len(pitcher_df) if len(pitcher_df)>0 else 0
+    p_homeruns = p_homeruns / len(pitcher_df) if len(pitcher_df)>0 else 0
+
+    era = round(era, 3)
+    whip = round(whip, 3)
+    battersfaced = round(battersfaced, 3)
+    p_homeruns = round(p_homeruns, 3)
+    print(p_homeruns, battersfaced, era, whip)
+    engine.execute(text(f"INSERT INTO league_average (year, avg, obp, slg, ops, era, whip) VALUES ('{year}', '{avg}', '{obp}', '{slg}', '{ops}', '{era}', '{whip}') ON CONFLICT (year) DO UPDATE SET avg = excluded.avg, obp = excluded.obp, slg = excluded.slg, ops = excluded.ops, era = excluded.era, whip = excluded.whip;"))   
 
 # model_1a = None
 # model_1b = None

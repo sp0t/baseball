@@ -920,11 +920,11 @@ home_bullpen_data = process_bullpen_data('LAA', 'home', '2023/07/16')
 
 # Combine 
 game_data = {}
-# game_data.update(away_bullpen_data)
+game_data.update(away_bullpen_data)
 game_data.update(away_batter_data)
 game_data.update(away_starter_data)
 
-# game_data.update(home_bullpen_data)
+game_data.update(home_bullpen_data)
 game_data.update(home_batter_data)
 game_data.update(home_starter_data)
 

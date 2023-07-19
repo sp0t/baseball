@@ -961,5 +961,6 @@ pred_1a = pickle.load(open('algorithms/model_1a_v10.sav', 'rb')).predict_proba(X
 print(pred_1a)
 # pred_1b = pickle.load(open('algorithms/model_1b_v10.sav', 'rb')).predict_proba(X_test)
 # print(pred_1b)
-engine.execute(f"INSERT INTO win_percent(game_id, away_prob, home_prob) VALUES('{717381}', '{pred_1a['away_prob']}', '{pred_1a['home_prob']}') ON CONFLICT win_percent_c_game_id_key DO UPDATE SET away_prob = excluded.away_prob, home_prob = excluded.home_prob;")  
+pred_1a = np.round(100 * pred_1a[0], 2)
+engine.execute(f"INSERT INTO win_percent(game_id, away_prob, home_prob) VALUES('{717381}', '{pred_1a[0]}', '{pred_1a[1]}') ON CONFLICT win_percent_c_game_id_key DO UPDATE SET away_prob = excluded.away_prob, home_prob = excluded.home_prob;")  
 print("Prediction made")

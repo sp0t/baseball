@@ -24,7 +24,7 @@ def get_batter_df(team_batter, gamedate):
     df = pd.read_sql("SELECT b.game_id, b.game_date, b.home_team, b.away_team, b.home_score, b.away_score, (a.atbats)atBats, a.avg, "
             "(a.baseonballs)baseonBalls, a.doubles, a.hits, (a.homeruns)homeRuns, a.obp, a.ops, "
             "(a.playerid)playerId, a.rbi, a.runs, a.slg, (a.strikeouts)strikeOuts, "
-            "a.triples FROM batter_table a LEFT JOIN game_table b ON a.game_id = b.game_id WHERE a.playerid = '%s' AND a.substitution = '0' AND b.game_date < '%s';" %(team_batter, gamedate), con = engine)
+            "a.triples FROM batter_table a LEFT JOIN game_table b ON a.game_id = b.game_id WHERE a.playerid = '%s' AND b.game_date < '%s';" %(team_batter, gamedate), con = engine)
 
     string_cols = [col for col in df.columns if 'id' in col.lower()] + ['game_date', 'away_team', 'home_team']
 
@@ -180,7 +180,7 @@ def get_starter_df(player_id, gamedate):
     df = pd.read_sql("SELECT b.game_id, b.game_date, b.home_team, b.away_team, b.home_score, b.away_score, (a.atbats)atBats, "
             "(a.baseonballs)baseonBalls, a.blownsaves, a.doubles, (a.earnedruns)earnedRuns, a.era, a.hits, a.holds, (a.homeruns)homeRuns, "
             "(a.inningspitched)inningsPitched, a.losses, (a.pitchesthrown)pitchesThrown, (a.playerid)playerId, a.rbi, a.runs, (a.strikeouts)strikeOuts, "
-            "a.strikes, a.triples, a.whip, a.wins FROM pitcher_table a LEFT JOIN game_table b ON a.game_id = b.game_id WHERE a.playerid = '%s' AND a.role = 'starter' AND a.batter = '0' AND b.game_date < '%s';" %(player_id, gamedate), con = engine)
+            "a.strikes, a.triples, a.whip, a.wins FROM pitcher_table a LEFT JOIN game_table b ON a.game_id = b.game_id WHERE a.playerid = '%s' AND a.batter = '0' AND b.game_date < '%s';" %(player_id, gamedate), con = engine)
 
     string_cols = [col for col in df.columns if 'id' in col.lower()] + ['game_date', 'away_team', 'home_team']
 
@@ -388,6 +388,7 @@ def process_recent_bullpen_data(bullpen_df, game_date, pitcher_stat_list):
         drop_cols = ['game_date', 'note', 'game_id', 'away_team', 'home_team', 'away_score', 'home_score']
         recent_df = recent_df.drop(drop_cols,axis = 1,errors = 'ignore').astype(float)
         recent_data = recent_df.mul(weights,axis = 0).sum().to_dict()
+        recent_data['difficulty'] = 8/8
         recent_games = list(recent_df.index)
         
     return recent_data, recent_games, games
@@ -476,7 +477,7 @@ def update_league_average(gamedate, state):
     batter_df = pd.read_sql(f"SELECT b.game_id, b.game_date, b.home_team, b.away_team, b.home_score, b.away_score, (a.atbats)atBats, a.avg, \
             (a.baseonballs)baseonBalls, a.doubles, a.hits, (a.homeruns)homeRuns, a.obp, a.ops, \
             (a.playerid)playerId, a.rbi, a.runs, a.slg, (a.strikeouts)strikeOuts, \
-            a.triples FROM batter_table a LEFT JOIN game_table b ON a.game_id = b.game_id WHERE a.substitution = '0' AND b.game_date LIKE '{year}%%' AND b.game_date < '{gamedate}';", con = engine).to_dict('records')
+            a.triples FROM batter_table a LEFT JOIN game_table b ON a.game_id = b.game_id WHERE b.game_date LIKE '{year}%%' AND b.game_date < '{gamedate}';", con = engine).to_dict('records')
 
     atbats = 0
     hits = 0
@@ -520,7 +521,7 @@ def update_league_average(gamedate, state):
     pitcher_df = pd.read_sql(f"SELECT b.game_id, b.game_date, b.home_team, b.away_team, b.home_score, b.away_score, (a.atbats)atBats, \
             (a.baseonballs)baseonBalls, a.blownsaves, a.doubles, (a.earnedruns)earnedRuns, a.era, a.hits, a.holds, (a.homeruns)homeRuns, \
             (a.inningspitched)inningsPitched, a.losses, (a.pitchesthrown)pitchesThrown, (a.playerid)playerId, a.rbi, a.runs, (a.strikeouts)strikeOuts, \
-            a.strikes, a.triples, a.whip, a.wins FROM pitcher_table a LEFT JOIN game_table b ON a.game_id = b.game_id WHERE a.role = 'starter' AND a.batter = '0' AND b.game_date LIKE '{year}%%' AND b.game_date < '{gamedate}';", con = engine).to_dict('records')
+            a.strikes, a.triples, a.whip, a.wins FROM pitcher_table a LEFT JOIN game_table b ON a.game_id = b.game_id WHERE a.batter = '0' AND b.game_date LIKE '{year}%%' AND b.game_date < '{gamedate}';", con = engine).to_dict('records')
     
     baseonballs = 0
     hits = 0
@@ -745,11 +746,7 @@ def addBattersFaced(X_test, bullpen = False):
     drop_cols = [col for col in X_test.columns if 'inningsPitched' in col or 'baseOnBalls' in col]
     drop_cols = drop_cols + ['away_starter_recent_atBats', 'away_starter_career_atBats', 
                              'home_starter_recent_atBats', 'home_starter_career_atBats', ]
-    print('#################################          drop_cols            ##############################################')
-    print(drop_cols)
-    X_test = X_test.drop(drop_cols,axis=1)
-    print('#################################          X_test 2_1            ##############################################')
-    print(drop_cols)    
+    X_test = X_test.drop(drop_cols,axis=1)   
     column_names = X_test.columns
     
     return X_test, column_names   
@@ -880,14 +877,14 @@ awaybatters = []
 homebatters = []
 away_starter = ''
 home_starter = ''
-batters = pd.read_sql(text(f"SELECT * FROM batter_table WHERE game_id = '717368' and substitution = '0' ORDER BY team, position;"), con = engine).to_dict('records')
+batters = pd.read_sql(text(f"SELECT * FROM batter_table WHERE game_id = '717381' and substitution = '0' ORDER BY team, position;"), con = engine).to_dict('records')
 for batter in batters:
     if batter['team'] == 'away':
         awaybatters.append(batter['playerid'])
     if batter['team'] == 'home':
         homebatters.append(batter['playerid'])
 
-pithcers = pd.read_sql(text(f"SELECT * FROM pitcher_table WHERE game_id = '717368' AND role = 'starter';"), con = engine).to_dict('records')
+pithcers = pd.read_sql(text(f"SELECT * FROM pitcher_table WHERE game_id = '717381' AND role = 'starter';"), con = engine).to_dict('records')
 
 for pitcher in pithcers:
     if pitcher['team'] == 'away':
@@ -901,12 +898,12 @@ for pitcher in pithcers:
 
 
 # Batters
-away_batter_data = process_team_batter_data(awaybatters, 'away', '2023/07/17', home_starter)
-home_batter_data = process_team_batter_data(homebatters, 'home', '2023/07/17', away_starter)
+away_batter_data = process_team_batter_data(awaybatters, 'away', '2023/07/16', home_starter)
+home_batter_data = process_team_batter_data(homebatters, 'home', '2023/07/16', away_starter)
 
 # # Starters 
-away_starter_data = process_starter_data(away_starter, 'away', '2023/07/17', homebatters)
-home_starter_data = process_starter_data(home_starter, 'home', '2023/07/17', awaybatters)
+away_starter_data = process_starter_data(away_starter, 'away', '2023/07/16', homebatters)
+home_starter_data = process_starter_data(home_starter, 'home', '2023/07/16', awaybatters)
 
 print('#################################          Data             ##############################################')
 print('---------------------------------      away_batter_data    ------------------------------------------------')
@@ -918,8 +915,8 @@ print(away_starter_data)
 print('---------------------------------      home_starter_data    ------------------------------------------------')
 print(home_starter_data)
 # Bullpen 
-# away_bullpen_data = process_bullpen_data(game[2], 'away', game[1])
-# home_bullpen_data = process_bullpen_data(game[3], 'home', game[1])
+away_bullpen_data = process_bullpen_data('HOU', 'away', '2023/07/16')
+home_bullpen_data = process_bullpen_data('LAA', 'home', '2023/07/16')
 
 # Combine 
 game_data = {}
@@ -945,22 +942,24 @@ X_test, column_names = addBattersFaced(X_test, bullpen = False)
 print('#################################          X_test 3            ##############################################')
 print(X_test)
 
-rosters = schedule.get_rosters('717368')
+rosters = schedule.get_rosters('717381')
 
-save_batter_data(engine, X_test, awaybatters, homebatters, '717368', rosters)
-save_pitcher_data(engine, X_test, away_starter, home_starter, '717368', rosters)
+save_batter_data(engine, X_test, awaybatters, homebatters, '717381', rosters)
+save_pitcher_data(engine, X_test, away_starter, home_starter, '717381', rosters)
 
-X_test = standardizeData(X_test, column_names)
-
+X_test_b = X_test[[col for col in X_test.columns if 'difficulty' not in col]]
+column_names = X_test[[el for el in column_names if 'difficulty' not in el]]
+for el in column_names:
+    print(el)
+X_test_b = standardizeData(X_test_b, column_names)
 # X_test_b = X_test[[col for col in X_test.columns if 'bullpen' not in col]]
 # print(X_test)
 
-X_test_b = X_test[[col for col in X_test.columns if col not in ['difficulty', 'group']]]
 # print(X_test_b)
 # Make Prediciton    
-# pred_1a = pickle.load(open('algorithms/model_1a_v10.sav', 'rb')).predict_proba(X_test)
-# print(pred_1a)
-pred_1b = pickle.load(open('algorithms/model_1b_v10.sav', 'rb')).predict_proba(X_test_b)
-print(pred_1b)
-engine.execute(f"INSERT INTO win_percent(game_id, away_prob, home_prob) VALUES('{717381}', '{pred_1b['away_prob']}', '{pred_1b['home_prob']}') ON CONFLICT win_percent_c_game_id_key DO UPDATE SET away_prob = excluded.away_prob, home_prob = excluded.home_prob;")  
+pred_1a = pickle.load(open('algorithms/model_1a_v10.sav', 'rb')).predict_proba(X_test)
+print(pred_1a)
+# pred_1b = pickle.load(open('algorithms/model_1b_v10.sav', 'rb')).predict_proba(X_test)
+# print(pred_1b)
+engine.execute(f"INSERT INTO win_percent(game_id, away_prob, home_prob) VALUES('{717381}', '{pred_1a['away_prob']}', '{pred_1a['home_prob']}') ON CONFLICT win_percent_c_game_id_key DO UPDATE SET away_prob = excluded.away_prob, home_prob = excluded.home_prob;")  
 print("Prediction made")

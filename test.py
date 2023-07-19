@@ -948,7 +948,7 @@ save_batter_data(engine, X_test, awaybatters, homebatters, '717381', rosters)
 save_pitcher_data(engine, X_test, away_starter, home_starter, '717381', rosters)
 
 X_test = X_test[[col for col in X_test.columns if 'difficulty' not in col]]
-column_names = X_test[[el for el in column_names if 'difficulty' not in el]]
+column_names = [el for el in column_names if 'difficulty' not in el]
 for el in column_names:
     print(el)
 X_test = standardizeData(X_test, column_names)

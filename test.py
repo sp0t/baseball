@@ -877,14 +877,14 @@ awaybatters = []
 homebatters = []
 away_starter = ''
 home_starter = ''
-batters = pd.read_sql(text(f"SELECT * FROM batter_table WHERE game_id = '717381' and substitution = '0' ORDER BY team, position;"), con = engine).to_dict('records')
+batters = pd.read_sql(text(f"SELECT * FROM batter_table WHERE game_id = '717350' and substitution = '0' ORDER BY team, position;"), con = engine).to_dict('records')
 for batter in batters:
     if batter['team'] == 'away':
         awaybatters.append(batter['playerid'])
     if batter['team'] == 'home':
         homebatters.append(batter['playerid'])
 
-pithcers = pd.read_sql(text(f"SELECT * FROM pitcher_table WHERE game_id = '717381' AND role = 'starter';"), con = engine).to_dict('records')
+pithcers = pd.read_sql(text(f"SELECT * FROM pitcher_table WHERE game_id = '717350' AND role = 'starter';"), con = engine).to_dict('records')
 
 for pitcher in pithcers:
     if pitcher['team'] == 'away':
@@ -898,12 +898,12 @@ for pitcher in pithcers:
 
 
 # Batters
-away_batter_data = process_team_batter_data(awaybatters, 'away', '2023/07/16', home_starter)
-home_batter_data = process_team_batter_data(homebatters, 'home', '2023/07/16', away_starter)
+away_batter_data = process_team_batter_data(awaybatters, 'away', '2023/07/18', home_starter)
+home_batter_data = process_team_batter_data(homebatters, 'home', '2023/07/18', away_starter)
 
 # # Starters 
-away_starter_data = process_starter_data(away_starter, 'away', '2023/07/16', homebatters)
-home_starter_data = process_starter_data(home_starter, 'home', '2023/07/16', awaybatters)
+away_starter_data = process_starter_data(away_starter, 'away', '2023/07/18', homebatters)
+home_starter_data = process_starter_data(home_starter, 'home', '2023/07/18', awaybatters)
 
 print('#################################          Data             ##############################################')
 print('---------------------------------      away_batter_data    ------------------------------------------------')
@@ -915,8 +915,8 @@ print(away_starter_data)
 print('---------------------------------      home_starter_data    ------------------------------------------------')
 print(home_starter_data)
 # Bullpen 
-away_bullpen_data = process_bullpen_data('HOU', 'away', '2023/07/16')
-home_bullpen_data = process_bullpen_data('LAA', 'home', '2023/07/16')
+away_bullpen_data = process_bullpen_data('HOU', 'away', '2023/07/18')
+home_bullpen_data = process_bullpen_data('LAA', 'home', '2023/07/18')
 
 # Combine 
 game_data = {}
@@ -942,10 +942,10 @@ X_test, column_names = addBattersFaced(X_test, bullpen = False)
 print('#################################          X_test 3            ##############################################')
 print(X_test)
 
-rosters = schedule.get_rosters('717381')
+rosters = schedule.get_rosters('717350')
 
-save_batter_data(engine, X_test, awaybatters, homebatters, '717381', rosters)
-save_pitcher_data(engine, X_test, away_starter, home_starter, '717381', rosters)
+save_batter_data(engine, X_test, awaybatters, homebatters, '717350', rosters)
+save_pitcher_data(engine, X_test, away_starter, home_starter, '717350', rosters)
 
 X_test = X_test[[col for col in X_test.columns if 'difficulty' not in col]]
 column_names = [el for el in column_names if 'difficulty' not in el]

@@ -915,8 +915,8 @@ print(away_starter_data)
 print('---------------------------------      home_starter_data    ------------------------------------------------')
 print(home_starter_data)
 # Bullpen 
-away_bullpen_data = process_bullpen_data('HOU', 'away', '2023/07/18')
-home_bullpen_data = process_bullpen_data('LAA', 'home', '2023/07/18')
+away_bullpen_data = process_bullpen_data('LAD', 'away', '2023/07/18')
+home_bullpen_data = process_bullpen_data('BAL', 'home', '2023/07/18')
 
 # Combine 
 game_data = {}

@@ -877,14 +877,14 @@ awaybatters = []
 homebatters = []
 away_starter = ''
 home_starter = ''
-batters = pd.read_sql(text(f"SELECT * FROM batter_table WHERE game_id = '717350' and substitution = '0' ORDER BY team, position;"), con = engine).to_dict('records')
+batters = pd.read_sql(text(f"SELECT * FROM batter_table WHERE game_id = '717352' and substitution = '0' ORDER BY team, position;"), con = engine).to_dict('records')
 for batter in batters:
     if batter['team'] == 'away':
         awaybatters.append(batter['playerid'])
     if batter['team'] == 'home':
         homebatters.append(batter['playerid'])
 
-pithcers = pd.read_sql(text(f"SELECT * FROM pitcher_table WHERE game_id = '717350' AND role = 'starter';"), con = engine).to_dict('records')
+pithcers = pd.read_sql(text(f"SELECT * FROM pitcher_table WHERE game_id = '717352' AND role = 'starter';"), con = engine).to_dict('records')
 
 for pitcher in pithcers:
     if pitcher['team'] == 'away':
@@ -942,10 +942,10 @@ X_test, column_names = addBattersFaced(X_test, bullpen = False)
 print('#################################          X_test 3            ##############################################')
 print(X_test)
 
-rosters = schedule.get_rosters('717350')
+rosters = schedule.get_rosters('717352')
 
-save_batter_data(engine, X_test, awaybatters, homebatters, '717350', rosters)
-save_pitcher_data(engine, X_test, away_starter, home_starter, '717350', rosters)
+save_batter_data(engine, X_test, awaybatters, homebatters, '717352', rosters)
+save_pitcher_data(engine, X_test, away_starter, home_starter, '717352', rosters)
 
 X_test = X_test[[col for col in X_test.columns if 'difficulty' not in col]]
 column_names = [el for el in column_names if 'difficulty' not in el]

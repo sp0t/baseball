@@ -681,6 +681,11 @@ def update_P_T_table():
 
     return 'OK'   
 
+@app.route('/selectPlayer', methods = ["GET"])
+def selectPlayer(): 
+    # today_schedule = schedule.get_schedule()
+    return render_template("selectplayer.html")
+
 def update_league_average():
     engine = database.connect_to_db()
     year = date.today().year

@@ -400,10 +400,8 @@ function updateDatabase(){
         },
         success: function (data){ 
             document.getElementById('update-loader').style.display = 'none';
-            alert('Update Complete! Page will refresh now.')
-            document.location.reload()
-            // document.getElementById('last-record').textContent = 'Last Record: ' + data['update_data']['record']
-            // document.getElementById('last-time').textContent = 'Last Updated ' + data['update_data']['time']
+            selectPlayer()
+            // document.location.reload()
         }
     })
 }
@@ -591,3 +589,13 @@ function  getPlayerStats(id){
     })
 }
 
+function selectPlayer(){ 
+    alert('asdfasf')
+    $.ajax({
+        url: '/selectPlayer', 
+        type: 'GET',
+        success: function (){ 
+            location.href = '/selectPlayer';
+        }
+    })
+}

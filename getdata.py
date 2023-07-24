@@ -1,12 +1,25 @@
 from selenium import webdriver
+from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from bs4 import BeautifulSoup
+from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.chrome.options import Options
+from sqlalchemy import create_engine
+import pandas as pd
 
-options = Options()
-options.headless = True
+chrome_options = Options()
+chrome_options.add_argument('--headless')
+chrome_options.add_argument('--no-sandbox')
+chrome_options.add_argument('--disable-dev-shm-usage')
+driver_path = ChromeDriverManager().install()
+driver = webdriver.Chrome(service=Service(driver_path), options=chrome_options)
 
-DRIVER_PATH = '/path/to/chromedriver'
-driver = webdriver.Chrome(executable_path=DRIVER_PATH)
-driver.get('https://google.com')
+url = f"https://fightodds.io/recent-mma-events"
 
+driver.get(url)
 print(driver.page_source)
+
 driver.quit()
+
+print("success!")

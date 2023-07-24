@@ -18,7 +18,7 @@ driver = webdriver.Chrome(service=Service(driver_path), options=chrome_options)
 url = f"https://fightodds.io/recent-mma-events"
 
 driver.get(url)
-myDiv = driver.find_element(By.CLASS_NAME, '.MuiPaper-root.MuiCard-root.MuiPaper-elevation1.MuiPaper-rounded')
+myDiv = driver.find_element(By.CLASS_NAME, '.MuiGrid-root.MuiGrid-container')
 print(myDiv.get_attribute("outerHTML"))
 # wait = WebDriverWait(driver, 10)
 # get_url = driver.current_url

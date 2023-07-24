@@ -290,10 +290,8 @@ def process_career_starter_data(games, pitcher_stat_list):
 
         all_s_data=[]
         for s in s_list: 
-            print(s)
             s['era'] = s.apply(lambda x: 9*x['earnedRuns']/x['inningsPitched'] if x['inningsPitched']>0 else 0,axis=1)
             s['whip'] = s.apply(lambda x: (x['baseOnBalls']+x['hits'])/x['inningsPitched'] if x['inningsPitched']>0 else 0 ,axis=1)
-            print(s)
             drop_cols = ['game_id', 'game_date', 'note', 'season','game_id', 'away_team', 'home_team', 'away_score', 'home_score']
             s = s.drop(drop_cols, errors = 'ignore', axis = 1)
             s_data = s.mean().to_dict()
@@ -301,6 +299,7 @@ def process_career_starter_data(games, pitcher_stat_list):
             
         career_df = pd.DataFrame(all_s_data)
         career_data = career_df.mul(weights,axis=0).sum().to_dict()
+        print(career_data)
     
     return career_data
 

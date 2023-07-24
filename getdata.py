@@ -20,7 +20,7 @@ url = f"https://fightodds.io/recent-mma-events"
 driver.get(url)
 # myDiv = driver.find_element(By.CLASS_NAME, '.MuiGrid-root.MuiGrid-container')
 # print(myDiv.get_attribute("outerHTML"))
-wait = WebDriverWait(driver, 10)
+wait = WebDriverWait(driver, 20)
 get_url = driver.current_url
 wait.until(EC.url_to_be(url))
 

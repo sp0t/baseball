@@ -293,9 +293,7 @@ def process_career_starter_data(games, pitcher_stat_list):
             print(s)
             s['era'] = s.apply(lambda x: 9*x['earnedRuns']/x['inningsPitched'] if x['inningsPitched']>0 else 0,axis=1)
             s['whip'] = s.apply(lambda x: (x['baseOnBalls']+x['hits'])/x['inningsPitched'] if x['inningsPitched']>0 else 0 ,axis=1)
-            print('====================================')
-            print('era = ',  s['era'], 'whip = ', s['whip'])
-            print('====================================')
+            print(s)
             drop_cols = ['game_id', 'game_date', 'note', 'season','game_id', 'away_team', 'home_team', 'away_score', 'home_score']
             s = s.drop(drop_cols, errors = 'ignore', axis = 1)
             s_data = s.mean().to_dict()

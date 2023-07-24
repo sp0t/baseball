@@ -1,21 +1,20 @@
-import platform       
 from selenium import webdriver
-from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service
-from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from bs4 import BeautifulSoup
+from webdriver_manager.chrome import ChromeDriverManager
+from selenium.webdriver.chrome.options import Options
+from sqlalchemy import create_engine
+import pandas as pd
 
-options = Options()
-# a few usefull options
-options.add_argument("--disable-infobars")
-options.add_argument("start-maximized")
-options.add_argument("--disable-extensions")
-options.add_argument("--headless") # if you want it headless
-
-driver = webdriver.Chrome('/home/.wdm/drivers/chromedriver',options=options)
+chrome_options = Options()
+chrome_options.add_argument('--headless')
+chrome_options.add_argument('--no-sandbox')
+chrome_options.add_argument('--disable-dev-shm-usage')
+driver = webdriver.Chrome('/home/.wdm/drivers/chromedriver',chrome_options=chrome_options)
 driver=webdriver.Chrome(service=Service(ChromeDriverManager().install()))
+
 
 url = "https://fightodds.io/recent-mma-events"
 

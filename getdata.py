@@ -14,10 +14,8 @@ options.add_argument("start-maximized")
 options.add_argument("--disable-extensions")
 options.add_argument("--headless") # if you want it headless
 
-driver_path = ChromeDriverManager().install()
-
-service = Service(driver_path)
-driver = webdriver.Chrome(service=service, options=options)
+driver = webdriver.Chrome('/home/.wdm/drivers/chromedriver',options=options)
+driver=webdriver.Chrome(service=Service(ChromeDriverManager().install()))
 
 url = "https://fightodds.io/recent-mma-events"
 

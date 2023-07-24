@@ -1,12 +1,9 @@
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
-from bs4 import BeautifulSoup
+from selenium.webdriver.common.by import By
 from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.chrome.options import Options
 from sqlalchemy import create_engine
-import pandas as pd
 
 chrome_options = Options()
 chrome_options.add_argument('--headless')
@@ -18,8 +15,8 @@ driver = webdriver.Chrome(service=Service(driver_path), options=chrome_options)
 url = f"https://fightodds.io/recent-mma-events"
 
 driver.get(url)
-print(driver.page_source)
-
+exercise1_card = driver.find_element(By.CLASS_NAME, '.MuiPaper-root.MuiCard-root.jss1906.MuiPaper-elevation1 MuiPaper-rounded')
+print(exercise1_card)
 driver.quit()
 
 print("success!")

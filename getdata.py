@@ -18,15 +18,15 @@ driver = webdriver.Chrome(service=Service(driver_path), options=chrome_options)
 url = f"https://fightodds.io/recent-mma-events"
 
 driver.get(url)
-myDiv = driver.find_element(By.CLASS_NAME, '.MuiGrid-root.MuiGrid-container')
-print(myDiv.get_attribute("outerHTML"))
-# wait = WebDriverWait(driver, 10)
-# get_url = driver.current_url
-# wait.until(EC.url_to_be(url))
+# myDiv = driver.find_element(By.CLASS_NAME, '.MuiGrid-root.MuiGrid-container')
+# print(myDiv.get_attribute("outerHTML"))
+wait = WebDriverWait(driver, 10)
+get_url = driver.current_url
+wait.until(EC.url_to_be(url))
 
-# page_source = driver.page_source
-# soup = BeautifulSoup(page_source)
-# print(soup)
+page_source = driver.page_source
+soup = BeautifulSoup(page_source)
+print(soup)
 driver.quit()
 
 print("success!")

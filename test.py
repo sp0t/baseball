@@ -126,6 +126,8 @@ def process_career_batter_data(games, batter_stat_list):
         weights = [2/3,1/6,1/6]
     all_s_data=[]
     for s_df in s_list: 
+        drop_cols = ['game_date', 'note', 'season','game_id', 'away_team', 'home_team', 'away_score', 'home_score']
+        s_df = s_df.drop(drop_cols, errors = 'ignore', axis = 1)
         length = len(s_df)
         s_df['singles'] = s_df['hits']-s_df['doubles']-s_df['triples']-s_df['homeRuns']
         s_df = s_df.sum()
@@ -133,8 +135,6 @@ def process_career_batter_data(games, batter_stat_list):
         s_df['obp'] = (s_df['hits']+s_df['baseOnBalls'])/(s_df['atBats']+s_df['baseOnBalls']) if (s_df['atBats']+s_df['baseOnBalls'])>0 else 0
         s_df['slg'] = ((s_df['singles'])+2*(s_df['doubles'])+3*(s_df['triples'])+4*(s_df['homeRuns']))/s_df['atBats'] if s_df['atBats']>0 else 0
         s_df['ops'] = s_df['obp'] + s_df['slg']
-        drop_cols = ['game_date', 'note', 'season','game_id', 'away_team', 'home_team', 'away_score', 'home_score']
-        s_df = s_df.drop(drop_cols, errors = 'ignore', axis = 1)
         exclude_columns = ['avg', 'obp', 'slg', 'ops']
         for col in s_df.columns:
             if col not in exclude_columns:
@@ -294,12 +294,12 @@ def process_career_starter_data(games, pitcher_stat_list):
 
         all_s_data=[]
         for s in s_list:
+            drop_cols = ['game_id', 'game_date', 'note', 'season','game_id', 'away_team', 'home_team', 'away_score', 'home_score']
+            s = s.drop(drop_cols, errors = 'ignore', axis = 1)
             length = len(s) 
             s = s.sum()
             s['era'] = 9*s['earnedRuns']/s['inningsPitched'] if s['inningsPitched']>0 else 0
             s['whip'] = (s['baseOnBalls']+s['hits'])/s['inningsPitched'] if s['inningsPitched']>0 else 0
-            drop_cols = ['game_id', 'game_date', 'note', 'season','game_id', 'away_team', 'home_team', 'away_score', 'home_score']
-            s = s.drop(drop_cols, errors = 'ignore', axis = 1)
             exclude_columns = ['era', 'whip']
             for col in s.columns:
                 if col not in exclude_columns:
@@ -422,12 +422,12 @@ def process_career_bullpen_data(games,pitcher_stat_list):
 
         all_s_data=[]
         for s in s_list:
+            drop_cols = ['game_id', 'game_date', 'note', 'season','game_id', 'away_team', 'home_team', 'away_score', 'home_score']
+            s = s.drop(drop_cols, errors = 'ignore', axis = 1)
             length = len(s) 
             s = s.sum()
             s['era'] = 9*s['earnedRuns']/s['inningsPitched'] if s['inningsPitched']>0 else 0
             s['whip'] = (s['baseOnBalls']+s['hits'])/s['inningsPitched'] if s['inningsPitched']>0 else 0
-            drop_cols = ['game_id', 'game_date', 'note', 'season','game_id', 'away_team', 'home_team', 'away_score', 'home_score']
-            s = s.drop(drop_cols, errors = 'ignore', axis = 1)
             exclude_columns = ['era', 'whip']
             for col in s.columns:
                 if col not in exclude_columns:
@@ -586,7 +586,9 @@ def cal_batter_average(team_batter, gamedate):
         s_list = [sub_df3,sub_df2,sub_df1]
         weights = [2/3,1/6,1/6]
     all_s_data=[]
-    for s_df in s_list: 
+    for s_df in s_list:
+        drop_cols = ['game_date', 'note', 'season','game_id', 'away_team', 'home_team', 'away_score', 'home_score']
+        s_df = s_df.drop(drop_cols, errors = 'ignore', axis = 1) 
         length = len(s_df)
         s_df['singles'] = s_df['hits']-s_df['doubles']-s_df['triples']-s_df['homeRuns']
         s_df = s_df.sum()
@@ -594,8 +596,6 @@ def cal_batter_average(team_batter, gamedate):
         s_df['obp'] = (s_df['hits']+s_df['baseOnBalls'])/(s_df['atBats']+s_df['baseOnBalls']) if (s_df['atBats']+s_df['baseOnBalls'])>0 else 0
         s_df['slg'] = ((s_df['singles'])+2*(s_df['doubles'])+3*(s_df['triples'])+4*(s_df['homeRuns']))/s_df['atBats'] if s_df['atBats']>0 else 0
         s_df['ops'] = s_df['obp'] + s_df['slg']
-        drop_cols = ['game_date', 'note', 'season','game_id', 'away_team', 'home_team', 'away_score', 'home_score']
-        s_df = s_df.drop(drop_cols, errors = 'ignore', axis = 1)
         exclude_columns = ['avg', 'obp', 'slg', 'ops']
         for col in s_df.columns:
             if col not in exclude_columns:
@@ -643,12 +643,12 @@ def cal_pitcher_average(team_pitcher, gamedate):
 
     all_s_data=[]
     for s in s_list: 
+        drop_cols = ['game_id', 'game_date', 'note', 'season','game_id', 'away_team', 'home_team', 'away_score', 'home_score']
+        s = s.drop(drop_cols, errors = 'ignore', axis = 1)
         length = len(s) 
         s = s.sum()
         s['era'] = 9*s['earnedRuns']/s['inningsPitched'] if s['inningsPitched']>0 else 0
         s['whip'] = (s['baseOnBalls']+s['hits'])/s['inningsPitched'] if s['inningsPitched']>0 else 0
-        drop_cols = ['game_id', 'game_date', 'note', 'season','game_id', 'away_team', 'home_team', 'away_score', 'home_score']
-        s = s.drop(drop_cols, errors = 'ignore', axis = 1)
         exclude_columns = ['era', 'whip']
         for col in s.columns:
             if col not in exclude_columns:

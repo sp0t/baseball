@@ -647,8 +647,10 @@ def cal_pitcher_average(team_pitcher, gamedate):
         s = s.drop(drop_cols, errors = 'ignore', axis = 1)
         length = len(s) 
         s = s.sum()
+        print(s)
         s['era'] = 9*s['earnedRuns']/s['inningsPitched'] if s['inningsPitched']>0 else 0
         s['whip'] = (s['baseOnBalls']+s['hits'])/s['inningsPitched'] if s['inningsPitched']>0 else 0
+        print(s)
         exclude_columns = ['era', 'whip']
         for col in s.columns:
             if col not in exclude_columns:

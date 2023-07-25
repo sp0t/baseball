@@ -136,7 +136,7 @@ def process_career_batter_data(games, batter_stat_list):
         s_df['slg'] = ((s_df['singles'])+2*(s_df['doubles'])+3*(s_df['triples'])+4*(s_df['homeRuns']))/s_df['atBats'] if s_df['atBats']>0 else 0
         s_df['ops'] = s_df['obp'] + s_df['slg']
         exclude_columns = ['avg', 'obp', 'slg', 'ops']
-        for col in s_df.columns:
+        for col in s_df.keys():
             if col not in exclude_columns:
                 s_df[col] /= length
         s_data = s_df.to_dict()
@@ -301,7 +301,7 @@ def process_career_starter_data(games, pitcher_stat_list):
             s['era'] = 9*s['earnedRuns']/s['inningsPitched'] if s['inningsPitched']>0 else 0
             s['whip'] = (s['baseOnBalls']+s['hits'])/s['inningsPitched'] if s['inningsPitched']>0 else 0
             exclude_columns = ['era', 'whip']
-            for col in s.columns:
+            for col in s.keys():
                 if col not in exclude_columns:
                     s[col] /= length
             s_data = s.to_dict()
@@ -429,7 +429,7 @@ def process_career_bullpen_data(games,pitcher_stat_list):
             s['era'] = 9*s['earnedRuns']/s['inningsPitched'] if s['inningsPitched']>0 else 0
             s['whip'] = (s['baseOnBalls']+s['hits'])/s['inningsPitched'] if s['inningsPitched']>0 else 0
             exclude_columns = ['era', 'whip']
-            for col in s.columns:
+            for col in s.keys():
                 if col not in exclude_columns:
                     s[col] /= length
             s_data = s.to_dict()
@@ -597,9 +597,9 @@ def cal_batter_average(team_batter, gamedate):
         s_df['slg'] = ((s_df['singles'])+2*(s_df['doubles'])+3*(s_df['triples'])+4*(s_df['homeRuns']))/s_df['atBats'] if s_df['atBats']>0 else 0
         s_df['ops'] = s_df['obp'] + s_df['slg']
         exclude_columns = ['avg', 'obp', 'slg', 'ops']
-        for col in s_df.columns:
-            if col not in exclude_columns:
-                s_df[col] /= length
+        for col in s_df.keys():
+                if col not in exclude_columns:
+                    s_df[col] /= length
         s_data = s_df.to_dict()
         all_s_data.append(s_data)
     career_data=pd.DataFrame(all_s_data).mul(weights,axis=0).sum().to_dict()
@@ -646,12 +646,10 @@ def cal_pitcher_average(team_pitcher, gamedate):
         drop_cols = ['game_id', 'game_date', 'note', 'season','game_id', 'away_team', 'home_team', 'away_score', 'home_score', 'playerId']
         s = s.drop(drop_cols, errors = 'ignore', axis = 1)
         length = len(s) 
-        s = s.sum()
         s['era'] = 9*s['earnedRuns']/s['inningsPitched'] if s['inningsPitched']>0 else 0
         s['whip'] = (s['baseOnBalls']+s['hits'])/s['inningsPitched'] if s['inningsPitched']>0 else 0
-        print(s)
         exclude_columns = ['era', 'whip']
-        for col in s.columns:
+        for col in s.keys():
             if col not in exclude_columns:
                 s[col] /= length
         s_data = s.to_dict()

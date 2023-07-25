@@ -126,7 +126,7 @@ def process_career_batter_data(games, batter_stat_list):
         weights = [2/3,1/6,1/6]
     all_s_data=[]
     for s_df in s_list: 
-        drop_cols = ['game_date', 'note', 'season','game_id', 'away_team', 'home_team', 'away_score', 'home_score']
+        drop_cols = ['game_date', 'note', 'season','game_id', 'away_team', 'home_team', 'away_score', 'home_score', 'playerid']
         s_df = s_df.drop(drop_cols, errors = 'ignore', axis = 1)
         length = len(s_df)
         s_df['singles'] = s_df['hits']-s_df['doubles']-s_df['triples']-s_df['homeRuns']
@@ -294,7 +294,7 @@ def process_career_starter_data(games, pitcher_stat_list):
 
         all_s_data=[]
         for s in s_list:
-            drop_cols = ['game_id', 'game_date', 'note', 'season','game_id', 'away_team', 'home_team', 'away_score', 'home_score']
+            drop_cols = ['game_id', 'game_date', 'note', 'season','game_id', 'away_team', 'home_team', 'away_score', 'home_score', 'playerid']
             s = s.drop(drop_cols, errors = 'ignore', axis = 1)
             length = len(s) 
             s = s.sum()
@@ -422,7 +422,7 @@ def process_career_bullpen_data(games,pitcher_stat_list):
 
         all_s_data=[]
         for s in s_list:
-            drop_cols = ['game_id', 'game_date', 'note', 'season','game_id', 'away_team', 'home_team', 'away_score', 'home_score']
+            drop_cols = ['game_id', 'game_date', 'note', 'season','game_id', 'away_team', 'home_team', 'away_score', 'home_score', 'playerid']
             s = s.drop(drop_cols, errors = 'ignore', axis = 1)
             length = len(s) 
             s = s.sum()
@@ -587,7 +587,7 @@ def cal_batter_average(team_batter, gamedate):
         weights = [2/3,1/6,1/6]
     all_s_data=[]
     for s_df in s_list:
-        drop_cols = ['game_date', 'note', 'season','game_id', 'away_team', 'home_team', 'away_score', 'home_score']
+        drop_cols = ['game_date', 'note', 'season','game_id', 'away_team', 'home_team', 'away_score', 'home_score', 'playerid']
         s_df = s_df.drop(drop_cols, errors = 'ignore', axis = 1) 
         length = len(s_df)
         s_df['singles'] = s_df['hits']-s_df['doubles']-s_df['triples']-s_df['homeRuns']
@@ -643,11 +643,10 @@ def cal_pitcher_average(team_pitcher, gamedate):
 
     all_s_data=[]
     for s in s_list: 
-        drop_cols = ['game_id', 'game_date', 'note', 'season','game_id', 'away_team', 'home_team', 'away_score', 'home_score']
+        drop_cols = ['game_id', 'game_date', 'note', 'season','game_id', 'away_team', 'home_team', 'away_score', 'home_score', 'playerid']
         s = s.drop(drop_cols, errors = 'ignore', axis = 1)
         length = len(s) 
         s = s.sum()
-        print(s)
         s['era'] = 9*s['earnedRuns']/s['inningsPitched'] if s['inningsPitched']>0 else 0
         s['whip'] = (s['baseOnBalls']+s['hits'])/s['inningsPitched'] if s['inningsPitched']>0 else 0
         print(s)

@@ -97,7 +97,13 @@ def process_recent_batter_data(player_df, game_date, team_starter, batter_stat_l
         if average_whip == 0 or last_whip == 0 or career_whip == 0 or recent_whip == 0:
             DifficultyRating = 8/8
         else:
+            print('========================================================================')
+            print('======================        Rect Stats       ===============================')
+            print('average_whip = ', average_whip, 'last_whip = ', last_whip, 'recent_whip = ', recent_whip, 'career_whip = ', career_whip)
+            print('========================================================================')
             DifficultyRating = switch_difficulty(average_whip/last_whip, recent_whip/career_whip)
+            print('DifficultyRating = ', DifficultyRating)
+            print('========================================================================')
 
         drop_cols = ['game_date', 'note', 'game_id', 'away_team', 'home_team', 'away_score', 'home_score']
         recent_df = recent_df.drop(drop_cols,axis = 1,errors = 'ignore').astype(float)

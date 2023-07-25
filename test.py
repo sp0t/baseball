@@ -126,14 +126,20 @@ def process_career_batter_data(games, batter_stat_list):
         weights = [2/3,1/6,1/6]
     all_s_data=[]
     for s_df in s_list: 
+        length = len(s_df)
         s_df['singles'] = s_df['hits']-s_df['doubles']-s_df['triples']-s_df['homeRuns']
-        s_df['avg'] = s_df.apply(lambda x: x['hits']/x['atBats'] if x['atBats']>0 else 0,axis=1)
-        s_df['obp'] = s_df.apply(lambda x: (x['hits']+x['baseOnBalls'])/(x['atBats']+x['baseOnBalls']) if x['atBats']+x['baseOnBalls']>0 else 0,axis=1)
-        s_df['slg'] = s_df.apply(lambda x: ((x['singles'])+2*(x['doubles'])+3*(x['triples'])+4*(x['homeRuns']))/x['atBats'] if x['atBats']>0 else 0,axis=1)
+        s_df = s_df.sum()
+        s_df['avg'] = s_df['hits']/s_df['atBats'] if s_df['atBats']>0 else 0
+        s_df['obp'] = (s_df['hits']+s_df['baseOnBalls'])/(s_df['atBats']+s_df['baseOnBalls']) if (s_df['atBats']+s_df['baseOnBalls'])>0 else 0
+        s_df['slg'] = ((s_df['singles'])+2*(s_df['doubles'])+3*(s_df['triples'])+4*(s_df['homeRuns']))/s_df['atBats'] if s_df['atBats']>0 else 0
         s_df['ops'] = s_df['obp'] + s_df['slg']
         drop_cols = ['game_date', 'note', 'season','game_id', 'away_team', 'home_team', 'away_score', 'home_score']
         s_df = s_df.drop(drop_cols, errors = 'ignore', axis = 1)
-        s_data = s_df.mean().to_dict()
+        exclude_columns = ['avg', 'obp', 'slg', 'ops']
+        for col in s_df.columns:
+            if col not in exclude_columns:
+                s_df[col] /= length
+        s_data = s_df.to_dict()
         all_s_data.append(s_data)
     career_data=pd.DataFrame(all_s_data).mul(weights,axis=0).sum().to_dict()
 
@@ -287,12 +293,18 @@ def process_career_starter_data(games, pitcher_stat_list):
             weights = [2/3,1/6,1/6]
 
         all_s_data=[]
-        for s in s_list: 
-            s['era'] = s.apply(lambda x: 9*x['earnedRuns']/x['inningsPitched'] if x['inningsPitched']>0 else 0,axis=1)
-            s['whip'] = s.apply(lambda x: (x['baseOnBalls']+x['hits'])/x['inningsPitched'] if x['inningsPitched']>0 else 0 ,axis=1)
+        for s in s_list:
+            length = len(s) 
+            s = s.sum()
+            s['era'] = 9*s['earnedRuns']/s['inningsPitched'] if s['inningsPitched']>0 else 0
+            s['whip'] = (s['baseOnBalls']+s['hits'])/s['inningsPitched'] if s['inningsPitched']>0 else 0
             drop_cols = ['game_id', 'game_date', 'note', 'season','game_id', 'away_team', 'home_team', 'away_score', 'home_score']
             s = s.drop(drop_cols, errors = 'ignore', axis = 1)
-            s_data = s.mean().to_dict()
+            exclude_columns = ['era', 'whip']
+            for col in s.columns:
+                if col not in exclude_columns:
+                    s[col] /= length
+            s_data = s.to_dict()
             all_s_data.append(s_data)
             
         career_df = pd.DataFrame(all_s_data)
@@ -393,54 +405,38 @@ def process_recent_bullpen_data(bullpen_df, game_date, pitcher_stat_list):
         
     return recent_data, recent_games, games
 
-def process_career_bullpen_data(player_id, games, recent_games, pitcher_stat_list, game_date): 
+def process_career_bullpen_data(games,pitcher_stat_list): 
     
-    # Get Seasons 
-    games['season'] = games['game_date'].dt.year
-    seasons = sorted(set(games['season']))[-3:]
-    
-    if len(seasons)==0: 
+    if len(games)==0: 
         career_data = dict(zip(pitcher_stat_list, np.repeat(0, len(pitcher_stat_list))))
-        return career_data
-    
-    # Get Season Game Count 
-    s0 = seasons[-1]
-    season_game_count = len(games[games['season']==s0])
-    games = games.drop(recent_games, axis = 0)
-    
-    # Case #1: Rookie
-    if len(seasons)==1: 
-        s_list, weights = [s0], [2/3]
-    # Case #2: 2nd Year
-    elif len(seasons)==2: 
-        s1=seasons[0]
-        s_list = [s0,s1] if season_game_count > 15 else [s1]
-        weights = [2/3,1/6] if season_game_count > 15 else [1]        
-    # Case #3: 3+ Years
-    elif len(seasons)==3: 
-        s1,s2 = seasons[1], seasons[0]
-        s_list = [s0,s1,s2] if season_game_count>15 else [s1,s2]
-        weights = [2/3,1/6,1/6] if season_game_count>15 else [1/2,1/2]
     else: 
-        career_data = dict(zip(pitcher_stat_list, np.repeat(np.nan, len(pitcher_stat_list))))
-        return career_data
+        if len(games) < 40: 
+            s_list, weights = [games], [1]
+        elif len(games) >= 40: 
+            last_40 = games.tail(40)  # Get the last 40 rows of the DataFrame
+            sub_df1 = last_40.iloc[-40:-29]
+            sub_df2 = last_40.iloc[-28:-15]  
+            sub_df3 = last_40.iloc[-14:]
+            s_list = [sub_df3,sub_df2,sub_df1]
+            weights = [2/3,1/6,1/6]
 
-    all_s_data=[]
-    for s in s_list: 
-        s_df = games[games['season']==s]
-        if len(s_df)==0: 
-            s_data = dict(zip(pitcher_stat_list, np.repeat(np.nan, len(pitcher_stat_list))))
-            all_s_data.append(s_data)
-        else: 
-            s_df['era'] = s_df.apply(lambda x: 9*x['earnedRuns']/x['inningsPitched'] if x['inningsPitched']>0 else 0,axis=1)
-            s_df['whip'] = s_df.apply(lambda x: (x['baseOnBalls']+x['hits'])/x['inningsPitched'] if x['inningsPitched']>0 else 0 ,axis=1)
-            drop_cols = ['game_date', 'note', 'game_id', 'away_team', 'season','home_team', 'away_score', 'home_score']
-            s_df = s_df.drop(drop_cols,axis = 1,errors = 'ignore')
-            s_data = s_df.mean().to_dict()
+        all_s_data=[]
+        for s in s_list:
+            length = len(s) 
+            s = s.sum()
+            s['era'] = 9*s['earnedRuns']/s['inningsPitched'] if s['inningsPitched']>0 else 0
+            s['whip'] = (s['baseOnBalls']+s['hits'])/s['inningsPitched'] if s['inningsPitched']>0 else 0
+            drop_cols = ['game_id', 'game_date', 'note', 'season','game_id', 'away_team', 'home_team', 'away_score', 'home_score']
+            s = s.drop(drop_cols, errors = 'ignore', axis = 1)
+            exclude_columns = ['era', 'whip']
+            for col in s.columns:
+                if col not in exclude_columns:
+                    s[col] /= length
+            s_data = s.to_dict()
             all_s_data.append(s_data)
             
-    career_df = pd.DataFrame(all_s_data)
-    career_data = career_df.mul(weights,axis=0).sum().to_dict()
+        career_df = pd.DataFrame(all_s_data)
+        career_data = career_df.mul(weights,axis=0).sum().to_dict()
     
     
     return career_data
@@ -455,7 +451,7 @@ def process_bullpen_data(team_name, team, game_date):
     
     if len(bullpen_df) > 0 : 
         recent_data, recent_games, games = process_recent_bullpen_data(bullpen_df, game_date, pitcher_stat_list)
-        career_data = process_career_bullpen_data(team_name, games, recent_games, pitcher_stat_list, game_date)
+        career_data = process_career_bullpen_data(games, pitcher_stat_list)
     else: 
         recent_data = dict(zip(pitcher_stat_list, np.repeat(0, len(pitcher_stat_list))))
         career_data = dict(zip(pitcher_stat_list, np.repeat(0, len(pitcher_stat_list))))
@@ -591,14 +587,20 @@ def cal_batter_average(team_batter, gamedate):
         weights = [2/3,1/6,1/6]
     all_s_data=[]
     for s_df in s_list: 
+        length = len(s_df)
         s_df['singles'] = s_df['hits']-s_df['doubles']-s_df['triples']-s_df['homeRuns']
-        s_df['avg'] = s_df.apply(lambda x: x['hits']/x['atBats'] if x['atBats']>0 else 0,axis=1)
-        s_df['obp'] = s_df.apply(lambda x: (x['hits']+x['baseOnBalls'])/(x['atBats']+x['baseOnBalls']) if x['atBats']+x['baseOnBalls']>0 else 0,axis=1)
-        s_df['slg'] = s_df.apply(lambda x: ((x['singles'])+2*(x['doubles'])+3*(x['triples'])+4*(x['homeRuns']))/x['atBats'] if x['atBats']>0 else 0,axis=1)
+        s_df = s_df.sum()
+        s_df['avg'] = s_df['hits']/s_df['atBats'] if s_df['atBats']>0 else 0
+        s_df['obp'] = (s_df['hits']+s_df['baseOnBalls'])/(s_df['atBats']+s_df['baseOnBalls']) if (s_df['atBats']+s_df['baseOnBalls'])>0 else 0
+        s_df['slg'] = ((s_df['singles'])+2*(s_df['doubles'])+3*(s_df['triples'])+4*(s_df['homeRuns']))/s_df['atBats'] if s_df['atBats']>0 else 0
         s_df['ops'] = s_df['obp'] + s_df['slg']
         drop_cols = ['game_date', 'note', 'season','game_id', 'away_team', 'home_team', 'away_score', 'home_score']
         s_df = s_df.drop(drop_cols, errors = 'ignore', axis = 1)
-        s_data = s_df.mean().to_dict()
+        exclude_columns = ['avg', 'obp', 'slg', 'ops']
+        for col in s_df.columns:
+            if col not in exclude_columns:
+                s_df[col] /= length
+        s_data = s_df.to_dict()
         all_s_data.append(s_data)
     career_data=pd.DataFrame(all_s_data).mul(weights,axis=0).sum().to_dict()
 
@@ -641,11 +643,17 @@ def cal_pitcher_average(team_pitcher, gamedate):
 
     all_s_data=[]
     for s in s_list: 
-        s['era'] = s.apply(lambda x: 9*x['earnedRuns']/x['inningsPitched'] if x['inningsPitched']>0 else 0,axis=1)
-        s['whip'] = s.apply(lambda x: (x['baseOnBalls']+x['hits'])/x['inningsPitched'] if x['inningsPitched']>0 else 0 ,axis=1)
+        length = len(s) 
+        s = s.sum()
+        s['era'] = 9*s['earnedRuns']/s['inningsPitched'] if s['inningsPitched']>0 else 0
+        s['whip'] = (s['baseOnBalls']+s['hits'])/s['inningsPitched'] if s['inningsPitched']>0 else 0
         drop_cols = ['game_id', 'game_date', 'note', 'season','game_id', 'away_team', 'home_team', 'away_score', 'home_score']
         s = s.drop(drop_cols, errors = 'ignore', axis = 1)
-        s_data = s.mean().to_dict()
+        exclude_columns = ['era', 'whip']
+        for col in s.columns:
+            if col not in exclude_columns:
+                s[col] /= length
+        s_data = s.to_dict()
         all_s_data.append(s_data)
         
     career_df = pd.DataFrame(all_s_data)
@@ -952,15 +960,10 @@ column_names = [el for el in column_names if 'difficulty' not in el]
 for el in column_names:
     print(el)
 X_test = standardizeData(X_test, column_names)
-# X_test_b = X_test[[col for col in X_test.columns if 'bullpen' not in col]]
-# print(X_test)
 
-# print(X_test_b)
 # Make Prediciton    
 pred_1a = pickle.load(open('algorithms/model_1a_v10.sav', 'rb')).predict_proba(X_test)
 print(pred_1a)
-# pred_1b = pickle.load(open('algorithms/model_1b_v10.sav', 'rb')).predict_proba(X_test)
-# print(pred_1b)
 pred_1a = np.round(100 * pred_1a[0], 2)
 engine.execute(f"INSERT INTO win_percent_c(game_id, away_prob, home_prob) VALUES('{717352}', '{pred_1a[0]}', '{pred_1a[1]}') ON CONFLICT (game_id) DO UPDATE SET away_prob = excluded.away_prob, home_prob = excluded.home_prob;")  
 print("Prediction made")

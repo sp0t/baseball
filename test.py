@@ -78,11 +78,11 @@ def process_recent_batter_data(player_df, game_date, team_starter, batter_stat_l
             formatted_date = date_obj.strftime('%Y/%m/%d')
             average_obp, average_whip = update_league_average(formatted_date, False)
             
-            last_whip, career_whip, recent_whip = cal_pitcher_average(pitcher[0]['playerid'], formatted_date)
-            if average_whip == 0 or last_whip == 0 or career_whip == 0 or recent_whip == 0:
+            career_whip, recent_whip = cal_pitcher_average(pitcher[0]['playerid'], formatted_date)
+            if average_whip == 0 or career_whip == 0 or recent_whip == 0:
                 difficulty.append(8/8)
             else:
-                value = switch_difficulty(average_whip/last_whip, career_whip/recent_whip)
+                value = switch_difficulty(average_whip/career_whip, career_whip/recent_whip)
                 difficulty.append(value)
 
         difficulty_weights = np.array(weights) * np.array(difficulty)
@@ -93,17 +93,11 @@ def process_recent_batter_data(player_df, game_date, team_starter, batter_stat_l
         recent_df['slg'] = recent_df.apply(lambda x: ((x['singles'])+2*(x['doubles'])+3*(x['triples'])+4*(x['homeRuns']))/x['atBats'] if x['atBats']>0 else 0,axis=1)
         recent_df['ops'] = recent_df['obp'] + recent_df['slg']
 
-        last_whip, career_whip, recent_whip = cal_pitcher_average(team_starter, game_date)
-        if average_whip == 0 or last_whip == 0 or career_whip == 0 or recent_whip == 0:
+        career_whip, recent_whip = cal_pitcher_average(team_starter, game_date)
+        if average_whip == 0 or career_whip == 0 or recent_whip == 0:
             DifficultyRating = 8/8
         else:
-            print('========================================================================')
-            print('======================        Rect Stats       ===============================')
-            print('average_whip = ', average_whip, 'last_whip = ', last_whip, 'recent_whip = ', recent_whip, 'career_whip = ', career_whip)
-            print('========================================================================')
-            DifficultyRating = switch_difficulty(average_whip/last_whip, career_whip/recent_whip)
-            print('DifficultyRating = ', DifficultyRating)
-            print('========================================================================')
+            DifficultyRating = switch_difficulty(average_whip/career_whip, career_whip/recent_whip)
 
         drop_cols = ['game_date', 'note', 'game_id', 'away_team', 'home_team', 'away_score', 'home_score']
         recent_df = recent_df.drop(drop_cols,axis = 1,errors = 'ignore').astype(float)
@@ -126,8 +120,8 @@ def process_career_batter_data(games, batter_stat_list):
     elif len(games) >= 200: 
         last_40 = games.tail(200)  # Get the last 40 rows of the DataFrame
         sub_df1 = last_40.iloc[-200:-134]
-        sub_df2 = last_40.iloc[-133:-67]  
-        sub_df3 = last_40.iloc[-66:]
+        sub_df2 = last_40.iloc[-134:-67]  
+        sub_df3 = last_40.iloc[-67:]
         s_list = [sub_df3,sub_df2,sub_df1]
         weights = [2/3,1/6,1/6]
     all_s_data=[]
@@ -247,11 +241,11 @@ def process_recent_starter_data(player_df, game_date, team_batters, pitcher_stat
                 date_obj = datetime.strptime(date_str, '%Y-%m-%d %H:%M:%S')
                 formatted_date = date_obj.strftime('%Y/%m/%d')
                 average_obp, average_whip = update_league_average(formatted_date, False)
-                last_obp, career_obp, recent_obp = cal_batter_average(batter['playerid'], formatted_date)
-                if average_obp == 0 or last_obp == 0 or career_obp == 0 or recent_obp == 0:
+                career_obp, recent_obp = cal_batter_average(batter['playerid'], formatted_date)
+                if average_obp == 0 or career_obp == 0 or recent_obp == 0:
                     batter_difficulty = batter_difficulty + 8/8
                 else:
-                    value = switch_difficulty(last_obp/average_obp, recent_obp/career_obp)
+                    value = switch_difficulty(career_obp/average_obp, recent_obp/career_obp)
                     batter_difficulty = batter_difficulty + value
 
             batter_difficulty = batter_difficulty / 9.0
@@ -263,11 +257,11 @@ def process_recent_starter_data(player_df, game_date, team_batters, pitcher_stat
         
         DifficultyRating = 0
         for el in team_batters:
-            last_obp, career_obp, recent_obp = cal_batter_average(el, game_date)
-            if average_obp == 0 or last_obp == 0 or career_obp == 0 or recent_obp == 0:
+            career_obp, recent_obp = cal_batter_average(el, game_date)
+            if average_obp == 0 or career_obp == 0 or recent_obp == 0:
                 DifficultyRating = DifficultyRating + 8/8
             else:
-                value = switch_difficulty(last_obp/average_obp, recent_obp/career_obp)
+                value = switch_difficulty(career_obp/average_obp, recent_obp/career_obp)
                 DifficultyRating = DifficultyRating + value
         
         DifficultyRating = DifficultyRating / 9.0
@@ -292,11 +286,11 @@ def process_career_starter_data(games, pitcher_stat_list):
             s_list, weights = [games], [1]
         elif len(games) >= 40: 
             last_40 = games.tail(40)  # Get the last 40 rows of the DataFrame
-            sub_df1 = last_40.iloc[-40:-29]
-            sub_df2 = last_40.iloc[-28:-15]  
+            sub_df1 = last_40.iloc[-40:-28]
+            sub_df2 = last_40.iloc[-28:-14]  
             sub_df3 = last_40.iloc[-14:]
             s_list = [sub_df3,sub_df2,sub_df1]
-            weights = [2/3,1/6,1/6]
+            weights = [2/3, 1/6,1/6]
 
         all_s_data=[]
         for s in s_list:
@@ -382,8 +376,7 @@ def process_recent_bullpen_data(bullpen_df, game_date, pitcher_stat_list):
     
     bullpen_df['game_date'] = pd.to_datetime(bullpen_df['game_date'])
     games = bullpen_df[bullpen_df['game_date'] < game_date]
-    games = games.sort_values('game_date')
-    
+    games = games.sort_values('game_date')    
     
     if len(games) == 0: 
         recent_games = []
@@ -420,11 +413,11 @@ def process_career_bullpen_data(games,pitcher_stat_list):
             s_list, weights = [games], [1]
         elif len(games) >= 40: 
             last_40 = games.tail(40)  # Get the last 40 rows of the DataFrame
-            sub_df1 = last_40.iloc[-40:-29]
-            sub_df2 = last_40.iloc[-28:-15]  
+            sub_df1 = last_40.iloc[-40:-28]
+            sub_df2 = last_40.iloc[-28:-14]  
             sub_df3 = last_40.iloc[-14:]
             s_list = [sub_df3,sub_df2,sub_df1]
-            weights = [2/3,1/6,1/6]
+            weights = [2/3, 1/6,1/6]
 
         all_s_data=[]
         for s in s_list:
@@ -561,9 +554,7 @@ def cal_batter_average(team_batter, gamedate):
 
     if len(df) == 0:
         return 0, 0, 0
-
-    last_obp = df.iloc[-1]['obp']
-
+    
     if len(df) >= 15: 
         recent_df = df.tail(15)
         weights = [0.01,0.02,0.03,0.04,0.05,0.05,0.06,0.07,0.08,0.08,0.09,0.09,0.1,0.11,0.12]
@@ -587,8 +578,8 @@ def cal_batter_average(team_batter, gamedate):
     elif len(df) >= 200: 
         last_40 = df.tail(200)  # Get the last 40 rows of the DataFrame
         sub_df1 = last_40.iloc[-200:-134]
-        sub_df2 = last_40.iloc[-133:-67]  
-        sub_df3 = last_40.iloc[-66:]
+        sub_df2 = last_40.iloc[-134:-67]  
+        sub_df3 = last_40.iloc[-67:]
         s_list = [sub_df3,sub_df2,sub_df1]
         weights = [2/3,1/6,1/6]
     all_s_data=[]
@@ -610,7 +601,7 @@ def cal_batter_average(team_batter, gamedate):
         all_s_data.append(s_data)
     career_data=pd.DataFrame(all_s_data).mul(weights,axis=0).sum().to_dict()
 
-    return last_obp, career_data['obp'], recent_data['obp']
+    return career_data['obp'], recent_data['obp']
 
 def cal_pitcher_average(team_pitcher, gamedate):
   
@@ -618,8 +609,6 @@ def cal_pitcher_average(team_pitcher, gamedate):
     
     if len(df) == 0: 
         return 0, 0, 0
-    
-    last_whip = df.iloc[-1]['whip']
         
     if len(df) >= 5: 
         recent_df = df.tail(5)
@@ -630,8 +619,7 @@ def cal_pitcher_average(team_pitcher, gamedate):
         weights = list(np.repeat(1/len(recent_df), len(recent_df)))
         
     recent_df['era'] = recent_df.apply(lambda x: 9*x['earnedRuns']/x['inningsPitched'] if x['inningsPitched']>0 else 0,axis=1)
-    recent_df['whip'] = recent_df.apply(lambda x: (x['baseOnBalls']+x['hits'])/x['inningsPitched'] if x['inningsPitched']>0 else 0 ,axis=1)
-    
+    recent_df['whip'] = recent_df.apply(lambda x: (x['baseOnBalls']+x['hits'])/x['inningsPitched'] if x['inningsPitched']>0 else 0 ,axis=1)    
     
     drop_cols = ['game_date', 'note', 'game_id', 'away_team', 'home_team', 'away_score', 'home_score']
     recent_df = recent_df.drop(drop_cols,axis = 1,errors = 'ignore').astype(float)
@@ -641,17 +629,17 @@ def cal_pitcher_average(team_pitcher, gamedate):
         s_list, weights = [df], [1]
     elif len(df) >= 40: 
         last_40 = df.tail(40)  # Get the last 40 rows of the DataFrame
-        sub_df1 = last_40.iloc[-40:-29]
-        sub_df2 = last_40.iloc[-28:-15]  
+        sub_df1 = last_40.iloc[-40:-28]
+        sub_df2 = last_40.iloc[-28:-14]  
         sub_df3 = last_40.iloc[-14:]
         s_list = [sub_df3,sub_df2,sub_df1]
-        weights = [2/3,1/6,1/6]
+        weights = [2/3, 1/6,1/6]
 
     all_s_data=[]
     for s in s_list: 
         drop_cols = ['game_id', 'game_date', 'note', 'season','game_id', 'away_team', 'home_team', 'away_score', 'home_score', 'playerId']
         s = s.drop(drop_cols, errors = 'ignore', axis = 1)
-        length = len(s) 
+        length = len(s)
         s = s.sum()
         s['era'] = 9*s['earnedRuns']/s['inningsPitched'] if s['inningsPitched']>0 else 0
         s['whip'] = (s['baseOnBalls']+s['hits'])/s['inningsPitched'] if s['inningsPitched']>0 else 0
@@ -664,7 +652,7 @@ def cal_pitcher_average(team_pitcher, gamedate):
         
     career_df = pd.DataFrame(all_s_data)
     career_data = career_df.mul(weights,axis=0).sum().to_dict()
-    return last_whip, career_data['whip'], recent_data['whip']
+    return career_data['whip'], recent_data['whip']
 
 def switch_difficulty(leaguefactor, recentfacotr):
     if leaguefactor >= 1.3 and recentfacotr >= 1.08:
@@ -915,11 +903,11 @@ for pitcher in pithcers:
 away_batter_data = process_team_batter_data(awaybatters, 'away', '2023/07/18', home_starter)
 home_batter_data = process_team_batter_data(homebatters, 'home', '2023/07/18', away_starter)
 
-# # Starters 
+# # # Starters 
 away_starter_data = process_starter_data(away_starter, 'away', '2023/07/18', homebatters)
 home_starter_data = process_starter_data(home_starter, 'home', '2023/07/18', awaybatters)
 
-print('#################################          Data             ##############################################')
+# print('#################################          Data             ##############################################')
 print('---------------------------------      away_batter_data    ------------------------------------------------')
 print(away_batter_data)
 print('---------------------------------      home_batter_data    ------------------------------------------------')

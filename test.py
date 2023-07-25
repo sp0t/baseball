@@ -78,6 +78,7 @@ def process_recent_batter_data(player_df, game_date, team_starter, batter_stat_l
             formatted_date = date_obj.strftime('%Y/%m/%d')
             average_obp, average_whip = update_league_average(formatted_date, False)
             
+            print(pitcher[0]['playerid'], formatted_date)
             career_whip, recent_whip = cal_pitcher_average(pitcher[0]['playerid'], formatted_date)
             if average_whip == 0 or career_whip == 0 or recent_whip == 0:
                 difficulty.append(8/8)

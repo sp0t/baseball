@@ -554,7 +554,7 @@ def cal_batter_average(team_batter, gamedate):
     df = get_batter_df(team_batter, gamedate)
 
     if len(df) == 0:
-        return 0, 0, 0
+        return 0, 0
     
     if len(df) >= 15: 
         recent_df = df.tail(15)
@@ -609,7 +609,7 @@ def cal_pitcher_average(team_pitcher, gamedate):
     df = get_starter_df(team_pitcher, gamedate)
     
     if len(df) == 0: 
-        return 0, 0, 0
+        return 0, 0
         
     if len(df) >= 5: 
         recent_df = df.tail(5)

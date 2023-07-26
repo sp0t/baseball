@@ -552,6 +552,7 @@ def update_league_average(gamedate, state):
 
 def cal_batter_average(team_batter, gamedate):
     df = get_batter_df(team_batter, gamedate)
+    print(df)
 
     if len(df) == 0:
         return 0, 0
@@ -590,6 +591,7 @@ def cal_batter_average(team_batter, gamedate):
         length = len(s_df)
         s_df['singles'] = s_df['hits']-s_df['doubles']-s_df['triples']-s_df['homeRuns']
         s_df = s_df.sum()
+        print(s_df)
         s_df['avg'] = s_df['hits']/s_df['atBats'] if s_df['atBats']>0 else 0
         s_df['obp'] = (s_df['hits']+s_df['baseOnBalls'])/(s_df['atBats']+s_df['baseOnBalls']) if (s_df['atBats']+s_df['baseOnBalls'])>0 else 0
         s_df['slg'] = ((s_df['singles'])+2*(s_df['doubles'])+3*(s_df['triples'])+4*(s_df['homeRuns']))/s_df['atBats'] if s_df['atBats']>0 else 0
@@ -601,7 +603,7 @@ def cal_batter_average(team_batter, gamedate):
         s_data = s_df.to_dict()
         all_s_data.append(s_data)
     career_data=pd.DataFrame(all_s_data).mul(weights,axis=0).sum().to_dict()
-
+    print(career_data)
     return career_data['obp'], recent_data['obp']
 
 def cal_pitcher_average(team_pitcher, gamedate):
@@ -900,65 +902,67 @@ for pitcher in pithcers:
 #     continue
 
 
-# Batters
-away_batter_data = process_team_batter_data(awaybatters, 'away', '2023/07/18', home_starter)
-home_batter_data = process_team_batter_data(homebatters, 'home', '2023/07/18', away_starter)
+# # Batters
+# away_batter_data = process_team_batter_data(awaybatters, 'away', '2023/07/18', home_starter)
+# home_batter_data = process_team_batter_data(homebatters, 'home', '2023/07/18', away_starter)
 
-# # # Starters 
-away_starter_data = process_starter_data(away_starter, 'away', '2023/07/18', homebatters)
-home_starter_data = process_starter_data(home_starter, 'home', '2023/07/18', awaybatters)
+# # # # Starters 
+# away_starter_data = process_starter_data(away_starter, 'away', '2023/07/18', homebatters)
+# home_starter_data = process_starter_data(home_starter, 'home', '2023/07/18', awaybatters)
 
-# print('#################################          Data             ##############################################')
-print('---------------------------------      away_batter_data    ------------------------------------------------')
-print(away_batter_data)
-print('---------------------------------      home_batter_data    ------------------------------------------------')
-print(home_batter_data)
-print('---------------------------------      away_starter_data    ------------------------------------------------')
-print(away_starter_data)
-print('---------------------------------      home_starter_data    ------------------------------------------------')
-print(home_starter_data)
-# Bullpen 
-away_bullpen_data = process_bullpen_data('NYY', 'away', '2023/07/18')
-home_bullpen_data = process_bullpen_data('LAA', 'home', '2023/07/18')
+# # print('#################################          Data             ##############################################')
+# print('---------------------------------      away_batter_data    ------------------------------------------------')
+# print(away_batter_data)
+# print('---------------------------------      home_batter_data    ------------------------------------------------')
+# print(home_batter_data)
+# print('---------------------------------      away_starter_data    ------------------------------------------------')
+# print(away_starter_data)
+# print('---------------------------------      home_starter_data    ------------------------------------------------')
+# print(home_starter_data)
+# # Bullpen 
+# away_bullpen_data = process_bullpen_data('NYY', 'away', '2023/07/18')
+# home_bullpen_data = process_bullpen_data('LAA', 'home', '2023/07/18')
 
-# Combine 
-game_data = {}
-game_data.update(away_bullpen_data)
-game_data.update(away_batter_data)
-game_data.update(away_starter_data)
+# # Combine 
+# game_data = {}
+# game_data.update(away_bullpen_data)
+# game_data.update(away_batter_data)
+# game_data.update(away_starter_data)
 
-game_data.update(home_bullpen_data)
-game_data.update(home_batter_data)
-game_data.update(home_starter_data)
+# game_data.update(home_bullpen_data)
+# game_data.update(home_batter_data)
+# game_data.update(home_starter_data)
 
-X_test = pd.DataFrame(game_data, index = [0])
+# X_test = pd.DataFrame(game_data, index = [0])
 
-print('#################################          X_test 1            ##############################################')
-print(X_test)
+# print('#################################          X_test 1            ##############################################')
+# print(X_test)
 
-X_test = feature_selection(X_test, fill_null = True)
+# X_test = feature_selection(X_test, fill_null = True)
 
-print('#################################          X_test 2            ##############################################')
-print(X_test)
-X_test, column_names = addBattersFaced(X_test, bullpen = False)
+# print('#################################          X_test 2            ##############################################')
+# print(X_test)
+# X_test, column_names = addBattersFaced(X_test, bullpen = False)
 
-print('#################################          X_test 3            ##############################################')
-print(X_test)
+# print('#################################          X_test 3            ##############################################')
+# print(X_test)
 
-rosters = schedule.get_rosters('717352')
+# rosters = schedule.get_rosters('717352')
 
-save_batter_data(engine, X_test, awaybatters, homebatters, '717352', rosters)
-save_pitcher_data(engine, X_test, away_starter, home_starter, '717352', rosters)
+# save_batter_data(engine, X_test, awaybatters, homebatters, '717352', rosters)
+# save_pitcher_data(engine, X_test, away_starter, home_starter, '717352', rosters)
 
-X_test = X_test[[col for col in X_test.columns if 'difficulty' not in col]]
-column_names = [el for el in column_names if 'difficulty' not in el]
-for el in column_names:
-    print(el)
-X_test = standardizeData(X_test, column_names)
+# X_test = X_test[[col for col in X_test.columns if 'difficulty' not in col]]
+# column_names = [el for el in column_names if 'difficulty' not in el]
+# for el in column_names:
+#     print(el)
+# X_test = standardizeData(X_test, column_names)
 
-# Make Prediciton    
-pred_1a = pickle.load(open('algorithms/model_1a_v10.sav', 'rb')).predict_proba(X_test)
-print(pred_1a)
-pred_1a = np.round(100 * pred_1a[0], 2)
-engine.execute(f"INSERT INTO win_percent_c(game_id, away_prob, home_prob) VALUES('{717352}', '{pred_1a[0]}', '{pred_1a[1]}') ON CONFLICT (game_id) DO UPDATE SET away_prob = excluded.away_prob, home_prob = excluded.home_prob;")  
-print("Prediction made")
+# # Make Prediciton    
+# pred_1a = pickle.load(open('algorithms/model_1a_v10.sav', 'rb')).predict_proba(X_test)
+# print(pred_1a)
+# pred_1a = np.round(100 * pred_1a[0], 2)
+# engine.execute(f"INSERT INTO win_percent_c(game_id, away_prob, home_prob) VALUES('{717352}', '{pred_1a[0]}', '{pred_1a[1]}') ON CONFLICT (game_id) DO UPDATE SET away_prob = excluded.away_prob, home_prob = excluded.home_prob;")  
+# print("Prediction made")
+
+cal_batter_average('650402', '2023/07/18')

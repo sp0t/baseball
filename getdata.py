@@ -171,7 +171,7 @@ try:
             if head_element.text == 'UFC Fight Night 224: Aspinall vs. Tybura' and date_element.text == 'July 22, 2023':
                 print('=================================================')
                 target_date = False
-                break
+                # break
         driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
         driver.implicitly_wait(2)
 

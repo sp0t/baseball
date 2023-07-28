@@ -242,4 +242,5 @@ except:
 # driver.quit()
 data = extract_data(db_connection)
 save_to_csv(data, 'data.csv')
+print(data)
 db_connection.close()

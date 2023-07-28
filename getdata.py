@@ -219,23 +219,21 @@ try:
                     pinnacle = pinnacle_element.text
                 except:
                     pinnacle = ''
-
-                print(betonline, pinnacle)
                 
-                # if row % 2 == 0:
-                #     fighter_data.fighter1 = name_element.text
-                #     fighter_data.betonline_f1 = betonline
-                #     fighter_data.pinnacle_f1 = pinnacle
+                if row % 2 == 0:
+                    fighter_data.fighter1 = name_element.text
+                    fighter_data.betonline_f1 = betonline
+                    fighter_data.pinnacle_f1 = pinnacle
                 
-                # if row % 2 == 1:
-                #     fighter_data.fighter2 = name_element.text
-                #     fighter_data.betonline_f2 = betonline
-                #     fighter_data.pinnacle_f2 = pinnacle
-                #     fighter_data.link = odds_url
-                #     print(fighter_data)
-                #     # insert_fighter(db_connection, fighter_data)
-                #     fighter_data = {}
-                # row = row + 1
+                if row % 2 == 1:
+                    fighter_data.fighter2 = name_element.text
+                    fighter_data.betonline_f2 = betonline
+                    fighter_data.pinnacle_f2 = pinnacle
+                    fighter_data.link = event_data['link']
+                    print(fighter_data)
+                    # insert_fighter(db_connection, fighter_data)
+                    fighter_data = {}
+                row = row + 1
 
             odds_url = ''
         except:

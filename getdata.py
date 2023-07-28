@@ -4,7 +4,6 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from bs4 import BeautifulSoup 
 from webdriver_manager.chrome import ChromeDriverManager
-from selenium.webdriver.firefox.options import Options as FirefoxOptions
 from selenium.webdriver.chrome.options import Options as ChromeOptions
 from selenium.webdriver.common.by import By
 from datetime import date, timedelta, datetime
@@ -208,10 +207,6 @@ try:
 
         insert_event(db_connection, event_data)
         print(event_data)
-
-        firefox_options = FirefoxOptions()
-        firefox_options.headless = True
-        odd_driver = webdriver.Firefox(options=firefox_options)
 
         # odd_driver.get(odds_url)
         # odd_driver.maximize_window()

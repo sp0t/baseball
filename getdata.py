@@ -179,8 +179,9 @@ try:
                 "link": odds_url
             }
 
-            # insert_event(db_connection, event_data)
-            event_datas.append(event_data)
+            if event_data not in event_datas:
+                # insert_event(db_connection, event_data)
+                event_datas.append(event_data)
             # if head_element.text == 'Invicta FC 45: Zappitella vs. Delboni 2' and date_element.text == 'January 12, 2022':
             #     target_date = False
         driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")

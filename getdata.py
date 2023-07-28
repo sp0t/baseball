@@ -196,47 +196,45 @@ try:
         odd_driver = webdriver.Chrome(service=Service(driver_path), options=options)
         odd_driver.get(odds_url)
         odd_driver.maximize_window()
-        time.sleep(3)
         
         table_source = odd_driver.page_source
         table_soup = BeautifulSoup(table_source, "html.parser")
         try:
             table_element = table_soup.find('table')
             tbody_element = table_element.find(attrs={"class": "MuiTableBody-root"})
-            print(tbody_element.prettify())
-        #     fighters_element = tbody_element.find_all('tr')
-        #     row = 0
-        #     fighter_data = {}
-        #     for fighter_element in fighters_element:
-        #         name_element = fighter_element.find('a', attrs={"class":"MuiTypography-root MuiLink-root MuiLink-underlineHover MuiTypography-colorPrimary"})
-        #         odds_elements = fighter_element.find_all('span', attrs={"class":"MuiButton-label"})
-        #         try:
-        #             betonline_element = odds_elements[0].find('div').find('div').find('span')
-        #             betonline = betonline_element.text
-        #         except:
-        #             betonline = ''
-        #         try:
-        #             pinnacle_element = odds_elements[1].find('div').find('div').find('span')
-        #             pinnacle = pinnacle_element.text
-        #         except:
-        #             pinnacle = ''
+            fighters_element = tbody_element.find_all('tr')
+            row = 0
+            fighter_data = {}
+            for fighter_element in fighters_element:
+                name_element = fighter_element.find('a', attrs={"class":"MuiTypography-root MuiLink-root MuiLink-underlineHover MuiTypography-colorPrimary"})
+                odds_elements = fighter_element.find_all('span', attrs={"class":"MuiButton-label"})
+                try:
+                    betonline_element = odds_elements[0].find('div').find('div').find('span')
+                    betonline = betonline_element.text
+                except:
+                    betonline = ''
+                try:
+                    pinnacle_element = odds_elements[1].find('div').find('div').find('span')
+                    pinnacle = pinnacle_element.text
+                except:
+                    pinnacle = ''
                 
-        #         if row % 2 == 0:
-        #             fighter_data.fighter1 = name_element.text
-        #             fighter_data.betonline_f1 = betonline
-        #             fighter_data.pinnacle_f1 = pinnacle
+                if row % 2 == 0:
+                    fighter_data.fighter1 = name_element.text
+                    fighter_data.betonline_f1 = betonline
+                    fighter_data.pinnacle_f1 = pinnacle
                 
-        #         if row % 2 == 1:
-        #             fighter_data.fighter2 = name_element.text
-        #             fighter_data.betonline_f2 = betonline
-        #             fighter_data.pinnacle_f2 = pinnacle
-        #             fighter_data.link = odds_url
-        #             insert_fighter(db_connection, fighter_data)
-        #             fighter_data = {}
-        #         row = row + 1
+                if row % 2 == 1:
+                    fighter_data.fighter2 = name_element.text
+                    fighter_data.betonline_f2 = betonline
+                    fighter_data.pinnacle_f2 = pinnacle
+                    fighter_data.link = odds_url
+                    print(fighter_data)
+                    # insert_fighter(db_connection, fighter_data)
+                    fighter_data = {}
+                row = row + 1
 
-        #     odd_driver.quit()
-        #     odds_url = ''
+            odds_url = ''
         except:
             print('No ODDs')
         odd_driver.quit()

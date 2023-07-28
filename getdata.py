@@ -175,20 +175,20 @@ try:
         driver.implicitly_wait(2)
 
     page_source = driver.page_source
-    print(page_source)
-    # soup = BeautifulSoup(page_source, "html.parser")
-    # game_elements = soup.findAll('div', attrs={"class":"MuiGrid-root MuiGrid-item MuiGrid-grid-xs-9"})
-    # count = 0
-    # for game_element in game_elements:
-    #     event_date = ''
-    #     event_venue = ''
-    #     event_city = ''
-    #     event_name = ''
-    #     fighter1 = ''
-    #     fighter2 = ''
-    #     betonline = ''
-    #     pinnacle = ''
-    #     head_element = game_element.find('a', attrs={"class":"MuiTypography-root MuiLink-root MuiLink-underlineNone MuiTypography-colorPrimary"})
+    soup = BeautifulSoup(page_source, "html.parser")
+    game_elements = soup.findAll('div', attrs={"class":"MuiGrid-root MuiGrid-item MuiGrid-grid-xs-9"})
+    count = 0
+    for game_element in game_elements:
+        event_date = ''
+        event_venue = ''
+        event_city = ''
+        event_name = ''
+        fighter1 = ''
+        fighter2 = ''
+        betonline = ''
+        pinnacle = ''
+        head_element = game_element.find('a', attrs={"class":"MuiTypography-root MuiLink-root MuiLink-underlineNone MuiTypography-colorPrimary"})
+        print(head_element.text)
     #     body_element = game_element.find_all('div', recursive=False)
     #     date_element = body_element[1].findAll('div')[0]
     #     venue_element = body_element[1].findAll('div')[1]

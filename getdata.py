@@ -208,8 +208,8 @@ try:
             fighter_data = {}
             for fighter_element in fighters_element:
                 name_element = fighter_element.find('a', attrs={"class":"MuiTypography-root MuiLink-root MuiLink-underlineHover MuiTypography-colorPrimary"})
-                print(name_element.prettify())
                 odds_elements = fighter_element.find_all('span', attrs={"class":"MuiButton-label"})
+                print(odds_elements[0].find('div').find('div').find('span').prettify())
                 try:
                     betonline_element = odds_elements[0].find('div').find('div').find('span')
                     betonline = betonline_element.text

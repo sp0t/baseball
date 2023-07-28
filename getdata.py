@@ -199,7 +199,6 @@ try:
         time.sleep(10)
         
         table_source = odd_driver.page_source
-        print(table_source)
         table_soup = BeautifulSoup(table_source, "html.parser")
         try:
             table_element = table_soup.find('table')
@@ -209,10 +208,9 @@ try:
             fighter_data = {}
             for fighter_element in fighters_element:
                 name_element = fighter_element.find('a', attrs={"class":"MuiTypography-root MuiLink-root MuiLink-underlineHover MuiTypography-colorPrimary"})
-                print(fighter_element.prettify())
-                # td_elements = fighter_element.find_all('td')
-                # for td_element in td_elements:
-                #     print(td_element.prettify())
+                td_elements = fighter_element.find_all('td')
+                for td_element in td_elements:
+                    print(td_element.prettify())
                 # odds_element = td_elements[1].find('span', attrs={"class":"MuiButton-label"})
                 # try:
                 #     betonline_element = odds_element.find('div').find('div').find('span')

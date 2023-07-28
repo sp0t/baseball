@@ -166,7 +166,7 @@ try:
             city_element = body_element[1].findAll('div')[2]
             odds_url ='https://fightodds.io/' + head_element.get('href') + '/odds'
 
-            if head_element.text == 'UFC Fight Night 224: Aspinall vs. Tybura' and date_element.text == 'July 22, 2023':
+            if head_element.text == 'UFC Fight Night: Holm vs. Bueno Silva' and date_element.text == 'July 15, 2023':
                 print('=================================================')
                 target_date = False
                 break
@@ -187,7 +187,7 @@ try:
         driver.implicitly_wait(2)
 
     driver.quit()
-    
+
     for event_data in event_datas:
         betonline = ''
         pinnacle = ''

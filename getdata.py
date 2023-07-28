@@ -194,7 +194,7 @@ try:
         print(event_data)
 
         odd_driver = webdriver.Chrome(service=Service(driver_path), options=options)
-        odd_driver.get(event_data.link)
+        odd_driver.get(event_data['link'])
         odd_driver.maximize_window()
         time.sleep(10)
         

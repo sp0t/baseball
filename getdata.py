@@ -9,6 +9,7 @@ from selenium.webdriver.common.by import By
 from datetime import date, timedelta, datetime
 import sqlite3
 import csv
+import time
 
 
 
@@ -198,7 +199,9 @@ try:
         odd_driver.get(odds_url)
         odd_driver.maximize_window()
         odd_wait = WebDriverWait(odd_driver, 30)
+        time.sleep(5)
         odd_wait.until(EC.url_to_be(odds_url))
+        
         table_source = odd_driver.page_source
         table_soup = BeautifulSoup(table_source, "html.parser")
         try:

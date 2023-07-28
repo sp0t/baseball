@@ -203,6 +203,7 @@ try:
         try:
             table_element = table_soup.find('table')
             tbody_element = table_element.find(attrs={"class": "MuiTableBody-root"})
+            print(tbody_element.prettify())
             fighters_element = tbody_element.find_all('tr')
             row = 0
             fighter_data = {}

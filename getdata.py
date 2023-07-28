@@ -256,6 +256,7 @@ try:
         # except:
         #     print('No ODDs')
         #     continue
+        odd_driver.quit()
 except:
     print("Element not found on the page.")
 driver.quit()

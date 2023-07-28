@@ -131,8 +131,6 @@ def save_to_csv(data, csv_filename):
 #database and table create
 db_connection = connect_to_database('mma_odds.db')
 create_table(db_connection)
-# data = extract_data(db_connection)
-# save_to_csv(data, 'data.csv')
 
 #run webdriver
 options = Options()
@@ -179,7 +177,7 @@ try:
             }
 
             if event_data not in event_datas:
-                # insert_event(db_connection, event_data)
+                insert_event(db_connection, event_data)
                 event_datas.append(event_data)
             # if head_element.text == 'Invicta FC 45: Zappitella vs. Delboni 2' and date_element.text == 'January 12, 2022':
             #     target_date = False
@@ -231,7 +229,7 @@ try:
                     fighter_data['pinnacle_f2'] = pinnacle
                     fighter_data['link'] = event_data['link']
                     print(fighter_data)
-                    # insert_fighter(db_connection, fighter_data)
+                    insert_fighter(db_connection, fighter_data)
                     fighter_data = {}
                 row = row + 1
 
@@ -242,4 +240,6 @@ try:
 except:
     print("Element not found on the page.")
 # driver.quit()
+data = extract_data(db_connection)
+save_to_csv(data, 'data.csv')
 db_connection.close()

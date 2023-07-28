@@ -153,7 +153,7 @@ wait.until(EC.url_to_be("https://fightodds.io/recent-mma-events"))
 
 try:
     target_date = True
-    while target_date:
+    while target_date :
         page_source = driver.page_source
         soup = BeautifulSoup(page_source, "html.parser")
         game_elements = soup.findAll('div', attrs={"class":"MuiGrid-root MuiGrid-item MuiGrid-grid-xs-9"})
@@ -168,7 +168,9 @@ try:
             # if head_element.text == 'Invicta FC 45: Zappitella vs. Delboni 2' and date_element.text == 'January 12, 2022':
             #     target_date = False
             if head_element.text == 'UFC Fight Night 224: Aspinall vs. Tybura' and date_element.text == 'July 22, 2023':
+                print('=================================================')
                 target_date = False
+                break
         driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
         driver.implicitly_wait(2)
 
@@ -192,6 +194,8 @@ try:
         city_element = body_element[1].findAll('div')[2]
         odds_url ='https://fightodds.io' + head_element.get('href') + '/odds'
 
+        print(odds_url)
+
         event_data = {
             "eventname": head_element.text,
             "eventdate": date_element.text,
@@ -199,7 +203,6 @@ try:
             "city": city_element.text,
             "link": odds_url
         }
-        print(event_data)
 
         insert_event(db_connection, event_data)
 
@@ -208,47 +211,48 @@ try:
         odd_driver.maximize_window()
         odd_wait = WebDriverWait(odd_driver, 30)
         odd_wait.until(EC.url_to_be(odds_url))
-        print(odds_url)
         table_source = odd_driver.page_source
         table_soup = BeautifulSoup(table_source, "html.parser")
-        tbody_element = table_soup.find('tbody')
-        fighters_element = tbody_element.find_all('tr')
-        row = 0
-        fighter_data = {}
-        for fighter_element in fighters_element:
-            name_element = fighter_element.find('a', attrs={"class":"MuiTypography-root MuiLink-root MuiLink-underlineHover MuiTypography-colorPrimary"})
-            odds_elements = fighter_element.find_all('span', attrs={"class":"MuiButton-label"})
-            try:
-                betonline_element = odds_elements[0].find('div').find('div').find('span')
-                betonline = betonline_element.text
-            except:
-                betonline = ''
-            try:
-                pinnacle_element = odds_elements[2].find('div').find('div').find('span')
-                pinnacle = pinnacle_element.text
-            except:
-                pinnacle = ''
-            
-            if row % 2 == 0:
-                fighter_data.fighter1 = name_element.text
-                fighter_data.betonline_f1 = betonline
-                fighter_data.pinnacle_f1 = pinnacle
-            
-            if row % 2 == 1:
-                fighter_data.fighter2 = name_element.text
-                fighter_data.betonline_f2 = betonline
-                fighter_data.pinnacle_f2 = pinnacle
-                fighter_data.link = odds_url
-                insert_fighter(db_connection, fighter_data)
-                print(fighter_data)
-                fighter_data = {}
-            row = row + 1
+        try:
+            tbody_element = table_soup.find('tbody')
+            print(tbody_element.prettify())
+        #     fighters_element = tbody_element.find_all('tr')
+        #     row = 0
+        #     fighter_data = {}
+        #     for fighter_element in fighters_element:
+        #         name_element = fighter_element.find('a', attrs={"class":"MuiTypography-root MuiLink-root MuiLink-underlineHover MuiTypography-colorPrimary"})
+        #         odds_elements = fighter_element.find_all('span', attrs={"class":"MuiButton-label"})
+        #         try:
+        #             betonline_element = odds_elements[0].find('div').find('div').find('span')
+        #             betonline = betonline_element.text
+        #         except:
+        #             betonline = ''
+        #         try:
+        #             pinnacle_element = odds_elements[1].find('div').find('div').find('span')
+        #             pinnacle = pinnacle_element.text
+        #         except:
+        #             pinnacle = ''
+                
+        #         if row % 2 == 0:
+        #             fighter_data.fighter1 = name_element.text
+        #             fighter_data.betonline_f1 = betonline
+        #             fighter_data.pinnacle_f1 = pinnacle
+                
+        #         if row % 2 == 1:
+        #             fighter_data.fighter2 = name_element.text
+        #             fighter_data.betonline_f2 = betonline
+        #             fighter_data.pinnacle_f2 = pinnacle
+        #             fighter_data.link = odds_url
+        #             insert_fighter(db_connection, fighter_data)
+        #             fighter_data = {}
+        #         row = row + 1
 
-        odd_driver.quit()
-        odds_url = ''
+        #     odd_driver.quit()
+        #     odds_url = ''
+        except:
+            print('No ODDs')
+            continue
 except:
     print("Element not found on the page.")
 driver.quit()
 db_connection.close()
-
-

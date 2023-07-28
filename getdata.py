@@ -196,13 +196,12 @@ try:
         odd_driver = webdriver.Chrome(service=Service(driver_path), options=options)
         odd_driver.get(odds_url)
         odd_driver.maximize_window()
-        time.sleep(5)
+        time.sleep(10)
         
         table_source = odd_driver.page_source
         table_soup = BeautifulSoup(table_source, "html.parser")
         try:
             table_element = table_soup.find('table')
-            print(table_element.prettify())
             tbody_element = table_element.find(attrs={"class": "MuiTableBody-root"})
             fighters_element = tbody_element.find_all('tr')
             row = 0

@@ -148,9 +148,7 @@ driver.get("https://fightodds.io/recent-mma-events")
 
 print(date.today())
 # Wait for the sports list to load
-wait = WebDriverWait(driver, 30)
-get_url = driver.current_url
-wait.until(EC.url_to_be("https://fightodds.io/recent-mma-events"))
+time.sleep(3)
 event_datas = []
 
 try:
@@ -198,9 +196,7 @@ try:
         odd_driver = webdriver.Chrome(service=Service(driver_path), options=options)
         odd_driver.get(odds_url)
         odd_driver.maximize_window()
-        odd_wait = WebDriverWait(odd_driver, 30)
-        time.sleep(5)
-        odd_wait.until(EC.url_to_be(odds_url))
+        time.sleep(3)
         
         table_source = odd_driver.page_source
         table_soup = BeautifulSoup(table_source, "html.parser")

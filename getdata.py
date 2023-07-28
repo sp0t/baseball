@@ -194,9 +194,9 @@ try:
         print(event_data)
 
         odd_driver = webdriver.Chrome(service=Service(driver_path), options=options)
-        odd_driver.get(odds_url)
+        odd_driver.get(event_data.link)
         odd_driver.maximize_window()
-        time.sleep(10)
+        time.sleep(5)
         
         table_source = odd_driver.page_source
         table_soup = BeautifulSoup(table_source, "html.parser")
@@ -208,8 +208,10 @@ try:
             fighter_data = {}
             for fighter_element in fighters_element:
                 name_element = fighter_element.find('a', attrs={"class":"MuiTypography-root MuiLink-root MuiLink-underlineHover MuiTypography-colorPrimary"})
+                td_elements = fighter_element.find_all('td')
+                for td_element in td_elements:
+                    print(td_element.prettify())
                 # odds_element = td_elements[1].find('span', attrs={"class":"MuiButton-label"})
-                print(fighter_element.prettify())
                 # try:
                 #     betonline_element = odds_element.find('div').find('div').find('span')
                 #     betonline = betonline_element.text

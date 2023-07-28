@@ -150,6 +150,7 @@ print(date.today())
 wait = WebDriverWait(driver, 30)
 get_url = driver.current_url
 wait.until(EC.url_to_be("https://fightodds.io/recent-mma-events"))
+event_datas = []
 
 try:
     target_date = True
@@ -157,7 +158,6 @@ try:
         page_source = driver.page_source
         soup = BeautifulSoup(page_source, "html.parser")
         game_elements = soup.findAll('div', attrs={"class":"MuiGrid-root MuiGrid-item MuiGrid-grid-xs-9"})
-        count = 0
         for game_element in game_elements:
             head_element = game_element.find('a', attrs={"class":"MuiTypography-root MuiLink-root MuiLink-underlineNone MuiTypography-colorPrimary"})
             body_element = game_element.find_all('div', recursive=False)
@@ -165,47 +165,32 @@ try:
             venue_element = body_element[1].findAll('div')[1]
             city_element = body_element[1].findAll('div')[2]
             odds_url =head_element.get('href') + '/odds'
-            # if head_element.text == 'Invicta FC 45: Zappitella vs. Delboni 2' and date_element.text == 'January 12, 2022':
-            #     target_date = False
+
             if head_element.text == 'UFC Fight Night 224: Aspinall vs. Tybura' and date_element.text == 'July 22, 2023':
                 print('=================================================')
                 target_date = False
+                driver.quit()
                 break
+
+            event_data = {
+                "eventname": head_element.text,
+                "eventdate": date_element.text,
+                "venue": venue_element.text,
+                "city": city_element.text,
+                "link": odds_url
+            }
+
+            insert_event(db_connection, event_data)
+            event_datas.append(event_data)
+            # if head_element.text == 'Invicta FC 45: Zappitella vs. Delboni 2' and date_element.text == 'January 12, 2022':
+            #     target_date = False
         driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
         driver.implicitly_wait(2)
 
-    page_source = driver.page_source
-    soup = BeautifulSoup(page_source, "html.parser")
-    game_elements = soup.findAll('div', attrs={"class":"MuiGrid-root MuiGrid-item MuiGrid-grid-xs-9"})
-    count = 0
-    for game_element in game_elements:
-        event_date = ''
-        event_venue = ''
-        event_city = ''
-        event_name = ''
-        fighter1 = ''
-        fighter2 = ''
+
+    for event_data in event_datas:
         betonline = ''
         pinnacle = ''
-        head_element = game_element.find('a', attrs={"class":"MuiTypography-root MuiLink-root MuiLink-underlineNone MuiTypography-colorPrimary"})
-        print(head_element.text)
-        body_element = game_element.find_all('div', recursive=False)
-        date_element = body_element[1].findAll('div')[0]
-        venue_element = body_element[1].findAll('div')[1]
-        city_element = body_element[1].findAll('div')[2]
-        odds_url ='https://fightodds.io' + head_element.get('href') + '/odds'
-
-        print(odds_url)
-
-        event_data = {
-            "eventname": head_element.text,
-            "eventdate": date_element.text,
-            "venue": venue_element.text,
-            "city": city_element.text,
-            "link": odds_url
-        }
-
-        insert_event(db_connection, event_data)
         print(event_data)
 
         # odd_driver.get(odds_url)

@@ -165,7 +165,7 @@ try:
             venue_element = body_element[1].findAll('div')[1]
             city_element = body_element[1].findAll('div')[2]
             odds_url =head_element.get('href') + '/odds'
-            print(odds_url)
+            print(head_element.text)
             # if head_element.text == 'Invicta FC 45: Zappitella vs. Delboni 2' and date_element.text == 'January 12, 2022':
             #     target_date = False
             if head_element.text == 'UFC Fight Night 224: Aspinall vs. Tybura' and date_element.text == 'July 22, 2023':

@@ -207,7 +207,7 @@ try:
             row = 0
             fighter_data = {}
             for fighter_element in fighters_element:
-                name_element = fighter_element.find('a', attrs={"class":"MuiTypography-root MuiLink-root MuiLink-underlineHover MuiTypography-colorPrimary"})
+                # name_element = fighter_element.find('a', attrs={"class":"MuiTypography-root MuiLink-root MuiLink-underlineHover MuiTypography-colorPrimary"})
                 td_elements = fighter_element.find_all('td')
                 for td_element in td_elements:
                     print(td_element.prettify())

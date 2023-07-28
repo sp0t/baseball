@@ -196,7 +196,7 @@ try:
         odd_driver = webdriver.Chrome(service=Service(driver_path), options=options)
         odd_driver.get(event_data['link'])
         odd_driver.maximize_window()
-        time.sleep(10)
+        time.sleep(5)
         
         table_source = odd_driver.page_source
         table_soup = BeautifulSoup(table_source, "html.parser")
@@ -209,7 +209,7 @@ try:
             for fighter_element in fighters_element:
                 name_element = fighter_element.find('a', attrs={"class":"MuiTypography-root MuiLink-root MuiLink-underlineHover MuiTypography-colorPrimary"})
                 td_elements = fighter_element.find_all('td')
-                betonline_element = td_elements[1].find('button').find('span').find('div').find('div').find('span')
+                betonline_element = td_elements[3].find('button').find('span').find('div').find('div').find('span')
                 print(betonline_element.text)
                 # try:
                 #     betonline_element = td_elements[1].find('button').find('span').find('div').find('div').find('span')

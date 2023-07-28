@@ -136,8 +136,8 @@ create_table(db_connection)
 #run webdriver
 options = Options()
 options.use_chromium = True
-options.add_argument('--headless')
-options.add_argument('--no-sandbox')
+# options.add_argument('--headless')
+# options.add_argument('--no-sandbox')
 options.add_argument('--disable-dev-shm-usage')
 user_agent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.182 Safari/537.36"
 options.add_argument(f'user-agent={user_agent}')
@@ -210,13 +210,13 @@ try:
         insert_event(db_connection, event_data)
         print(event_data)
 
-        odd_driver = webdriver.Chrome(options=options)
-        odd_driver.get(odds_url)
-        odd_driver.maximize_window()
-        odd_wait = WebDriverWait(odd_driver, 30)
-        odd_wait.until(EC.url_to_be(odds_url))
-        table_source = odd_driver.page_source
-        print(table_source)
+        # odd_driver = webdriver.Chrome(options=options)
+        # odd_driver.get(odds_url)
+        # odd_driver.maximize_window()
+        # odd_wait = WebDriverWait(odd_driver, 30)
+        # odd_wait.until(EC.url_to_be(odds_url))
+        # table_source = odd_driver.page_source
+        # print(table_source)
     #     table_soup = BeautifulSoup(table_source, "html.parser")
     #     print(table_source)
         # try:

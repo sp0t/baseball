@@ -199,6 +199,7 @@ try:
         time.sleep(10)
         
         table_source = odd_driver.page_source
+        print(table_source)
         table_soup = BeautifulSoup(table_source, "html.parser")
         try:
             table_element = table_soup.find('table')

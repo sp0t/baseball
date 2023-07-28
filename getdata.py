@@ -209,11 +209,11 @@ try:
         print(event_data)
 
         odd_driver = webdriver.Chrome(options=options)
-        odd_driver.get(odds_url)
-        odd_driver.maximize_window()
-        odd_wait = WebDriverWait(odd_driver, 30)
-        odd_wait.until(EC.url_to_be(odds_url))
-        # table_source = odd_driver.page_source
+        # odd_driver.get(odds_url)
+        # odd_driver.maximize_window()
+        # odd_wait = WebDriverWait(odd_driver, 30)
+        # odd_wait.until(EC.url_to_be(odds_url))
+        # # table_source = odd_driver.page_source
         # print(table_source)
     #     table_soup = BeautifulSoup(table_source, "html.parser")
     #     print(table_source)

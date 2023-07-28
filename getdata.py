@@ -165,17 +165,17 @@ try:
             venue_element = body_element[1].findAll('div')[1]
             city_element = body_element[1].findAll('div')[2]
             odds_url =head_element.get('href') + '/odds'
-            print(head_element.text)
             # if head_element.text == 'Invicta FC 45: Zappitella vs. Delboni 2' and date_element.text == 'January 12, 2022':
             #     target_date = False
             if head_element.text == 'UFC Fight Night 224: Aspinall vs. Tybura' and date_element.text == 'July 22, 2023':
                 print('=================================================')
                 target_date = False
-                # break
+                break
         driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
         driver.implicitly_wait(2)
 
-    # page_source = driver.page_source
+    page_source = driver.page_source
+    print(page_source)
     # soup = BeautifulSoup(page_source, "html.parser")
     # game_elements = soup.findAll('div', attrs={"class":"MuiGrid-root MuiGrid-item MuiGrid-grid-xs-9"})
     # count = 0

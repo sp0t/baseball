@@ -203,11 +203,11 @@ try:
         try:
             table_element = table_soup.find('table')
             tbody_element = table_element.find(attrs={"class": "MuiTableBody-root"})
-            print(tbody_element.prettify())
             fighters_element = tbody_element.find_all('tr')
             row = 0
             fighter_data = {}
             for fighter_element in fighters_element:
+                print(fighter_element.prettify())
                 name_element = fighter_element.find('a', attrs={"class":"MuiTypography-root MuiLink-root MuiLink-underlineHover MuiTypography-colorPrimary"})
                 odds_elements = fighter_element.find_all('span', attrs={"class":"MuiButton-label"})
                 try:

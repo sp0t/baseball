@@ -4,7 +4,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from bs4 import BeautifulSoup 
 from webdriver_manager.chrome import ChromeDriverManager
-from selenium.webdriver.chrome.options import Options as ChromeOptions
+from selenium.webdriver.chrome.options import Options 
 from selenium.webdriver.common.by import By
 from datetime import date, timedelta, datetime
 import sqlite3
@@ -134,7 +134,7 @@ create_table(db_connection)
 # save_to_csv(data, 'data.csv')
 
 #run webdriver
-options = ChromeOptions()
+options = Options()
 options.use_chromium = True
 options.add_argument('--headless')
 options.add_argument('--no-sandbox')
@@ -164,7 +164,7 @@ try:
             date_element = body_element[1].findAll('div')[0]
             venue_element = body_element[1].findAll('div')[1]
             city_element = body_element[1].findAll('div')[2]
-            odds_url =head_element.get('href') + '/odds'
+            odds_url ='https://fightodds.io/' + head_element.get('href') + '/odds'
 
             if head_element.text == 'UFC Fight Night 224: Aspinall vs. Tybura' and date_element.text == 'July 22, 2023':
                 print('=================================================')
@@ -243,5 +243,5 @@ try:
         # odd_driver.quit()
 except:
     print("Element not found on the page.")
-driver.quit()
+# driver.quit()
 db_connection.close()

@@ -202,7 +202,7 @@ try:
         table_source = odd_driver.page_source
         table_soup = BeautifulSoup(table_source, "html.parser")
         try:
-            tbody_element = table_soup.find('tbody', attrs={"class":"MuiTableBody-root"})
+            tbody_element = table_soup.find('table')
             print(tbody_element.prettify())
         #     fighters_element = tbody_element.find_all('tr')
         #     row = 0

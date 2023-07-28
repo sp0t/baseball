@@ -196,7 +196,7 @@ try:
         odd_driver = webdriver.Chrome(service=Service(driver_path), options=options)
         odd_driver.get(event_data.link)
         odd_driver.maximize_window()
-        time.sleep(5)
+        time.sleep(10)
         
         table_source = odd_driver.page_source
         table_soup = BeautifulSoup(table_source, "html.parser")

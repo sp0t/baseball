@@ -209,31 +209,33 @@ try:
             for fighter_element in fighters_element:
                 name_element = fighter_element.find('a', attrs={"class":"MuiTypography-root MuiLink-root MuiLink-underlineHover MuiTypography-colorPrimary"})
                 td_elements = fighter_element.find_all('td')
-                try:
-                    betonline_element = td_elements[1].find('button').find('span').find('div').find('div').find('span')
-                    betonline = betonline_element.text
-                except:
-                    betonline = ''
-                try:
-                    pinnacle_element = td_elements[3].find('button').find('span').find('div').find('div').find('span')
-                    pinnacle = pinnacle_element.text
-                except:
-                    pinnacle = ''
+                betonline_element = td_elements[1].find('button').find('span').find('div').find('div').find('span')
+                print(betonline_element.text)
+                # try:
+                #     betonline_element = td_elements[1].find('button').find('span').find('div').find('div').find('span')
+                #     betonline = betonline_element.text
+                # except:
+                #     betonline = ''
+                # try:
+                #     pinnacle_element = td_elements[3].find('button').find('span').find('div').find('div').find('span')
+                #     pinnacle = pinnacle_element.text
+                # except:
+                #     pinnacle = ''
                 
-                if row % 2 == 0:
-                    fighter_data.fighter1 = name_element.text
-                    fighter_data.betonline_f1 = betonline
-                    fighter_data.pinnacle_f1 = pinnacle
+                # if row % 2 == 0:
+                #     fighter_data.fighter1 = name_element.text
+                #     fighter_data.betonline_f1 = betonline
+                #     fighter_data.pinnacle_f1 = pinnacle
                 
-                if row % 2 == 1:
-                    fighter_data.fighter2 = name_element.text
-                    fighter_data.betonline_f2 = betonline
-                    fighter_data.pinnacle_f2 = pinnacle
-                    fighter_data.link = odds_url
-                    print(fighter_data)
-                    # insert_fighter(db_connection, fighter_data)
-                    fighter_data = {}
-                row = row + 1
+                # if row % 2 == 1:
+                #     fighter_data.fighter2 = name_element.text
+                #     fighter_data.betonline_f2 = betonline
+                #     fighter_data.pinnacle_f2 = pinnacle
+                #     fighter_data.link = odds_url
+                #     print(fighter_data)
+                #     # insert_fighter(db_connection, fighter_data)
+                #     fighter_data = {}
+                # row = row + 1
 
             odds_url = ''
         except:

@@ -213,9 +213,10 @@ try:
         odd_wait.until(EC.url_to_be(odds_url))
         table_source = odd_driver.page_source
         table_soup = BeautifulSoup(table_source, "html.parser")
-        try:
-            tbody_element = table_soup.find('tbody')
-            print(tbody_element.prettify())
+        print(table_source)
+        # try:
+        #     tbody_element = table_soup.find('tbody')
+        #     print(tbody_element.prettify())
         #     fighters_element = tbody_element.find_all('tr')
         #     row = 0
         #     fighter_data = {}
@@ -249,9 +250,9 @@ try:
 
         #     odd_driver.quit()
         #     odds_url = ''
-        except:
-            print('No ODDs')
-            continue
+        # except:
+        #     print('No ODDs')
+        #     continue
 except:
     print("Element not found on the page.")
 driver.quit()

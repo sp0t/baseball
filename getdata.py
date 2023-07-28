@@ -164,7 +164,7 @@ try:
             date_element = body_element[1].findAll('div')[0]
             venue_element = body_element[1].findAll('div')[1]
             city_element = body_element[1].findAll('div')[2]
-            odds_url ='https://fightodds.io/' + head_element.get('href') + '/odds'
+            odds_url ='https://fightodds.io' + head_element.get('href') + '/odds'
 
             if head_element.text == 'UFC Fight Night: Holm vs. Bueno Silva' and date_element.text == 'July 15, 2023':
                 print('=================================================')
@@ -194,12 +194,14 @@ try:
         pinnacle = ''
         print(event_data)
 
-        # odd_driver.get(odds_url)
-        # odd_driver.maximize_window()
-        # odd_wait = WebDriverWait(odd_driver, 30)
-        # odd_wait.until(EC.url_to_be(odds_url))
-        # # table_source = odd_driver.page_source
-        # print(table_source)
+        odd_driver = webdriver.Chrome(service=Service(driver_path), options=options)
+        odd_driver.get(odds_url)
+        odd_driver.maximize_window()
+        odd_wait = WebDriverWait(odd_driver, 30)
+        odd_wait.until(EC.url_to_be(odds_url))
+        table_source = odd_driver.page_source
+        odd_driver.quit()
+        print(table_source)
     #     table_soup = BeautifulSoup(table_source, "html.parser")
     #     print(table_source)
         # try:

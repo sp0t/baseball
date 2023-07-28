@@ -189,23 +189,24 @@ try:
         pinnacle = ''
         head_element = game_element.find('a', attrs={"class":"MuiTypography-root MuiLink-root MuiLink-underlineNone MuiTypography-colorPrimary"})
         print(head_element.text)
-    #     body_element = game_element.find_all('div', recursive=False)
-    #     date_element = body_element[1].findAll('div')[0]
-    #     venue_element = body_element[1].findAll('div')[1]
-    #     city_element = body_element[1].findAll('div')[2]
-    #     odds_url ='https://fightodds.io' + head_element.get('href') + '/odds'
+        body_element = game_element.find_all('div', recursive=False)
+        date_element = body_element[1].findAll('div')[0]
+        venue_element = body_element[1].findAll('div')[1]
+        city_element = body_element[1].findAll('div')[2]
+        odds_url ='https://fightodds.io' + head_element.get('href') + '/odds'
 
-    #     print(odds_url)
+        print(odds_url)
 
-    #     event_data = {
-    #         "eventname": head_element.text,
-    #         "eventdate": date_element.text,
-    #         "venue": venue_element.text,
-    #         "city": city_element.text,
-    #         "link": odds_url
-    #     }
+        event_data = {
+            "eventname": head_element.text,
+            "eventdate": date_element.text,
+            "venue": venue_element.text,
+            "city": city_element.text,
+            "link": odds_url
+        }
 
-    #     insert_event(db_connection, event_data)
+        insert_event(db_connection, event_data)
+        print(event_data)
 
     #     odd_driver = webdriver.Chrome(options=options)
     #     odd_driver.get(odds_url)

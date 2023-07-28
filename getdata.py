@@ -136,6 +136,7 @@ create_table(db_connection)
 #run webdriver
 options = Options()
 options.use_chromium = True
+options.add_argument('--no-sandbox')
 options.add_argument('--disable-dev-shm-usage')
 
 driver_path = ChromeDriverManager().install()

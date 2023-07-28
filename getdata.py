@@ -200,9 +200,8 @@ try:
         odd_wait = WebDriverWait(odd_driver, 30)
         odd_wait.until(EC.url_to_be(odds_url))
         table_source = odd_driver.page_source
-        table_soup = BeautifulSoup(table_source, "html.parser")
         try:
-            tbody_element = table_soup.find('tbody')
+            tbody_element = table_source.find('tbody')
             print(tbody_element.prettify())
         #     fighters_element = tbody_element.find_all('tr')
         #     row = 0

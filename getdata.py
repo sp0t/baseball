@@ -256,9 +256,8 @@ try:
         # except:
         #     print('No ODDs')
         #     continue
-        # odd_driver.quit()
+        odd_driver.quit()
 except:
     print("Element not found on the page.")
 driver.quit()
-odd_driver.quit()
 db_connection.close()

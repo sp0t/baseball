@@ -400,8 +400,7 @@ function updateDatabase(){
         },
         success: function (data){ 
             document.getElementById('update-loader').style.display = 'none';
-            selectPlayer()
-            // document.location.reload()
+            document.location.reload()
         }
     })
 }
@@ -589,12 +588,12 @@ function  getPlayerStats(id){
     })
 }
 
-function selectPlayer(){ 
-    $.ajax({
-        url: '/selectPlayer', 
-        type: 'GET',
-        success: function (){ 
-            location.href = '/selectPlayer';
-        }
-    })
-}
+// function selectPlayer(){ 
+//     $.ajax({
+//         url: '/selectPlayer', 
+//         type: 'GET',
+//         success: function (){ 
+//             location.href = '/selectPlayer';
+//         }
+//     })
+// }

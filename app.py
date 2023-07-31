@@ -253,6 +253,22 @@ def get_game_info():
     data = jsonify(data)
     return data
 
+@app.route('/get_player_info', methods = ["POST"])
+def get_player_info(): 
+    engine = database.connect_to_db()
+    game_id = str(json.loads(request.form['data']))
+    rosters = schedule.get_rosters(game_id)
+
+    res = pd.read_sql(f"SELECT * FROM schedule WHERE game_id = '{game_id}'", con = engine).iloc[0]
+    data = {'game_id': res['game_id'], 
+        'rosters': rosters,
+        'away': res['away_name'], 
+        'home': res['home_name']
+       }   
+    data = jsonify(data)
+
+    return data
+
 @app.route('/get_betting_info', methods = ["POST"])
 def get_betting_info(): 
     engine = database.connect_to_db()
@@ -683,8 +699,14 @@ def update_P_T_table():
 
 @app.route('/selectPlayer', methods = ["GET"])
 def selectPlayer(): 
-    # today_schedule = schedule.get_schedule()
-    return render_template("selectplayer.html")
+    today_schedule = schedule.get_schedule()
+    return render_template("selectplayer.html", schedule = today_schedule)
+
+@app.route('/startPrediction', methods = ["POST"])
+def startPrediction():
+    predictionData = json.loads(request.form['data'])
+    print(predictionData)
+    return redirect(url_for("index"))
 
 def update_league_average():
     engine = database.connect_to_db()

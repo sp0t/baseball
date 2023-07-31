@@ -590,7 +590,6 @@ function  getPlayerStats(id){
 }
 
 function selectPlayer(){ 
-    alert('asdfasf')
     $.ajax({
         url: '/selectPlayer', 
         type: 'GET',

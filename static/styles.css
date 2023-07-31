@@ -601,3 +601,99 @@ table {
 .model-title{
 	font-size: 10px;
 }
+  
+.scrolling-game {
+	max-height: 680px; /* Set the maximum height of the div; adjust as needed */
+	overflow-y: hidden; /* Initially hide the vertical scrollbar */
+	border: 1px solid #ccc; /* Optional: Add a border to visualize the div */
+	transition: overflow-y 0.3s ease; /* Add smooth transition to the scrollbar */
+}
+  
+.scrolling-game:hover {
+	overflow-y: auto; /* Display vertical scrollbar when hovering */
+}
+
+.scrolling-player {
+	max-height: 645px; /* Set the maximum height of the div; adjust as needed */
+	overflow-y: hidden; /* Initially hide the vertical scrollbar */
+	border: 1px solid #ccc; /* Optional: Add a border to visualize the div */
+	transition: overflow-y 0.3s ease; /* Add smooth transition to the scrollbar */
+}
+  
+.scrolling-player:hover {
+	overflow-y: auto; /* Display vertical scrollbar when hovering */
+}
+
+.match-card {
+    display: flex;
+    background-color: #798a96;
+    border: 1px solid black;
+    margin: 2px;
+    text-align: center;
+    overflow-x: auto;
+}
+
+.match-card:hover {
+	background-color: #263d53;
+	cursor: pointer;
+}
+
+.checkbox{
+	margin:20px;
+  }
+  
+  .checkbox label {
+	min-height: 21px;
+	padding-left: 20px;
+	margin-bottom: 0;
+	font-weight: normal;
+	cursor: pointer;
+	line-height:22px;
+  }
+  
+  .c-checkbox span {
+	position: relative;
+	display: inline-block;
+	vertical-align: top;
+	margin-left: -20px;
+	width: 20px;
+	height: 20px;
+	border-radius: 2px;
+	border: 1px solid #ccc;
+	text-align: center;
+  }
+  
+  .c-checkbox span:before{
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	opacity: 0;
+	text-align: center !important;
+	font-size: 12px;
+	line-height: 18px;
+	vertical-align: middle;
+  }
+  
+  .c-checkbox input[type=checkbox]{
+	position:absolute;
+	margin: 4px 0 0;
+	opacity:0;
+  }
+  
+  .c-checkbox input[type=checkbox]:checked {
+  color: #fff;
+  transition: color 0.3s ease-out;
+  }
+  
+  .c-checkbox input[type=checkbox]:checked + span{
+  border-color: #5d9cec;
+  background-color: #5d9cec;
+  }
+  
+  .c-checkbox input[type=checkbox]:checked + span:before{
+	color: #fff;
+  opacity: 1;
+  transition: color 0.3s ease-out;
+  }

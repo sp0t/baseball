@@ -4,3 +4,5 @@ schedule/__pycache__/
 __pycache__
 .env
 bs-config.js
+test.py
+mlb odds 2022.xlsx

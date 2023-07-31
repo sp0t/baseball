@@ -10,15 +10,327 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-throttle-debounce/1.1/jquery.ba-throttle-debounce.min.js"></script>
     <link rel="stylesheet" href="/static/styles.css">
+    <script>
+
+    </script>
 
 </head>
-<body>
-    <div class="nav-header"><div class="nav-title" style="font-size: 40px; padding-top: 30px; color: black; margin-left: auto; margin-left: auto;">Select Player</div></div>
-    <!-- <div>
-        {% for game in schedule %}
-        <h1>{{game.away_name}} @ {{game.home_name}}</h1>
-        <h2>{{game.game_id}}</h2>
-        {% endfor %}
-    </div> -->
+<body onload="getPlayers('{{schedule[0].game_id}}')">
+    <div class="nav-header" style="display: flex; justify-content: center; align-items: center; padding-bottom: 20px;"><div class="nav-title" style="font-size: 40px; padding-top: 30px; color: #5499C7 ;">Select Player</div></div>
+    <div style="display: flex; justify-content: flex-end; margin-right: 10px;">
+        <button class="medium-solid-button" onclick="startPrediction()">Start Prediction</button>
+    </div>
+    <div style="display: flex; height: 800px; border: 3px solid #5D6D7E; margin: 10px; color:black ;">
+        <div style="width: 20%; text-align: center; border-right: 2px solid #5D6D7E">
+            <span style="display: block; padding-top: 40px; padding-bottom: 32px; font-size: 30px; color: white; background-color: #263d53;">Game</span>
+            <div style="display: flex; text-align: center; font-size: 20px; background-color: #CCD1D1;">
+                <div style="width: 50%; border-right: 2px solid #5D6D7E; border-bottom: 2px solid #5D6D7E;">
+                    <span>away</span>
+                </div>
+                <div style="width: 50%; border-bottom: 2px solid #5D6D7E;">
+                    <span>home</span>
+                </div>
+            </div>
+            <div class="scrolling-game">
+                {% for game in schedule %}
+                <div id = "{{game.game_id}}" class="match-card" onclick="getPlayers(this.id)">
+                    <span style="font-size: 20px; width: 45%;">{{game.away_name}}</span>
+                    <span style="font-size: 20px; width: 10%;">@</span>
+                    <span style="font-size: 20px; width: 45%;">{{game.home_name}}</span>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        <div style="width: 80%; text-align: center;">
+            <span style="display: block; padding-top: 20px; padding-bottom: 10px; font-size: 30px; color: white; background-color: #263d53;">Players</span>
+            <div id="select_players" style="display: flex;">
+                <div style="width: 50%; border-right: 2px solid #5D6D7E; height: 720px;">
+                    <div id="away_select_team" style="border-bottom: 2px solid #5D6D7E; border-top: 2px solid #5D6D7E; color: black; background-color: #CCD1D1;">
+                    </div>
+                    <div style="display: flex; text-align: center; font-size: 20px; border-bottom: 2px solid #5D6D7E">
+                        <div style="width: 50%; border-right: 2px solid #5D6D7E">
+                            <span>Batter</span>
+                        </div>
+                        <div style="width: 50%;">
+                            <span>Pitcher</span>
+                        </div>
+                    </div>
+                    <div style="display: flex;">
+                        <div style="width: 50%; height: 645px; border-right: 2px solid #5D6D7E;">
+                            <div  id="away_batter_player" class="scrolling-player">
+                            </div>
+                        </div>
+                        <div style="width: 50%; height: 645px;">
+                            <div  id="away_pitcher_player" class="scrolling-player">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div style="width: 50%;">
+                    <div id="home_select_team" style="border-bottom: 2px solid #5D6D7E; border-top: 2px solid #5D6D7E; color: black; background-color: #CCD1D1 ;">
+                    </div>
+                    <div style="display: flex; text-align: center; font-size: 20px; border-bottom: 2px solid #5D6D7E">
+                        <div style="width: 50%; border-right: 2px solid #5D6D7E">
+                            <span>Batter</span>
+                        </div>
+                        <div style="width: 50%;">
+                            <span>Pitcher</span>
+                        </div>
+                    </div>
+                    <div style="display: flex;">
+                        <div style="width: 50%; height: 645px; border-right: 2px solid #5D6D7E;">
+                            <div  id="home_batter_player" class="scrolling-player">
+                            </div>
+                        </div>
+                        <div style="width: 50%; height: 645px;">
+                            <div  id="home_pitcher_player" class="scrolling-player">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="loader"><img style="width: 50px; margin-top: 220px;" src="/static/loader.gif"/></div>
+        </div>
+    </div>
+    <script>
+        let playerData = {}
+
+        function getPlayers(gameid) {
+            $.ajax({
+                type: 'POST', 
+                url: '/get_player_info', 
+                data: {'data' : gameid},
+                beforeSend: function(){ 
+                    $('#select_players').hide();
+                    $('#loader').show();
+                },
+                success: function (data){
+
+                    var away_team_html = '';
+                    var home_team_html = '';
+
+                    away_team_html += `<span style="font-size: 25px;">${data['away']}</span>`
+                    home_team_html += `<span style="font-size: 25px;">${data['home']}</span>`
+
+                    $("#away_select_team").html(away_team_html);
+                    $("#home_select_team").html(home_team_html);
+
+                    var away_batter_html='';
+                    var away_pitcher_html='';
+
+                    for(let i = 0; i < data['rosters']['away'].length; i++)
+                    {
+                        away_batter_html += '<div style="display: flex; padding: 3px;">'
+                        away_pitcher_html += '<div style="display: flex; padding: 3px;">'
+                        away_batter_html += '<div style="width: 70%; display: flex;">'
+                        away_pitcher_html += '<div style="width: 70%; display: flex;">'
+                        away_batter_html += `<label for="away_batter_${data['rosters']['away'][i].id}"  style="font-size: 18px; margin-left: auto;">${data['rosters']['away'][i].fullName}</label>`
+                        away_pitcher_html += `<label for="away_pitcher_${data['rosters']['away'][i].id}"  style="font-size: 18px; margin-left: auto;">${data['rosters']['away'][i].fullName}</label>`
+                        away_batter_html += `</div>`
+                        away_pitcher_html += `</div>`
+                        away_batter_html += `<div style="width: 30%; display: flex;">`
+                        away_pitcher_html += `<div style="width: 30%; display: flex;">`
+                        battercheck = false
+                        pitchercheck = false
+                        state = gameid in playerData;
+                        if (state){
+                            battercheck =  playerData[gameid].away_batter.includes(data['rosters']['away'][i].id)
+                            pitchercheck = playerData[gameid].away_pitcher.includes(data['rosters']['away'][i].id)
+                        }
+                        away_batter_html += `<input type="checkbox" id="away_batter_${data['rosters']['away'][i].id}" style="height: 18px; width: 18px; margin: 3px;" ${battercheck?'checked':''} onclick="addAwayBatter(${data['game_id']}, ${data['rosters']['away'][i].id}, this.checked)">`
+                        away_pitcher_html += `<input type="checkbox" id="away_pitcher_${data['rosters']['away'][i].id}" style="height: 18px; width: 18px; margin: 3px;" ${pitchercheck?'checked':''} onclick="addAwayPitcher(${data['game_id']}, ${data['rosters']['away'][i].id}, this.checked)">`
+                        away_batter_html += `</div>`
+                        away_pitcher_html += `</div>`
+                        away_batter_html += `</div>`
+                        away_pitcher_html += `</div>`
+                    }
+
+                    var home_batter_html='';
+                    var home_pitcher_html='';
+
+                    for(let j = 0; j < data['rosters']['home'].length; j++)
+                    {
+                        home_batter_html += '<div style="display: flex; padding: 3px;">'
+                        home_pitcher_html += '<div style="display: flex; padding: 3px;">'
+                        home_batter_html += '<div style="width: 70%; display: flex;">'
+                        home_pitcher_html += '<div style="width: 70%; display: flex;">'
+                        home_batter_html += `<label for="home_batter_${data['rosters']['home'][j].id}"  style="font-size: 18px; margin-left: auto;">${data['rosters']['home'][j].fullName}</label>`
+                        home_pitcher_html += `<label for="home_pitcher_${data['rosters']['home'][j].id}"  style="font-size: 18px; margin-left: auto;">${data['rosters']['home'][j].fullName}</label>`
+                        home_batter_html += `</div>`
+                        home_pitcher_html += `</div>`
+                        home_batter_html += `<div style="width: 30%; display: flex;">`
+                        home_pitcher_html += `<div style="width: 30%; display: flex;">`
+                        
+                        battercheck = false
+                        pitchercheck = false
+                        state = gameid in playerData;
+                        if (state){
+                            battercheck = playerData[gameid].home_batter.includes(data['rosters']['home'][j].id)
+                            pitchercheck = playerData[gameid].home_pitcher.includes(data['rosters']['home'][j].id)
+                        }
+                        home_batter_html += `<input type="checkbox" id="home_batter_${data['rosters']['home'][j].id}" style="height: 18px; width: 18px; margin: 3px;" ${battercheck?'checked':''} onclick="addHomeBatter(${data['game_id']}, ${data['rosters']['home'][j].id}, this.checked)">`
+                        home_pitcher_html += `<input type="checkbox" id="home_pitcher_${data['rosters']['home'][j].id}" style="height: 18px; width: 18px; margin: 3px;" ${pitchercheck?'checked':''} onclick="addHomePitcher(${data['game_id']}, ${data['rosters']['home'][j].id}, this.checked)">`
+                        home_batter_html += `</div>`
+                        home_pitcher_html += `</div>`
+                        home_batter_html += `</div>`
+                        home_pitcher_html += `</div>`
+                    }
+
+                    $('#loader').hide(); 
+
+                    $("#away_batter_player").html(away_batter_html);
+                    $("#away_pitcher_player").html(away_pitcher_html);
+                    $("#home_batter_player").html(home_batter_html);
+                    $("#home_pitcher_player").html(home_pitcher_html);
+                    $('#select_players').show();
+                }
+            })
+        }
+
+        function addAwayBatter(game_id, player_id, check) {
+            state = game_id in playerData;
+            if (!state){
+                playerData[game_id] = {}
+                playerData[game_id].away_batter = []
+                playerData[game_id].home_batter = []
+                playerData[game_id].away_pitcher = []
+                playerData[game_id].home_pitcher = []
+            }
+
+            if(check) {
+                if(playerData[game_id].away_batter.length == 15)
+                {
+                    alert('Already Selected 15 Players')
+                    $(`#away_batter_${player_id}`).prop('checked', false);
+                    return
+                }
+                playerData[game_id].away_batter.push(player_id)
+
+                if(playerData[game_id].away_batter.length == 15 && playerData[game_id].home_batter.length == 15 && playerData[game_id].away_pitcher.length >= 1 && playerData[game_id].home_pitcher.length >= 1) {
+                    $(`#${game_id}`).css("background-color", "#263d53");
+                    $(`#${game_id}`).css("color", "white");
+                }
+            } else {
+                playerData[game_id].away_batter = playerData[game_id].away_batter.filter(id => id !== player_id);
+
+                if(playerData[game_id].away_batter.length < 15 || playerData[game_id].home_batter.length < 15 || playerData[game_id].away_pitcher.length == 0 || playerData[game_id].home_pitcher.length == 0) {
+                    $(`#${game_id}`).css("background-color", "#798a96");
+                    $(`#${game_id}`).css("color", "black");
+                }
+            }
+        }
+
+        function addHomeBatter(game_id, player_id, check) {
+            state = game_id in playerData;
+            if (!state){
+                playerData[game_id] = {}
+                playerData[game_id].away_batter = []
+                playerData[game_id].home_batter = []
+                playerData[game_id].away_pitcher = []
+                playerData[game_id].home_pitcher = []
+            }
+
+            if(check) {
+                if(playerData[game_id].home_batter.length == 15)
+                {
+                    alert('Already Selected 15 Players')
+                    $(`#home_batter_${player_id}`).prop('checked', false);
+                    return
+                }
+                playerData[game_id].home_batter.push(player_id)
+
+                if(playerData[game_id].away_batter.length == 15 && playerData[game_id].home_batter.length == 15 && playerData[game_id].away_pitcher.length >= 1 && playerData[game_id].home_pitcher.length >= 1) {
+                    $(`#${game_id}`).css("background-color", "#263d53");
+                    $(`#${game_id}`).css("color", "white");
+                }
+            } else {
+                playerData[game_id].home_batter = playerData[game_id].home_batter.filter(id => id !== player_id);
+
+                if(playerData[game_id].away_batter.length < 15 || playerData[game_id].home_batter.length < 15 || playerData[game_id].away_pitcher.length == 0 || playerData[game_id].home_pitcher.length == 0) {
+                    $(`#${game_id}`).css("background-color", "#798a96");
+                    $(`#${game_id}`).css("color", "black");
+                }
+            }
+        }
+
+        function addAwayPitcher(game_id, player_id, check) {
+            state = game_id in playerData;
+            if (!state){
+                playerData[game_id] = {}
+                playerData[game_id].away_batter = []
+                playerData[game_id].home_batter = []
+                playerData[game_id].away_pitcher = []
+                playerData[game_id].home_pitcher = []
+            }
+
+            if(check) {
+                if(playerData[game_id].away_pitcher.length == 4)
+                {
+                    alert('Already Selected 4 Players')
+                    $(`#away_pitcher_${player_id}`).prop('checked', false);
+                    return
+                }
+                playerData[game_id].away_pitcher.push(player_id)
+
+                if(playerData[game_id].away_batter.length == 15 && playerData[game_id].home_batter.length == 15 && playerData[game_id].away_pitcher.length >= 1 && playerData[game_id].home_pitcher.length >= 1) {
+                    $(`#${game_id}`).css("background-color", "#263d53");
+                    $(`#${game_id}`).css("color", "white");
+                }
+
+            } else {
+                playerData[game_id].away_pitcher = playerData[game_id].away_pitcher.filter(id => id !== player_id);
+
+                if(playerData[game_id].away_batter.length < 15 || playerData[game_id].home_batter.length < 15 || playerData[game_id].away_pitcher.length == 0 || playerData[game_id].home_pitcher.length == 0) {
+                    $(`#${game_id}`).css("background-color", "#798a96");
+                    $(`#${game_id}`).css("color", "black");
+                }
+            }
+        }
+
+        function addHomePitcher(game_id, player_id, check) {
+            state = game_id in playerData;
+            if (!state){
+                playerData[game_id] = {}
+                playerData[game_id].away_batter = []
+                playerData[game_id].home_batter = []
+                playerData[game_id].away_pitcher = []
+                playerData[game_id].home_pitcher = []
+            }
+
+            if(check) {
+                if(playerData[game_id].home_pitcher.length == 4)
+                {
+                    alert('Already Selected 4 Players')
+                    $(`#home_pitcher_${player_id}`).prop('checked', false);
+                    return
+                }
+                playerData[game_id].home_pitcher.push(player_id)
+
+                if(playerData[game_id].away_batter.length == 15 && playerData[game_id].home_batter.length == 15 && playerData[game_id].away_pitcher.length >= 1 && playerData[game_id].home_pitcher.length >= 1) {
+                    $(`#${game_id}`).css("background-color", "#263d53");
+                    $(`#${game_id}`).css("color", "white");
+                }
+
+            } else {
+                playerData[game_id].home_pitcher = playerData[game_id].home_pitcher.filter(id => id !== player_id);
+
+                if(playerData[game_id].away_batter.length < 15 || playerData[game_id].home_batter.length < 15 || playerData[game_id].away_pitcher.length == 0 || playerData[game_id].home_pitcher.length == 0) {
+                    $(`#${game_id}`).css("background-color", "#798a96");
+                    $(`#${game_id}`).css("color", "black");
+                }
+            }
+        }
+
+        function startPrediction() {
+            $.ajax({
+                url: '/startPrediction', 
+                type: 'POST',
+                data: { 'data' : JSON.stringify(playerData)},
+                success: function (){ 
+                    location.href = '/';
+                }
+            })
+        }
+      </script>
 </body>
 </html>

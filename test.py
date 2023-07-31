@@ -965,4 +965,4 @@ for pitcher in pithcers:
 # engine.execute(f"INSERT INTO win_percent_c(game_id, away_prob, home_prob) VALUES('{717352}', '{pred_1a[0]}', '{pred_1a[1]}') ON CONFLICT (game_id) DO UPDATE SET away_prob = excluded.away_prob, home_prob = excluded.home_prob;")  
 # print("Prediction made")
 
-cal_batter_average('650402', '2023/07/18')
+# cal_batter_average('650402', '2023/07/18')

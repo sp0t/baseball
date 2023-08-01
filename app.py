@@ -791,7 +791,7 @@ def update_league_average():
     battersfaced = round(battersfaced, 3)
     p_homeruns = round(p_homeruns, 3)
     print(p_homeruns, battersfaced, era, whip)
-    engine.execute(text(f"INSERT INTO league_average (year, avg, obp, slg, ops, era, whip) VALUES ('{year}', '{avg}', '{obp}', '{slg}', '{ops}', '{era}', '{whip}') ON CONFLICT (year) DO UPDATE SET avg = excluded.avg, obp = excluded.obp, slg = excluded.slg, ops = excluded.ops, era = excluded.era, whip = excluded.whip;"))   
+    engine.execute(text(f"INSERT INTO league_average (year, avg, obp, slg, ops, era, whip) VALUES ('{year}', '{avg}', '{obp}', '{slg}', '{ops}', '{era}', '{whip}') ON CONFLICT idx_league_average_year DO UPDATE SET avg = excluded.avg, obp = excluded.obp, slg = excluded.slg, ops = excluded.ops, era = excluded.era, whip = excluded.whip;"))   
 
 # model_1a = None
 # model_1b = None

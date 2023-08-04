@@ -49,7 +49,7 @@ def process_recent_starter_data(player_df, game_date, team_batters, pitcher_stat
     
     if len(games) == 0: 
         recent_difficulty_data = dict(zip(pitcher_stat_list, np.repeat(np.nan, len(pitcher_stat_list))))
-        recent_difficulty_data['difficulty'] = DifficultyRating
+        recent_difficulty_data['difficulty'] = 1
     else: 
         team_starter = games.iloc[0]['playerId']
         if len(games) >= 5: 

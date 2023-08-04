@@ -51,6 +51,7 @@ def process_recent_bullpen_data(bullpen_df, game_date, pitcher_stat_list):
     if len(games) == 0: 
         recent_games = []
         recent_data = dict(zip(pitcher_stat_list, np.repeat(np.nan, len(pitcher_stat_list))))
+        recent_data['difficulty'] = 8/8
         
     else: 
         

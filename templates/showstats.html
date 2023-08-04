@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BetMLB</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-throttle-debounce/1.1/jquery.ba-throttle-debounce.min.js"></script>
+    <link rel="stylesheet" href="/static/styles.css">
+    <script>
+
+    </script>
+
+</head>
+<body onload="getPlayers('{{schedule[0].game_id}}')">
+    <div class="nav-header" style="display: flex; justify-content: center; align-items: center; padding-bottom: 20px;"><div class="nav-title" style="font-size: 40px; padding-top: 30px; color: #5499C7 ;">Stats Page</div></div>
+    <div style="margin-left: 50px;">
+        <label for="games" style="font-size: 25px;">Select game:</label>
+        <select name="cars" id="games" onchange="getPlayers(this.value)" style="font-size: 20px; height: auto; width: auto; text-align: center; color: white; background-color: rgb(49, 47, 47); padding: 5px;">
+            {% for game in schedule %}
+                <option value="{{game.game_id}}" style="height: auto;">{{game.away_name}} @ {{game.home_name}}</option>
+            {% endfor %}
+        </select>
+    </div>
+    
+    <div style="display: flex; height: 800px; border: 3px solid #5D6D7E; margin: 10px; color:black ;">
+        <div style="display: flex; width: 20%; text-align: center; border-right: 2px solid #5D6D7E">
+            <div style="width:100%; height: 795px; border-right: 2px solid #5D6D7E">
+                <div style="background-color: #2a3847; color: white; padding: 10px; font-size: 20px;  border-bottom: 2px solid #5D6D7E">
+                    <span>Players</span>
+                </div>
+                <div style="display: flex;">
+                    <div style="width: 50%; height: 745px;  border-right: 1px solid #5D6D7E;">
+                        <div style="background-color: #a5a9ad; color: black; padding: 5px; font-size: 18px; border-bottom: 2px solid #5D6D7E;">
+                            <span>Philadelphia Phillies</span>
+                        </div>
+                        <div style="height: 500px;">
+                            <div class="form-row">
+                                {% for i in range(1,10) %}
+                                <div class="form-row">
+                                    <label for="away_batter_{{i}}" style="margin: 0 9px; color: #5D6D7E;">Batter #{{i}}</label>
+                                    <select name="away_batter_{{i}}" id="away_batter_{{i}}" style="width: 125px;  text-align: center;" required>
+                                        <option value="">—</option>
+                                    </select>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        <div class="scrolling-pitcher">
+                            <div class="form-row">
+                                <label for="away_pitcher" style="margin: 0 9px; color: #5D6D7E">Starter</label>
+                                <select name="away_pitcher" id="away_pitcher" style="width: 125px;  text-align: center" required>
+                                    <option value="">—</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div style="width: 50%;">
+                        <div style="background-color: #a5a9ad; color: black; padding: 5px; font-size: 18px; border-bottom: 2px solid #5D6D7E;">
+                            <span>Miami Marlins</span>
+                        </div>
+                        <div style="height: 500px;">
+                            <div class="form-row">
+                                {% for i in range(1,10) %}
+                                <div class="form-row">
+                                    <label for="home_batter_{{i}}" style="margin: 0 9px; color: #5D6D7E">Batter #{{i}}</label>
+                                    <select name="home_batter_{{i}}" id="home_batter_{{i}}" style="width: 125px; text-align: center" required>
+                                        <option value="">—</option>
+                                    </select>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        <div class="scrolling-pitcher">
+                            <div class="form-row">
+                                <label for="home_pitcher" style="margin: 0 9px; color: #5D6D7E">Starter</label>
+                                <select name="home_pitcher" id="home_pitcher" style="width: 125px;  text-align: center" required>
+                                    <option value="">—</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div style="width: 80%; text-align: center;">
+            <span style="display: block; padding-top: 20px; padding-bottom: 10px; font-size: 30px; color: white; background-color: #263d53;">Players</span>
+            <div id="loader"><img style="width: 50px; margin-top: 220px;" src="/static/loader.gif"/></div>
+        </div>
+    </div>
+    <script>
+        function getPlayers(gameid) {
+            $.ajax({
+                type: 'POST', 
+                url: '/get_predict_players', 
+                data: {'data' : gameid},
+                beforeSend: function(){ 
+                    $('#select_players').hide();
+                    $('#loader').show();
+                },
+                success: function (data){
+
+                    var awaybatterhtml = ''
+                    var awaypitcherhtml = ''
+                    var homebatterhtml = ''
+                    var homepitcherhtml = ''
+
+                    for (i = 1; i < 10; i++){
+                        awaybatterhtml += `<option value="">—</option>`
+                        for (n = 0; n < data['awayBatters'].length; n++){
+                            awaybatterhtml += `<option value='${data['awayBatters'][n]['player_id']}' class='option'>${data['awayBatters'][n]['player_name']}</option>`
+                        }
+                        $(`#${'away_batter_' + i}`).html(awaybatterhtml);
+                        awaybatterhtml = ''
+                    }
+
+                    for (i = 1; i < 10; i++){
+                        homebatterhtml += `<option value="">—</option>`
+                        for (n = 0; n < data['homeBatters'].length; n++){
+                            homebatterhtml += `<option value='${data['homeBatters'][n]['player_id']}' class='option'>${data['homeBatters'][n]['player_name']}</option>`
+                        }
+
+                        $(`#${'home_batter_' + i}`).html(homebatterhtml);
+                        homebatterhtml = ''
+                    }
+
+                    awaypitcherhtml += `<option value="">—</option>`
+                    for (n = 0; n < data['awayPitchers'].length; n++){
+                        awaypitcherhtml += `<option value='${data['awayPitchers'][n]['player_id']}' class='option'>${data['awayPitchers'][n]['player_name']}</option>`
+                    }
+                    $(`#away_pitcher`).html(awaypitcherhtml);
+
+                    homepitcherhtml += `<option value="">—</option>`
+                    for (n = 0; n < data['homePitchers'].length; n++){
+                        homepitcherhtml += `<option value='${data['homePitchers'][n]['player_id']}' class='option'>${data['homePitchers'][n]['player_name']}</option>`
+                    }
+                    $(`#home_pitcher`).html(homepitcherhtml);
+
+                    $('#loader').hide(); 
+                }
+            })
+        }
+
+        function startPrediction() {
+            $.ajax({
+                url: '/startPrediction', 
+                type: 'POST',
+                data: { 'data' : JSON.stringify(playerData)},
+                success: function (){ 
+                    location.href = '/';
+                }
+            })
+        }
+      </script>
+</body>
+</html>

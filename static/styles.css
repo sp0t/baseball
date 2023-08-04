@@ -624,6 +624,28 @@ table {
 	overflow-y: auto; /* Display vertical scrollbar when hovering */
 }
 
+.scrolling-batter {
+	max-height: 645px; /* Set the maximum height of the div; adjust as needed */
+	overflow-y: hidden; /* Initially hide the vertical scrollbar */
+	border: 1px solid #ccc; /* Optional: Add a border to visualize the div */
+	transition: overflow-y 0.3s ease; /* Add smooth transition to the scrollbar */
+}
+  
+.scrolling-batter:hover {
+	overflow-y: auto; /* Display vertical scrollbar when hovering */
+}
+
+.scrolling-pitcher {
+	max-height: 645px; /* Set the maximum height of the div; adjust as needed */
+	overflow-y: hidden; /* Initially hide the vertical scrollbar */
+	border: 1px solid #ccc; /* Optional: Add a border to visualize the div */
+	transition: overflow-y 0.3s ease; /* Add smooth transition to the scrollbar */
+}
+  
+.scrolling-pitcher:hover {
+	overflow-y: auto; /* Display vertical scrollbar when hovering */
+}
+
 .match-card {
     display: flex;
     background-color: #798a96;

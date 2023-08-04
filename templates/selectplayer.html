@@ -137,8 +137,8 @@
                             battercheck =  playerData[gameid].away_batter.includes(data['rosters']['away'][i].id)
                             pitchercheck = playerData[gameid].away_pitcher.includes(data['rosters']['away'][i].id)
                         }
-                        away_batter_html += `<input type="checkbox" id="away_batter_${data['rosters']['away'][i].id}" style="height: 18px; width: 18px; margin: 3px;" ${battercheck?'checked':''} onclick="addAwayBatter(${data['game_id']}, ${data['rosters']['away'][i].id}, this.checked)">`
-                        away_pitcher_html += `<input type="checkbox" id="away_pitcher_${data['rosters']['away'][i].id}" style="height: 18px; width: 18px; margin: 3px;" ${pitchercheck?'checked':''} onclick="addAwayPitcher(${data['game_id']}, ${data['rosters']['away'][i].id}, this.checked)">`
+                        away_batter_html += `<input type="checkbox" id="away_batter_${data['rosters']['away'][i].id}" style="height: 18px; width: 18px; margin: 3px;" ${battercheck?'checked':''} onclick="addAwayBatter(${data['game_id']}, ${data['rosters']['away'][i].id}, '${data['rosters']['away'][i].fullName}', this.checked)">`
+                        away_pitcher_html += `<input type="checkbox" id="away_pitcher_${data['rosters']['away'][i].id}" style="height: 18px; width: 18px; margin: 3px;" ${pitchercheck?'checked':''} onclick="addAwayPitcher(${data['game_id']}, ${data['rosters']['away'][i].id}, '${data['rosters']['away'][i].fullName}', this.checked)">`
                         away_batter_html += `</div>`
                         away_pitcher_html += `</div>`
                         away_batter_html += `</div>`
@@ -168,8 +168,8 @@
                             battercheck = playerData[gameid].home_batter.includes(data['rosters']['home'][j].id)
                             pitchercheck = playerData[gameid].home_pitcher.includes(data['rosters']['home'][j].id)
                         }
-                        home_batter_html += `<input type="checkbox" id="home_batter_${data['rosters']['home'][j].id}" style="height: 18px; width: 18px; margin: 3px;" ${battercheck?'checked':''} onclick="addHomeBatter(${data['game_id']}, ${data['rosters']['home'][j].id}, this.checked)">`
-                        home_pitcher_html += `<input type="checkbox" id="home_pitcher_${data['rosters']['home'][j].id}" style="height: 18px; width: 18px; margin: 3px;" ${pitchercheck?'checked':''} onclick="addHomePitcher(${data['game_id']}, ${data['rosters']['home'][j].id}, this.checked)">`
+                        home_batter_html += `<input type="checkbox" id="home_batter_${data['rosters']['home'][j].id}" style="height: 18px; width: 18px; margin: 3px;" ${battercheck?'checked':''} onclick="addHomeBatter(${data['game_id']}, ${data['rosters']['home'][j].id}, '${data['rosters']['home'][j].fullName}', this.checked)">`
+                        home_pitcher_html += `<input type="checkbox" id="home_pitcher_${data['rosters']['home'][j].id}" style="height: 18px; width: 18px; margin: 3px;" ${pitchercheck?'checked':''} onclick="addHomePitcher(${data['game_id']}, ${data['rosters']['home'][j].id}, '${data['rosters']['home'][j].fullName}', this.checked)">`
                         home_batter_html += `</div>`
                         home_pitcher_html += `</div>`
                         home_batter_html += `</div>`
@@ -187,7 +187,7 @@
             })
         }
 
-        function addAwayBatter(game_id, player_id, check) {
+        function addAwayBatter(game_id, player_id, player_name, check) {
             state = game_id in playerData;
             if (!state){
                 playerData[game_id] = {}
@@ -195,6 +195,7 @@
                 playerData[game_id].home_batter = []
                 playerData[game_id].away_pitcher = []
                 playerData[game_id].home_pitcher = []
+                playerData[game_id].name = {}
             }
 
             if(check) {
@@ -205,6 +206,7 @@
                     return
                 }
                 playerData[game_id].away_batter.push(player_id)
+                playerData[game_id].name[player_id] = player_name
 
                 if(playerData[game_id].away_batter.length == 15 && playerData[game_id].home_batter.length == 15 && playerData[game_id].away_pitcher.length >= 1 && playerData[game_id].home_pitcher.length >= 1) {
                     $(`#${game_id}`).css("background-color", "#263d53");
@@ -220,7 +222,7 @@
             }
         }
 
-        function addHomeBatter(game_id, player_id, check) {
+        function addHomeBatter(game_id, player_id, player_name, check) {
             state = game_id in playerData;
             if (!state){
                 playerData[game_id] = {}
@@ -228,6 +230,7 @@
                 playerData[game_id].home_batter = []
                 playerData[game_id].away_pitcher = []
                 playerData[game_id].home_pitcher = []
+                playerData[game_id].name = {}
             }
 
             if(check) {
@@ -238,6 +241,7 @@
                     return
                 }
                 playerData[game_id].home_batter.push(player_id)
+                playerData[game_id].name[player_id] = player_name
 
                 if(playerData[game_id].away_batter.length == 15 && playerData[game_id].home_batter.length == 15 && playerData[game_id].away_pitcher.length >= 1 && playerData[game_id].home_pitcher.length >= 1) {
                     $(`#${game_id}`).css("background-color", "#263d53");
@@ -253,7 +257,7 @@
             }
         }
 
-        function addAwayPitcher(game_id, player_id, check) {
+        function addAwayPitcher(game_id, player_id, player_name, check) {
             state = game_id in playerData;
             if (!state){
                 playerData[game_id] = {}
@@ -261,6 +265,7 @@
                 playerData[game_id].home_batter = []
                 playerData[game_id].away_pitcher = []
                 playerData[game_id].home_pitcher = []
+                playerData[game_id].name = {}
             }
 
             if(check) {
@@ -271,6 +276,7 @@
                     return
                 }
                 playerData[game_id].away_pitcher.push(player_id)
+                playerData[game_id].name[player_id] = player_name
 
                 if(playerData[game_id].away_batter.length == 15 && playerData[game_id].home_batter.length == 15 && playerData[game_id].away_pitcher.length >= 1 && playerData[game_id].home_pitcher.length >= 1) {
                     $(`#${game_id}`).css("background-color", "#263d53");
@@ -287,7 +293,7 @@
             }
         }
 
-        function addHomePitcher(game_id, player_id, check) {
+        function addHomePitcher(game_id, player_id, player_name, check) {
             state = game_id in playerData;
             if (!state){
                 playerData[game_id] = {}
@@ -295,6 +301,7 @@
                 playerData[game_id].home_batter = []
                 playerData[game_id].away_pitcher = []
                 playerData[game_id].home_pitcher = []
+                playerData[game_id].name = {}
             }
 
             if(check) {
@@ -305,6 +312,7 @@
                     return
                 }
                 playerData[game_id].home_pitcher.push(player_id)
+                playerData[game_id].name[player_id] = player_name
 
                 if(playerData[game_id].away_batter.length == 15 && playerData[game_id].home_batter.length == 15 && playerData[game_id].away_pitcher.length >= 1 && playerData[game_id].home_pitcher.length >= 1) {
                     $(`#${game_id}`).css("background-color", "#263d53");

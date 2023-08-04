@@ -14,6 +14,7 @@ from sqlalchemy import text
 
 # Modules
 from functions import batting, predict, starters, smartContract
+from functions_c import batting_c, starters_c
 from schedule import schedule
 import time
 import atexit
@@ -28,6 +29,7 @@ from itsdangerous import URLSafeTimedSerializer
 from flask_mail import Message
 import requests
 from bs4 import BeautifulSoup
+import threading
 
 # Connect App + DB
 app = Flask(__name__)
@@ -546,6 +548,41 @@ def get_PlayerStats():
     
     return data
 
+@app.route('/get_predict_players', methods = ["POST"])
+def get_predict_players(): 
+    engine = database.connect_to_db()
+    game_id = str(json.loads(request.form['data']))
+    
+    away_batter = []
+    home_batter = []
+    away_starter = []
+    home_starter = []
+
+    batter_res = pd.read_sql(f"SELECT player_id, player_name, team FROM predict_batter_stats WHERE game_id = '{game_id}' AND role = 'recent';", con = engine).to_dict('records')
+    for el in batter_res:
+        if el['team'] == 'away':
+            away_batter.append(el)
+        if el['team'] == 'home':
+            home_batter.append(el)
+        
+    pitcher_res = pd.read_sql(f"SELECT player_id, player_name, team FROM predict_pitcher_stats WHERE game_id = '{game_id}' AND role = 'recent';", con = engine).to_dict('records')
+    for el in pitcher_res:
+        if el['team'] == 'away':
+            away_starter.append(el)
+        if el['team'] == 'home':
+            home_starter.append(el)
+
+    data = {
+        'awayBatters': away_batter,
+        'homeBatters': home_batter,
+        'awayPitchers': away_starter,
+        'homePitchers': home_starter,
+    }
+
+    data = jsonify(data)
+
+    return data
+
 @app.route('/download_batter_data', methods = ["POST"])
 def get_batter_csv_data():
     # game_id = str(json.loads(request.form['data']))
@@ -583,6 +620,7 @@ def get_pitcher_csv_data():
         return 'OK'
     
 @app.route('/friend_page', methods = ["GET", "POST"]) 
+@login_required
 def friend_page():  
     engine = database.connect_to_db()
 
@@ -697,7 +735,14 @@ def update_P_T_table():
 
     return 'OK'   
 
+@app.route('/showstats', methods = ["GET"])
+@login_required
+def showstats(): 
+    today_schedule = schedule.get_schedule()
+    return render_template("showstats.html", schedule = today_schedule)
+
 @app.route('/selectPlayer', methods = ["GET"])
+@login_required
 def selectPlayer(): 
     today_schedule = schedule.get_schedule()
     return render_template("selectplayer.html", schedule = today_schedule)
@@ -705,8 +750,78 @@ def selectPlayer():
 @app.route('/startPrediction', methods = ["POST"])
 def startPrediction():
     predictionData = json.loads(request.form['data'])
-    print(predictionData)
+
+    thread = threading.Thread(target=calculate, args=(predictionData,))
+    
+    # Start the thread
+    thread.start()
     return redirect(url_for("index"))
+
+def calculate(predictionData):
+    today  = date.today()
+    engine = database.connect_to_db()
+    output_date = today.strftime("%Y/%m/%d")
+
+    batter_stat_list = ['home_score', 'away_score', 'atBats', 'avg', 'baseOnBalls', 'doubles', 'hits', 'homeRuns', 'obp', 'ops', 'playerId', 'rbi', 'runs', 
+                        'slg', 'strikeOuts', 'triples', 'season', 'singles']
+    pitcher_stat_list=['atBats', 'baseOnBalls', 'blownSave', 'doubles', 'earnedRuns', 'era', 'hits', 'holds', 'homeRuns', 'inningsPitched', 
+        'losses', 'pitchesThrown', 'playerId', 'rbi', 'runs', 'strikeOuts', 'strikes', 'triples', 'whip',  'wins']
+    
+    for gameid in predictionData:
+        away_batters = predictionData[gameid]['away_batter']
+        for away_batter in away_batters:
+            player_df = batting_c.get_batter_df(away_batter, output_date)
+            recent_batter_stats, games = batting_c.process_recent_batter_data(player_df, output_date, '', batter_stat_list)
+            career_batter_data = batting_c.process_career_batter_data(games, batter_stat_list)
+
+            engine.execute(text(f"INSERT INTO predict_batter_stats(game_date, game_id, player_id, player_name, team, role, atBats, avg, baseOnBalls, doubles, hits, homeRuns, obp, ops, rbi, runs, slg, strikeOuts, triples, singles, difficulty) \
+                                    VALUES('{output_date}', '{gameid}', '{away_batter}', '{predictionData[gameid]['name'][str(away_batter)]}', 'away', 'recent', '{round(float(recent_batter_stats['atBats']), 3)}', '{round(float(recent_batter_stats['avg']), 3)}', '{round(float(recent_batter_stats['baseOnBalls']), 3)}', '{round(float(recent_batter_stats['doubles']), 3)}', '{round(float(recent_batter_stats['hits']), 3)}', '{round(float(recent_batter_stats['homeRuns']), 3)}', '{round(float(recent_batter_stats['obp']), 3)}', '{round(float(recent_batter_stats['ops']), 3)}', '{round(float(recent_batter_stats['rbi']), 3)}', '{round(float(recent_batter_stats['runs']), 3)}', '{round(float(recent_batter_stats['slg']), 3)}', '{round(float(recent_batter_stats['strikeOuts']), 3)}', '{round(float(recent_batter_stats['triples']), 3)}', '{round(float(recent_batter_stats['singles']), 3)}', '{round(float(recent_batter_stats['difficulty']), 3)}')\
+                                    ON CONFLICT ON CONSTRAINT predict_batter_stats_key DO UPDATE SET atBats = excluded.atBats, avg = excluded.avg, baseOnBalls = excluded.baseOnBalls, doubles = excluded.doubles, hits = excluded.hits, homeRuns = excluded.homeRuns, obp = excluded.obp, ops = excluded.ops, rbi = excluded.rbi, runs = excluded.runs, slg = excluded.slg, strikeOuts = excluded.strikeOuts, triples = excluded.triples, singles = excluded.singles, difficulty = excluded.difficulty;"))
+            engine.execute(text(f"INSERT INTO predict_batter_stats(game_date, game_id, player_id, player_name, team, role, atBats, avg, baseOnBalls, doubles, hits, homeRuns, obp, ops, rbi, runs, slg, strikeOuts, triples, singles, difficulty) \
+                                    VALUES('{output_date}', '{gameid}', '{away_batter}', '{predictionData[gameid]['name'][str(away_batter)]}', 'away', 'career', '{round(float(career_batter_data['atBats']), 3)}', '{round(float(career_batter_data['avg']), 3)}', '{round(float(career_batter_data['baseOnBalls']), 3)}', '{round(float(career_batter_data['doubles']), 3)}', '{round(float(career_batter_data['hits']), 3)}', '{round(float(career_batter_data['homeRuns']), 3)}', '{round(float(career_batter_data['obp']), 3)}', '{round(float(career_batter_data['ops']), 3)}', '{round(float(career_batter_data['rbi']), 3)}', '{round(float(career_batter_data['runs']), 3)}', '{round(float(career_batter_data['slg']), 3)}', '{round(float(career_batter_data['strikeOuts']), 3)}', '{round(float(career_batter_data['triples']), 3)}', '{round(float(career_batter_data['singles']), 3)}', '1')\
+                                    ON CONFLICT ON CONSTRAINT predict_batter_stats_key DO UPDATE SET atBats = excluded.atBats, avg = excluded.avg, baseOnBalls = excluded.baseOnBalls, doubles = excluded.doubles, hits = excluded.hits, homeRuns = excluded.homeRuns, obp = excluded.obp, ops = excluded.ops, rbi = excluded.rbi, runs = excluded.runs, slg = excluded.slg, strikeOuts = excluded.strikeOuts, triples = excluded.triples, singles = excluded.singles, difficulty = excluded.difficulty;"))
+
+
+        home_batters = predictionData[gameid]['home_batter']
+        for home_batter in home_batters:
+            player_df = batting_c.get_batter_df(home_batter, output_date)
+            recent_batter_stats, games = batting_c.process_recent_batter_data(player_df, output_date, '', batter_stat_list)
+            career_batter_data = batting_c.process_career_batter_data(games, batter_stat_list)
+
+            engine.execute(text(f"INSERT INTO predict_batter_stats(game_date, game_id, player_id, player_name, team, role, atBats, avg, baseOnBalls, doubles, hits, homeRuns, obp, ops, rbi, runs, slg, strikeOuts, triples, singles, difficulty) \
+                                    VALUES('{output_date}', '{gameid}', '{home_batter}', '{predictionData[gameid]['name'][str(home_batter)]}', 'home', 'recent', '{round(float(recent_batter_stats['atBats']), 3)}', '{round(float(recent_batter_stats['avg']), 3)}', '{round(float(recent_batter_stats['baseOnBalls']), 3)}', '{round(float(recent_batter_stats['doubles']), 3)}', '{round(float(recent_batter_stats['hits']), 3)}', '{round(float(recent_batter_stats['homeRuns']), 3)}', '{round(float(recent_batter_stats['obp']), 3)}', '{round(float(recent_batter_stats['ops']), 3)}', '{round(float(recent_batter_stats['rbi']), 3)}', '{round(float(recent_batter_stats['runs']), 3)}', '{round(float(recent_batter_stats['slg']), 3)}', '{round(float(recent_batter_stats['strikeOuts']), 3)}', '{round(float(recent_batter_stats['triples']), 3)}', '{round(float(recent_batter_stats['singles']), 3)}', '{round(float(recent_batter_stats['difficulty']), 3)}')\
+                                    ON CONFLICT ON CONSTRAINT predict_batter_stats_key DO UPDATE SET atBats = excluded.atBats, avg = excluded.avg, baseOnBalls = excluded.baseOnBalls, doubles = excluded.doubles, hits = excluded.hits, homeRuns = excluded.homeRuns, obp = excluded.obp, ops = excluded.ops, rbi = excluded.rbi, runs = excluded.runs, slg = excluded.slg, strikeOuts = excluded.strikeOuts, triples = excluded.triples, singles = excluded.singles, difficulty = excluded.difficulty;"))
+            engine.execute(text(f"INSERT INTO predict_batter_stats(game_date, game_id, player_id, player_name, team, role, atBats, avg, baseOnBalls, doubles, hits, homeRuns, obp, ops, rbi, runs, slg, strikeOuts, triples, singles, difficulty) \
+                                    VALUES('{output_date}', '{gameid}', '{home_batter}', '{predictionData[gameid]['name'][str(home_batter)]}', 'home', 'career', '{round(float(career_batter_data['atBats']), 3)}', '{round(float(career_batter_data['avg']), 3)}', '{round(float(career_batter_data['baseOnBalls']), 3)}', '{round(float(career_batter_data['doubles']), 3)}', '{round(float(career_batter_data['hits']), 3)}', '{round(float(career_batter_data['homeRuns']), 3)}', '{round(float(career_batter_data['obp']), 3)}', '{round(float(career_batter_data['ops']), 3)}', '{round(float(career_batter_data['rbi']), 3)}', '{round(float(career_batter_data['runs']), 3)}', '{round(float(career_batter_data['slg']), 3)}', '{round(float(career_batter_data['strikeOuts']), 3)}', '{round(float(career_batter_data['triples']), 3)}', '{round(float(career_batter_data['singles']), 3)}', '1')\
+                                    ON CONFLICT ON CONSTRAINT predict_batter_stats_key DO UPDATE SET atBats = excluded.atBats, avg = excluded.avg, baseOnBalls = excluded.baseOnBalls, doubles = excluded.doubles, hits = excluded.hits, homeRuns = excluded.homeRuns, obp = excluded.obp, ops = excluded.ops, rbi = excluded.rbi, runs = excluded.runs, slg = excluded.slg, strikeOuts = excluded.strikeOuts, triples = excluded.triples, singles = excluded.singles, difficulty = excluded.difficulty;"))
+
+        away_starters = predictionData[gameid]['away_pitcher']
+        for away_starter in away_starters:
+            player_df = starters_c.get_starter_df(away_starter, output_date)
+            recent_pitcher_stats, games = starters_c.process_recent_starter_data(player_df, output_date, [], pitcher_stat_list)
+            career_pitcher_data = starters_c.process_career_starter_data(games, pitcher_stat_list)
+
+            engine.execute(text(f"INSERT INTO predict_pitcher_stats(game_date, game_id, player_id, player_name, team, role, atBats, baseOnBalls, blownsaves, doubles, earnedRuns, era, hits, holds, homeRuns, inningsPitched, losses, pitchesThrown, rbi, runs, strikeOuts, strikes, triples, whip, wins, difficulty) \
+                                    VALUES('{output_date}', '{gameid}', '{away_starter}', '{predictionData[gameid]['name'][str(away_starter)]}', 'away', 'recent', '{round(float(recent_pitcher_stats['atBats']), 3)}', '{round(float(recent_pitcher_stats['baseOnBalls']), 3)}', '{round(float(recent_pitcher_stats['blownsaves']), 3)}', '{round(float(recent_pitcher_stats['doubles']), 3)}', '{round(float(recent_pitcher_stats['earnedRuns']), 3)}', '{round(float(recent_pitcher_stats['era']), 3)}', '{round(float(recent_pitcher_stats['hits']), 3)}', '{round(float(recent_pitcher_stats['holds']), 3)}', '{round(float(recent_pitcher_stats['homeRuns']), 3)}', '{round(float(recent_pitcher_stats['inningsPitched']), 3)}', '{round(float(recent_pitcher_stats['losses']), 3)}', '{round(float(recent_pitcher_stats['pitchesThrown']), 3)}', '{round(float(recent_pitcher_stats['rbi']), 3)}', '{round(float(recent_pitcher_stats['runs']), 3)}', '{round(float(recent_pitcher_stats['strikeOuts']), 3)}', '{round(float(recent_pitcher_stats['strikes']), 3)}', '{round(float(recent_pitcher_stats['triples']), 3)}', '{round(float(recent_pitcher_stats['whip']), 3)}', '{round(float(recent_pitcher_stats['wins']), 3)}', '{round(float(recent_pitcher_stats['difficulty']), 3)}')\
+                                    ON CONFLICT ON CONSTRAINT predict_pitcher_stats_key DO UPDATE SET atBats = excluded.atBats, baseOnBalls = excluded.baseOnBalls, blownsaves = excluded.blownsaves, doubles = excluded.doubles, earnedRuns = excluded.earnedRuns, era = excluded.era, hits = excluded.hits, holds = excluded.holds, homeRuns = excluded.homeRuns, inningsPitched = excluded.inningsPitched, losses = excluded.losses, pitchesThrown = excluded.pitchesThrown, rbi = excluded.rbi, runs = excluded.runs, strikeOuts = excluded.strikeOuts, strikes = excluded.strikes, triples = excluded.triples, whip = excluded.whip, wins = excluded.wins, difficulty = excluded.difficulty;"))
+            engine.execute(text(f"INSERT INTO predict_pitcher_stats(game_date, game_id, player_id, player_name, team, role, atBats, baseOnBalls, blownsaves, doubles, earnedRuns, era, hits, holds, homeRuns, inningsPitched, losses, pitchesThrown, rbi, runs, strikeOuts, strikes, triples, whip, wins, difficulty) \
+                                    VALUES('{output_date}', '{gameid}', '{away_starter}', '{predictionData[gameid]['name'][str(away_starter)]}', 'away', 'career', '{round(float(career_pitcher_data['atBats']), 3)}', '{round(float(career_pitcher_data['baseOnBalls']), 3)}', '{round(float(career_pitcher_data['blownsaves']), 3)}', '{round(float(career_pitcher_data['doubles']), 3)}', '{round(float(career_pitcher_data['earnedRuns']), 3)}', '{round(float(career_pitcher_data['era']), 3)}', '{round(float(career_pitcher_data['hits']), 3)}', '{round(float(career_pitcher_data['holds']), 3)}', '{round(float(career_pitcher_data['homeRuns']), 3)}', '{round(float(career_pitcher_data['inningsPitched']), 3)}', '{round(float(career_pitcher_data['losses']), 3)}', '{round(float(career_pitcher_data['pitchesThrown']), 3)}', '{round(float(career_pitcher_data['rbi']), 3)}', '{round(float(career_pitcher_data['runs']), 3)}', '{round(float(career_pitcher_data['strikeOuts']), 3)}', '{round(float(career_pitcher_data['strikes']), 3)}', '{round(float(career_pitcher_data['triples']), 3)}', '{round(float(career_pitcher_data['whip']), 3)}', '{round(float(career_pitcher_data['wins']), 3)}', '1')\
+                                    ON CONFLICT ON CONSTRAINT predict_pitcher_stats_key DO UPDATE SET atBats = excluded.atBats, baseOnBalls = excluded.baseOnBalls, blownsaves = excluded.blownsaves, doubles = excluded.doubles, earnedRuns = excluded.earnedRuns, era = excluded.era, hits = excluded.hits, holds = excluded.holds, homeRuns = excluded.homeRuns, inningsPitched = excluded.inningsPitched, losses = excluded.losses, pitchesThrown = excluded.pitchesThrown, rbi = excluded.rbi, runs = excluded.runs, strikeOuts = excluded.strikeOuts, strikes = excluded.strikes, triples = excluded.triples, whip = excluded.whip, wins = excluded.wins, difficulty = excluded.difficulty;"))
+
+        home_starters = predictionData[gameid]['home_pitcher']
+        for home_starter in home_starters:
+            player_df = starters_c.get_starter_df(home_starter, output_date)
+            recent_pitcher_stats, games = starters_c.process_recent_starter_data(player_df, output_date, [], pitcher_stat_list)
+            career_pitcher_data = starters_c.process_career_starter_data(games, pitcher_stat_list)
+            
+            engine.execute(text(f"INSERT INTO predict_pitcher_stats(game_date, game_id, player_id, player_name, team, role, atBats, baseOnBalls, blownsaves, doubles, earnedRuns, era, hits, holds, homeRuns, inningsPitched, losses, pitchesThrown, rbi, runs, strikeOuts, strikes, triples, whip, wins, difficulty) \
+                                    VALUES('{output_date}', '{gameid}', '{home_starter}', '{predictionData[gameid]['name'][str(home_starter)]}', 'home', 'recent', '{round(float(recent_pitcher_stats['atBats']), 3)}', '{round(float(recent_pitcher_stats['baseOnBalls']), 3)}', '{round(float(recent_pitcher_stats['blownsaves']), 3)}', '{round(float(recent_pitcher_stats['doubles']), 3)}', '{round(float(recent_pitcher_stats['earnedRuns']), 3)}', '{round(float(recent_pitcher_stats['era']), 3)}', '{round(float(recent_pitcher_stats['hits']), 3)}', '{round(float(recent_pitcher_stats['holds']), 3)}', '{round(float(recent_pitcher_stats['homeRuns']), 3)}', '{round(float(recent_pitcher_stats['inningsPitched']), 3)}', '{round(float(recent_pitcher_stats['losses']), 3)}', '{round(float(recent_pitcher_stats['pitchesThrown']), 3)}', '{round(float(recent_pitcher_stats['rbi']), 3)}', '{round(float(recent_pitcher_stats['runs']), 3)}', '{round(float(recent_pitcher_stats['strikeOuts']), 3)}', '{round(float(recent_pitcher_stats['strikes']), 3)}', '{round(float(recent_pitcher_stats['triples']), 3)}', '{round(float(recent_pitcher_stats['whip']), 3)}', '{round(float(recent_pitcher_stats['wins']), 3)}', '{round(float(recent_pitcher_stats['difficulty']), 3)}')\
+                                    ON CONFLICT ON CONSTRAINT predict_pitcher_stats_key DO UPDATE SET atBats = excluded.atBats, baseOnBalls = excluded.baseOnBalls, blownsaves = excluded.blownsaves, doubles = excluded.doubles, earnedRuns = excluded.earnedRuns, era = excluded.era, hits = excluded.hits, holds = excluded.holds, homeRuns = excluded.homeRuns, inningsPitched = excluded.inningsPitched, losses = excluded.losses, pitchesThrown = excluded.pitchesThrown, rbi = excluded.rbi, runs = excluded.runs, strikeOuts = excluded.strikeOuts, strikes = excluded.strikes, triples = excluded.triples, whip = excluded.whip, wins = excluded.wins, difficulty = excluded.difficulty;"))
+            engine.execute(text(f"INSERT INTO predict_pitcher_stats(game_date, game_id, player_id, player_name, team, role, atBats, baseOnBalls, blownsaves, doubles, earnedRuns, era, hits, holds, homeRuns, inningsPitched, losses, pitchesThrown, rbi, runs, strikeOuts, strikes, triples, whip, wins, difficulty) \
+                                    VALUES('{output_date}', '{gameid}', '{home_starter}', '{predictionData[gameid]['name'][str(home_starter)]}', 'home', 'career', '{round(float(career_pitcher_data['atBats']), 3)}', '{round(float(career_pitcher_data['baseOnBalls']), 3)}', '{round(float(career_pitcher_data['blownsaves']), 3)}', '{round(float(career_pitcher_data['doubles']), 3)}', '{round(float(career_pitcher_data['earnedRuns']), 3)}', '{round(float(career_pitcher_data['era']), 3)}', '{round(float(career_pitcher_data['hits']), 3)}', '{round(float(career_pitcher_data['holds']), 3)}', '{round(float(career_pitcher_data['homeRuns']), 3)}', '{round(float(career_pitcher_data['inningsPitched']), 3)}', '{round(float(career_pitcher_data['losses']), 3)}', '{round(float(career_pitcher_data['pitchesThrown']), 3)}', '{round(float(career_pitcher_data['rbi']), 3)}', '{round(float(career_pitcher_data['runs']), 3)}', '{round(float(career_pitcher_data['strikeOuts']), 3)}', '{round(float(career_pitcher_data['strikes']), 3)}', '{round(float(career_pitcher_data['triples']), 3)}', '{round(float(career_pitcher_data['whip']), 3)}', '{round(float(career_pitcher_data['wins']), 3)}', '1')\
+                                    ON CONFLICT ON CONSTRAINT predict_pitcher_stats_key DO UPDATE SET atBats = excluded.atBats, baseOnBalls = excluded.baseOnBalls, blownsaves = excluded.blownsaves, doubles = excluded.doubles, earnedRuns = excluded.earnedRuns, era = excluded.era, hits = excluded.hits, holds = excluded.holds, homeRuns = excluded.homeRuns, inningsPitched = excluded.inningsPitched, losses = excluded.losses, pitchesThrown = excluded.pitchesThrown, rbi = excluded.rbi, runs = excluded.runs, strikeOuts = excluded.strikeOuts, strikes = excluded.strikes, triples = excluded.triples, whip = excluded.whip, wins = excluded.wins, difficulty = excluded.difficulty;"))
+
+    return
 
 def update_league_average():
     engine = database.connect_to_db()
@@ -823,12 +938,8 @@ scheduler = BackgroundScheduler()
 scheduler.add_job(func=print_date_time, trigger="interval", seconds=600)
 scheduler.start()
 
-# schedulertable = BackgroundScheduler()
-# schedulertable.add_job(func=update_P_T_table, trigger = 'cron', day = '1', hour= '12', minute= '25')
-# schedulertable.start()
-# Shut down the scheduler when exiting the app
+
 atexit.register(lambda: scheduler.shutdown())
-# atexit.register(lambda: schedulertable.shutdown())
 
 if __name__ == '__main__':
     # app.run(ssl_context='adhoc')

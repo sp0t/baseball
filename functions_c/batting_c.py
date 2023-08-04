@@ -48,7 +48,7 @@ def process_recent_batter_data(player_df, game_date, team_starter, batter_stat_l
     difficulty = []
 
     if len(games) == 0: 
-        recent_difficulty_data = dict(zip(batter_stat_list, np.repeat(0, len(batter_stat_list))))
+        recent_difficulty_data = dict(zip(batter_stat_list, np.repeat(np.nan, len(batter_stat_list))))
         recent_difficulty_data['difficulty'] = 8/8
         
     else: 

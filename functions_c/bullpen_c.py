@@ -50,7 +50,7 @@ def process_recent_bullpen_data(bullpen_df, game_date, pitcher_stat_list):
     
     if len(games) == 0: 
         recent_games = []
-        recent_data = dict(zip(pitcher_stat_list, np.repeat(0, len(pitcher_stat_list))))
+        recent_data = dict(zip(pitcher_stat_list, np.repeat(np.nan, len(pitcher_stat_list))))
         
     else: 
         
@@ -77,7 +77,7 @@ def process_recent_bullpen_data(bullpen_df, game_date, pitcher_stat_list):
 def process_career_bullpen_data(games,pitcher_stat_list): 
     
     if len(games)==0: 
-        career_data = dict(zip(pitcher_stat_list, np.repeat(0, len(pitcher_stat_list))))
+        career_data = dict(zip(pitcher_stat_list, np.repeat(np.nan, len(pitcher_stat_list))))
     else: 
         if len(games) < 40: 
             s_list, weights = [games], [1]
@@ -122,8 +122,8 @@ def process_bullpen_data(team_name, team, game_date):
         recent_data, recent_games, games = process_recent_bullpen_data(bullpen_df, game_date, pitcher_stat_list)
         career_data = process_career_bullpen_data(games, pitcher_stat_list)
     else: 
-        recent_data = dict(zip(pitcher_stat_list, np.repeat(0, len(pitcher_stat_list))))
-        career_data = dict(zip(pitcher_stat_list, np.repeat(0, len(pitcher_stat_list))))
+        recent_data = dict(zip(pitcher_stat_list, np.repeat(np.nan, len(pitcher_stat_list))))
+        career_data = dict(zip(pitcher_stat_list, np.repeat(np.nan, len(pitcher_stat_list))))
 
     recent_data = {f'{team}_bullpen_recent_{k}':v for k,v in recent_data.items()}
     career_data = {f'{team}_bullpen_career_{k}':v for k,v in career_data.items()}

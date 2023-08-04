@@ -48,7 +48,7 @@ def process_recent_starter_data(player_df, game_date, team_batters, pitcher_stat
     difficulty = []
     
     if len(games) == 0: 
-        recent_difficulty_data = dict(zip(pitcher_stat_list, np.repeat(0, len(pitcher_stat_list))))
+        recent_difficulty_data = dict(zip(pitcher_stat_list, np.repeat(np.nan, len(pitcher_stat_list))))
         recent_difficulty_data['difficulty'] = DifficultyRating
     else: 
         team_starter = games.iloc[0]['playerId']
@@ -116,7 +116,7 @@ def process_recent_starter_data(player_df, game_date, team_batters, pitcher_stat
 def process_career_starter_data(games, pitcher_stat_list): 
     
     if len(games)==0: 
-        career_data = dict(zip(pitcher_stat_list, np.repeat(0, len(pitcher_stat_list))))
+        career_data = dict(zip(pitcher_stat_list, np.repeat(np.nan, len(pitcher_stat_list))))
     else: 
         if len(games) < 40: 
             s_list, weights = [games], [1]

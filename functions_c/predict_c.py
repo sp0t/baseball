@@ -82,6 +82,8 @@ def save_batter_data(engine, row, away_batters, home_batters, gameId, rosters):
     data = mlb.boxscore_data(gameId)
     gamedate = data['gameId'][:10]
 
+    print('saving new stats=============================>', batter_df)
+
     state = False
 
     for el in rosters['position']['away']:
@@ -467,7 +469,6 @@ def get_probabilities(params):
 
 
     if savestate:
-        print('saving new model stats================================>')
         rosters = schedule.get_rosters(game_id)
         save_batter_data(engine, X_test, away_batters, home_batters, game_id, rosters)
         save_pitcher_data(engine, X_test, away_starter, home_starter, game_id, rosters)

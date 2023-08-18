@@ -467,6 +467,7 @@ def get_probabilities(params):
 
 
     if savestate:
+        print('saving new model stats================================>')
         rosters = schedule.get_rosters(game_id)
         save_batter_data(engine, X_test, away_batters, home_batters, game_id, rosters)
         save_pitcher_data(engine, X_test, away_starter, home_starter, game_id, rosters)

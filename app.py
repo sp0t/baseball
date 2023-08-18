@@ -554,7 +554,7 @@ def get_PlayerStats():
     if type == 0:
         batter_table = 'batter_stats'
         pitcher_table = 'pitcher_stats'
-    elif type == 0:
+    elif type == 1:
         batter_table = 'batter_stats_c'
         pitcher_table = 'pitcher_stats_c'
     else:

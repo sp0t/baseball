@@ -98,6 +98,9 @@ def cal_batter_average(team_batter, gamedate):
     if len(df) == 0:
         return 0, 0
     
+    if len(df) < 70:
+        return 0, 0
+    
     if len(df) >= 15: 
         recent_df = df.tail(15)
         weights = [0.01,0.02,0.03,0.04,0.05,0.05,0.06,0.07,0.08,0.08,0.09,0.09,0.1,0.11,0.12]
@@ -150,6 +153,9 @@ def cal_pitcher_average(team_pitcher, gamedate):
     df = starters_c.get_starter_df(team_pitcher, gamedate)
     
     if len(df) == 0: 
+        return 0, 0
+    
+    if len(df) < 23:
         return 0, 0
         
     if len(df) >= 5: 

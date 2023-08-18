@@ -17,8 +17,13 @@
 </head>
 <body onload="getPlayers('{{schedule[0].game_id}}')">
     <div class="nav-header" style="display: flex; justify-content: center; align-items: center; padding-bottom: 20px;"><div class="nav-title" style="font-size: 40px; padding-top: 30px; color: #5499C7 ;">Select Player</div></div>
-    <div style="display: flex; justify-content: flex-end; margin-right: 10px;">
-        <button class="medium-solid-button" onclick="startPrediction()">Start Prediction</button>
+    <div style="display: flex; justify-content: space-between;">
+        <div class="nav-links" style="margin-left: 100px;">
+            <a href="/" style="font-size: 25px; padding: 10px;">Home</a>
+        </div>
+        <div style="display: flex; justify-content: flex-end; margin-right: 10px;">
+            <button class="medium-solid-button" onclick="startPrediction()">Start Prediction</button>
+        </div>
     </div>
     <div style="display: flex; height: 800px; border: 3px solid #5D6D7E; margin: 10px; color:black ;">
         <div style="width: 20%; text-align: center; border-right: 2px solid #5D6D7E">

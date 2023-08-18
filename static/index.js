@@ -163,10 +163,12 @@ function makePrediction(){
             document.getElementsByName('away_prob')[0].textContent = data['1a']['away_prob'] + '%'
             document.getElementsByName('away_prob_1')[0].textContent = data['1a']['away_prob'] + '%'
             document.getElementsByName('away_prob_2')[0].textContent = data['1b']['away_prob'] + '%'
+            document.getElementsByName('away_prob_3')[0].textContent = data['1c']['away_prob'] + '%'
 
             document.getElementsByName('home_prob')[0].textContent = data['1a']['home_prob'] + '%'
             document.getElementsByName('home_prob_1')[0].textContent = data['1a']['home_prob'] + '%'
             document.getElementsByName('home_prob_2')[0].textContent = data['1b']['home_prob'] + '%'
+            document.getElementsByName('home_prob_3')[0].textContent = data['1c']['home_prob'] + '%'
 
         }
 
@@ -182,11 +184,11 @@ function getAwayBet(){
     var awayModelType = document.querySelector('input[name="away_model_type"]:checked').value;
     if (awayModelType == 'away_model_1a'){ 
         document.getElementsByName('away_prob')[0].textContent = document.getElementsByName('away_prob_1')[0].textContent
-
     }
-    else{ 
+    else if (awayModelType == 'away_model_1b'){ 
         document.getElementsByName('away_prob')[0].textContent = document.getElementsByName('away_prob_2')[0].textContent
-
+    } else {
+        document.getElementsByName('away_prob')[0].textContent = document.getElementsByName('away_prob_3')[0].textContent
     }
 
 
@@ -239,14 +241,14 @@ function getAwayBet(){
     document.getElementsByName('away_edge')[0].textContent = awayEV; 
     document.getElementsByName('away_bet_size')[0].textContent = awayBetSize
 
-    $.ajax({
-        url: '/update_predicdata', 
-        type: 'POST', 
-        data: { 'data' : JSON.stringify(data)},
-        error: function (error) {
-            alert('error; ' + eval(error));
-        }
-    })
+    // $.ajax({
+    //     url: '/update_predicdata', 
+    //     type: 'POST', 
+    //     data: { 'data' : JSON.stringify(data)},
+    //     error: function (error) {
+    //         alert('error; ' + eval(error));
+    //     }
+    // })
 
     // Change Color 
     if (awayBetSize != 'No Bet!'){ 
@@ -266,13 +268,11 @@ function getHomeBet(){
         document.getElementsByName('home_prob')[0].textContent = document.getElementsByName('home_prob_1')[0].textContent
 
     }
-    else{ 
-        document.getElementsByName('home_prob')[0].textContent = 'boobs1b'
+    else if (homeModelType == 'home_model_1b'){ 
         document.getElementsByName('home_prob')[0].textContent = document.getElementsByName('home_prob_2')[0].textContent
-
+    } else {
+        document.getElementsByName('home_prob')[0].textContent = document.getElementsByName('home_prob_3')[0].textContent
     }
-
-
 
     // Get Data
     var homeProbValue = document.getElementsByName('home_prob')[0].textContent
@@ -320,14 +320,14 @@ function getHomeBet(){
     document.getElementsByName('home_edge')[0].textContent = homeEV; 
     document.getElementsByName('home_bet_size')[0].textContent = homeBetSize
 
-    $.ajax({
-        url: '/update_predicdata', 
-        type: 'POST', 
-        data: { 'data' : JSON.stringify(data)},
-        error: function (error) {
-            alert('error; ' + eval(error));
-        }
-    })
+    // $.ajax({
+    //     url: '/update_predicdata', 
+    //     type: 'POST', 
+    //     data: { 'data' : JSON.stringify(data)},
+    //     error: function (error) {
+    //         alert('error; ' + eval(error));
+    //     }
+    // })
 
 
     // Change Color 
@@ -481,11 +481,12 @@ function  downLoadPitcherData(id){
     })
 }
 
-function  getPlayerStats(id){
+function  getPlayerStats(id, type){
+    var param = {'game_id' : id, 'type': type}
     $.ajax({
         type: 'POST', 
-        url: '/get_PlayerStats', 
-        data: {'data' : id},
+        url: '/get_PlayerStats',
+        data: { 'data' : JSON.stringify(param)},
         beforeSend: function(){ 
             console.log('before sending');
         },
@@ -523,6 +524,7 @@ function  getPlayerStats(id){
                     html += '<div style="background-color:black">RRBI</div>'
                     html += '<div style="background-color:black">RSLG</div>'
                     html += '<div style="background-color:black">RSO</div>'
+                    html += '<div style="background-color:black">RAT</div>'
                     
 
                     for(var x in data.batter) {
@@ -545,6 +547,7 @@ function  getPlayerStats(id){
                         html += `<div>${data.batter[x].recent_rbi}</div>`
                         html += `<div>${data.batter[x].recent_slg}</div>`
                         html += `<div>${data.batter[x].recent_strikeouts}</div>`
+                        html += `<div>${data.batter[x].difficulty_rating == undefined?'': data.batter[x].difficulty_rating}</div>`
                     }
                     html += '</div>';
                 }
@@ -562,6 +565,7 @@ function  getPlayerStats(id){
                     html += '<div style="background-color:black">RHR</div>'
                     html += '<div style="background-color:black">RWHP</div>'
                     html += '<div style="background-color:black">RBF</div>'
+                    html += '<div style="background-color:black">RAT</div>'
                     
 
                     for(var y in data.pitcher) {
@@ -576,6 +580,7 @@ function  getPlayerStats(id){
                         html += `<div>${data.pitcher[y].recent_homeruns}</div>`
                         html += `<div>${data.pitcher[y].recent_whip}</div>`
                         html += `<div>${data.pitcher[y].recent_battersfaced}</div>`
+                        html += `<div>${data.pitcher[y].difficulty_rating == undefined ? '': data.pitcher[y].difficulty_rating}</div>`
                     }
 
                     html += '</div>'

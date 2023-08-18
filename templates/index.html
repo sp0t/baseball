@@ -24,8 +24,8 @@
                 statsDivState = state;
             }
 
-            function showDiv(id) {
-                getPlayerStats(id);
+            function showDiv(id, type) {
+                getPlayerStats(id, type);
             }
         
             async function hideDiv(state) {
@@ -91,7 +91,7 @@
                 {% for game in schedule %}
                     <div class="div-container">
                         <div class="card" id ="{{game.game_id}}">
-                            <div onmouseover="showDiv('{{game.game_id}}', false)">
+                            <div onmouseover="showDiv('{{game.game_id}}', 0)">
                                 <span class="card-title">{{game.away_name}} @ {{game.home_name}}</span>
                                 <p class="game-date">{{game.game_datetime}} EST</p>
                             </div>
@@ -99,7 +99,7 @@
                                 <div class="form-left">
                                     <span>Win Prob</span>
                                     <hr>
-                                    <div class="form-left-wrapper">
+                                    <div class="form-left-wrapper" onmouseover="showDiv('{{game.game_id}}', 1)">
                                         <table class = 'card-table'>
                                             <tr>
                                                 <td class="model-title">Model la</td>
@@ -113,6 +113,12 @@
                                                     <td class="model-content">{{game.predict.lb_away_prob}}%</td>
                                                 {% endif %}
                                             </tr>
+                                            <tr>
+                                                <td class="model-title">Model lc</td>
+                                                {% if game.predict.lc_away_prob != null %}
+                                                    <td class="model-content">{{game.predict.lc_away_prob}}%</td>
+                                                {% endif %}
+                                            </tr>
                                         </table>
                                     </div>
                                     <hr>
@@ -120,7 +126,7 @@
                                 <div class="form-right">
                                     <span>Win Prob</span>
                                     <hr>
-                                    <div class="form-right-wrapper">
+                                    <div class="form-right-wrapper" onmouseover="showDiv('{{game.game_id}}', 1)">
                                         <table class="card-table">
                                             <tr>
                                                 <td class="model-title">Model la</td>
@@ -132,6 +138,12 @@
                                                 <td class="model-title">Model lb</td>
                                                 {% if game.predict.lb_home_prob != null %}
                                                 <td class="model-content">{{game.predict.lb_home_prob}}%</td>
+                                                {% endif %}
+                                            </tr>
+                                            <tr>
+                                                <td class="model-title">Model lc</td>
+                                                {% if game.predict.lc_home_prob != null %}
+                                                <td class="model-content">{{game.predict.lc_home_prob}}%</td>
                                                 {% endif %}
                                             </tr>
                                         </table>
@@ -168,7 +180,7 @@
                                             {% if game.predict.la_home_betsize  != null and game.predict.la_home_betsize  != None %}
                                                 <td class="betting-content">{{game.predict.la_home_betsize}}</td>
                                             {% endif %}
-                                        </tr>            
+                                        </tr>         
                                     </table>
                                 </div>
                                 <div class="kelly-col">
@@ -187,7 +199,22 @@
                                         </tr>            
                                     </table>
                                 </div>
-                                
+                                <div class="kelly-col">
+                                    <span>modal C</span>
+                                    <hr>
+                                    <table class = 'kelly-table'>
+                                        <tr>
+                                            {% if game.predict.lc_away_betsize  != null and game.predict.lc_away_betsize  != None %}
+                                                <td class="betting-content">{{game.predict.lb_away_betsize}}</td>
+                                            {% endif %}
+                                        </tr>
+                                        <tr>
+                                            {% if game.predict.lc_home_betsize  != null and game.predict.lc_home_betsize  != None %}
+                                                <td class="betting-content">{{game.predict.lb_home_betsize}}</td>
+                                            {% endif %}
+                                        </tr>            
+                                    </table>
+                                </div>            
                             </div>
                             <!-- <hr>
                             <div style="display: flex; padding-top: 10px;">
@@ -475,6 +502,7 @@
                                             <td><div class="input-box" name="away_prob" style="border: none"></div></td>
                                             <td><div class="input-box" name="away_prob_1" style="border: none; display: none"></div></td>           
                                             <td><div class="input-box" name="away_prob_2" style="border: none; display: none"></div></td>
+                                            <td><div class="input-box" name="away_prob_3" style="border: none; display: none"></div></td>
                                         </tr>
 
                                         <tr></tr>
@@ -487,8 +515,13 @@
                                               </div>
                                               <div>
                                                 <input onchange="getAwayBet()" class="home_input" type="radio" id="away_model_1b" name="away_model_type" value="away_model_1b">
-                                                <label class ="home_label" for="away_model_1b">Model 1b</label></td>
+                                                <label class ="home_label" for="away_model_1b">Model 1b</label>
                                               </div>
+                                              <div>
+                                                <input onchange="getAwayBet()" class="home_input" type="radio" id="away_model_1c" name="away_model_type" value="away_model_1c">
+                                                <label class ="home_label" for="away_model_1c">Model 1c</label>
+                                              </div>
+                                            </td>
                                           </tr>
                                           <tr></tr>
 
@@ -533,12 +566,7 @@
 
 
                                     </table>
-                                    
-
-                                    
-
-
-
+ 
                             </div>
 
                     
@@ -557,6 +585,7 @@
                                             <td><div class="input-box" name="home_prob" style="border: none"></div></td>
                                             <td><div class="input-box" name="home_prob_1" style="border: none; display: none"></div></td>           
                                             <td><div class="input-box" name="home_prob_2" style="border: none; display: none"></div></td>
+                                            <td><div class="input-box" name="home_prob_3" style="border: none; display: none"></div></td>
                                         </tr>
 
                                         <tr></tr>
@@ -569,8 +598,13 @@
                                               </div>
                                               <div>
                                                 <input onchange="getHomeBet()" class="home_input" type="radio" id="home_model_1b" name="home_model_type" value="home_model_1b">
-                                                <label for="home_model_1b" class="home_label">Model 1b</label></td>
+                                                <label for="home_model_1b" class="home_label">Model 1b</label>
                                               </div>
+                                              <div>
+                                                <input onchange="getHomeBet()" class="home_input" type="radio" id="home_model_1c" name="home_model_type" value="home_model_1c">
+                                                <label for="home_model_1c" class="home_label">Model 1c</label>
+                                              </div>
+                                            </td>
                                           </tr>
                                           <tr></tr>
                                         

@@ -61,14 +61,15 @@ def process_recent_batter_data(player_df, game_date, batter_stat_list):
             recent_df = games
             weights = list(np.repeat(1/int(len((recent_df))), int(len(recent_df))))
             
+        drop_cols = ['game_date', 'note', 'game_id', 'away_team', 'home_team', 'away_score', 'home_score']
+        recent_df = recent_df.drop(drop_cols,axis = 1,errors = 'ignore').astype(float)
+
         recent_df['singles'] = recent_df['hits']-recent_df['doubles']-recent_df['triples']-recent_df['homeRuns']
         recent_df['avg'] = recent_df.apply(lambda x: x['hits']/x['atBats'] if x['atBats']>0 else 0,axis=1)
         recent_df['obp'] = recent_df.apply(lambda x: (x['hits']+x['baseOnBalls'])/(x['atBats']+x['baseOnBalls']) if x['atBats']+x['baseOnBalls']>0 else 0,axis=1)
         recent_df['slg'] = recent_df.apply(lambda x: ((x['singles'])+2*(x['doubles'])+3*(x['triples'])+4*(x['homeRuns']))/x['atBats'] if x['atBats']>0 else 0,axis=1)
         recent_df['ops'] = recent_df['obp'] + recent_df['slg']
         
-        drop_cols = ['game_date', 'note', 'game_id', 'away_team', 'home_team', 'away_score', 'home_score']
-        recent_df = recent_df.drop(drop_cols,axis = 1,errors = 'ignore').astype(float)
         recent_data = recent_df.mul(weights,axis = 0).sum().to_dict()
         recent_games = list(recent_df.index)
     return recent_data, recent_games, games
@@ -112,13 +113,14 @@ def process_career_batter_data(games, recent_games, batter_stat_list):
             s_data = dict(zip(batter_stat_list, np.repeat(np.nan, len(batter_stat_list))))
             all_s_data.append(s_data)
         else: 
+            drop_cols = ['game_date', 'note', 'season','game_id', 'away_team', 'home_team', 'away_score', 'home_score']
+            s_df = s_df.drop(drop_cols, errors = 'ignore', axis = 1)
+            
             s_df['singles'] = s_df['hits']-s_df['doubles']-s_df['triples']-s_df['homeRuns']
             s_df['avg'] = s_df.apply(lambda x: x['hits']/x['atBats'] if x['atBats']>0 else 0,axis=1)
             s_df['obp'] = s_df.apply(lambda x: (x['hits']+x['baseOnBalls'])/(x['atBats']+x['baseOnBalls']) if x['atBats']+x['baseOnBalls']>0 else 0,axis=1)
             s_df['slg'] = s_df.apply(lambda x: ((x['singles'])+2*(x['doubles'])+3*(x['triples'])+4*(x['homeRuns']))/x['atBats'] if x['atBats']>0 else 0,axis=1)
             s_df['ops'] = s_df['obp'] + s_df['slg']
-            drop_cols = ['game_date', 'note', 'season','game_id', 'away_team', 'home_team', 'away_score', 'home_score']
-            s_df = s_df.drop(drop_cols, errors = 'ignore', axis = 1)
             s_data = s_df.mean().to_dict()
             all_s_data.append(s_data)
     career_data=pd.DataFrame(all_s_data).mul(weights,axis=0).sum().to_dict()
@@ -156,6 +158,5 @@ def process_team_batter_data(team_batters, team, game_date):
             
     team_batter_data.update(team_career_data)
     team_batter_data.update(team_recent_data)
-    print(team_batter_data)
 
     return team_batter_data

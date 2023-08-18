@@ -63,12 +63,13 @@ def process_recent_bullpen_data(bullpen_df, game_date, pitcher_stat_list):
             recent_df = games
             weights = list(np.repeat(1/len(recent_df), len(recent_df)))
             
+        drop_cols = ['game_date', 'note', 'game_id', 'away_team', 'home_team', 'away_score', 'home_score']
+        recent_df = recent_df.drop(drop_cols,axis = 1,errors = 'ignore').astype(float)
+
         recent_df['era'] = recent_df.apply(lambda x: 9*x['earnedRuns']/x['inningsPitched'] if x['inningsPitched']>0 else 0,axis=1)
         recent_df['whip'] = recent_df.apply(lambda x: (x['baseOnBalls']+x['hits'])/x['inningsPitched'] if x['inningsPitched']>0 else 0 ,axis=1)
         
         
-        drop_cols = ['game_date', 'note', 'game_id', 'away_team', 'home_team', 'away_score', 'home_score']
-        recent_df = recent_df.drop(drop_cols,axis = 1,errors = 'ignore').astype(float)
         recent_data = recent_df.mul(weights,axis = 0).sum().to_dict()
         recent_games = list(recent_df.index)
         
@@ -113,10 +114,11 @@ def process_career_bullpen_data(player_id, games, recent_games, pitcher_stat_lis
             s_data = dict(zip(pitcher_stat_list, np.repeat(np.nan, len(pitcher_stat_list))))
             all_s_data.append(s_data)
         else: 
+            drop_cols = ['game_date', 'note', 'season','game_id', 'away_team', 'home_team', 'away_score', 'home_score', 'playerId']
+            s_df = s_df.drop(drop_cols, errors = 'ignore', axis = 1)
             s_df['era'] = s_df.apply(lambda x: 9*x['earnedRuns']/x['inningsPitched'] if x['inningsPitched']>0 else 0,axis=1)
             s_df['whip'] = s_df.apply(lambda x: (x['baseOnBalls']+x['hits'])/x['inningsPitched'] if x['inningsPitched']>0 else 0 ,axis=1)
-            drop_cols = ['game_date', 'note', 'season','game_id', 'away_team', 'home_team', 'away_score', 'home_score']
-            s_df = s_df.drop(drop_cols, errors = 'ignore', axis = 1)
+
             s_data = s_df.mean().to_dict()
             all_s_data.append(s_data)
             

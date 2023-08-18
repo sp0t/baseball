@@ -17,32 +17,136 @@
 </head>
 <body onload="getPlayers('{{schedule[0].game_id}}')">
     <div class="nav-header" style="display: flex; justify-content: center; align-items: center; padding-bottom: 20px;"><div class="nav-title" style="font-size: 40px; padding-top: 30px; color: #5499C7 ;">Stats Page</div></div>
-    <div style="margin-left: 50px;">
-        <label for="games" style="font-size: 25px;">Select game:</label>
-        <select name="cars" id="games" onchange="getPlayers(this.value)" style="font-size: 20px; height: auto; width: auto; text-align: center; color: white; background-color: rgb(49, 47, 47); padding: 5px;">
-            {% for game in schedule %}
-                <option value="{{game.game_id}}" style="height: auto;">{{game.away_name}} @ {{game.home_name}}</option>
-            {% endfor %}
-        </select>
+    <div style="margin-left: 50px; display: flex; justify-content: space-between; align-items: center;">
+        <div style="display: flex;">
+            <label for="games" style="font-size: 25px; padding-top: 5px;">Select game:</label>
+            <select name="cars" id="games" onchange="getPlayers(this.value)" style="font-size: 20px; height: auto; width: auto; text-align: center; color: white; background-color: rgb(49, 47, 47); padding: 5px; margin-left: 20px;">
+                {% for game in schedule %}
+                    <option value="{{game.game_id}}" style="height: auto;">{{game.away_name}} @ {{game.home_name}}</option>
+                {% endfor %}
+            </select>
+            <button class="medium-solid-button" style="margin-left: 30px;" onclick=getPredict()>GetPredict</button>
+        </div>
+        <div class="nav-links" style="margin-right: 100px;">
+            <a href="/" style="font-size: 25px; padding: 10px;">Home</a>
+        </div>
     </div>
     
     <div style="display: flex; height: 800px; border: 3px solid #5D6D7E; margin: 10px; color:black ;">
-        <div style="display: flex; width: 20%; text-align: center; border-right: 2px solid #5D6D7E">
-            <div style="width:100%; height: 795px; border-right: 2px solid #5D6D7E">
-                <div style="background-color: #2a3847; color: white; padding: 10px; font-size: 20px;  border-bottom: 2px solid #5D6D7E">
+        <div style="display: flex; width: 40%; text-align: center; border-right: 2px solid #5D6D7E">
+            <div style="width:100%; height: 795px;">
+                <div style="background-color: #2a3847; color: white; padding-top: 20px; padding-bottom: 10px; font-size: 30px;  border-bottom: 2px solid #5D6D7E">
                     <span>Players</span>
                 </div>
+                <div style="display: flex;">    
+                    <div style="width: 50%; height: 720px;  border-right: 1px solid #5D6D7E;">
+                        <div id='awayname' style="background-color: #a5a9ad; color: black; padding: 5px; font-size: 18px; border-bottom: 2px solid #5D6D7E;">
+                        </div>
+                        <div style="background-color: #1a922e; border-radius: 5px; margin-top: 4px;">Fixed</div>
+                        <div style="height: 450px;">
+                            <div class="form-row">
+                                {% for i in range(1,8) %}
+                                <div class="form-row">
+                                    <label for="away_f_batter_{{i}}" style="margin: 0 9px; color: #5D6D7E;">Batter #{{i}}</label>
+                                    <select name="away_f_batter_{{i}}" id="away_f_batter_{{i}}" style="width: 60%;  text-align: center;" onchange="select_f_AwayBatter(this.value)" required>
+                                        <option value="">—</option>
+                                    </select>
+                                </div>
+                                {% endfor %}
+                            </div>
+                            <div style="background-color: #bcbe1d; border-radius: 5px;">Interchangeable</div>
+                            <div class="form-row">
+                                {% for i in range(1,5) %}
+                                <div class="form-row">
+                                    <label for="away_i_batter_{{i}}" style="margin: 0 9px; color: #5D6D7E;">Batter #{{i}}</label>
+                                    <select name="away_i_batter_{{i}}" id="away_i_batter_{{i}}" style="width: 60%;  text-align: center;" onchange="select_i_AwayBatter(this.value)" required>
+                                        <option value="">—</option>
+                                    </select>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        <div class="scrolling-pitcher">
+                            {% for i in range(1, 5)%}
+                            <div class="form-row">
+                                <label for="away_pitcher_{{i}}" style="margin: 0 9px; color: #5D6D7E">Starter #{{i}}</label>
+                                <select name="away_pitcher_{{i}}" id="away_pitcher_{{i}}" style="width: 60%;  text-align: center" onchange="selectAwayPitcher(this.value)" required>
+                                    <option value="">—</option>
+                                </select>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <div style="width: 50%;">
+                        <div id='homename' style="background-color: #a5a9ad; color: black; padding: 5px; font-size: 18px; border-bottom: 2px solid #5D6D7E;">
+                        </div>
+                        <div style="background-color: #1a922e; border-radius: 5px; margin-top: 4px;">Fixed</div>
+                        <div style="height: 450px;">
+                            <div class="form-row">
+                                {% for i in range(1,8) %}
+                                <div class="form-row">
+                                    <label for="home_f_batter_{{i}}" style="margin: 0 9px; color: #5D6D7E">Batter #{{i}}</label>
+                                    <select name="home_f_batter_{{i}}" id="home_f_batter_{{i}}" style="width: 60%; text-align: center" onchange="select_f_HomeBatter(this.value)" required>
+                                        <option value="">—</option>
+                                    </select>
+                                </div>
+                                {% endfor %}
+                            </div>
+                            <div style="background-color: #bcbe1d; border-radius: 5px;">Interchangeable</div>
+                            <div style="height: 500px;">
+                                <div class="form-row">
+                                    {% for i in range(1,5) %}
+                                    <div class="form-row">
+                                        <label for="home_i_batter_{{i}}" style="margin: 0 9px; color: #5D6D7E">Batter #{{i}}</label>
+                                        <select name="home_i_batter_{{i}}" id="home_i_batter_{{i}}" style="width: 60%; text-align: center" onchange="select_i_HomeBatter(this.value)" required>
+                                            <option value="">—</option>
+                                        </select>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="scrolling-pitcher">
+                            {% for i in range(1,5) %}
+                            <div class="form-row">
+                                <label for="home_pitcher_{{i}}" style="margin: 0 9px; color: #5D6D7E">Starter #{{i}}</label>
+                                <select name="home_pitcher_{{i}}" id="home_pitcher_{{i}}" style="width: 60%;  text-align: center" onchange="selectHomePitcher(this.value)" required>
+                                    <option value="">—</option>
+                                </select>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div style="width: 35%; text-align: center; border-right: 2px solid #5D6D7E">
+            <span style="display: block; padding-top: 20px; padding-bottom: 10px; font-size: 30px; color: white; background-color: #2b2828; border-bottom: 2px solid #5D6D7E">Win %</span>
+            <div style="display: flex;">
+                <div id='awayname_predict' style="background-color: #a5a9ad; color: black; width: 50%; padding: 5px; font-size: 18px; border-bottom: 2px solid #5D6D7E; border-right: 2px solid #5D6D7E;">
+                </div>
+                <div id='homename_predict' style="background-color: #a5a9ad; color: black; width: 50%; padding: 5px; font-size: 18px; border-bottom: 2px solid #5D6D7E;">
+                </div>
+            </div>
+            <div id="loader"><img style="width: 50px; margin-top: 220px;" src="/static/loader.gif"/></div>
+            <div class="predict-win" id="predict-win">
+            </div>
+        </div>
+        <div style="display: flex; width: 25%; text-align: center;">
+            <div style="width:100%; height: 795px; border-right: 2px solid #5D6D7E">
+                <div style="background-color: #0957aa; color: white; padding-top: 20px; padding-bottom: 10px; font-size: 30px;  border-bottom: 2px solid #5D6D7E">
+                    <span>Lineups</span>
+                </div>
                 <div style="display: flex;">
-                    <div style="width: 50%; height: 745px;  border-right: 1px solid #5D6D7E;">
-                        <div style="background-color: #a5a9ad; color: black; padding: 5px; font-size: 18px; border-bottom: 2px solid #5D6D7E;">
-                            <span>Philadelphia Phillies</span>
+                    <div style="width: 50%; height: 725px;  border-right: 1px solid #5D6D7E;">
+                        <div id='awayname_lineups' style="background-color: #a5a9ad; color: black; padding: 5px; font-size: 18px; border-bottom: 2px solid #5D6D7E;">
                         </div>
                         <div style="height: 500px;">
                             <div class="form-row">
                                 {% for i in range(1,10) %}
                                 <div class="form-row">
                                     <label for="away_batter_{{i}}" style="margin: 0 9px; color: #5D6D7E;">Batter #{{i}}</label>
-                                    <select name="away_batter_{{i}}" id="away_batter_{{i}}" style="width: 125px;  text-align: center;" required>
+                                    <select name="away_batter_{{i}}" id="away_batter_{{i}}" style="width: 80%;  text-align: center;" onchange="selectAwayBatter(this.value)" required>
                                         <option value="">—</option>
                                     </select>
                                 </div>
@@ -52,22 +156,21 @@
                         <div class="scrolling-pitcher">
                             <div class="form-row">
                                 <label for="away_pitcher" style="margin: 0 9px; color: #5D6D7E">Starter</label>
-                                <select name="away_pitcher" id="away_pitcher" style="width: 125px;  text-align: center" required>
+                                <select name="away_pitcher" id="away_pitcher" style="width: 80%;  text-align: center" onchange="selectAwayPitcher(this.value)" required>
                                     <option value="">—</option>
                                 </select>
                             </div>
                         </div>
                     </div>
                     <div style="width: 50%;">
-                        <div style="background-color: #a5a9ad; color: black; padding: 5px; font-size: 18px; border-bottom: 2px solid #5D6D7E;">
-                            <span>Miami Marlins</span>
+                        <div id='homename_lineups' style="background-color: #a5a9ad; color: black; padding: 5px; font-size: 18px; border-bottom: 2px solid #5D6D7E;">
                         </div>
                         <div style="height: 500px;">
                             <div class="form-row">
                                 {% for i in range(1,10) %}
                                 <div class="form-row">
                                     <label for="home_batter_{{i}}" style="margin: 0 9px; color: #5D6D7E">Batter #{{i}}</label>
-                                    <select name="home_batter_{{i}}" id="home_batter_{{i}}" style="width: 125px; text-align: center" required>
+                                    <select name="home_batter_{{i}}" id="home_batter_{{i}}" style="width: 80%; text-align: center" onchange="selectHomeBatter(this.value)" required>
                                         <option value="">—</option>
                                     </select>
                                 </div>
@@ -77,7 +180,7 @@
                         <div class="scrolling-pitcher">
                             <div class="form-row">
                                 <label for="home_pitcher" style="margin: 0 9px; color: #5D6D7E">Starter</label>
-                                <select name="home_pitcher" id="home_pitcher" style="width: 125px;  text-align: center" required>
+                                <select name="home_pitcher" id="home_pitcher" style="width: 80%;  text-align: center" onchange="selectHomePitcher(this.value)" required>
                                     <option value="">—</option>
                                 </select>
                             </div>
@@ -86,12 +189,189 @@
                 </div>
             </div>
         </div>
-        <div style="width: 80%; text-align: center;">
-            <span style="display: block; padding-top: 20px; padding-bottom: 10px; font-size: 30px; color: white; background-color: #263d53;">Players</span>
-            <div id="loader"><img style="width: 50px; margin-top: 220px;" src="/static/loader.gif"/></div>
-        </div>
     </div>
     <script>
+        let players = {}
+        let predictdata = []
+
+        function select_f_AwayBatter(pid) {
+            if (pid == '')
+                reutrn;
+
+            if (players.away_f_batter.includes(pid) || players.away_i_batter.includes(pid)) {
+                alert('Already added this player!');
+                return;
+            }
+
+            players.away_f_batter = []
+
+            for (var i = 1; i <= 7; i++) {
+                players.away_f_batter.push($(`#away_f_batter_${i}`).val())
+            }
+        }
+
+        function select_i_AwayBatter(pid) {
+            if (pid == '')
+                reutrn;
+
+            if (players.away_f_batter.includes(pid) || players.away_i_batter.includes(pid)) {
+                alert('Already added this player!');
+                return;
+            }
+
+            players.away_i_batter = []
+
+            for (var i = 1; i <= 4; i++) {
+                if ($(`#away_i_batter_${i}`).val() != '')
+                    players.away_i_batter.push($(`#away_i_batter_${i}`).val())
+            }
+        }
+
+        function selectAwayPitcher(pid) {
+            if (pid == '')
+                reutrn;
+
+            if (players.awaypitcher.includes(pid)) {
+                alert('Already added this player!');
+                return;
+            }
+
+            players.awaypitcher = []
+
+            for (var i = 1; i <= 4; i++) {
+                if ($(`#away_pitcher_${i}`).val() != '')
+                    players.awaypitcher.push($(`#away_pitcher_${i}`).val())
+            }
+        }
+
+        function select_f_HomeBatter(pid) {  
+            if (pid == '')
+                reutrn;
+
+            if (players.home_f_batter.includes(pid) || players.home_i_batter.includes(pid)) {
+                alert('Already added this player!');
+                return;
+            }
+            
+            players.home_f_batter = []
+
+            for (var i = 1; i <= 7; i++) {
+                players.home_f_batter.push($(`#home_f_batter_${i}`).val())
+            }
+        }
+
+        function select_i_HomeBatter(pid) {
+            if (pid == '')
+                reutrn;
+            
+            if (players.home_f_batter.includes(pid) || players.home_i_batter.includes(pid)) {
+                alert('Already added this player!');
+                return;
+            }
+            
+            players.home_i_batter = []
+
+            for (var i = 1; i <= 4; i++) {
+                if ($(`#home_i_batter_${i}`).val() != '')
+                    players.home_i_batter.push($(`#home_i_batter_${i}`).val())
+            }
+        }
+
+        function selectHomePitcher(pid) {
+            if (pid == '')
+                reutrn;
+
+            if (players.homepitcher.includes(pid)) {
+                alert('Already added this player!');
+                return;
+            }
+            
+            players.homepitcher = []
+
+            for (var i = 1; i <= 4; i++) {
+                if ($(`#home_pitcher_${i}`).val() != '')
+                    players.homepitcher.push($(`#home_pitcher_${i}`).val())
+            }
+        }
+
+        function getPredict() {
+            if(players.away_f_batter.length == 7 && players.away_i_batter.length >= 3 && players.awaypitcher.length >= 1 && players.home_f_batter.length == 7 && players.home_i_batter.length >= 3 && players.homepitcher.length >= 1)
+                getWinPredict(players);
+            else
+                alert('Select more players');
+        }
+
+        function showPlayer(id) {
+            var playerdata = {}
+            playerdata = predictdata[parseInt(id)]
+
+            for (var i = 1; i < 10; i++){
+                var awayelement = document.getElementById(`away_batter_${i}`);
+                for (var j = 0; j < awayelement.options.length; j++) {
+                    var option = awayelement.options[j];
+                    if (option.value === playerdata['away_batters'][i-1]) {
+                        option.selected = true;
+                        break;
+                    }
+                }
+            }
+
+            for (var i = 1; i < 10; i++){
+                var homeelement = document.getElementById(`home_batter_${i}`);
+                for (var k = 0; j < homeelement.options.length; k++) {
+                    var option = homeelement.options[k];
+                    if (option.value === playerdata['home_batters'][i-1]) {
+                        option.selected = true;
+                        break;
+                    }
+                }
+            }
+
+            var awayelement = document.getElementById('away_pitcher');
+            for (var j = 0; j < awayelement.options.length; j++) {
+                var option =awayelement.options[j];
+                if (option.value === playerdata['away_starter']) {
+                    option.selected = true;
+                    break;
+                }
+            }
+
+            var homeelement = document.getElementById('home_pitcher');
+            for (var j = 0; j < homeelement.options.length; j++) {
+                var option =homeelement.options[j];
+                if (option.value === playerdata['home_starter']) {
+                    option.selected = true;
+                    break;
+                }
+            }
+        }
+
+        function getWinPredict(players) {
+            $.ajax({
+                type: 'POST',
+                url: '/getWinPredict',
+                data: JSON.stringify(players),
+                dataType: 'json',
+                contentType: 'application/json',
+                beforeSend: function(){ 
+                    $('#loader').show();
+                },
+                success: function (data) {
+                    $('#loader').hide();
+                    predictdata = data['data'];
+                    var html = '';
+                    for(var i=0; i < predictdata.length; i++) {
+                        html += `<div style="display: flex; text-align: center; cursor: pointer;" id=${i} onClick=showPlayer(this.id)>`
+                        html += `<div style="width: 50%; border: 1px solid black;">${predictdata[i]['preds_1c']['away_prob']}%</div>`
+                        html += `<div style="width: 50%; border: 1px solid black;">${predictdata[i]['preds_1c']['home_prob']}%</div>`
+                        html += `</div>`
+                    }
+
+                    $(`#predict-win`).html(html);
+                }
+            })
+        }
+
         function getPlayers(gameid) {
             $.ajax({
                 type: 'POST', 
@@ -107,6 +387,75 @@
                     var awaypitcherhtml = ''
                     var homebatterhtml = ''
                     var homepitcherhtml = ''
+                    var awayhtml = ''
+                    var homehtml = ''
+
+                    var i = 0;
+
+                    awayhtml += `<span>${data['awayName']}</span>`
+                    homehtml += `<span>${data['homeName']}</span>`
+                    $(`#awayname`).html(awayhtml);
+                    $(`#homename`).html(homehtml);
+                    $(`#awayname_lineups`).html(awayhtml);
+                    $(`#homename_lineups`).html(homehtml);
+                    $(`#awayname_predict`).html(awayhtml);
+                    $(`#homename_predict`).html(homehtml);
+
+                    for (i = 1; i < 8; i++){
+                        awaybatterhtml += `<option value="">—</option>`
+                        for (n = 0; n < data['awayBatters'].length; n++){
+                            awaybatterhtml += `<option value='${data['awayBatters'][n]['player_id']}' class='option'>${data['awayBatters'][n]['player_name']}</option>`
+                        }
+                        $(`#${'away_f_batter_' + i}`).html(awaybatterhtml);
+                        awaybatterhtml = '';
+                    }
+
+                    for (i = 1; i < 5; i++){
+                        awaybatterhtml += `<option value="">—</option>`
+                        for (n = 0; n < data['awayBatters'].length; n++){
+                            awaybatterhtml += `<option value='${data['awayBatters'][n]['player_id']}' class='option'>${data['awayBatters'][n]['player_name']}</option>`
+                        }
+                        $(`#${'away_i_batter_' + i}`).html(awaybatterhtml);
+                        awaybatterhtml = '';
+                    }
+
+                    for (i = 1; i < 8; i++){
+                        homebatterhtml += `<option value="">—</option>`
+                        for (n = 0; n < data['homeBatters'].length; n++){
+                            homebatterhtml += `<option value='${data['homeBatters'][n]['player_id']}' class='option'>${data['homeBatters'][n]['player_name']}</option>`
+                        }
+
+                        $(`#${'home_f_batter_' + i}`).html(homebatterhtml);
+                        homebatterhtml = '';
+                    }
+
+                    for (i = 1; i < 5; i++){
+                        homebatterhtml += `<option value="">—</option>`
+                        for (n = 0; n < data['homeBatters'].length; n++){
+                            homebatterhtml += `<option value='${data['homeBatters'][n]['player_id']}' class='option'>${data['homeBatters'][n]['player_name']}</option>`
+                        }
+
+                        $(`#${'home_i_batter_' + i}`).html(homebatterhtml);
+                        homebatterhtml = '';
+                    }
+
+                    for (i = 1; i < 5; i++ ) {
+                        awaypitcherhtml += `<option value="">—</option>`
+                        for (n = 0; n < data['awayPitchers'].length; n++){
+                            awaypitcherhtml += `<option value='${data['awayPitchers'][n]['player_id']}' class='option'>${data['awayPitchers'][n]['player_name']}</option>`
+                        }
+                        $(`#${'away_pitcher_' + i}`).html(awaypitcherhtml);
+                        awaypitcherhtml = '';
+                    }
+
+                    for (i = 1; i < 5; i++) {
+                        homepitcherhtml += `<option value="">—</option>`
+                        for (n = 0; n < data['homePitchers'].length; n++){
+                            homepitcherhtml += `<option value='${data['homePitchers'][n]['player_id']}' class='option'>${data['homePitchers'][n]['player_name']}</option>`
+                        }
+                        $(`#${'home_pitcher_' + i}`).html(homepitcherhtml);
+                        homepitcherhtml = '';
+                    }
 
                     for (i = 1; i < 10; i++){
                         awaybatterhtml += `<option value="">—</option>`
@@ -114,7 +463,7 @@
                             awaybatterhtml += `<option value='${data['awayBatters'][n]['player_id']}' class='option'>${data['awayBatters'][n]['player_name']}</option>`
                         }
                         $(`#${'away_batter_' + i}`).html(awaybatterhtml);
-                        awaybatterhtml = ''
+                        awaybatterhtml = '';
                     }
 
                     for (i = 1; i < 10; i++){
@@ -124,7 +473,7 @@
                         }
 
                         $(`#${'home_batter_' + i}`).html(homebatterhtml);
-                        homebatterhtml = ''
+                        homebatterhtml = '';
                     }
 
                     awaypitcherhtml += `<option value="">—</option>`
@@ -132,28 +481,30 @@
                         awaypitcherhtml += `<option value='${data['awayPitchers'][n]['player_id']}' class='option'>${data['awayPitchers'][n]['player_name']}</option>`
                     }
                     $(`#away_pitcher`).html(awaypitcherhtml);
+                    awaypitcherhtml = '';
 
                     homepitcherhtml += `<option value="">—</option>`
                     for (n = 0; n < data['homePitchers'].length; n++){
                         homepitcherhtml += `<option value='${data['homePitchers'][n]['player_id']}' class='option'>${data['homePitchers'][n]['player_name']}</option>`
                     }
                     $(`#home_pitcher`).html(homepitcherhtml);
+                    homepitcherhtml = '';
+
+                    players.away_f_batter = []
+                    players.away_i_batter = []
+                    players.awaypitcher = []
+                    players.home_f_batter = []
+                    players.home_i_batter = []
+                    players.homepitcher = []
+                    players.gameid = gameid
+                    players.matchup = $( "#games option:selected" ).text()
+                    $(`#predict-win`).html('');
 
                     $('#loader').hide(); 
                 }
             })
         }
 
-        function startPrediction() {
-            $.ajax({
-                url: '/startPrediction', 
-                type: 'POST',
-                data: { 'data' : JSON.stringify(playerData)},
-                success: function (){ 
-                    location.href = '/';
-                }
-            })
-        }
       </script>
 </body>
 </html>

@@ -11,10 +11,11 @@ import numpy as np
 from database import database
 from flask_basicauth import BasicAuth
 from sqlalchemy import text
+from itertools import combinations
 
 # Modules
 from functions import batting, predict, starters, smartContract
-from functions_c import batting_c, starters_c
+from functions_c import batting_c, starters_c, predict_c
 from schedule import schedule
 import time
 import atexit
@@ -304,9 +305,11 @@ def make_prediction():
         team_dict = {el['name']:el['abbreviation'] for el in team_dict}
         params['away_name'] = team_dict[away_full_name]
         params['home_name'] = team_dict[home_full_name]
+        params['savestate'] = True
         
         # Make Prediction
         predictions = predict.get_probabilities(params)
+        prediction_c = predict_c.get_probabilities(params)
         
         preds_1a = predictions['1a']
         preds_1a = np.round(100 * preds_1a[0], 2)
@@ -315,12 +318,17 @@ def make_prediction():
         preds_1b = predictions['1b']
         preds_1b = np.round(100 * preds_1b[0], 2)
         preds_1b = {'away_prob': preds_1b[0], 'home_prob': preds_1b[1]}
+
+        preds_1c = prediction_c
+        preds_1c = np.round(100 * preds_1c[0], 2)
+        preds_1c = {'away_prob': preds_1c[0], 'home_prob': preds_1c[1]}
         
-        prediction = {'1a': preds_1a, '1b': preds_1b}
+        prediction = {'1a': preds_1a, '1b': preds_1b, '1c': preds_1c}
 
         engine = database.connect_to_db()
-        engine.execute(f"INSERT INTO predict_table(game_id, la_away_prob, la_home_prob, lb_away_prob, lb_home_prob) VALUES('{gameId}', '{preds_1a['away_prob']}', '{preds_1a['home_prob']}','{preds_1b['away_prob']}', '{preds_1b['home_prob']}') ON CONFLICT (game_id) DO UPDATE SET la_away_prob = excluded.la_away_prob, la_home_prob = excluded.la_home_prob, lb_away_prob = excluded.lb_away_prob, lb_home_prob = excluded.lb_home_prob;")
+        engine.execute(f"INSERT INTO predict_table(game_id, la_away_prob, la_home_prob, lb_away_prob, lb_home_prob, lc_away_prob, lc_home_prob) VALUES('{gameId}', '{preds_1a['away_prob']}', '{preds_1a['home_prob']}','{preds_1b['away_prob']}', '{preds_1b['home_prob']}', '{preds_1c['away_prob']}', '{preds_1c['home_prob']}') ON CONFLICT (game_id) DO UPDATE SET la_away_prob = excluded.la_away_prob, la_home_prob = excluded.la_home_prob, lb_away_prob = excluded.lb_away_prob, lb_home_prob = excluded.lb_home_prob, lc_away_prob = excluded.lc_away_prob, lc_home_prob = excluded.lc_home_prob;")
         engine.execute(f"INSERT INTO win_percent(game_id, away_prob_a, home_prob_a, away_prob_b, home_prob_b) VALUES('{gameId}', '{preds_1a['away_prob']}', '{preds_1a['home_prob']}','{preds_1b['away_prob']}', '{preds_1b['home_prob']}') ON CONFLICT (game_id) DO UPDATE SET away_prob_a = excluded.away_prob_a, home_prob_a = excluded.home_prob_a, away_prob_b = excluded.away_prob_b, home_prob_b = excluded.home_prob_b;")  
+        engine.execute(f"INSERT INTO win_percent_c(game_id, away_prob, home_prob) VALUES('{gameId}', '{preds_1c['away_prob']}', '{preds_1c['home_prob']}') ON CONFLICT (game_id) DO UPDATE SET away_prob = excluded.away_prob, home_prob = excluded.home_prob;")  
         prediction = jsonify(prediction)
     
     return prediction
@@ -536,13 +544,26 @@ def get_batter_csv_table():
 
 @app.route('/get_PlayerStats', methods = ["POST"])
 def get_PlayerStats():
-    game_id = str(json.loads(request.form['data']))
-    print('===================================')
-    print(game_id)
-    engine = database.connect_to_db()
+    data = json.loads(request.form['data'])
+    game_id = data['game_id']
+    type = data['type']
+    batter_table = ''
+    pitcher_table = ''
     data = {}
-    batterData = pd.read_sql(f"SELECT * FROM batter_stats WHERE game_id = '{game_id}' ORDER BY position;", con = engine).to_dict('records')
-    pitcherData = pd.read_sql(f"SELECT * FROM pitcher_stats WHERE game_id = '{game_id}' ORDER BY position;", con = engine).to_dict('records')
+
+    if type == 0:
+        batter_table = 'batter_stats'
+        pitcher_table = 'pitcher_stats'
+    elif type == 0:
+        batter_table = 'batter_stats_c'
+        pitcher_table = 'pitcher_stats_c'
+    else:
+        return data
+    
+    engine = database.connect_to_db()
+    
+    batterData = pd.read_sql(f"SELECT * FROM {batter_table} WHERE game_id = '{game_id}' ORDER BY position;", con = engine).to_dict('records')
+    pitcherData = pd.read_sql(f"SELECT * FROM {pitcher_table} WHERE game_id = '{game_id}' ORDER BY position;", con = engine).to_dict('records')
     data['batter'] = batterData
     data['pitcher'] = pitcherData
     
@@ -552,11 +573,20 @@ def get_PlayerStats():
 def get_predict_players(): 
     engine = database.connect_to_db()
     game_id = str(json.loads(request.form['data']))
+    print(game_id)
     
     away_batter = []
     home_batter = []
     away_starter = []
     home_starter = []
+    away_name = ''
+    home_name = ''
+
+    game_res = pd.read_sql(f"SELECT away_name, home_name FROM schedule WHERE game_id = '{game_id}';", con = engine).to_dict('records')
+
+    if len(game_res) > 0:
+        away_name = game_res[0]['away_name']
+        home_name = game_res[0]['home_name']
 
     batter_res = pd.read_sql(f"SELECT player_id, player_name, team FROM predict_batter_stats WHERE game_id = '{game_id}' AND role = 'recent';", con = engine).to_dict('records')
     for el in batter_res:
@@ -573,6 +603,8 @@ def get_predict_players():
             home_starter.append(el)
 
     data = {
+        'awayName': away_name,
+        'homeName': home_name,
         'awayBatters': away_batter,
         'homeBatters': home_batter,
         'awayPitchers': away_starter,
@@ -580,8 +612,65 @@ def get_predict_players():
     }
 
     data = jsonify(data)
-
     return data
+
+@app.route('/getWinPredict', methods = ["POST"])    
+def getWinPredict():
+    data = [] 
+    players_data = request.get_json()
+    
+    # Fixing Names
+    res = mlb.get('teams', params = {'sportId': 1})['teams']
+
+    gameid = players_data['gameid']
+
+    matchup = players_data['matchup'].split(" @ ")
+    away_name, home_name = matchup[0], matchup[1]
+    res = mlb.get('teams', params = {'sportId': 1})['teams']
+
+    team_dict = [{k:v for k,v in el.items() if k in ['name', 'teamName', 'abbreviation']} for el in res]
+    team_dict = {el['teamName']:el['abbreviation'] for el in team_dict}
+
+    away_name = team_dict[away_name]
+    home_name = team_dict[home_name]
+
+    combinations_list = list(combinations(players_data['away_i_batter'], 2))
+    away_lists = [list(combination) for combination in combinations_list]
+
+    combinations_list = list(combinations(players_data['home_i_batter'], 2))
+    home_lists = [list(combination) for combination in combinations_list]
+
+    for away_list in away_lists:
+        awaybatter = players_data['away_f_batter'] + away_list
+        for i in players_data['awaypitcher']:
+            awaypitcher = i
+            for home_list in home_lists:
+                homebatter = players_data['home_f_batter'] + home_list
+                for j in players_data['homepitcher']:
+                    homepitcher = j
+                    params = {'away_batters': awaybatter, 
+                    'home_batters': homebatter, 
+                    'away_starter': awaypitcher, 
+                    'home_starter': homepitcher,
+                    }
+                    params['savestate'] = False
+
+                    params['away_name'] = away_name
+                    params['home_name'] = home_name
+                    params['game_id'] = gameid
+
+                    win_predict = predict_c.get_probabilities(params)
+                    preds_1c = np.round(100 * win_predict[0], 2)
+                    preds_1c = {'away_prob': preds_1c[0], 'home_prob': preds_1c[1]}
+                    params['preds_1c'] = preds_1c
+                    data.append(params)
+                    
+                    homepitcher = ''
+                homebatter = []
+            awaypitcher = ''
+        awaybatter = []
+    resdata = {'data': data}
+    return jsonify(resdata) 
 
 @app.route('/download_batter_data', methods = ["POST"])
 def get_batter_csv_data():

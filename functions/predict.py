@@ -256,10 +256,6 @@ def get_probabilities(params):
 
     X_test_b = X_test[[col for col in X_test.columns if 'bullpen' not in col]]
     print("Game Row Processed")
-    print('X_test=========================================>')
-    print(X_test)
-    print('X_test_b=========================================>')
-    print(X_test_b)
 
     # Make Prediciton    
     pred_1a = pickle.load(open('algorithms/model_1a_v10.sav', 'rb')).predict_proba(X_test)

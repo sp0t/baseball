@@ -286,6 +286,8 @@ def make_prediction():
         # Get Form Data
     
         form_data = json.loads(request.form['data'])
+        print(form_data)
+
         params = {'away_batters': form_data['away_batters'], 
                   'home_batters': form_data['home_batters'], 
                   'away_starter': form_data['away_starter'], 
@@ -306,29 +308,32 @@ def make_prediction():
         params['away_name'] = team_dict[away_full_name]
         params['home_name'] = team_dict[home_full_name]
         params['savestate'] = True
+        engine = database.connect_to_db()
         
         # Make Prediction
-        predictions = predict.get_probabilities(params)
-        prediction_c = predict_c.get_probabilities(params)
+        if form_data['model'] == 'a':
+            predictions = predict.get_probabilities(params)
+            preds_1a = predictions['1a']
+            preds_1a = np.round(100 * preds_1a[0], 2)
+            preds_1a = {'away_prob': preds_1a[0], 'home_prob': preds_1a[1]}
+            
+            preds_1b = predictions['1b']
+            preds_1b = np.round(100 * preds_1b[0], 2)
+            preds_1b = {'away_prob': preds_1b[0], 'home_prob': preds_1b[1]}
+            engine.execute(f"INSERT INTO predict_table(game_id, la_away_prob, la_home_prob, lb_away_prob, lb_home_prob) VALUES('{gameId}', '{preds_1a['away_prob']}', '{preds_1a['home_prob']}','{preds_1b['away_prob']}', '{preds_1b['home_prob']}') ON CONFLICT (game_id) DO UPDATE SET la_away_prob = excluded.la_away_prob, la_home_prob = excluded.la_home_prob, lb_away_prob = excluded.lb_away_prob, lb_home_prob = excluded.lb_home_prob;")
+            engine.execute(f"INSERT INTO win_percent(game_id, away_prob_a, home_prob_a, away_prob_b, home_prob_b) VALUES('{gameId}', '{preds_1a['away_prob']}', '{preds_1a['home_prob']}','{preds_1b['away_prob']}', '{preds_1b['home_prob']}') ON CONFLICT (game_id) DO UPDATE SET away_prob_a = excluded.away_prob_a, home_prob_a = excluded.home_prob_a, away_prob_b = excluded.away_prob_b, home_prob_b = excluded.home_prob_b;") 
+            prediction = {'model':'a', '1a': preds_1a, '1b': preds_1b}
+        elif form_data['model'] == 'c':
+            prediction_c = predict_c.get_probabilities(params)
         
-        preds_1a = predictions['1a']
-        preds_1a = np.round(100 * preds_1a[0], 2)
-        preds_1a = {'away_prob': preds_1a[0], 'home_prob': preds_1a[1]}
-        
-        preds_1b = predictions['1b']
-        preds_1b = np.round(100 * preds_1b[0], 2)
-        preds_1b = {'away_prob': preds_1b[0], 'home_prob': preds_1b[1]}
+            preds_1c = prediction_c
+            preds_1c = np.round(100 * preds_1c[0], 2)
+            preds_1c = {'away_prob': preds_1c[0], 'home_prob': preds_1c[1]}
+            engine.execute(f"INSERT INTO predict_table(game_id, lc_away_prob, lc_home_prob) VALUES('{gameId}', '{preds_1c['away_prob']}', '{preds_1c['home_prob']}') ON CONFLICT (game_id) DO UPDATE SET lc_away_prob = excluded.lc_away_prob, lc_home_prob = excluded.lc_home_prob;")
+            engine.execute(f"INSERT INTO win_percent_c(game_id, away_prob, home_prob) VALUES('{gameId}', '{preds_1c['away_prob']}', '{preds_1c['home_prob']}') ON CONFLICT (game_id) DO UPDATE SET away_prob = excluded.away_prob, home_prob = excluded.home_prob;")  
+            prediction = {'model':'c', '1c': preds_1c}
 
-        preds_1c = prediction_c
-        preds_1c = np.round(100 * preds_1c[0], 2)
-        preds_1c = {'away_prob': preds_1c[0], 'home_prob': preds_1c[1]}
-        
-        prediction = {'1a': preds_1a, '1b': preds_1b, '1c': preds_1c}
 
-        engine = database.connect_to_db()
-        engine.execute(f"INSERT INTO predict_table(game_id, la_away_prob, la_home_prob, lb_away_prob, lb_home_prob, lc_away_prob, lc_home_prob) VALUES('{gameId}', '{preds_1a['away_prob']}', '{preds_1a['home_prob']}','{preds_1b['away_prob']}', '{preds_1b['home_prob']}', '{preds_1c['away_prob']}', '{preds_1c['home_prob']}') ON CONFLICT (game_id) DO UPDATE SET la_away_prob = excluded.la_away_prob, la_home_prob = excluded.la_home_prob, lb_away_prob = excluded.lb_away_prob, lb_home_prob = excluded.lb_home_prob, lc_away_prob = excluded.lc_away_prob, lc_home_prob = excluded.lc_home_prob;")
-        engine.execute(f"INSERT INTO win_percent(game_id, away_prob_a, home_prob_a, away_prob_b, home_prob_b) VALUES('{gameId}', '{preds_1a['away_prob']}', '{preds_1a['home_prob']}','{preds_1b['away_prob']}', '{preds_1b['home_prob']}') ON CONFLICT (game_id) DO UPDATE SET away_prob_a = excluded.away_prob_a, home_prob_a = excluded.home_prob_a, away_prob_b = excluded.away_prob_b, home_prob_b = excluded.home_prob_b;")  
-        engine.execute(f"INSERT INTO win_percent_c(game_id, away_prob, home_prob) VALUES('{gameId}', '{preds_1c['away_prob']}', '{preds_1c['home_prob']}') ON CONFLICT (game_id) DO UPDATE SET away_prob = excluded.away_prob, home_prob = excluded.home_prob;")  
         prediction = jsonify(prediction)
     
     return prediction

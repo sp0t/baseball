@@ -436,7 +436,7 @@
                     <span class="large-card-title" id="large-card-title"></span>
                     <span class="large-game-date" id="large-game-date"></span>
 
-                    <form id ='form' onsubmit="makePrediction(); return false;">
+                    <div id ='form'>
                         <div class="form-wrapper">
 
                     
@@ -484,8 +484,11 @@
                             
                             
                         </div>
-                        <button style="margin: 50px auto" class="submit-button">Submit</button>
-                    </form>
+                        <div style="display: flex;">
+                            <button style="margin: 50px auto" class="submit-button" onclick="makePrediction('a')">Model a</button>
+                            <button style="margin: 50px auto" class="submit-button" onclick="makePrediction('c')">Midel c</button>
+                        </div>
+                    </div>
 
                     <form id = 'calc' onsubmit="return false;">
                         <div class="form-wrapper">

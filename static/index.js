@@ -117,7 +117,7 @@ function closeCard(){
 
 }
 
-function makePrediction(){ 
+function makePrediction(model){ 
 
     gameId = document.getElementsByClassName('.large-card').id.replace('game_button_', '');
 
@@ -143,8 +143,8 @@ function makePrediction(){
         'home_starter': homeStarter,
         'matchup': matchup,
         'game_id': gameId,
+        'model': model
     }
-
 
     $.ajax({
         type: 'POST', 
@@ -160,15 +160,22 @@ function makePrediction(){
             $('#form').hide();
             $('#calc').show();
 
-            document.getElementsByName('away_prob')[0].textContent = data['1a']['away_prob'] + '%'
-            document.getElementsByName('away_prob_1')[0].textContent = data['1a']['away_prob'] + '%'
-            document.getElementsByName('away_prob_2')[0].textContent = data['1b']['away_prob'] + '%'
-            document.getElementsByName('away_prob_3')[0].textContent = data['1c']['away_prob'] + '%'
+            if(data['model'] == 'a') {
+                document.getElementsByName('away_prob')[0].textContent = data['1a']['away_prob'] + '%'
+                document.getElementsByName('away_prob_1')[0].textContent = data['1a']['away_prob'] + '%'
+                document.getElementsByName('away_prob_2')[0].textContent = data['1b']['away_prob'] + '%'
+    
+                document.getElementsByName('home_prob')[0].textContent = data['1a']['home_prob'] + '%'
+                document.getElementsByName('home_prob_1')[0].textContent = data['1a']['home_prob'] + '%'
+                document.getElementsByName('home_prob_2')[0].textContent = data['1b']['home_prob'] + '%'
 
-            document.getElementsByName('home_prob')[0].textContent = data['1a']['home_prob'] + '%'
-            document.getElementsByName('home_prob_1')[0].textContent = data['1a']['home_prob'] + '%'
-            document.getElementsByName('home_prob_2')[0].textContent = data['1b']['home_prob'] + '%'
-            document.getElementsByName('home_prob_3')[0].textContent = data['1c']['home_prob'] + '%'
+            } else if (data['model'] == 'c') {
+                document.getElementsByName('away_prob')[0].textContent = data['1c']['away_prob'] + '%'
+                document.getElementsByName('away_prob_3')[0].textContent = data['1c']['away_prob'] + '%'
+    
+                document.getElementsByName('home_prob')[0].textContent = data['1a']['home_prob'] + '%'
+                document.getElementsByName('home_prob_3')[0].textContent = data['1c']['home_prob'] + '%'
+            }
 
         }
 

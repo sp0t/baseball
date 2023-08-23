@@ -86,6 +86,8 @@ def process_recent_starter_data(player_df, game_date, team_batters, pitcher_stat
         drop_cols = ['game_date', 'note', 'game_id', 'away_team', 'home_team', 'away_score', 'home_score']
         recent_df = recent_df.drop(drop_cols,axis = 1,errors = 'ignore').astype(float)
         recent_difficulty_data = recent_df.mul(difficulty_weights,axis = 0).sum().to_dict()
+        recent_difficulty_data['atBats'] = (recent_df['atBats'] * weights).sum()
+        recent_difficulty_data['baseOnBalls'] = (recent_df['baseOnBalls'] * weights).sum()
         
         DifficultyRating = 0
         average_obp, average_whip = average.update_league_average(game_date, False)

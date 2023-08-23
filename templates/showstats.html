@@ -375,7 +375,7 @@
         function getPlayers(gameid) {
             $.ajax({
                 type: 'POST', 
-                url: '/get_predict_players', 
+                url: '/get_player_info', 
                 data: {'data' : gameid},
                 beforeSend: function(){ 
                     $('#select_players').hide();
@@ -392,8 +392,8 @@
 
                     var i = 0;
 
-                    awayhtml += `<span>${data['awayName']}</span>`
-                    homehtml += `<span>${data['homeName']}</span>`
+                    awayhtml += `<span>${data['away']}</span>`
+                    homehtml += `<span>${data['home']}</span>`
                     $(`#awayname`).html(awayhtml);
                     $(`#homename`).html(homehtml);
                     $(`#awayname_lineups`).html(awayhtml);
@@ -403,8 +403,8 @@
 
                     for (i = 1; i < 8; i++){
                         awaybatterhtml += `<option value="">—</option>`
-                        for (n = 0; n < data['awayBatters'].length; n++){
-                            awaybatterhtml += `<option value='${data['awayBatters'][n]['player_id']}' class='option'>${data['awayBatters'][n]['player_name']}</option>`
+                        for (n = 0; n < data['rosters']['away'].length; n++){
+                            awaybatterhtml += `<option value='${data['rosters']['away'][n].id}' class='option'>${data['rosters']['away'][n].fullName}</option>`
                         }
                         $(`#${'away_f_batter_' + i}`).html(awaybatterhtml);
                         awaybatterhtml = '';
@@ -412,8 +412,8 @@
 
                     for (i = 1; i < 5; i++){
                         awaybatterhtml += `<option value="">—</option>`
-                        for (n = 0; n < data['awayBatters'].length; n++){
-                            awaybatterhtml += `<option value='${data['awayBatters'][n]['player_id']}' class='option'>${data['awayBatters'][n]['player_name']}</option>`
+                        for (n = 0; n < data['rosters']['away'].length; n++){
+                            awaybatterhtml += `<option value='${data['rosters']['away'][n].id}' class='option'>${data['rosters']['away'][n].fullName}</option>`
                         }
                         $(`#${'away_i_batter_' + i}`).html(awaybatterhtml);
                         awaybatterhtml = '';
@@ -421,8 +421,8 @@
 
                     for (i = 1; i < 8; i++){
                         homebatterhtml += `<option value="">—</option>`
-                        for (n = 0; n < data['homeBatters'].length; n++){
-                            homebatterhtml += `<option value='${data['homeBatters'][n]['player_id']}' class='option'>${data['homeBatters'][n]['player_name']}</option>`
+                        for (n = 0; n <  data['rosters']['home'].length; n++){
+                            homebatterhtml += `<option value='${data['rosters']['home'][n].id}' class='option'>${data['rosters']['home'][n].fullName}</option>`
                         }
 
                         $(`#${'home_f_batter_' + i}`).html(homebatterhtml);
@@ -431,8 +431,8 @@
 
                     for (i = 1; i < 5; i++){
                         homebatterhtml += `<option value="">—</option>`
-                        for (n = 0; n < data['homeBatters'].length; n++){
-                            homebatterhtml += `<option value='${data['homeBatters'][n]['player_id']}' class='option'>${data['homeBatters'][n]['player_name']}</option>`
+                        for (n = 0; n < data['rosters']['home'].length; n++){
+                            homebatterhtml += `<option value='${data['rosters']['home'][n].id}' class='option'>${data['rosters']['home'][n].fullName}</option>`
                         }
 
                         $(`#${'home_i_batter_' + i}`).html(homebatterhtml);
@@ -441,8 +441,8 @@
 
                     for (i = 1; i < 5; i++ ) {
                         awaypitcherhtml += `<option value="">—</option>`
-                        for (n = 0; n < data['awayPitchers'].length; n++){
-                            awaypitcherhtml += `<option value='${data['awayPitchers'][n]['player_id']}' class='option'>${data['awayPitchers'][n]['player_name']}</option>`
+                        for (n = 0; n < data['rosters']['away'].length; n++){
+                            awaypitcherhtml += `<option value='${data['rosters']['away'][n].id}' class='option'>${data['rosters']['away'][n].fullName}</option>`
                         }
                         $(`#${'away_pitcher_' + i}`).html(awaypitcherhtml);
                         awaypitcherhtml = '';
@@ -450,8 +450,8 @@
 
                     for (i = 1; i < 5; i++) {
                         homepitcherhtml += `<option value="">—</option>`
-                        for (n = 0; n < data['homePitchers'].length; n++){
-                            homepitcherhtml += `<option value='${data['homePitchers'][n]['player_id']}' class='option'>${data['homePitchers'][n]['player_name']}</option>`
+                        for (n = 0; n < data['rosters']['home'].length; n++){
+                            homepitcherhtml += `<option value='${data['rosters']['home'][n].id}' class='option'>${data['rosters']['home'][n].fullName}</option>`
                         }
                         $(`#${'home_pitcher_' + i}`).html(homepitcherhtml);
                         homepitcherhtml = '';
@@ -459,8 +459,8 @@
 
                     for (i = 1; i < 10; i++){
                         awaybatterhtml += `<option value="">—</option>`
-                        for (n = 0; n < data['awayBatters'].length; n++){
-                            awaybatterhtml += `<option value='${data['awayBatters'][n]['player_id']}' class='option'>${data['awayBatters'][n]['player_name']}</option>`
+                        for (n = 0; n < data['rosters']['away'].length; n++){
+                            awaybatterhtml += `<option value='${data['rosters']['away'][n].id}' class='option'>${data['rosters']['away'][n].fullName}</option>`
                         }
                         $(`#${'away_batter_' + i}`).html(awaybatterhtml);
                         awaybatterhtml = '';
@@ -468,8 +468,8 @@
 
                     for (i = 1; i < 10; i++){
                         homebatterhtml += `<option value="">—</option>`
-                        for (n = 0; n < data['homeBatters'].length; n++){
-                            homebatterhtml += `<option value='${data['homeBatters'][n]['player_id']}' class='option'>${data['homeBatters'][n]['player_name']}</option>`
+                        for (n = 0; n < data['rosters']['home'].length; n++){
+                            homebatterhtml += `<option value='${data['rosters']['home'][n].id}' class='option'>${data['rosters']['home'][n].fullName}</option>`
                         }
 
                         $(`#${'home_batter_' + i}`).html(homebatterhtml);
@@ -477,15 +477,15 @@
                     }
 
                     awaypitcherhtml += `<option value="">—</option>`
-                    for (n = 0; n < data['awayPitchers'].length; n++){
-                        awaypitcherhtml += `<option value='${data['awayPitchers'][n]['player_id']}' class='option'>${data['awayPitchers'][n]['player_name']}</option>`
+                    for (n = 0; n < data['rosters']['away'].length; n++){
+                        awaypitcherhtml += `<option value='${data['rosters']['away'][n].id}' class='option'>${data['rosters']['away'][n].fullName}</option>`
                     }
                     $(`#away_pitcher`).html(awaypitcherhtml);
                     awaypitcherhtml = '';
 
                     homepitcherhtml += `<option value="">—</option>`
-                    for (n = 0; n < data['homePitchers'].length; n++){
-                        homepitcherhtml += `<option value='${data['homePitchers'][n]['player_id']}' class='option'>${data['homePitchers'][n]['player_name']}</option>`
+                    for (n = 0; n < data['rosters']['home'].length; n++){
+                        homepitcherhtml += `<option value='${data['rosters']['home'][n].id}' class='option'>${data['rosters']['home'][n].fullName}</option>`
                     }
                     $(`#home_pitcher`).html(homepitcherhtml);
                     homepitcherhtml = '';

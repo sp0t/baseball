@@ -6,7 +6,6 @@ from sqlalchemy import text
 from functions_c import batting_c, starters_c
 
 def update_league_average(gamedate, state):
-    print('gamedate=======================', gamedate)
 
     engine = database.connect_to_db()
 

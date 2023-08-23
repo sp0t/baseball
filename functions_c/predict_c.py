@@ -208,7 +208,7 @@ def get_probabilities(params):
     savestate = params['savestate']
     
     # Get Data
-    game_date = datetime.today()
+    game_date = datetime.today().strftime("%Y/%m/%d")
     
     order = 1
 

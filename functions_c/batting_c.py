@@ -65,12 +65,9 @@ def process_recent_batter_data(player_df, game_date, team_starter, batter_stat_l
             team = pd.read_sql(f"SELECT * FROM batter_table WHERE game_id = '{row['game_id']}' AND playerid = '{row['playerId']}';", con=engine).to_dict('records')
             pitcher = pd.read_sql(f"SELECT * FROM pitcher_table WHERE game_id = '{row['game_id']}' AND team != '{team[0]['team']}' AND role = 'starter';", con=engine).to_dict('records')
 
-            date_str = str(row['game_date'])
-            date_obj = datetime.strptime(date_str, '%Y-%m-%d %H:%M:%S')
-            formatted_date = date_obj.strftime('%Y/%m/%d')
-            average_obp, average_whip = average.update_league_average(formatted_date, False)
+            average_obp, average_whip = average.update_league_average(row['game_date'], False)
             
-            career_whip, recent_whip = average.cal_pitcher_average(pitcher[0]['playerid'], formatted_date)
+            career_whip, recent_whip = average.cal_pitcher_average(pitcher[0]['playerid'], row['game_date'])
             if average_whip == 0 or career_whip == 0 or recent_whip == 0:
                 difficulty.append(8/8)
             else:

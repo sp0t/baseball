@@ -233,8 +233,10 @@ def get_probabilities(params):
     team_recent_data = {}
     team_career_data = {}
     for batter in away_batters:
+        print('awayBatter============>', batter)
         away_batter_res = pd.read_sql(f"SELECT * FROM predict_batter_stats WHERE game_id = '{game_id}' AND player_id = '{batter}';", con = engine).to_dict('records')
         if (len(away_batter_res) > 0 ):
+            print('is in the table')
             for away_stas in away_batter_res:
                 if away_stas['role'] == 'recent':
                     keys_to_remove = ['game_date', 'game_id', 'player_name', 'team', 'role']
@@ -265,8 +267,8 @@ def get_probabilities(params):
                     career_data = {f'away_career_b{order}_{k}':v for k,v in updated_stas.items()}
                     team_career_data.update(career_data)
         else:
+            print('not in the table')
             player_df = batting_c.get_batter_df(batter, game_date)
-            print(player_df)
 
             if len(player_df) > 0 : 
                 recent_data, games = batting_c.process_recent_batter_data(player_df, game_date, home_starter, batter_stat_list)
@@ -283,6 +285,8 @@ def get_probabilities(params):
                 player_name = player_name_res[0]['p_name']
             else:
                 player_name = batter
+
+            print('Insert in the table')
 
             engine.execute(text(f"INSERT INTO predict_batter_stats(game_date, game_id, player_id, player_name, team, role, atBats, avg, baseOnBalls, doubles, hits, homeRuns, obp, ops, rbi, runs, slg, strikeOuts, triples, singles, difficulty) \
                                     VALUES('{game_date}', '{game_id}', '{batter}', '{player_name}', 'away', 'recent', '{round(float(recent_data['atBats']), 3)}', '{round(float(recent_data['avg']), 3)}', '{round(float(recent_data['baseOnBalls']), 3)}', '{round(float(recent_data['doubles']), 3)}', '{round(float(recent_data['hits']), 3)}', '{round(float(recent_data['homeRuns']), 3)}', '{round(float(recent_data['obp']), 3)}', '{round(float(recent_data['ops']), 3)}', '{round(float(recent_data['rbi']), 3)}', '{round(float(recent_data['runs']), 3)}', '{round(float(recent_data['slg']), 3)}', '{round(float(recent_data['strikeOuts']), 3)}', '{round(float(recent_data['triples']), 3)}', '{round(float(recent_data['singles']), 3)}', '{round(float(recent_data['difficulty']), 3)}')\
@@ -304,8 +308,10 @@ def get_probabilities(params):
     team_recent_data = {}
     team_career_data = {}
     for batter in home_batters:
+        print('homeBatter============>', batter)
         home_batter_res = pd.read_sql(f"SELECT * FROM predict_batter_stats WHERE game_id = '{game_id}' AND player_id = '{batter}';", con = engine).to_dict('records')
         if (len(home_batter_res) > 0):
+            print('is in the table')
             for home_stas in home_batter_res:
                 if home_stas['role'] == 'recent':
                     keys_to_remove = ['game_date', 'game_id', 'player_name', 'team', 'role']
@@ -336,6 +342,7 @@ def get_probabilities(params):
                     career_data = {f'home_career_b{order}_{k}':v for k,v in updated_stas.items()}
                     team_career_data.update(career_data)
         else:
+            print('not in the table')
             player_df = batting_c.get_batter_df(batter, game_date)
 
             if len(player_df) > 0 : 
@@ -354,6 +361,7 @@ def get_probabilities(params):
             else:
                 player_name = batter
 
+            print('insert in the table')
             engine.execute(text(f"INSERT INTO predict_batter_stats(game_date, game_id, player_id, player_name, team, role, atBats, avg, baseOnBalls, doubles, hits, homeRuns, obp, ops, rbi, runs, slg, strikeOuts, triples, singles, difficulty) \
                                     VALUES('{game_date}', '{game_id}', '{batter}', '{player_name}', 'home', 'recent', '{round(float(recent_data['atBats']), 3)}', '{round(float(recent_data['avg']), 3)}', '{round(float(recent_data['baseOnBalls']), 3)}', '{round(float(recent_data['doubles']), 3)}', '{round(float(recent_data['hits']), 3)}', '{round(float(recent_data['homeRuns']), 3)}', '{round(float(recent_data['obp']), 3)}', '{round(float(recent_data['ops']), 3)}', '{round(float(recent_data['rbi']), 3)}', '{round(float(recent_data['runs']), 3)}', '{round(float(recent_data['slg']), 3)}', '{round(float(recent_data['strikeOuts']), 3)}', '{round(float(recent_data['triples']), 3)}', '{round(float(recent_data['singles']), 3)}', '{round(float(recent_data['difficulty']), 3)}')\
                                     ON CONFLICT ON CONSTRAINT predict_batter_stats_key DO UPDATE SET atBats = excluded.atBats, avg = excluded.avg, baseOnBalls = excluded.baseOnBalls, doubles = excluded.doubles, hits = excluded.hits, homeRuns = excluded.homeRuns, obp = excluded.obp, ops = excluded.ops, rbi = excluded.rbi, runs = excluded.runs, slg = excluded.slg, strikeOuts = excluded.strikeOuts, triples = excluded.triples, singles = excluded.singles, difficulty = excluded.difficulty;"))
@@ -374,8 +382,11 @@ def get_probabilities(params):
     
     team_recent_data = {}
     team_career_data = {}
+
+    print('awaystarter============>', away_starter)
     
     if (len(away_pitcher_res) > 0):
+        print('is in the table')
         for away_start_stas in away_pitcher_res:
             if away_start_stas['role'] == 'recent':
                 keys_to_remove = ['game_date', 'game_id', 'player_name', 'team', 'role']
@@ -406,6 +417,8 @@ def get_probabilities(params):
                 career_data = {f'away_starter_career_{k}':v for k,v in updated_stas.items()}
                 team_career_data.update(career_data)
     else:
+        print('not in the table')
+
         player_df = starters_c.get_starter_df(away_starter, game_date)
 
         if len(player_df) > 0 : 
@@ -422,6 +435,8 @@ def get_probabilities(params):
             player_name = player_name_res[0]['p_name']
         else:
             player_name = away_starter
+
+        print('insert in the table')
 
         engine.execute(text(f"INSERT INTO predict_pitcher_stats(game_date, game_id, player_id, player_name, team, role, atBats, baseOnBalls, blownsaves, doubles, earnedRuns, era, hits, holds, homeRuns, inningsPitched, losses, pitchesThrown, rbi, runs, strikeOuts, strikes, triples, whip, wins, difficulty) \
                                     VALUES('{game_date}', '{game_id}', '{away_starter}', '{player_name}', 'away', 'recent', '{round(float(recent_data['atBats']), 3)}', '{round(float(recent_data['baseOnBalls']), 3)}', '{round(float(recent_data['blownsaves']), 3)}', '{round(float(recent_data['doubles']), 3)}', '{round(float(recent_data['earnedRuns']), 3)}', '{round(float(recent_data['era']), 3)}', '{round(float(recent_data['hits']), 3)}', '{round(float(recent_data['holds']), 3)}', '{round(float(recent_data['homeRuns']), 3)}', '{round(float(recent_data['inningsPitched']), 3)}', '{round(float(recent_data['losses']), 3)}', '{round(float(recent_data['pitchesThrown']), 3)}', '{round(float(recent_data['rbi']), 3)}', '{round(float(recent_data['runs']), 3)}', '{round(float(recent_data['strikeOuts']), 3)}', '{round(float(recent_data['strikes']), 3)}', '{round(float(recent_data['triples']), 3)}', '{round(float(recent_data['whip']), 3)}', '{round(float(recent_data['wins']), 3)}', '{round(float(recent_data['difficulty']), 3)}')\
@@ -442,7 +457,11 @@ def get_probabilities(params):
     team_recent_data = {}
     team_career_data = {}
 
+    print('homestarter============>', home_starter)
+
+
     if (len(home_pitcher_res) > 0):
+        print('is in the table')
         for home_start_stas in home_pitcher_res:
             if home_start_stas['role'] == 'recent':
                 keys_to_remove = ['game_date', 'game_id', 'player_name', 'team', 'role']
@@ -473,6 +492,8 @@ def get_probabilities(params):
                 career_data = {f'home_starter_career_{k}':v for k,v in updated_stas.items()}
                 team_career_data.update(career_data)
     else:
+        print('not in the table')
+        
         player_df = starters_c.get_starter_df(home_starter, game_date)
 
         if len(player_df) > 0 : 
@@ -489,6 +510,8 @@ def get_probabilities(params):
             player_name = player_name_res[0]['p_name']
         else:
             player_name = home_starter
+
+        print('insert in the table')
 
         engine.execute(text(f"INSERT INTO predict_pitcher_stats(game_date, game_id, player_id, player_name, team, role, atBats, baseOnBalls, blownsaves, doubles, earnedRuns, era, hits, holds, homeRuns, inningsPitched, losses, pitchesThrown, rbi, runs, strikeOuts, strikes, triples, whip, wins, difficulty) \
                                     VALUES('{game_date}', '{game_id}', '{home_starter}', '{player_name}', 'home', 'recent', '{round(float(recent_data['atBats']), 3)}', '{round(float(recent_data['baseOnBalls']), 3)}', '{round(float(recent_data['blownsaves']), 3)}', '{round(float(recent_data['doubles']), 3)}', '{round(float(recent_data['earnedRuns']), 3)}', '{round(float(recent_data['era']), 3)}', '{round(float(recent_data['hits']), 3)}', '{round(float(recent_data['holds']), 3)}', '{round(float(recent_data['homeRuns']), 3)}', '{round(float(recent_data['inningsPitched']), 3)}', '{round(float(recent_data['losses']), 3)}', '{round(float(recent_data['pitchesThrown']), 3)}', '{round(float(recent_data['rbi']), 3)}', '{round(float(recent_data['runs']), 3)}', '{round(float(recent_data['strikeOuts']), 3)}', '{round(float(recent_data['strikes']), 3)}', '{round(float(recent_data['triples']), 3)}', '{round(float(recent_data['whip']), 3)}', '{round(float(recent_data['wins']), 3)}', '{round(float(recent_data['difficulty']), 3)}')\

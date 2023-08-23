@@ -66,6 +66,7 @@ def process_recent_batter_data(player_df, game_date, team_starter, batter_stat_l
             pitcher = pd.read_sql(f"SELECT * FROM pitcher_table WHERE game_id = '{row['game_id']}' AND team != '{team[0]['team']}' AND role = 'starter';", con=engine).to_dict('records')
 
             average_obp, average_whip = average.update_league_average(row['game_date'], False)
+            print("row['game_date']", row['game_date'])
             
             career_whip, recent_whip = average.cal_pitcher_average(pitcher[0]['playerid'], row['game_date'])
             if average_whip == 0 or career_whip == 0 or recent_whip == 0:
@@ -86,6 +87,8 @@ def process_recent_batter_data(player_df, game_date, team_starter, batter_stat_l
         recent_df = recent_df.drop(drop_cols,axis = 1,errors = 'ignore').astype(float)
         recent_difficulty_data = recent_df.mul(difficulty_weights,axis = 0).sum().to_dict()
         recent_difficulty_data['atBats'] = (recent_df['atBats'] * weights).sum()
+
+        print('game_date', game_date)
 
         average_obp, average_whip = average.update_league_average(game_date, False)
 

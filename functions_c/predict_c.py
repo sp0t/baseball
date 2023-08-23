@@ -266,6 +266,7 @@ def get_probabilities(params):
                     team_career_data.update(career_data)
         else:
             player_df = batting_c.get_batter_df(batter, game_date)
+            print(player_df)
 
             if len(player_df) > 0 : 
                 recent_data, games = batting_c.process_recent_batter_data(player_df, game_date, home_starter, batter_stat_list)

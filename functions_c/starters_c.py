@@ -65,10 +65,11 @@ def process_recent_starter_data(player_df, game_date, team_batters, pitcher_stat
             batters = pd.read_sql(f"SELECT * FROM batter_table WHERE game_id = '{row['game_id']}' AND team != '{team[0]['team']}' AND substitution = '0';", con=engine).to_dict('records')
             batter_difficulty = 0
             for batter in batters:
-                
-                print("row['game_date']", row['game_date'])
-                average_obp, average_whip = average.update_league_average(row['game_date'], False)
-                career_obp, recent_obp = average.cal_batter_average(batter['playerid'], row['game_date'])
+                date_str = str(row['game_date'])
+                date_obj = datetime.strptime(date_str, '%Y-%m-%d %H:%M:%S')
+                formatted_date = date_obj.strftime('%Y/%m/%d')
+                average_obp, average_whip = average.update_league_average(formatted_date, False)
+                career_obp, recent_obp = average.cal_batter_average(batter['playerid'], formatted_date)
                 if average_obp == 0 or career_obp == 0 or recent_obp == 0:
                     batter_difficulty = batter_difficulty + 8/8
                 else:
@@ -86,7 +87,6 @@ def process_recent_starter_data(player_df, game_date, team_batters, pitcher_stat
         recent_df = recent_df.drop(drop_cols,axis = 1,errors = 'ignore').astype(float)
         recent_difficulty_data = recent_df.mul(difficulty_weights,axis = 0).sum().to_dict()
         recent_difficulty_data['atBats'] = (recent_df['atBats'] * weights).sum()
-        recent_difficulty_data['baseOnBalls'] = (recent_df['baseOnBalls'] * weights).sum()
         
         DifficultyRating = 0
         average_obp, average_whip = average.update_league_average(game_date, False)

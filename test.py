@@ -19,6 +19,6 @@ import joblib
 # engine.execute(text("CREATE TABLE IF NOT EXISTS league_average(year TEXT, avg FLOAT, obp FLOAT, slg FLOAT, ops FLOAT, era FLOAT, whip FLOAT);"))
 # engine.execute(text("CREATE TABLE IF NOT EXISTS win_percent_c(game_id TEXT UNIQUE, away_prob FLOAT, home_prob FLOAT);"))
 # engine.execute(text("CREATE TABLE IF NOT EXISTS predict_table(game_id TEXT UNIQUE, la_away_prob TEXT, la_home_prob TEXT, lb_away_prob TEXT, lb_home_prob TEXT, lc_away_prob TEXT, lc_home_prob TEXT);"))
-game_date = datetime.today().strftime("%Y/%m/%d")
+game_date = datetime.today()
 
 print(game_date)

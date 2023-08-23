@@ -173,7 +173,7 @@ function makePrediction(model){
                 document.getElementsByName('away_prob')[0].textContent = data['1c']['away_prob'] + '%'
                 document.getElementsByName('away_prob_3')[0].textContent = data['1c']['away_prob'] + '%'
     
-                document.getElementsByName('home_prob')[0].textContent = data['1a']['home_prob'] + '%'
+                document.getElementsByName('home_prob')[0].textContent = data['1c']['home_prob'] + '%'
                 document.getElementsByName('home_prob_3')[0].textContent = data['1c']['home_prob'] + '%'
             }
 

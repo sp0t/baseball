@@ -65,6 +65,7 @@ def process_recent_batter_data(player_df, game_date, team_starter, batter_stat_l
             team = pd.read_sql(f"SELECT * FROM batter_table WHERE game_id = '{row['game_id']}' AND playerid = '{row['playerId']}';", con=engine).to_dict('records')
             pitcher = pd.read_sql(f"SELECT * FROM pitcher_table WHERE game_id = '{row['game_id']}' AND team != '{team[0]['team']}' AND role = 'starter';", con=engine).to_dict('records')
 
+            print("row['game_date']", row['game_date'])
             average_obp, average_whip = average.update_league_average(row['game_date'], False)
             print("row['game_date']", row['game_date'])
             

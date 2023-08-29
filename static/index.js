@@ -505,6 +505,34 @@ function  getPlayerStats(id, type){
                 const topPosition = divContainer.offsetTop;
                 const height = divContainer.offsetHeight;
                 const bottomPosition = topPosition + height;
+                var awayBatterRat = 0, homeBatterRat = 0, awayStarterRat = 0, homeStarterRat = 0;
+
+                if(data.model == 1) {
+                    for(var i=0; i < data.batter.length; i++) {
+                        var team = data.batter[i].position.substring(0, 4);
+    
+                        if(team == 'Away')
+                        homeStarterRat = homeStarterRat + data.batter[i].difficulty_rating;
+                        else if(team == 'Home')
+                            awayStarterRat = awayStarterRat + data.batter[i].difficulty_rating;
+                    }
+
+                    for(var j=0; j < data.pitcher; j++) {
+                        var team = data.pitcher[j].position.substring(0, 4);
+    
+                        if(team == 'Away')
+                            homeBatterRat = data.pitcher[j].difficulty_rating;
+                        else if(team == 'Home')
+                            awayBatterRat = data.pitcher[j].difficulty_rating;
+                    }
+                }
+
+                homeStarterRat = homeStarterRat / 9;
+                homeStarterRat = homeStarterRat.toFixed(3);
+
+                awayStarterRat = awayStarterRat / 9;
+                awayStarterRat = awayStarterRat.toFixed(3);
+
 
                 divContent.style.top = `${bottomPosition}px`;
                 divContent.style.left = '160px';
@@ -532,6 +560,7 @@ function  getPlayerStats(id, type){
                     html += '<div style="background-color:black">RSLG</div>'
                     html += '<div style="background-color:black">RSO</div>'
                     html += '<div style="background-color:black">RAT</div>'
+                    html += '<div style="background-color:black">OPRAT</div>'
                     
 
                     for(var x in data.batter) {
@@ -554,7 +583,15 @@ function  getPlayerStats(id, type){
                         html += `<div>${data.batter[x].recent_rbi}</div>`
                         html += `<div>${data.batter[x].recent_slg}</div>`
                         html += `<div>${data.batter[x].recent_strikeouts}</div>`
-                        html += `<div>${data.batter[x].difficulty_rating == undefined?'': data.batter[x].difficulty_rating}</div>`
+
+                        if(data.model == 0) {
+                            html += `<div></div>`
+                            html += `<div></div>`
+                        } else if(data.model == 1) {
+                            html += `<div>${data.batter[x].difficulty_rating}</div>`
+                            html += `<div>${data.batter[x].position.substring(0, 4) == 'Away'?awayBatterRat: homeBatterRat}</div>`
+                        }
+
                     }
                     html += '</div>';
                 }
@@ -573,6 +610,7 @@ function  getPlayerStats(id, type){
                     html += '<div style="background-color:black">RWHP</div>'
                     html += '<div style="background-color:black">RBF</div>'
                     html += '<div style="background-color:black">RAT</div>'
+                    html += '<div style="background-color:black">OPRAT</div>'
                     
 
                     for(var y in data.pitcher) {
@@ -587,7 +625,13 @@ function  getPlayerStats(id, type){
                         html += `<div>${data.pitcher[y].recent_homeruns}</div>`
                         html += `<div>${data.pitcher[y].recent_whip}</div>`
                         html += `<div>${data.pitcher[y].recent_battersfaced}</div>`
-                        html += `<div>${data.pitcher[y].difficulty_rating == undefined ? '': data.pitcher[y].difficulty_rating}</div>`
+                        if(data.model == 0) {
+                            html += `<div></div>`
+                            html += `<div></div>`
+                        } else if(data.model == 1) {
+                            html += `<div>${data.pitcher[y].difficulty_rating}</div>`
+                            html += `<div>${data.pitcher[y].position.substring(0, 4) == 'Away'?awayStarterRat: homeStarterRat}</div>`
+                        }
                     }
 
                     html += '</div>'

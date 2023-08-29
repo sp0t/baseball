@@ -559,11 +559,11 @@ def get_PlayerStats():
     if type == 0:
         batter_table = 'batter_stats'
         pitcher_table = 'pitcher_stats'
+        data['model'] = 0
     elif type == 1:
         batter_table = 'batter_stats_c'
         pitcher_table = 'pitcher_stats_c'
-    else:
-        return data
+        data['model'] = 1
     
     engine = database.connect_to_db()
     

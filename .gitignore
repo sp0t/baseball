@@ -5,3 +5,4 @@ __pycache__
 .env
 bs-config.js
 mlb odds 2022.xlsx
+package-lock.json

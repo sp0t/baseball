@@ -97,7 +97,7 @@ a{
 
 .batter-container {
 	display: grid;
-	grid-template-columns: auto auto auto auto auto auto auto auto auto auto auto auto auto auto auto auto auto auto auto auto;
+	grid-template-columns: auto auto auto auto auto auto auto auto auto auto auto auto auto auto auto auto auto auto auto auto auto;
 	gap: 1px;
 	background-color: white;
 	padding: 1px;
@@ -105,7 +105,7 @@ a{
 
 .pitcher-container {
 	display: grid;
-	grid-template-columns: auto auto auto auto auto auto auto auto auto auto auto auto;
+	grid-template-columns: auto auto auto auto auto auto auto auto auto auto auto auto auto;
 	gap: 1px;
 	background-color: white;
 	padding: 1px;

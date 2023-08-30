@@ -517,13 +517,17 @@ function  getPlayerStats(id, type){
                             awayStarterRat = awayStarterRat + data.batter[i].difficulty_rating;
                     }
 
+                    console.log(data)
+
                     for(var j=0; j < data.pitcher; j++) {
                         var team = data.pitcher[j].position.substring(0, 4);
-    
+                        
+                        console.log('team==============>', team)
                         if(team == 'Away')
                             homeBatterRat = data.pitcher[j].difficulty_rating;
                         else if(team == 'Home')
                             awayBatterRat = data.pitcher[j].difficulty_rating;
+                        console.log('difficulty_rating=======>', data.pitcher[j].difficulty_rating)
                     }
                 }
 

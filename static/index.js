@@ -519,7 +519,7 @@ function  getPlayerStats(id, type){
 
                     console.log(data)
 
-                    for(var j=0; j < data.pitcher; j++) {
+                    for(var j=0; j < data.pitcher.length; j++) {
                         var team = data.pitcher[j].position.substring(0, 4);
                         
                         console.log('team==============>', team)

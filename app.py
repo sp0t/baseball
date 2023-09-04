@@ -290,8 +290,8 @@ def make_prediction():
 
         params = {'away_batters': form_data['away_batters'], 
                   'home_batters': form_data['home_batters'], 
-                  'away_starter': form_data['away_starter'], 
-                  'home_starter': form_data['home_starter'],
+                  'away_starters': form_data['away_starters'], 
+                  'home_starters': form_data['home_starters'],
                   }
         
         gameId = form_data['game_id']

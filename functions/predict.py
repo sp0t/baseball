@@ -203,7 +203,9 @@ def get_probabilities(params):
     engine = database.connect_to_db()
 
     away_batters, home_batters = [str(el) for el in params['away_batters']], [str(el) for el in params['home_batters']]
-    away_starter, home_starter = str(params['away_starter']), str(params['home_starter'])
+    away_starters, home_starters = [str(el) for el in params['away_starters']], [str(el) for el in params['home_starters']]
+    away_starter = away_starters[0]
+    home_starter = home_starters[0]
     away_name, home_name = params['away_name'], params['home_name']
     game_id = params['game_id']
     

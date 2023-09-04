@@ -452,12 +452,14 @@
                                 </div>
                                 {% endfor %}
                                 <hr>
+                                {% for j in range(1, 6) %}
                                 <div class="form-row" style="margin: 20px 0 0 20px;">
-                                    <label for="away_starter" class="home_label select-label">Starter</label>
-                                    <select name="away_starter" required>
+                                    <label for="as_{{j}}" class="home_label select-label">Starter #{{j}}</label>
+                                    <select name="as_{{j}}" required>
                                         <option value="">—</option>
                                     </select>
                                 </div>
+                                {% endfor %}
 
                             </div>
 
@@ -473,12 +475,14 @@
                                 </div>
                                 {% endfor %}
                                 <hr>
+                                {% for j in range(1, 6) %}
                                 <div class="form-row" style="margin: 20px 0 0 20px;">
-                                    <label for="home_starter" class="home_label select-label">Starter</label>
-                                    <select name="home_starter" required>
+                                    <label for="hs_{{j}}" class="home_label select-label">Starter #{{j}}</label>
+                                    <select name="hs_{{j}}" required>
                                         <option value="">—</option>
                                     </select>
                                 </div>
+                                {% endfor %}
 
                             </div>
                             

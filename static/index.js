@@ -38,19 +38,22 @@ function openCard(buttonId){
                     newSelect.append(newOption)
                 }
             }
-            var newSelect = document.getElementsByName('away_starter')[0]; 
-            for (n = 0; n < awayRoster.length; n++){
-                var newOption = document.createElement('option');
-                newOption.value = awayRoster[n]['id'];
-                newOption.className = 'option' 
-                newOption.innerHTML = awayRoster[n]['fullName'];
-                
-                playerId = awayRoster[n]['id'];
 
-                if(pitcher['away'][playerId] == 'starter')
-                    newOption.setAttribute('selected', true);
-
-                newSelect.append(newOption)
+            for (var j=1; j <6; j++) {
+                var newSelect = document.getElementsByName('as_' + j)[0]; 
+                for (n = 0; n < awayRoster.length; n++){
+                    var newOption = document.createElement('option');
+                    newOption.value = awayRoster[n]['id'];
+                    newOption.className = 'option' 
+                    newOption.innerHTML = awayRoster[n]['fullName'];
+                    
+                    playerId = awayRoster[n]['id'];
+    
+                    if(j == 1 && pitcher['away'][playerId] == 'starter')
+                        newOption.setAttribute('selected', true);
+    
+                    newSelect.append(newOption)
+                }
             }
 
 
@@ -72,19 +75,22 @@ function openCard(buttonId){
                     newSelect.append(newOption)
                 }
             }
-            var newSelect = document.getElementsByName('home_starter')[0]; 
-            for (n = 0; n < homeRoster.length; n++){
-                var newOption = document.createElement('option');
-                newOption.value = homeRoster[n]['id']; 
-                newOption.className = 'option'
-                newOption.innerHTML = homeRoster[n]['fullName'];
 
-                playerId = homeRoster[n]['id']; 
-
-                if(pitcher['home'][playerId] == 'starter')
-                    newOption.setAttribute('selected', true);
-
-                newSelect.append(newOption)
+            for (var j=1; j <6; j++) {
+                var newSelect = document.getElementsByName('hs_' + j)[0]; 
+                for (n = 0; n < homeRoster.length; n++){
+                    var newOption = document.createElement('option');
+                    newOption.value = homeRoster[n]['id']; 
+                    newOption.className = 'option'
+                    newOption.innerHTML = homeRoster[n]['fullName'];
+    
+                    playerId = homeRoster[n]['id']; 
+    
+                    if(j == 1 && pitcher['home'][playerId] == 'starter')
+                        newOption.setAttribute('selected', true);
+    
+                    newSelect.append(newOption)
+                }
             }
 
             $('#loader').hide(); 
@@ -132,15 +138,25 @@ function makePrediction(model){
         homeBatters.push(node.value)
     })
 
-    var awayStarter = document.getElementsByName('away_starter')[0].value
-    var homeStarter = document.getElementsByName('home_starter')[0].value
+    // var awayStarter = document.getElementsByName('away_starter')[0].value
+    var awayStarters = []
+    document.querySelectorAll('select[name^=as]').forEach(function (node, idx){
+        awayStarters.push(node.value)
+    })
+
+    // var homeStarter = document.getElementsByName('home_starter')[0].value
+
+    var homeStarters = []
+    document.querySelectorAll('select[name^=hs]').forEach(function (node, idx){
+        homeStarters.push(node.value)
+    })
     var matchup = document.getElementById('large-card-title').textContent
 
     var formData = {
         'away_batters': awayBatters, 
         'home_batters': homeBatters, 
-        'away_starter': awayStarter, 
-        'home_starter': homeStarter,
+        'away_starters': awayStarters, 
+        'home_starters': homeStarters,
         'matchup': matchup,
         'game_id': gameId,
         'model': model

@@ -247,6 +247,8 @@ def get_probabilities(params):
 
     X_test = feature_selection(X_test, fill_null = True)
     X_test, column_names = addBattersFaced(X_test, bullpen = False)
+    for key in X_test.keys():
+        print(key)
 
     rosters = schedule.get_rosters(game_id)
 
@@ -256,8 +258,6 @@ def get_probabilities(params):
 
     X_test = standardizeData(X_test, column_names)
 
-    for key in X_test.keys():
-        print(key)
 
     X_test_b = X_test[[col for col in X_test.columns if 'bullpen' not in col]]
     print("Game Row Processed")

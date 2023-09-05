@@ -245,6 +245,8 @@ def get_probabilities(params):
     
     X_test = pd.DataFrame(game_data, index = [0])
 
+    print(X_test)
+
     X_test = feature_selection(X_test, fill_null = True)
     X_test, column_names = addBattersFaced(X_test, bullpen = False)
 
@@ -255,6 +257,9 @@ def get_probabilities(params):
     save_pitcher_data(engine, X_test, away_starter, home_starter, game_id, rosters)
 
     X_test = standardizeData(X_test, column_names)
+
+    print(X_test)
+
 
     X_test_b = X_test[[col for col in X_test.columns if 'bullpen' not in col]]
     print("Game Row Processed")

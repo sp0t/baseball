@@ -648,15 +648,17 @@ def getWinPredict():
     for away_list in away_lists:
         awaybatter = players_data['away_f_batter'] + away_list
         for i in players_data['awaypitcher']:
-            awaypitcher = i
+            awaypitcher = []
+            awaypitcher.append(i)
             for home_list in home_lists:
                 homebatter = players_data['home_f_batter'] + home_list
                 for j in players_data['homepitcher']:
-                    homepitcher = j
+                    homepitcher = []
+                    homepitcher.append(j)
                     params = {'away_batters': awaybatter, 
                     'home_batters': homebatter, 
-                    'away_starter': awaypitcher, 
-                    'home_starter': homepitcher,
+                    'away_starters': awaypitcher, 
+                    'home_starters': homepitcher,
                     }
                     params['savestate'] = False
 

@@ -228,6 +228,9 @@ def get_probabilities(params):
     away_starter_data = starters.process_starter_data(away_starter, 'away', game_date)
     home_starter_data = starters.process_starter_data(home_starter, 'home', game_date)
 
+
+    print(away_starter_data, home_starter_data)
+
     # Bullpen 
     away_bullpen_data = bullpen.process_bullpen_data(away_name, 'away', game_date)
     home_bullpen_data = bullpen.process_bullpen_data(home_name, 'home', game_date)
@@ -247,8 +250,6 @@ def get_probabilities(params):
 
     X_test = feature_selection(X_test, fill_null = True)
     X_test, column_names = addBattersFaced(X_test, bullpen = False)
-    for key in X_test.keys():
-        print(key)
 
     rosters = schedule.get_rosters(game_id)
 

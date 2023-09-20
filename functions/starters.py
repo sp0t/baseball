@@ -199,5 +199,5 @@ def process_starter_data(team_starters, team, game_date):
             else:
                 team_starter_data[key] = obj[key] * weights[j]
 
-    print(team_career_data)   
+    print(team_starter_data)   
     return team_starter_data

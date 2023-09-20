@@ -160,12 +160,15 @@ def process_starter_data(team_starters, team, game_date):
     team_starter_data = {}
     team_recent_data = {}
     team_career_data = {}
+    print(team_starters)
     
     for i in range(5):
         # order = team_batters.index(team_batter)+1
         order = i + 1
         team_starter = team_starters[i]
+        print(team_starter)
         player_df = get_starter_df(team_starter)
+        print(player_df)
 
         if len(player_df) > 0 : 
             recent_data, recent_games, games = process_recent_starter_data(player_df, game_date, pitcher_stat_list)
@@ -173,8 +176,6 @@ def process_starter_data(team_starters, team, game_date):
         else: 
             recent_data = dict(zip(pitcher_stat_list, np.repeat(np.nan, len(pitcher_stat_list))))
             career_data = dict(zip(pitcher_stat_list, np.repeat(np.nan, len(pitcher_stat_list))))
-
-        print(recent_data)
 
         recent_data = {f'{team}_starter_recent_{k}':v for k,v in recent_data.items()}
         career_data = {f'{team}_starter_career_{k}':v for k,v in career_data.items()}
@@ -184,6 +185,5 @@ def process_starter_data(team_starters, team, game_date):
             
     team_starter_data.update(career_data)
     team_starter_data.update(recent_data)
-    print(team_starter_data)
     
     return team_starter_data

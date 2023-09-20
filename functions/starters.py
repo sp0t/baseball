@@ -158,9 +158,8 @@ def process_starter_data(team_starters, team, game_date):
         'losses', 'pitchesThrown', 'playerId', 'rbi', 'runs', 'strikeOuts', 'strikes', 'triples', 'whip',  'wins']
     
     team_starter_data = {}
-    team_recent_data = {}
-    team_career_data = {}
-    print(team_starters)
+    team_recent_data = []
+    team_career_data = []
     
     for i in range(5):
         # order = team_batters.index(team_batter)+1
@@ -180,8 +179,10 @@ def process_starter_data(team_starters, team, game_date):
         recent_data = {f'{team}_starter_recent_{k}':v for k,v in recent_data.items()}
         career_data = {f'{team}_starter_career_{k}':v for k,v in career_data.items()}
             
-        team_recent_data.update(recent_data)
-        team_career_data.update(career_data)
+        team_recent_data.append(recent_data)
+        team_career_data.append(career_data)
+
+        print(team_recent_data)
             
     team_starter_data.update(career_data)
     team_starter_data.update(recent_data)

@@ -157,7 +157,7 @@ def process_starter_data(team_starters, team, game_date):
         'atBats', 'baseOnBalls', 'blownSave', 'doubles', 'earnedRuns', 'era', 'hits', 'holds', 'homeRuns', 'inningsPitched', 
         'losses', 'pitchesThrown', 'playerId', 'rbi', 'runs', 'strikeOuts', 'strikes', 'triples', 'whip',  'wins']
     
-    team_batter_data = {}
+    team_starter_data = {}
     team_recent_data = {}
     team_career_data = {}
     

@@ -126,7 +126,7 @@ def process_career_starter_data(player_id, games, recent_games, pitcher_stat_lis
     
     return career_data
 
-def process_starter_data1(team_starter, team, game_date): 
+def process_starter_data(team_starter, team, game_date): 
     
     pitcher_stat_list=[
         'atBats', 'baseOnBalls', 'blownSave', 'doubles', 'earnedRuns', 'era', 'hits', 'holds', 'homeRuns', 'inningsPitched', 
@@ -152,7 +152,7 @@ def process_starter_data1(team_starter, team, game_date):
     
     return team_starter_data
 
-def process_starter_data(team_starters, team, game_date): 
+def process_starter_data1(team_starters, team, game_date): 
     
     pitcher_stat_list=[
         'atBats', 'baseOnBalls', 'blownSave', 'doubles', 'earnedRuns', 'era', 'hits', 'holds', 'homeRuns', 'inningsPitched', 
@@ -190,7 +190,7 @@ def process_starter_data(team_starters, team, game_date):
                 team_starter_data[key] += obj[key] * weights[j]
             else:
                 team_starter_data[key] = obj[key] * weights[j]
-                
+
     for i in range(len(team_recent_data)):
         obj = team_recent_data[i]
         for key in obj:

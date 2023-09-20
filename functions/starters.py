@@ -126,7 +126,7 @@ def process_career_starter_data(player_id, games, recent_games, pitcher_stat_lis
     
     return career_data
 
-def process_starter_data(team_starter, team, game_date): 
+def process_starter_data1(team_starter, team, game_date): 
     
     pitcher_stat_list=[
         'atBats', 'baseOnBalls', 'blownSave', 'doubles', 'earnedRuns', 'era', 'hits', 'holds', 'homeRuns', 'inningsPitched', 
@@ -148,5 +148,40 @@ def process_starter_data(team_starter, team, game_date):
     team_starter_data = {}
     team_starter_data.update(career_data)
     team_starter_data.update(recent_data)
+    
+    return team_starter_data
+
+def process_starter_data(team_starters, team, game_date): 
+    
+    pitcher_stat_list=[
+        'atBats', 'baseOnBalls', 'blownSave', 'doubles', 'earnedRuns', 'era', 'hits', 'holds', 'homeRuns', 'inningsPitched', 
+        'losses', 'pitchesThrown', 'playerId', 'rbi', 'runs', 'strikeOuts', 'strikes', 'triples', 'whip',  'wins']
+    
+    team_batter_data = {}
+    team_recent_data = {}
+    team_career_data = {}
+    
+    for i in range(5):
+        # order = team_batters.index(team_batter)+1
+        order = i + 1
+        team_starter = team_starters[i]
+        player_df = get_starter_df(team_starter)
+
+        if len(player_df) > 0 : 
+            recent_data, recent_games, games = process_recent_starter_data(player_df, game_date, pitcher_stat_list)
+            career_data = process_career_starter_data(team_starter, games, recent_games, pitcher_stat_list, game_date)
+        else: 
+            recent_data = dict(zip(pitcher_stat_list, np.repeat(np.nan, len(pitcher_stat_list))))
+            career_data = dict(zip(pitcher_stat_list, np.repeat(np.nan, len(pitcher_stat_list))))
+
+        recent_data = {f'{team}_starter_recent_{k}':v for k,v in recent_data.items()}
+        career_data = {f'{team}_starter_career_{k}':v for k,v in career_data.items()}
+            
+        team_recent_data.update(recent_data)
+        team_career_data.update(career_data)
+            
+    team_starter_data.update(career_data)
+    team_starter_data.update(recent_data)
+    print(team_starter_data)
     
     return team_starter_data

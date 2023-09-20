@@ -162,6 +162,7 @@ def process_starter_data(team_starters, team, game_date):
     team_recent_data = []
     team_career_data = []
     weights = [0.6, 0.1, 0.1, 0.1, 0.1]
+    starterid = ''
     
     for i in range(5):
         # order = team_batters.index(team_batter)+1
@@ -191,7 +192,7 @@ def process_starter_data(team_starters, team, game_date):
                 team_starter_data[key] = obj[key] * weights[i]
 
     for j in range(len(team_career_data)):
-        obj = team_career_data[i]
+        obj = team_career_data[j]
         for key in obj:
             if key in team_starter_data:
                 team_starter_data[key] += obj[key] * weights[j]

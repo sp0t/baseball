@@ -174,6 +174,8 @@ def process_starter_data(team_starters, team, game_date):
             recent_data = dict(zip(pitcher_stat_list, np.repeat(np.nan, len(pitcher_stat_list))))
             career_data = dict(zip(pitcher_stat_list, np.repeat(np.nan, len(pitcher_stat_list))))
 
+        print(recent_data)
+
         recent_data = {f'{team}_starter_recent_{k}':v for k,v in recent_data.items()}
         career_data = {f'{team}_starter_career_{k}':v for k,v in career_data.items()}
             

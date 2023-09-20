@@ -165,9 +165,7 @@ def process_starter_data(team_starters, team, game_date):
         # order = team_batters.index(team_batter)+1
         order = i + 1
         team_starter = team_starters[i]
-        print(team_starter)
         player_df = get_starter_df(team_starter)
-        print(player_df)
 
         if len(player_df) > 0 : 
             recent_data, recent_games, games = process_recent_starter_data(player_df, game_date, pitcher_stat_list)

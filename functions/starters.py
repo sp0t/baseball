@@ -148,6 +148,7 @@ def process_starter_data(team_starter, team, game_date):
     team_starter_data = {}
     team_starter_data.update(career_data)
     team_starter_data.update(recent_data)
+    print(team_starter_data)
     
     return team_starter_data
 
@@ -160,6 +161,7 @@ def process_starter_data1(team_starters, team, game_date):
     team_starter_data = {}
     team_recent_data = []
     team_career_data = []
+    weights = [0.6, 0.1, 0.1, 0.1, 0.1]
     
     for i in range(5):
         # order = team_batters.index(team_batter)+1
@@ -171,8 +173,8 @@ def process_starter_data1(team_starters, team, game_date):
             recent_data, recent_games, games = process_recent_starter_data(player_df, game_date, pitcher_stat_list)
             career_data = process_career_starter_data(team_starter, games, recent_games, pitcher_stat_list, game_date)
         else: 
-            recent_data = dict(zip(pitcher_stat_list, np.repeat(np.nan, len(pitcher_stat_list))))
-            career_data = dict(zip(pitcher_stat_list, np.repeat(np.nan, len(pitcher_stat_list))))
+            recent_data = dict(zip(pitcher_stat_list, np.repeat(0, len(pitcher_stat_list))))
+            career_data = dict(zip(pitcher_stat_list, np.repeat(0, len(pitcher_stat_list))))
 
         recent_data = {f'{team}_starter_recent_{k}':v for k,v in recent_data.items()}
         career_data = {f'{team}_starter_career_{k}':v for k,v in career_data.items()}
@@ -180,9 +182,20 @@ def process_starter_data1(team_starters, team, game_date):
         team_recent_data.append(recent_data)
         team_career_data.append(career_data)
 
-        print(team_recent_data)
-            
-    team_starter_data.update(career_data)
-    team_starter_data.update(recent_data)
+        for i in range(len(team_recent_data)):
+            obj = team_recent_data[i]
+            for key in obj:
+                if key in weighted_sum:
+                    team_starter_data[key] += obj[key] * weights[i]
+                else:
+                    team_starter_data[key] = obj[key] * weights[i]
+
+        for j in range(len(team_career_data)):
+            obj = team_career_data[i]
+            for key in obj:
+                if key in weighted_sum:
+                    team_starter_data[key] += obj[key] * weights[j]
+                else:
+                    team_starter_data[key] = obj[key] * weights[j]
     
     return team_starter_data

@@ -19,7 +19,22 @@ import joblib
 # engine.execute(text("CREATE TABLE IF NOT EXISTS league_average(year TEXT, avg FLOAT, obp FLOAT, slg FLOAT, ops FLOAT, era FLOAT, whip FLOAT);"))
 # engine.execute(text("CREATE TABLE IF NOT EXISTS win_percent_c(game_id TEXT UNIQUE, away_prob FLOAT, home_prob FLOAT);"))
 # engine.execute(text("CREATE TABLE IF NOT EXISTS predict_table(game_id TEXT UNIQUE, la_away_prob TEXT, la_home_prob TEXT, lb_away_prob TEXT, lb_home_prob TEXT, lc_away_prob TEXT, lc_home_prob TEXT);"))
-game_date = datetime.today()
-rosters = schedule.get_rosters("716775")
+# game_date = datetime.today()
+# rosters = schedule.get_rosters("716775")
 
-print(rosters)
+array = [{'a': 3, 'b': 4}, {'a': 2, 'b': 5}, {'a': 4, 'b': 3}]
+weights = [0.6, 0.3, 0.1]
+
+weighted_sum = {}
+
+for i in range(len(array)):
+    obj = array[i]
+    for key in obj:
+        if key in weighted_sum:
+            weighted_sum[key] += obj[key] * weights[i]
+        else:
+            weighted_sum[key] = obj[key] * weights[i]
+
+print(weighted_sum)
+
+# print(rosters)

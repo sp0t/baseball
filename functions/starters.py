@@ -126,7 +126,7 @@ def process_career_starter_data(player_id, games, recent_games, pitcher_stat_lis
     
     return career_data
 
-def process_starter_data(team_starter, team, game_date): 
+def process_starter_data1(team_starter, team, game_date): 
     
     pitcher_stat_list=[
         'atBats', 'baseOnBalls', 'blownSave', 'doubles', 'earnedRuns', 'era', 'hits', 'holds', 'homeRuns', 'inningsPitched', 
@@ -152,7 +152,7 @@ def process_starter_data(team_starter, team, game_date):
     
     return team_starter_data
 
-def process_starter_data1(team_starters, team, game_date): 
+def process_starter_data(team_starters, team, game_date): 
     
     pitcher_stat_list=[
         'atBats', 'baseOnBalls', 'blownSave', 'doubles', 'earnedRuns', 'era', 'hits', 'holds', 'homeRuns', 'inningsPitched', 
@@ -182,20 +182,21 @@ def process_starter_data1(team_starters, team, game_date):
         team_recent_data.append(recent_data)
         team_career_data.append(career_data)
 
-        for i in range(len(team_recent_data)):
-            obj = team_recent_data[i]
-            for key in obj:
-                if key in weighted_sum:
-                    team_starter_data[key] += obj[key] * weights[i]
-                else:
-                    team_starter_data[key] = obj[key] * weights[i]
+    for i in range(len(team_recent_data)):
+        obj = team_recent_data[i]
+        for key in obj:
+            if key in team_starter_data:
+                team_starter_data[key] += obj[key] * weights[i]
+            else:
+                team_starter_data[key] = obj[key] * weights[i]
 
-        for j in range(len(team_career_data)):
-            obj = team_career_data[i]
-            for key in obj:
-                if key in weighted_sum:
-                    team_starter_data[key] += obj[key] * weights[j]
-                else:
-                    team_starter_data[key] = obj[key] * weights[j]
-    
+    for j in range(len(team_career_data)):
+        obj = team_career_data[i]
+        for key in obj:
+            if key in team_starter_data:
+                team_starter_data[key] += obj[key] * weights[j]
+            else:
+                team_starter_data[key] = obj[key] * weights[j]
+
+    print(team_career_data)   
     return team_starter_data

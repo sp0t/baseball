@@ -6,6 +6,7 @@ import numpy as np
 import pandas as pd
 import sqlite3
 from database import database
+from sqlalchemy import text
 
 def get_starter_df(player_id): 
     

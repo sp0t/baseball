@@ -179,6 +179,10 @@ def process_starter_data1(team_starters, team, game_date):
 
         recent_data = {f'{team}_starter_recent_{k}':v for k,v in recent_data.items()}
         career_data = {f'{team}_starter_career_{k}':v for k,v in career_data.items()}
+
+        prrnt(recent_data)
+        prrnt(career_data)
+
             
         team_recent_data.append(recent_data)
         team_career_data.append(career_data)

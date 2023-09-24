@@ -136,11 +136,11 @@ def save_pitcher_data(engine, row, away_starter, home_starter, gameId, rosters):
             state = False
         else:
             state = True
-    # for index, row in pitchers.iterrows():
-    #     if state:
-    #         engine.execute(text(f"INSERT INTO pitcher_stats(game_id, game_date, position, player_id, career_era, career_homeRuns, career_whip, career_battersFaced, recent_era, recent_homeRuns, recent_whip, recent_battersFaced) \
-    #                                 VALUES('{gameId}', '{gamedate}', '{index}', '{int(row['player_id'])}', '{round(float(row['career_era']), 3)}', '{round(float(row['career_homeRuns']), 3)}', '{round(float(row['career_whip']), 3)}', '{round(float(row['career_battersFaced']), 3)}', '{round(float(row['recent_era']), 3)}', '{round(float(row['recent_homeRuns']), 3)}', '{round(float(row['recent_whip']), 3)}', '{round(float(row['recent_battersFaced']), 3)}') \
-    #                                 ON CONFLICT ON CONSTRAINT unique_pitcher_player DO UPDATE SET game_date = excluded.game_date, career_era = excluded.career_era, career_homeRuns = excluded.career_homeRuns, career_whip = excluded.career_whip, career_battersFaced = excluded.career_battersFaced, recent_era = excluded.recent_era, recent_homeRuns = excluded.recent_homeRuns, recent_whip = excluded.recent_whip, recent_battersFaced = excluded.recent_battersFaced;"))
+    for index, row in pitchers.iterrows():
+        if state:
+            engine.execute(text(f"INSERT INTO pitcher_stats(game_id, game_date, position, player_id, career_era, career_homeRuns, career_whip, career_battersFaced, recent_era, recent_homeRuns, recent_whip, recent_battersFaced) \
+                                    VALUES('{gameId}', '{gamedate}', '{index}', '{int(row['player_id'])}', '{round(float(row['career_era']), 3)}', '{round(float(row['career_homeRuns']), 3)}', '{round(float(row['career_whip']), 3)}', '{round(float(row['career_battersFaced']), 3)}', '{round(float(row['recent_era']), 3)}', '{round(float(row['recent_homeRuns']), 3)}', '{round(float(row['recent_whip']), 3)}', '{round(float(row['recent_battersFaced']), 3)}') \
+                                    ON CONFLICT ON CONSTRAINT unique_pitcher_player DO UPDATE SET game_date = excluded.game_date, career_era = excluded.career_era, career_homeRuns = excluded.career_homeRuns, career_whip = excluded.career_whip, career_battersFaced = excluded.career_battersFaced, recent_era = excluded.recent_era, recent_homeRuns = excluded.recent_homeRuns, recent_whip = excluded.recent_whip, recent_battersFaced = excluded.recent_battersFaced;"))
  
     return pitcher_df
 
@@ -225,8 +225,8 @@ def get_probabilities(params):
     away_batter_data = batting.process_team_batter_data(team_batter, 'away', game_date)
     home_batter_data = batting.process_team_batter_data(team_home, 'home', game_date)
     # Starters 
-    away_starter_data = starters.process_starter_data(away_starters, 'away', game_date, game_id)
-    home_starter_data = starters.process_starter_data(home_starters, 'home', game_date, game_id)
+    away_starter_data = starters.process_starter_data(away_starter, 'away', game_date)
+    home_starter_data = starters.process_starter_data(home_starter, 'home', game_date)
 
     # Bullpen 
     away_bullpen_data = bullpen.process_bullpen_data(away_name, 'away', game_date)

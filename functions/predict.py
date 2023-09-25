@@ -225,8 +225,8 @@ def get_probabilities(params):
     away_batter_data = batting.process_team_batter_data(team_batter, 'away', game_date)
     home_batter_data = batting.process_team_batter_data(team_home, 'home', game_date)
     # Starters 
-    away_starter_data = starters.process_starter_data(away_starter, 'away', game_date)
-    home_starter_data = starters.process_starter_data(home_starter, 'home', game_date)
+    away_starter_data = starters.process_starter_data(away_starters, 'away', game_date, game_id)
+    home_starter_data = starters.process_starter_data(home_starters, 'home', game_date, game_id)
 
     # Bullpen 
     away_bullpen_data = bullpen.process_bullpen_data(away_name, 'away', game_date)

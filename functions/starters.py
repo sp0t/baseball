@@ -127,7 +127,7 @@ def process_career_starter_data(player_id, games, recent_games, pitcher_stat_lis
     
     return career_data
 
-def process_starter_data(team_starter, team, game_date): 
+def process_starter_data1(team_starter, team, game_date): 
     
     pitcher_stat_list=[
         'atBats', 'baseOnBalls', 'blownSave', 'doubles', 'earnedRuns', 'era', 'hits', 'holds', 'homeRuns', 'inningsPitched', 
@@ -153,7 +153,7 @@ def process_starter_data(team_starter, team, game_date):
     
     return team_starter_data
 
-def process_starter_data1(team_starters, team, game_date, gameid): 
+def process_starter_data(team_starters, team, game_date, gameid): 
     
     pitcher_stat_list=[
         'atBats', 'baseOnBalls', 'blownSave', 'doubles', 'earnedRuns', 'era', 'hits', 'holds', 'homeRuns', 'inningsPitched', 
@@ -164,6 +164,7 @@ def process_starter_data1(team_starters, team, game_date, gameid):
     team_career_data = []
     weights = [0.5552, 0.1112, 0.1112, 0.1112, 0.1112]
     engine = database.connect_to_db()
+    formatted_date = game_date.strftime('%Y/%m/%d')
     
     for i in range(5):
         # order = team_batters.index(team_batter)+1
@@ -183,10 +184,10 @@ def process_starter_data1(team_starters, team, game_date, gameid):
         print(team, '===================================', order)
         
         print(text(f"INSERT INTO pitcher_stats(game_id, game_date, position, player_id, career_era, career_homeRuns, career_whip, career_battersFaced, recent_era, recent_homeRuns, recent_whip, recent_battersFaced) \
-                                    VALUES('{gameid}', '{game_date}', '{f'{team} pitcher {order}'}', '{team_starter}', '{round(float(career_data[f'{team}_starter_career_era']), 3)}', '{round(float(career_data[f'{team}_starter_career_homeRuns']), 3)}', '{round(float(career_data[f'{team}_starter_career_whip']), 3)}', '{round(float(career_data[f'{team}_starter_career_atBats']) + float(career_data[f'{team}_starter_career_baseOnBalls']), 3)}', '{round(float(recent_data[f'{team}_starter_recent_era']), 3)}', '{round(float(recent_data[f'{team}_starter_recent_homeRuns']), 3)}', '{round(float(recent_data[f'{team}_starter_recent_whip']), 3)}', '{round(float(recent_data[f'{team}_starter_recent_atBats']) + float(recent_data[f'{team}_starter_recent_baseOnBalls']), 3)}') \
+                                    VALUES('{gameid}', '{formatted_date}', '{f'{team} pitcher {order}'}', '{team_starter}', '{round(float(career_data[f'{team}_starter_career_era']), 3)}', '{round(float(career_data[f'{team}_starter_career_homeRuns']), 3)}', '{round(float(career_data[f'{team}_starter_career_whip']), 3)}', '{round(float(career_data[f'{team}_starter_career_atBats']) + float(career_data[f'{team}_starter_career_baseOnBalls']), 3)}', '{round(float(recent_data[f'{team}_starter_recent_era']), 3)}', '{round(float(recent_data[f'{team}_starter_recent_homeRuns']), 3)}', '{round(float(recent_data[f'{team}_starter_recent_whip']), 3)}', '{round(float(recent_data[f'{team}_starter_recent_atBats']) + float(recent_data[f'{team}_starter_recent_baseOnBalls']), 3)}') \
                                     ON CONFLICT ON CONSTRAINT unique_pitcher_player DO UPDATE SET game_date = excluded.game_date, career_era = excluded.career_era, career_homeRuns = excluded.career_homeRuns, career_whip = excluded.career_whip, career_battersFaced = excluded.career_battersFaced, recent_era = excluded.recent_era, recent_homeRuns = excluded.recent_homeRuns, recent_whip = excluded.recent_whip, recent_battersFaced = excluded.recent_battersFaced;"))
         engine.execute(text(f"INSERT INTO pitcher_stats(game_id, game_date, position, player_id, career_era, career_homeRuns, career_whip, career_battersFaced, recent_era, recent_homeRuns, recent_whip, recent_battersFaced) \
-                                    VALUES('{gameid}', '{game_date}', '{f'{team} pitcher {order}'}', '{team_starter}', '{round(float(career_data[f'{team}_starter_career_era']), 3)}', '{round(float(career_data[f'{team}_starter_career_homeRuns']), 3)}', '{round(float(career_data[f'{team}_starter_career_whip']), 3)}', '{round(float(career_data[f'{team}_starter_career_atBats']) + float(career_data[f'{team}_starter_career_baseOnBalls']), 3)}', '{round(float(recent_data[f'{team}_starter_recent_era']), 3)}', '{round(float(recent_data[f'{team}_starter_recent_homeRuns']), 3)}', '{round(float(recent_data[f'{team}_starter_recent_whip']), 3)}', '{round(float(recent_data[f'{team}_starter_recent_atBats']) + float(recent_data[f'{team}_starter_recent_baseOnBalls']), 3)}') \
+                                    VALUES('{gameid}', '{formatted_date}', '{f'{team} pitcher {order}'}', '{team_starter}', '{round(float(career_data[f'{team}_starter_career_era']), 3)}', '{round(float(career_data[f'{team}_starter_career_homeRuns']), 3)}', '{round(float(career_data[f'{team}_starter_career_whip']), 3)}', '{round(float(career_data[f'{team}_starter_career_atBats']) + float(career_data[f'{team}_starter_career_baseOnBalls']), 3)}', '{round(float(recent_data[f'{team}_starter_recent_era']), 3)}', '{round(float(recent_data[f'{team}_starter_recent_homeRuns']), 3)}', '{round(float(recent_data[f'{team}_starter_recent_whip']), 3)}', '{round(float(recent_data[f'{team}_starter_recent_atBats']) + float(recent_data[f'{team}_starter_recent_baseOnBalls']), 3)}') \
                                     ON CONFLICT ON CONSTRAINT unique_pitcher_player DO UPDATE SET game_date = excluded.game_date, career_era = excluded.career_era, career_homeRuns = excluded.career_homeRuns, career_whip = excluded.career_whip, career_battersFaced = excluded.career_battersFaced, recent_era = excluded.recent_era, recent_homeRuns = excluded.recent_homeRuns, recent_whip = excluded.recent_whip, recent_battersFaced = excluded.recent_battersFaced;"))
             
         team_recent_data.append(recent_data)

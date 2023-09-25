@@ -22,19 +22,6 @@ import joblib
 # game_date = datetime.today()
 # rosters = schedule.get_rosters("716775")
 
-array = [{'a': 3, 'b': 4}, {'a': 2, 'b': 5}, {'a': 4, 'b': 3}]
-weights = [0.6, 0.3, 0.1]
-
-weighted_sum = {}
-
-for i in range(len(array)):
-    obj = array[i]
-    for key in obj:
-        if key in weighted_sum:
-            weighted_sum[key] += obj[key] * weights[i]
-        else:
-            weighted_sum[key] = obj[key] * weights[i]
-
-print(weighted_sum)
-
-# print(rosters)
+game_date = datetime.today()
+formatted_date = game_date.strftime('%Y/%m/%d')
+print(formatted_date)

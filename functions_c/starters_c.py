@@ -173,3 +173,57 @@ def process_starter_data(team_starter, team, game_date, team_batters):
     team_starter_data.update(recent_data)
     
     return team_starter_data
+
+def process_starter_data1(team_starters, team, game_date, team_batters): 
+    
+    pitcher_stat_list=[
+        'atBats', 'baseOnBalls', 'blownSave', 'doubles', 'earnedRuns', 'era', 'hits', 'holds', 'homeRuns', 'inningsPitched', 
+        'losses', 'pitchesThrown', 'playerId', 'rbi', 'runs', 'strikeOuts', 'strikes', 'triples', 'whip',  'wins']
+    
+    
+    team_starter_data = {}
+    team_recent_data = []
+    team_career_data = []
+    weights = [0.5552, 0.1112, 0.1112, 0.1112, 0.1112]
+    engine = database.connect_to_db()
+    formatted_date = game_date.strftime('%Y/%m/%d')
+
+    for i in range(5):
+        order = i + 1
+        team_starter = team_starters[i]
+        player_df = get_starter_df(team_starter, game_date)
+
+        if len(player_df) > 0 : 
+            recent_data, games = process_recent_starter_data(player_df, game_date, team_batters, pitcher_stat_list)
+            career_data = process_career_starter_data(games, pitcher_stat_list)
+        else: 
+            recent_data = dict(zip(pitcher_stat_list, np.repeat(0, len(pitcher_stat_list))))
+            career_data = dict(zip(pitcher_stat_list, np.repeat(0, len(pitcher_stat_list))))
+
+        recent_data = {f'{team}_starter_recent_{k}':v for k,v in recent_data.items()}
+        career_data = {f'{team}_starter_career_{k}':v for k,v in career_data.items()}
+
+        engine.execute(text(f"INSERT INTO pitcher_stats(game_id, game_date, position, player_id, career_era, career_homeRuns, career_whip, career_battersFaced, recent_era, recent_homeRuns, recent_whip, recent_battersFaced) \
+                                    VALUES('{gameid}', '{formatted_date}', '{f'{team} pitcher {order}'}', '{team_starter}', '{round(float(career_data[f'{team}_starter_career_era']), 3)}', '{round(float(career_data[f'{team}_starter_career_homeRuns']), 3)}', '{round(float(career_data[f'{team}_starter_career_whip']), 3)}', '{round(float(career_data[f'{team}_starter_career_atBats']) + float(career_data[f'{team}_starter_career_baseOnBalls']), 3)}', '{round(float(recent_data[f'{team}_starter_recent_era']), 3)}', '{round(float(recent_data[f'{team}_starter_recent_homeRuns']), 3)}', '{round(float(recent_data[f'{team}_starter_recent_whip']), 3)}', '{round(float(recent_data[f'{team}_starter_recent_atBats']) + float(recent_data[f'{team}_starter_recent_baseOnBalls']), 3)}') \
+                                    ON CONFLICT ON CONSTRAINT unique_pitcher_player DO UPDATE SET game_date = excluded.game_date, career_era = excluded.career_era, career_homeRuns = excluded.career_homeRuns, career_whip = excluded.career_whip, career_battersFaced = excluded.career_battersFaced, recent_era = excluded.recent_era, recent_homeRuns = excluded.recent_homeRuns, recent_whip = excluded.recent_whip, recent_battersFaced = excluded.recent_battersFaced;"))
+            
+        team_recent_data.append(recent_data)
+        team_career_data.append(career_data)
+
+    for j in range(len(team_career_data)):
+        obj = team_career_data[j]
+        for key in obj:
+            if key in team_starter_data:
+                team_starter_data[key] += obj[key] * weights[j]
+            else:
+                team_starter_data[key] = obj[key] * weights[j]
+
+    for i in range(len(team_recent_data)):
+        obj = team_recent_data[i]
+        for key in obj:
+            if key in team_starter_data:
+                team_starter_data[key] += obj[key] * weights[i]
+            else:
+                team_starter_data[key] = obj[key] * weights[i]
+    
+    return team_starter_data

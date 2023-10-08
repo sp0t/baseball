@@ -535,7 +535,7 @@ def get_probabilities(params):
         team_career_data = []
         weights = [0.5552, 0.1112, 0.1112, 0.1112, 0.1112]
 
-        print('awaystarter============>', away_starter)
+        print('awaystarter============>', away_starters)
 
         for starter in away_starters:
             away_pitcher_res = pd.read_sql(f"SELECT * FROM predict_pitcher_stats WHERE game_id = '{game_id}' AND player_id = '{starter}';", con = engine).to_dict('records')
@@ -589,7 +589,7 @@ def get_probabilities(params):
                 if (len(player_name_res) > 0):
                     player_name = player_name_res[0]['p_name']
                 else:
-                    player_name = away_starter
+                    player_name = starter
 
                 print('insert in the table')
 
@@ -684,7 +684,7 @@ def get_probabilities(params):
                 if (len(player_name_res) > 0):
                     player_name = player_name_res[0]['p_name']
                 else:
-                    player_name = home_starter
+                    player_name = starter
 
                 print('insert in the table')
 

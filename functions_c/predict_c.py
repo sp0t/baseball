@@ -619,6 +619,7 @@ def get_probabilities(params):
         away_starter_data.update(team_starter_data)
         team_starter_data = {}
 
+        print(team_recent_data)
         for i in range(len(team_recent_data)):
             obj = team_recent_data[i]
             for key in obj:

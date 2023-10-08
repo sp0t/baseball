@@ -626,6 +626,7 @@ def get_probabilities(params):
         print(team_recent_data)
         for i in range(len(team_recent_data)):
             obj = team_recent_data[i]
+            obj['away_starter_recent_playerId'] = int(obj['away_starter_recent_playerId'])
             for key in obj:
                 if key in team_starter_data:
                     team_starter_data[key] += obj[key] * weights[i]
@@ -727,6 +728,7 @@ def get_probabilities(params):
         team_starter_data = {}
         for i in range(len(team_recent_data)):
             obj = team_recent_data[i]
+            obj['home_starter_recent_playerId'] = int(obj['home_starter_recent_playerId'])
             for key in obj:
                 if key in team_starter_data:
                     team_starter_data[key] += obj[key] * weights[i]

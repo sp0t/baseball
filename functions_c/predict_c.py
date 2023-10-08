@@ -580,8 +580,8 @@ def get_probabilities(params):
                     recent_data, games = starters_c.process_recent_starter_data(player_df, game_date, [], pitcher_stat_list)
                     career_data = starters_c.process_career_starter_data(games, pitcher_stat_list)
                 else: 
-                    recent_data = dict(zip(pitcher_stat_list, np.repeat(np.nan, len(pitcher_stat_list))))
-                    career_data = dict(zip(pitcher_stat_list, np.repeat(np.nan, len(pitcher_stat_list))))
+                    recent_data = dict(zip(pitcher_stat_list, np.repeat(0, len(pitcher_stat_list))))
+                    career_data = dict(zip(pitcher_stat_list, np.repeat(0, len(pitcher_stat_list))))
 
                 player_name_res = pd.read_sql(f"SELECT * FROM player_table WHERE p_id = '{starter}';", con = engine).to_dict('records')
                 player_name = ''
@@ -674,8 +674,8 @@ def get_probabilities(params):
                     recent_data, games = starters_c.process_recent_starter_data(player_df, game_date, [], pitcher_stat_list)
                     career_data = starters_c.process_career_starter_data(games, pitcher_stat_list)
                 else: 
-                    recent_data = dict(zip(pitcher_stat_list, np.repeat(np.nan, len(pitcher_stat_list))))
-                    career_data = dict(zip(pitcher_stat_list, np.repeat(np.nan, len(pitcher_stat_list))))
+                    recent_data = dict(zip(pitcher_stat_list, np.repeat(0, len(pitcher_stat_list))))
+                    career_data = dict(zip(pitcher_stat_list, np.repeat(0, len(pitcher_stat_list))))
 
                 player_name_res = pd.read_sql(f"SELECT * FROM player_table WHERE p_id = '{starter}';", con = engine).to_dict('records')
                 player_name = ''

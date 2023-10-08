@@ -606,6 +606,8 @@ def get_probabilities(params):
                 team_career_data.append(career_data)
                 team_recent_data.append(recent_data)
 
+        team_starter_data = {}
+
         for j in range(len(team_career_data)):
             obj = team_career_data[j]
             for key in obj:
@@ -614,6 +616,9 @@ def get_probabilities(params):
                 else:
                     team_starter_data[key] = obj[key] * weights[j]
 
+        away_starter_data.update(team_starter_data)
+        team_starter_data = {}
+
         for i in range(len(team_recent_data)):
             obj = team_recent_data[i]
             for key in obj:
@@ -621,8 +626,7 @@ def get_probabilities(params):
                     team_starter_data[key] += obj[key] * weights[i]
                 else:
                     team_starter_data[key] = obj[key] * weights[i]
-        away_starter_data.update(team_career_data)
-        away_starter_data.update(team_recent_data)
+        away_starter_data.update(team_starter_data)
 
         team_recent_data = []
         team_career_data = []
@@ -695,7 +699,8 @@ def get_probabilities(params):
 
                 team_career_data.append(career_data)
                 team_recent_data.append(recent_data)
-                
+
+        team_starter_data = {}        
         for j in range(len(team_career_data)):
             obj = team_career_data[j]
             for key in obj:
@@ -704,6 +709,8 @@ def get_probabilities(params):
                 else:
                     team_starter_data[key] = obj[key] * weights[j]
 
+        home_starter_data.update(team_starter_data)
+        team_starter_data = {}
         for i in range(len(team_recent_data)):
             obj = team_recent_data[i]
             for key in obj:
@@ -712,8 +719,7 @@ def get_probabilities(params):
                 else:
                     team_starter_data[key] = obj[key] * weights[i]
 
-        home_starter_data.update(team_career_data)
-        home_starter_data.update(team_recent_data)
+        home_starter_data.update(team_starter_data)
         
     # Bullpen 
     away_bullpen_data = bullpen_c.process_bullpen_data(away_name, 'away', game_date)

@@ -67,7 +67,7 @@
                             </div>
                         </div>
                         <div class="scrolling-pitcher">
-                            {% for i in range(1, 5)%}
+                            {% for i in range(1, 6)%}
                             <div class="form-row">
                                 <label for="away_pitcher_{{i}}" style="margin: 0 9px; color: #5D6D7E">Starter #{{i}}</label>
                                 <select name="away_pitcher_{{i}}" id="away_pitcher_{{i}}" style="width: 60%;  text-align: center" onchange="selectAwayPitcher(this.value)" required>
@@ -107,7 +107,7 @@
                             </div>
                         </div>
                         <div class="scrolling-pitcher">
-                            {% for i in range(1,5) %}
+                            {% for i in range(1,6) %}
                             <div class="form-row">
                                 <label for="home_pitcher_{{i}}" style="margin: 0 9px; color: #5D6D7E">Starter #{{i}}</label>
                                 <select name="home_pitcher_{{i}}" id="home_pitcher_{{i}}" style="width: 60%;  text-align: center" onchange="selectHomePitcher(this.value)" required>
@@ -238,7 +238,7 @@
 
             players.awaypitcher = []
 
-            for (var i = 1; i <= 4; i++) {
+            for (var i = 1; i <= 5; i++) {
                 if ($(`#away_pitcher_${i}`).val() != '')
                     players.awaypitcher.push($(`#away_pitcher_${i}`).val())
             }
@@ -288,7 +288,7 @@
             
             players.homepitcher = []
 
-            for (var i = 1; i <= 4; i++) {
+            for (var i = 1; i <= 5; i++) {
                 if ($(`#home_pitcher_${i}`).val() != '')
                     players.homepitcher.push($(`#home_pitcher_${i}`).val())
             }
@@ -439,7 +439,7 @@
                         homebatterhtml = '';
                     }
 
-                    for (i = 1; i < 5; i++ ) {
+                    for (i = 1; i < 6; i++ ) {
                         awaypitcherhtml += `<option value="">—</option>`
                         for (n = 0; n < data['rosters']['away'].length; n++){
                             awaypitcherhtml += `<option value='${data['rosters']['away'][n].id}' class='option'>${data['rosters']['away'][n].fullName}</option>`
@@ -448,7 +448,7 @@
                         awaypitcherhtml = '';
                     }
 
-                    for (i = 1; i < 5; i++) {
+                    for (i = 1; i < 6; i++) {
                         homepitcherhtml += `<option value="">—</option>`
                         for (n = 0; n < data['rosters']['home'].length; n++){
                             homepitcherhtml += `<option value='${data['rosters']['home'][n].id}' class='option'>${data['rosters']['home'][n].fullName}</option>`

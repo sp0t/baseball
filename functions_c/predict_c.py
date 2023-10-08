@@ -535,10 +535,8 @@ def get_probabilities(params):
         team_career_data = []
         weights = [0.5552, 0.1112, 0.1112, 0.1112, 0.1112]
 
-        print('awaystarters============>', away_starters)
 
         for starter in away_starters:
-            print('away========starter============>', starter)
             away_pitcher_res = pd.read_sql(f"SELECT * FROM predict_pitcher_stats WHERE game_id = '{game_id}' AND player_id = '{starter}';", con = engine).to_dict('records')
         
             if (len(away_pitcher_res) > 0):
@@ -573,7 +571,6 @@ def get_probabilities(params):
                         career_data = {f'away_starter_career_{k}':v for k,v in updated_stas.items()}
                         team_career_data.append(career_data)
 
-                print('=========================team_career_data', team_career_data)
             else:
                 print('not in the table')
 
@@ -608,7 +605,6 @@ def get_probabilities(params):
 
                 team_career_data.append(career_data)
                 team_recent_data.append(recent_data)
-                print('=========================team_career_data', team_career_data)
 
         team_starter_data = {}
 
@@ -634,16 +630,13 @@ def get_probabilities(params):
                     team_starter_data[key] = obj[key] * weights[i]
         away_starter_data.update(team_starter_data)
 
-        print('away_starter_data ============>', away_starter_data)
 
         team_recent_data = []
         team_career_data = []
 
-        print('away_starter_data ============>', home_starters)
 
 
         for starter in home_starters:
-            print('home========starter============>', starter)
 
             home_pitcher_res = pd.read_sql(f"SELECT * FROM predict_pitcher_stats WHERE game_id = '{game_id}' AND player_id = '{starter}';", con = engine).to_dict('records')
 
@@ -678,7 +671,6 @@ def get_probabilities(params):
 
                         career_data = {f'home_starter_career_{k}':v for k,v in updated_stas.items()}
                         team_career_data.append(career_data)
-                print('=========================team_career_data', team_career_data)
             else:
                 print('not in the table')
                 
@@ -713,7 +705,6 @@ def get_probabilities(params):
 
                 team_career_data.append(career_data)
                 team_recent_data.append(recent_data)
-                print('=========================team_career_data', team_career_data)
 
         team_starter_data = {}        
         for j in range(len(team_career_data)):
@@ -736,7 +727,6 @@ def get_probabilities(params):
                     team_starter_data[key] = obj[key] * weights[i]
 
         home_starter_data.update(team_starter_data)
-        print('=========================home_starter_data', home_starter_data)
         
     # Bullpen 
     away_bullpen_data = bullpen_c.process_bullpen_data(away_name, 'away', game_date)
@@ -752,6 +742,8 @@ def get_probabilities(params):
     game_data.update(home_bullpen_data)
     game_data.update(home_batter_data)
     game_data.update(home_starter_data)
+
+    print(game_data)
     
     X_test = pd.DataFrame(game_data, index = [0])
 
@@ -771,6 +763,7 @@ def get_probabilities(params):
 
     # Make Prediciton    
     pred_1c = pickle.load(open('algorithms/model_1a_v10.sav', 'rb')).predict_proba(X_test)
+    print('pred_1c ======================>', pred_1c)
 
     
     return pred_1c

@@ -274,9 +274,9 @@
             }
 
             if(check) {
-                if(playerData[game_id].away_pitcher.length == 4)
+                if(playerData[game_id].away_pitcher.length == 5)
                 {
-                    alert('Already Selected 4 Players')
+                    alert('Already Selected 5 Players')
                     $(`#away_pitcher_${player_id}`).prop('checked', false);
                     return
                 }
@@ -310,9 +310,9 @@
             }
 
             if(check) {
-                if(playerData[game_id].home_pitcher.length == 4)
+                if(playerData[game_id].home_pitcher.length == 5)
                 {
-                    alert('Already Selected 4 Players')
+                    alert('Already Selected 5 Players')
                     $(`#home_pitcher_${player_id}`).prop('checked', false);
                     return
                 }

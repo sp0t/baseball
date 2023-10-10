@@ -201,10 +201,6 @@ def get_probabilities(params):
     
     engine = database.connect_to_db()
 
-    pred_1c = [[0.51486457, 0.48513543]]
-    return pred_1c
-
-
     away_batters, home_batters = [str(el) for el in params['away_batters']], [str(el) for el in params['home_batters']]
     away_starters, home_starters = [str(el) for el in params['away_starters']], [str(el) for el in params['home_starters']]
     savestate = params['savestate']

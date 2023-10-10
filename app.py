@@ -57,6 +57,7 @@ app.config['MAIL_USE_TLS'] = True
 app.config['MAIL_USE_SSL'] = False
 app.config['SECURITY_PASSWORD_SALT'] = "betmlblucalucamaurelli@proton.me"
 app.config['MAIL_DEFAULT_SENDER'] = "Strongwind410@gmail.com'"
+app.config['PERMANENT_SESSION_LIFETIME'] = 3600
 
 mail = Mail(app)
 

@@ -201,7 +201,7 @@ def get_probabilities(params):
     
     engine = database.connect_to_db()
 
-    pred_1c = [[0.51486457 0.48513543]]
+    pred_1c = [[0.51486457, 0.48513543]]
     return pred_1c
 
 

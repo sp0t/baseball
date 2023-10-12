@@ -41,23 +41,23 @@ for game in res_game:
                 hander = 'R'
 
             if batter['position'] == 'C':
-                away_c = f"{batter['name'].replace("'", " ")}-{hander}"
+                away_c = batter['name'].replace("'", " ") + "-" + hander
             elif batter['position'] == '1B':
-                away_b1 = f"{batter['name'].replace("'", " ")}-{hander}"
+                away_b1 = batter['name'].replace("'", " ") + "-" + hander
             elif batter['position'] == '2B':
-                away_b2 = f"{batter['name'].replace("'", " ")}-{hander}"
+                away_b2 = batter['name'].replace("'", " ") + "-" + hander
             elif batter['position'] == '3B':
-                away_b3 = f"{batter['name'].replace("'", " ")}-{hander}"
+                away_b3 = batter['name'].replace("'", " ") + "-" + hander
             elif batter['position'] == 'SS':
-                away_ss = f"{batter['name'].replace("'", " ")}-{hander}"
+                away_ss = batter['name'].replace("'", " ") + "-" + hander
             elif batter['position'] == 'LF':
-                away_lf = f"{batter['name'].replace("'", " ")}-{hander}"
+                away_lf = batter['name'].replace("'", " ") + "-" + hander
             elif batter['position'] == 'CF':
-                away_cf = f"{batter['name'].replace("'", " ")}-{hander}"
+                away_cf = batter['name'].replace("'", " ") + "-" + hander
             elif batter['position'] == 'RF':
-                away_rf = f"{batter['name'].replace("'", " ")}-{hander}"
+                away_rf = batter['name'].replace("'", " ") + "-" + hander
             elif batter['position'] == 'DH':
-                away_dh = f"{batter['name'].replace("'", " ")}-{hander}"
+                away_dh = batter['name'].replace("'", " ") + "-" + hander
 
 
 
@@ -75,23 +75,23 @@ for game in res_game:
                 hander = 'R'
 
             if batter['position'] == 'C':
-                home_c = f"{batter['name'].replace("'", " ")}-{hander}"
+                home_c = batter['name'].replace("'", " ") + "-" + hander
             elif batter['position'] == '1B':
-                home_b1 = f"{batter['name'].replace("'", " ")}-{hander}"
+                home_b1 = batter['name'].replace("'", " ") + "-" + hander
             elif batter['position'] == '2B':
-                home_b2 = f"{batter['name'].replace("'", " ")}-{hander}"
+                home_b2 = batter['name'].replace("'", " ") + "-" + hander
             elif batter['position'] == '3B':
-                home_b3 = f"{batter['name'].replace("'", " ")}-{hander}"
+                home_b3 = batter['name'].replace("'", " ") + "-" + hander
             elif batter['position'] == 'SS':
-                home_ss = f"{batter['name'].replace("'", " ")}-{hander}"
+                home_ss = batter['name'].replace("'", " ") + "-" + hander
             elif batter['position'] == 'LF':
-                home_lf = f"{batter['name'].replace("'", " ")}-{hander}"
+                home_lf = batter['name'].replace("'", " ") + "-" + hander
             elif batter['position'] == 'CF':
-                home_cf = f"{batter['name'].replace("'", " ")}-{hander}"
+                home_cf = batter['name'].replace("'", " ") + "-" + hander
             elif batter['position'] == 'RF':
-                home_rf = f"{batter['name'].replace("'", " ")}-{hander}"
+                home_rf = batter['name'].replace("'", " ") + "-" + hander
             elif batter['position'] == 'DH':
-                home_dh = f"{batter['name'].replace("'", " ")}-{hander}"
+                home_dh = batter['name'].replace("'", " ") + "-" + hander
 
     engine.execute(text(f"INSERT INTO position(game_id, game_date, team, role, c, b1, b2, b3, ss, lf, cf, rf, dh) \
                                     VALUES('{game['game_id']}', '{gamedate}', '{home}', 'home', '{home_c}', '{home_b1}', '{home_b2}', '{home_b3}', '{home_ss}', '{home_lf}', '{home_cf}', '{home_rf}', '{home_dh}');"))

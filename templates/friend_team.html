@@ -76,36 +76,182 @@
             
     </style>
     <script>
-         function changeData() {
-            var team_name, team_abbr, count;
-            var data = {};
-      
-            team_name = $("#team option:selected").text();
-            team_abbr = $("#team").val();
-            player = $("#player").val();
-            count = $("#count option:selected").text();
+    function changeData() {
+    var team_name, team_abbr, count;
+    var data = {};
 
-            if($("#season").val() > 2099 || $("#season").val() < 1900)
-            {
-                alert("Invalid year! Retype year.");
-                return;
-            }
+    
+    team_name = $("#team option:selected").text();
+    team_abbr = $("#team").val();
+    player = $("#player").val();
+    if(player == 'batter') 
+        $("#positiontext").text('Positioning');
+    else if(player == 'pitcher')
+        $("#positiontext").text('Bullpen');
+    count = $("#count option:selected").text();
+    
+    if($("#season").val() > 2099 || $("#season").val() < 1900)
+    {
+        alert("Invalid year! Retype year.");
+        return;
+    }
+    
+    // if(team_name.length == 0)
+    // {
+    //     alert("Please select team");
+    //     return;
+    // }
+    
+    data['name'] = team_name;
+    data['abbr'] = team_abbr;
+    data['count'] = count;
+    data['player'] = player;
+    data['year'] = $("#season").val();
+    
+    var isCheckedposition = $("#position").prop('checked');
+    if (isCheckedposition) {
+        document.getElementById('team_page').style.display = 'none';
+        if(player == 'batter') {
+            document.getElementById('position_page').style.display = 'block';
+            document.getElementById('bullpen_page').style.display = 'none';
+            var html='';
+            html+='<thead><tr style="max-width: 1680px">';
+            html+=`<th class="border border-black">Position</th>`;
+            html+=`<th class="border border-black">Player1</th>`;
+            html+=`<th class="border border-black">Player2</th>`;
+            html+=`<th class="border border-black">Player3</th>`;
+            html+=`</tr></thead><tbody  class='border border-black'>`;
+            html+=`<tr class="border border-black">`;
+            html+=`<td class="border border-black bodyth" style="text-align: center;">C</td>`;
+            html+=`<td class="border border-black bg-rose-500">123 - 90%</td>`;
+            html+=`<td class="border border-black bg-rose-500">123 - 48%</td>`;
+            html+=`<td class="border border-black bg-rose-500">123 - 35%</td>`;
+            html+='</tr>'
+            html+=`<tr class="border border-black">`;
+            html+=`<td class="border border-black bodyth" style="text-align: center;">1B</td>`;
+            html+=`<td class="border border-black bg-rose-500">123 - 80%</td>`;
+            html+=`<td class="border border-black bg-rose-500">123 - 40%</td>`;
+            html+=`<td class="border border-black bg-rose-500">123 - 40%</td>`;
+            html+='</tr>'
+            html+=`<tr class="border border-black">`;
+            html+=`<td class="border border-black bodyth" style="text-align: center;">2B</td>`;
+            html+=`<td class="border border-black bg-rose-500">123 - 40%</td>`;
+            html+=`<td class="border border-black bg-rose-500">123 - 30%</td>`;
+            html+=`<td class="border border-black bg-rose-500">123 - 10%</td>`;
+            html+='</tr>'
+            html+=`<tr class="border border-black">`;
+            html+=`<td class="border border-black bodyth" style="text-align: center;">3B</td>`;
+            html+=`<td class="border border-black bg-rose-500">123 - 90%</td>`;
+            html+=`<td class="border border-black bg-rose-500">123 - 70%</td>`;
+            html+=`<td class="border border-black bg-rose-500">123 - 40%</td>`;
+            html+='</tr>'
+            html+=`<tr class="border border-black">`;
+            html+=`<td class="border border-black bodyth" style="text-align: center;">SS</td>`;
+            html+=`<td class="border border-black bg-rose-500">123 - 50%</td>`;
+            html+=`<td class="border border-black bg-rose-500">123 - 40%</td>`;
+            html+=`<td class="border border-black bg-rose-500">123 - 30%</td>`;
+            html+='</tr>'
+            html+=`<tr class="border border-black">`;
+            html+=`<td class="border border-black bodyth" style="text-align: center;">LF</td>`;
+            html+=`<td class="border border-black bg-rose-500">123 - 80%</td>`;
+            html+=`<td class="border border-black bg-rose-500">123 - 46%</td>`;
+            html+=`<td class="border border-black bg-rose-500">123 - 35%</td>`;
+            html+='</tr>'
+            html+=`<tr class="border border-black">`;
+            html+=`<td class="border border-black bodyth" style="text-align: center;">CF</td>`;
+            html+=`<td class="border border-black bg-rose-500">123 - 70%</td>`;
+            html+=`<td class="border border-black bg-rose-500">123 - 60%</td>`;
+            html+=`<td class="border border-black bg-rose-500">123 - 40%</td>`;
+            html+='</tr>'
+            html+=`<tr class="border border-black">`;
+            html+=`<td class="border border-black bodyth" style="text-align: center;">RF</td>`;
+            html+=`<td class="border border-black bg-rose-500">123 - 90%</td>`;
+            html+=`<td class="border border-black bg-rose-500">123 - 48%</td>`;
+            html+=`<td class="border border-black bg-rose-500">123 - 35%</td>`;
+            html+='</tr>'
+            html+=`<tr class="border border-black">`;
+            html+=`<td class="border border-black bodyth" style="text-align: center;">DH</td>`;
+            html+=`<td class="border border-black bg-rose-500">123 - 60%</td>`;
+            html+=`<td class="border border-black bg-rose-500">123 - 50%</td>`;
+            html+=`<td class="border border-black bg-rose-500">123 - 30%</td>`;
+            html+='</tr>'
+            html+='</tbody>'
+    
+            $("#position_table").html(html);
+        } else if (player == 'pitcher') {
+            document.getElementById('position_page').style.display = 'block';
+            document.getElementById('bullpen_page').style.display = 'none';
 
-            if(team_name.length == 0)
-            {
-                alert("Please select team");
-                return;
-            }
-
-            data['name'] = team_name;
-            data['abbr'] = team_abbr;
-            data['count'] = count;
-            data['player'] = player;
-            data['year'] = $("#season").val();
-
-
-            $.ajax({
-                url: '/friend_page', 
+            var html='';
+            html+='<thead><tr style="max-width: 1680px">';
+            html+=`<th class="border border-black">Arizona Bullpen</th>`;
+            html+=`<th class="border border-black">Player1</th>`;
+            html+=`<th class="border border-black">Player2</th>`;
+            html+=`<th class="border border-black">Player3</th>`;
+            html+=`</tr></thead><tbody  class='border border-black'>`;
+            html+=`<tr class="border border-black">`;
+            html+=`<td class="border border-black bodyth" style="text-align: center;">C</td>`;
+            html+=`<td class="border border-black bg-rose-500">123 - 90%</td>`;
+            html+=`<td class="border border-black bg-rose-500">123 - 48%</td>`;
+            html+=`<td class="border border-black bg-rose-500">123 - 35%</td>`;
+            html+='</tr>'
+            html+=`<tr class="border border-black">`;
+            html+=`<td class="border border-black bodyth" style="text-align: center;">1B</td>`;
+            html+=`<td class="border border-black bg-rose-500">123 - 80%</td>`;
+            html+=`<td class="border border-black bg-rose-500">123 - 40%</td>`;
+            html+=`<td class="border border-black bg-rose-500">123 - 40%</td>`;
+            html+='</tr>'
+            html+=`<tr class="border border-black">`;
+            html+=`<td class="border border-black bodyth" style="text-align: center;">2B</td>`;
+            html+=`<td class="border border-black bg-rose-500">123 - 40%</td>`;
+            html+=`<td class="border border-black bg-rose-500">123 - 30%</td>`;
+            html+=`<td class="border border-black bg-rose-500">123 - 10%</td>`;
+            html+='</tr>'
+            html+=`<tr class="border border-black">`;
+            html+=`<td class="border border-black bodyth" style="text-align: center;">3B</td>`;
+            html+=`<td class="border border-black bg-rose-500">123 - 90%</td>`;
+            html+=`<td class="border border-black bg-rose-500">123 - 70%</td>`;
+            html+=`<td class="border border-black bg-rose-500">123 - 40%</td>`;
+            html+='</tr>'
+            html+=`<tr class="border border-black">`;
+            html+=`<td class="border border-black bodyth" style="text-align: center;">SS</td>`;
+            html+=`<td class="border border-black bg-rose-500">123 - 50%</td>`;
+            html+=`<td class="border border-black bg-rose-500">123 - 40%</td>`;
+            html+=`<td class="border border-black bg-rose-500">123 - 30%</td>`;
+            html+='</tr>'
+            html+=`<tr class="border border-black">`;
+            html+=`<td class="border border-black bodyth" style="text-align: center;">LF</td>`;
+            html+=`<td class="border border-black bg-rose-500">123 - 80%</td>`;
+            html+=`<td class="border border-black bg-rose-500">123 - 46%</td>`;
+            html+=`<td class="border border-black bg-rose-500">123 - 35%</td>`;
+            html+='</tr>'
+            html+=`<tr class="border border-black">`;
+            html+=`<td class="border border-black bodyth" style="text-align: center;">CF</td>`;
+            html+=`<td class="border border-black bg-rose-500">123 - 70%</td>`;
+            html+=`<td class="border border-black bg-rose-500">123 - 60%</td>`;
+            html+=`<td class="border border-black bg-rose-500">123 - 40%</td>`;
+            html+='</tr>'
+            html+=`<tr class="border border-black">`;
+            html+=`<td class="border border-black bodyth" style="text-align: center;">RF</td>`;
+            html+=`<td class="border border-black bg-rose-500">123 - 90%</td>`;
+            html+=`<td class="border border-black bg-rose-500">123 - 48%</td>`;
+            html+=`<td class="border border-black bg-rose-500">123 - 35%</td>`;
+            html+='</tr>'
+            html+=`<tr class="border border-black">`;
+            html+=`<td class="border border-black bodyth" style="text-align: center;">DH</td>`;
+            html+=`<td class="border border-black bg-rose-500">123 - 60%</td>`;
+            html+=`<td class="border border-black bg-rose-500">123 - 50%</td>`;
+            html+=`<td class="border border-black bg-rose-500">123 - 30%</td>`;
+            html+='</tr>'
+            html+='</tbody>'
+            $("#bullpen_page").html(html);
+        }
+    } else {
+        document.getElementById('team_page').style.display = 'block';
+        document.getElementById('position_page').style.display = 'none';
+        document.getElementById('bullpen_page').style.display = 'none';
+        $.ajax({
+        url: '/friend_page', 
                 type: 'POST', 
                 data: JSON.stringify(data),
                 dataType: 'json',
@@ -210,8 +356,8 @@
                     $("#team_page").html(html);
                 }
             })
-
         }
+    }
 
         function sortTable(ea) {
 
@@ -290,7 +436,11 @@
                     <select class="bg-cyan-100 border-black px-5" style="border: solid 1px" id="player" onchange="changeData()">
                         <option value="batter">Batters</option>
                         <option value="pitcher">Pitchers</option>
-                    </select>   
+                    </select>
+                    <div>
+                        <input type="checkbox" id="position" name="position" value="position" onclick="changeData()">
+                        <label for="position" style="color: blue;" id="positiontext">Positioning</label><br>
+                    </div>   
                 </div>
                 <div class="w-3/12 flex justify-center text-xl space-x-7">
                     <label class="home_label" for="count" class="text-red-700">Count:</label>
@@ -317,6 +467,14 @@
             
             <div class="mt-10" role="region" aria-labelledby="caption" tabindex="0">
                 <table class="border-collapse border border-black border-collapse text-center scroll-smooth scroll-auto" style="max-width: 1920px" id="team_page">
+                </table>
+                <div id="position_page" style="display: block;">
+                    <div style="font-size: 30px; margin: auto; text-align: center;"><span >Season:&nbsp&nbsp&nbsp</span><span style="color: blue;">30</span></div>
+                    <div  style="font-size: 30px; margin: auto; text-align: center;"><span>Played :&nbsp&nbsp&nbsp</span><span style="color: red;">20</span></div>
+                    <table class="border-collapse border border-black border-collapse text-center scroll-smooth scroll-auto" style="max-width: 1200px; margin: auto;  margin-top: 30px;" id="position_table">
+                    </table>
+                </div>
+                <table class="border-collapse border border-black border-collapse text-center scroll-smooth scroll-auto" style="max-width: 1920px" id="bullpen_page">
                 </table>
             </div>
         </div>

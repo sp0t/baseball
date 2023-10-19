@@ -14,7 +14,7 @@ from sqlalchemy import text
 from itertools import combinations
 
 # Modules
-from functions import batting, predict, starters, smartContract
+from functions import batting, predict, starters, smartContract, sanitycheck
 from functions_c import batting_c, starters_c, predict_c
 from schedule import schedule
 import time
@@ -791,6 +791,133 @@ def friend_page():
         data['name'] = team_data['name']
         data['abbr'] = team_data['abbr']
         return data
+
+@app.route('/position_page', methods = ["POST"]) 
+@login_required
+def position_page():  
+    engine = database.connect_to_db()
+    data = {}
+    team_data = request.get_json()
+    total_res = pd.read_sql(text(f"SELECT COUNT(game_date)count FROM game_table WHERE game_date LIKE '{team_data['year']}%%';"), con = engine).to_dict('records')
+    if(total_res) == 0:
+        total_count = 0
+    else:    
+        total_count = total_res[0]['count']
+    game_res = pd.read_sql(text(f"SELECT COUNT(game_date)count FROM position WHERE team = '{team_data['abbr']}' AND game_date LIKE '{team_data['year']}%%';"), con = engine).to_dict('records')
+    # game_res = pd.read_sql(text(f"SELECT COUNT(game_date)count FROM game_table WHERE (away_team = '{team_data['abbr']}' OR home_team = '{team_data['abbr']}') AND game_date LIKE '{team_data['year']}%%';"), con = engine).to_dict('records')
+    if(game_res) == 0:
+        game_count = 0
+    else:    
+        game_count = game_res[0]['count']
+    c_res = pd.read_sql(text(f"WITH RankedNames AS (SELECT c, DENSE_RANK() OVER(ORDER BY COUNT(*) DESC) AS c_rank, COUNT(*) AS c_count FROM position WHERE team = '{team_data['abbr']}' AND game_date LIKE '{team_data['year']}%%' GROUP BY c) SELECT c, c_rank, c_count FROM RankedNames;"), con = engine).to_dict('records')
+    b1_res = pd.read_sql(text(f"WITH RankedNames AS (SELECT b1, DENSE_RANK() OVER(ORDER BY COUNT(*) DESC) AS b1_rank, COUNT(*) AS b1_count FROM position WHERE team = '{team_data['abbr']}' AND game_date LIKE '{team_data['year']}%%' GROUP BY b1) SELECT b1, b1_rank, b1_count FROM RankedNames;"), con = engine).to_dict('records')
+    b2_res = pd.read_sql(text(f"WITH RankedNames AS (SELECT b2, DENSE_RANK() OVER(ORDER BY COUNT(*) DESC) AS b2_rank, COUNT(*) AS b2_count FROM position WHERE team = '{team_data['abbr']}' AND game_date LIKE '{team_data['year']}%%' GROUP BY b2) SELECT b2, b2_rank, b2_count FROM RankedNames;"), con = engine).to_dict('records')    
+    b3_res = pd.read_sql(text(f"WITH RankedNames AS (SELECT b3, DENSE_RANK() OVER(ORDER BY COUNT(*) DESC) AS b3_rank, COUNT(*) AS b3_count FROM position WHERE team = '{team_data['abbr']}' AND game_date LIKE '{team_data['year']}%%' GROUP BY b3) SELECT b3, b3_rank, b3_count FROM RankedNames;"), con = engine).to_dict('records')    
+    ss_res = pd.read_sql(text(f"WITH RankedNames AS (SELECT ss, DENSE_RANK() OVER(ORDER BY COUNT(*) DESC) AS ss_rank, COUNT(*) AS ss_count FROM position WHERE team = '{team_data['abbr']}' AND game_date LIKE '{team_data['year']}%%' GROUP BY ss) SELECT ss, ss_rank, ss_count FROM RankedNames;"), con = engine).to_dict('records')
+    lf_res = pd.read_sql(text(f"WITH RankedNames AS (SELECT lf, DENSE_RANK() OVER(ORDER BY COUNT(*) DESC) AS lf_rank, COUNT(*) AS lf_count FROM position WHERE team = '{team_data['abbr']}' AND game_date LIKE '{team_data['year']}%%' GROUP BY lf) SELECT lf, lf_rank, lf_count FROM RankedNames;"), con = engine).to_dict('records')
+    cf_res = pd.read_sql(text(f"WITH RankedNames AS (SELECT cf, DENSE_RANK() OVER(ORDER BY COUNT(*) DESC) AS cf_rank, COUNT(*) AS cf_count FROM position WHERE team = '{team_data['abbr']}' AND game_date LIKE '{team_data['year']}%%' GROUP BY cf) SELECT cf, cf_rank, cf_count FROM RankedNames;"), con = engine).to_dict('records')
+    rf_res = pd.read_sql(text(f"WITH RankedNames AS (SELECT rf, DENSE_RANK() OVER(ORDER BY COUNT(*) DESC) AS rf_rank, COUNT(*) AS rf_count FROM position WHERE team = '{team_data['abbr']}' AND game_date LIKE '{team_data['year']}%%' GROUP BY rf) SELECT rf, rf_rank, rf_count FROM RankedNames;"), con = engine).to_dict('records')
+    dh_res = pd.read_sql(text(f"WITH RankedNames AS (SELECT dh, DENSE_RANK() OVER(ORDER BY COUNT(*) DESC) AS dh_rank, COUNT(*) AS dh_count FROM position WHERE team = '{team_data['abbr']}' AND game_date LIKE '{team_data['year']}%%' GROUP BY dh) SELECT dh, dh_rank, dh_count FROM RankedNames;"), con = engine).to_dict('records')
+    
+    data['total_count'] = total_count
+    data['game_count'] = game_count
+    data['c'] = c_res
+    data['b1'] = b1_res
+    data['b2'] = b2_res
+    data['b3'] = b3_res
+    data['ss'] = ss_res
+    data['lf'] = lf_res
+    data['cf'] = cf_res
+    data['rf'] = rf_res
+    data['dh'] = dh_res
+
+
+    return data
+
+@app.route('/bullpen_page', methods = ["POST"]) 
+@login_required
+def bullpen_page():  
+    engine = database.connect_to_db()
+    data = {}
+    data['players'] = []
+    team_data = request.get_json()
+    player_res = pd.read_sql(text(f"WITH RankedNames AS (SELECT playerid, COUNT(*) AS dh_count \
+            FROM (SELECT a.game_date, a.away_team, b.* FROM game_table a INNER JOIN pitcher_table b ON a.game_id = b.game_id WHERE ((a.away_team = '{team_data['abbr']}' AND b.team ='away') OR (a.home_team = '{team_data['abbr']}' AND b.team = 'home')) \
+            AND b.role = 'bullpen' AND a.game_date LIKE '{team_data['year']}%%') c GROUP BY playerid), \
+            LastGameDate AS ( SELECT playerid, MAX(game_date) AS last_game_date, DENSE_RANK() OVER (ORDER BY MAX(game_date) DESC) AS dh_rank FROM ( SELECT a.game_date, a.away_team, b.* \
+            FROM game_table a INNER JOIN pitcher_table b ON a.game_id = b.game_id WHERE ((a.away_team = '{team_data['abbr']}' AND b.team ='away') OR (a.home_team = '{team_data['abbr']}' AND b.team = 'home')) \
+            AND b.role = 'bullpen' AND a.game_date LIKE '{team_data['year']}%%') c GROUP BY playerid) SELECT rn.playerid, dh_rank, dh_count, lgd.last_game_date \
+            FROM RankedNames rn JOIN LastGameDate lgd ON rn.playerid = lgd.playerid ORDER BY dh_rank, lgd.last_game_date DESC;"), con = engine).to_dict('records')
+
+    current_date = datetime.now().date()
+    
+    for el in player_res:
+        player={}
+        target_date = datetime.strptime(el['last_game_date'], "%Y/%m/%d").date()
+        delta = current_date - target_date
+        days_difference = delta.days
+        if (days_difference > 15):
+            continue
+
+        player['rest'] = days_difference
+        player['playerid'] = el['playerid']
+
+        url = f"https://statsapi.mlb.com/api/v1/people/{el['playerid']}"
+        response = requests.get(url)
+        if response.status_code == 200:
+            result = response.json()
+            name = result['people'][0]['fullName']
+            hander = result['people'][0]['batSide']['code']
+            player_name = name.replace("'", " ") + "   " + hander
+        else:
+            player_name = el['playerid']
+
+        player['name'] = player_name
+        player['game'] = el['dh_count']
+        
+        game_date = datetime.today()
+        player_df = sanitycheck.get_starter_df(el['playerid'], team_data['year'])
+    
+        pitcher_stat_list=[
+            'runs', 'doubles', 'triples', 'homeRuns', 'strikeOuts', 'baseOnBalls', 'hits', 'atBats', 
+            'stolenBases', 'inningsPitched', 'wins', 'losses', 'holds', 'blownSave',
+            'pitchesThrown', 'strikes', 'rbi', 'era', 'whip', 'obp']
+
+    
+        recent_data = {}
+        career_data = {}
+
+        if len(player_df) > 0 : 
+            recent_df, recent_games, games, recent_data= sanitycheck.process_recent_starter_data(player_df, game_date, pitcher_stat_list)
+            career_data = sanitycheck.process_career_starter_data(el['playerid'], games, recent_games, pitcher_stat_list, game_date)
+            player['recent'] = {}
+            player['recent']['HR'] = recent_data['HR']
+            player['recent']['ERA'] = recent_data['ERA']
+            player['recent']['WHIP'] = recent_data['WHIP']
+            player['recent']['BF'] = recent_data['BattersFaced']
+
+            player['career'] = {}
+            player['career']['HR'] = career_data['HR']
+            player['career']['ERA'] = career_data['ERA']
+            player['career']['WHIP'] = career_data['WHIP']
+            player['career']['BF'] = career_data['BattersFaced']
+        else: 
+            player['recent'] = {}
+            player['recent']['HR'] = 0
+            player['recent']['ERA'] = 0
+            player['recent']['WHIP'] = 0
+            player['recent']['BF'] = 0
+
+            player['career'] = {}
+            player['career']['HR'] = 0
+            player['career']['ERA'] = 0
+            player['career']['WHIP'] = 0
+            player['career']['BF'] = 0
+
+        
+        data['players'].append(player)
+
+    return data
 
 @app.route('/updateTeam', methods = ["POST"])
 def update_P_T_table():

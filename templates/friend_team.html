@@ -114,137 +114,151 @@
         if(player == 'batter') {
             document.getElementById('position_page').style.display = 'block';
             document.getElementById('bullpen_page').style.display = 'none';
-            var html='';
-            html+='<thead><tr style="max-width: 1680px">';
-            html+=`<th class="border border-black">Position</th>`;
-            html+=`<th class="border border-black">Player1</th>`;
-            html+=`<th class="border border-black">Player2</th>`;
-            html+=`<th class="border border-black">Player3</th>`;
-            html+=`</tr></thead><tbody  class='border border-black'>`;
-            html+=`<tr class="border border-black">`;
-            html+=`<td class="border border-black bodyth" style="text-align: center;">C</td>`;
-            html+=`<td class="border border-black bg-rose-500">123 - 90%</td>`;
-            html+=`<td class="border border-black bg-rose-500">123 - 48%</td>`;
-            html+=`<td class="border border-black bg-rose-500">123 - 35%</td>`;
-            html+='</tr>'
-            html+=`<tr class="border border-black">`;
-            html+=`<td class="border border-black bodyth" style="text-align: center;">1B</td>`;
-            html+=`<td class="border border-black bg-rose-500">123 - 80%</td>`;
-            html+=`<td class="border border-black bg-rose-500">123 - 40%</td>`;
-            html+=`<td class="border border-black bg-rose-500">123 - 40%</td>`;
-            html+='</tr>'
-            html+=`<tr class="border border-black">`;
-            html+=`<td class="border border-black bodyth" style="text-align: center;">2B</td>`;
-            html+=`<td class="border border-black bg-rose-500">123 - 40%</td>`;
-            html+=`<td class="border border-black bg-rose-500">123 - 30%</td>`;
-            html+=`<td class="border border-black bg-rose-500">123 - 10%</td>`;
-            html+='</tr>'
-            html+=`<tr class="border border-black">`;
-            html+=`<td class="border border-black bodyth" style="text-align: center;">3B</td>`;
-            html+=`<td class="border border-black bg-rose-500">123 - 90%</td>`;
-            html+=`<td class="border border-black bg-rose-500">123 - 70%</td>`;
-            html+=`<td class="border border-black bg-rose-500">123 - 40%</td>`;
-            html+='</tr>'
-            html+=`<tr class="border border-black">`;
-            html+=`<td class="border border-black bodyth" style="text-align: center;">SS</td>`;
-            html+=`<td class="border border-black bg-rose-500">123 - 50%</td>`;
-            html+=`<td class="border border-black bg-rose-500">123 - 40%</td>`;
-            html+=`<td class="border border-black bg-rose-500">123 - 30%</td>`;
-            html+='</tr>'
-            html+=`<tr class="border border-black">`;
-            html+=`<td class="border border-black bodyth" style="text-align: center;">LF</td>`;
-            html+=`<td class="border border-black bg-rose-500">123 - 80%</td>`;
-            html+=`<td class="border border-black bg-rose-500">123 - 46%</td>`;
-            html+=`<td class="border border-black bg-rose-500">123 - 35%</td>`;
-            html+='</tr>'
-            html+=`<tr class="border border-black">`;
-            html+=`<td class="border border-black bodyth" style="text-align: center;">CF</td>`;
-            html+=`<td class="border border-black bg-rose-500">123 - 70%</td>`;
-            html+=`<td class="border border-black bg-rose-500">123 - 60%</td>`;
-            html+=`<td class="border border-black bg-rose-500">123 - 40%</td>`;
-            html+='</tr>'
-            html+=`<tr class="border border-black">`;
-            html+=`<td class="border border-black bodyth" style="text-align: center;">RF</td>`;
-            html+=`<td class="border border-black bg-rose-500">123 - 90%</td>`;
-            html+=`<td class="border border-black bg-rose-500">123 - 48%</td>`;
-            html+=`<td class="border border-black bg-rose-500">123 - 35%</td>`;
-            html+='</tr>'
-            html+=`<tr class="border border-black">`;
-            html+=`<td class="border border-black bodyth" style="text-align: center;">DH</td>`;
-            html+=`<td class="border border-black bg-rose-500">123 - 60%</td>`;
-            html+=`<td class="border border-black bg-rose-500">123 - 50%</td>`;
-            html+=`<td class="border border-black bg-rose-500">123 - 30%</td>`;
-            html+='</tr>'
-            html+='</tbody>'
-    
-            $("#position_table").html(html);
-        } else if (player == 'pitcher') {
-            document.getElementById('position_page').style.display = 'block';
-            document.getElementById('bullpen_page').style.display = 'none';
+            $.ajax({
+                url: '/position_page',
+                type: 'POST',
+                data: JSON.stringify(data),
+                dataType: 'json',
+                contentType: 'application/json',
+                beforeSend: function () {
+                    document.getElementById('pageloader').style.display = 'block';
+                },
 
-            var html='';
-            html+='<thead><tr style="max-width: 1680px">';
-            html+=`<th class="border border-black">Arizona Bullpen</th>`;
-            html+=`<th class="border border-black">Player1</th>`;
-            html+=`<th class="border border-black">Player2</th>`;
-            html+=`<th class="border border-black">Player3</th>`;
-            html+=`</tr></thead><tbody  class='border border-black'>`;
-            html+=`<tr class="border border-black">`;
-            html+=`<td class="border border-black bodyth" style="text-align: center;">C</td>`;
-            html+=`<td class="border border-black bg-rose-500">123 - 90%</td>`;
-            html+=`<td class="border border-black bg-rose-500">123 - 48%</td>`;
-            html+=`<td class="border border-black bg-rose-500">123 - 35%</td>`;
-            html+='</tr>'
-            html+=`<tr class="border border-black">`;
-            html+=`<td class="border border-black bodyth" style="text-align: center;">1B</td>`;
-            html+=`<td class="border border-black bg-rose-500">123 - 80%</td>`;
-            html+=`<td class="border border-black bg-rose-500">123 - 40%</td>`;
-            html+=`<td class="border border-black bg-rose-500">123 - 40%</td>`;
-            html+='</tr>'
-            html+=`<tr class="border border-black">`;
-            html+=`<td class="border border-black bodyth" style="text-align: center;">2B</td>`;
-            html+=`<td class="border border-black bg-rose-500">123 - 40%</td>`;
-            html+=`<td class="border border-black bg-rose-500">123 - 30%</td>`;
-            html+=`<td class="border border-black bg-rose-500">123 - 10%</td>`;
-            html+='</tr>'
-            html+=`<tr class="border border-black">`;
-            html+=`<td class="border border-black bodyth" style="text-align: center;">3B</td>`;
-            html+=`<td class="border border-black bg-rose-500">123 - 90%</td>`;
-            html+=`<td class="border border-black bg-rose-500">123 - 70%</td>`;
-            html+=`<td class="border border-black bg-rose-500">123 - 40%</td>`;
-            html+='</tr>'
-            html+=`<tr class="border border-black">`;
-            html+=`<td class="border border-black bodyth" style="text-align: center;">SS</td>`;
-            html+=`<td class="border border-black bg-rose-500">123 - 50%</td>`;
-            html+=`<td class="border border-black bg-rose-500">123 - 40%</td>`;
-            html+=`<td class="border border-black bg-rose-500">123 - 30%</td>`;
-            html+='</tr>'
-            html+=`<tr class="border border-black">`;
-            html+=`<td class="border border-black bodyth" style="text-align: center;">LF</td>`;
-            html+=`<td class="border border-black bg-rose-500">123 - 80%</td>`;
-            html+=`<td class="border border-black bg-rose-500">123 - 46%</td>`;
-            html+=`<td class="border border-black bg-rose-500">123 - 35%</td>`;
-            html+='</tr>'
-            html+=`<tr class="border border-black">`;
-            html+=`<td class="border border-black bodyth" style="text-align: center;">CF</td>`;
-            html+=`<td class="border border-black bg-rose-500">123 - 70%</td>`;
-            html+=`<td class="border border-black bg-rose-500">123 - 60%</td>`;
-            html+=`<td class="border border-black bg-rose-500">123 - 40%</td>`;
-            html+='</tr>'
-            html+=`<tr class="border border-black">`;
-            html+=`<td class="border border-black bodyth" style="text-align: center;">RF</td>`;
-            html+=`<td class="border border-black bg-rose-500">123 - 90%</td>`;
-            html+=`<td class="border border-black bg-rose-500">123 - 48%</td>`;
-            html+=`<td class="border border-black bg-rose-500">123 - 35%</td>`;
-            html+='</tr>'
-            html+=`<tr class="border border-black">`;
-            html+=`<td class="border border-black bodyth" style="text-align: center;">DH</td>`;
-            html+=`<td class="border border-black bg-rose-500">123 - 60%</td>`;
-            html+=`<td class="border border-black bg-rose-500">123 - 50%</td>`;
-            html+=`<td class="border border-black bg-rose-500">123 - 30%</td>`;
-            html+='</tr>'
-            html+='</tbody>'
-            $("#bullpen_page").html(html);
+                success: function (data) {
+                    document.getElementById('pageloader').style.display = 'none';
+                    $("#total_game").text(data['total_count']);
+                    $("#game_count").text(data['game_count']);
+                    var html='';
+                    html+='<thead><tr">';
+                    html+=`<th class="border border-black">Position</th>`;
+                    html+=`<th class="border border-black">Player1</th>`;
+                    html+=`<th class="border border-black">Player2</th>`;
+                    html+=`<th class="border border-black">Player3</th>`;
+                    html+=`<th class="border border-black">Player4</th>`;
+                    html+=`</tr></thead><tbody  class='border border-black'>`;
+                    html+=`<tr class="border border-black">`;
+                    html+=`<td class="border border-black bodyth" style="text-align: center;">C</td>`;
+                    html+=`<td class="border border-black bg-green-500">${data['c'][0]['c']}-${(100 * data['c'][0]['c_count'] / data['game_count']).toFixed(2)}%</td>`;
+                    html+=`<td class="border border-black bg-yellow-300">${data['c'][1]['c']}-${(100 * data['c'][1]['c_count'] / data['game_count']).toFixed(2)}%</td>`;
+                    html+=`<td class="border border-black bg-orange-500">${data['c'][2]['c']}-${(100 * data['c'][2]['c_count'] / data['game_count']).toFixed(2)}%</td>`;
+                    html+=`<td class="border border-black bg-rose-500">${data['c'][3]['c']}-${(100 * data['c'][3]['c_count'] / data['game_count']).toFixed(2)}%</td>`;
+                    html+='</tr>'
+                    html+=`<tr class="border border-black">`;
+                    html+=`<td class="border border-black bodyth" style="text-align: center;">1B</td>`;
+                    html+=`<td class="border border-black bg-green-500">${data['b1'][0]['b1']}-${(100 * data['b1'][0]['b1_count'] / data['game_count']).toFixed(2)}%</td>`;
+                    html+=`<td class="border border-black bg-yellow-300">${data['b1'][1]['b1']}-${(100 * data['b1'][1]['b1_count'] / data['game_count']).toFixed(2)}%</td>`;
+                    html+=`<td class="border border-black bg-orange-500">${data['b1'][2]['b1']}-${(100 * data['b1'][2]['b1_count'] / data['game_count']).toFixed(2)}%</td>`;
+                    html+=`<td class="border border-black bg-rose-500">${data['b1'][3]['b1']}-${(100 * data['b1'][3]['b1_count'] / data['game_count']).toFixed(2)}%</td>`;
+                    html+='</tr>'
+                    html+=`<tr class="border border-black">`;
+                    html+=`<td class="border border-black bodyth" style="text-align: center;">2B</td>`;
+                    html+=`<td class="border border-black bg-green-500">${data['b2'][0]['b2']}-${(100 * data['b2'][0]['b2_count'] / data['game_count']).toFixed(2)}%</td>`;
+                    html+=`<td class="border border-black bg-yellow-300">${data['b2'][1]['b2']}-${(100 * data['b2'][1]['b2_count'] / data['game_count']).toFixed(2)}%</td>`;
+                    html+=`<td class="border border-black bg-orange-500">${data['b2'][2]['b2']}-${(100 * data['b2'][2]['b2_count'] / data['game_count']).toFixed(2)}%</td>`;
+                    html+=`<td class="border border-black bg-rose-500">${data['b2'][3]['b2']}-${(100 * data['b2'][3]['b2_count'] / data['game_count']).toFixed(2)}%</td>`;
+                    html+='</tr>'
+                    html+=`<tr class="border border-black">`;
+                    html+=`<td class="border border-black bodyth" style="text-align: center;">3B</td>`;
+                    html+=`<td class="border border-black bg-green-500">${data['b3'][0]['b3']}-${(100 * data['b3'][0]['b3_count'] / data['game_count']).toFixed(2)}%</td>`;
+                    html+=`<td class="border border-black bg-yellow-300">${data['b3'][1]['b3']}-${(100 * data['b3'][1]['b3_count'] / data['game_count']).toFixed(2)}%</td>`;
+                    html+=`<td class="border border-black bg-orange-500">${data['b3'][2]['b3']}-${(100 * data['b3'][2]['b3_count'] / data['game_count']).toFixed(2)}%</td>`;
+                    html+=`<td class="border border-black bg-rose-500">${data['b3'][3]['b3']}-${(100 * data['b3'][3]['b3_count'] / data['game_count']).toFixed(2)}%</td>`;
+                    html+='</tr>'
+                    html+=`<tr class="border border-black">`;
+                    html+=`<td class="border border-black bodyth" style="text-align: center;">SS</td>`;
+                    html+=`<td class="border border-black bg-green-500">${data['ss'][0]['ss']}-${(100 * data['ss'][0]['ss_count'] / data['game_count']).toFixed(2)}%</td>`;
+                    html+=`<td class="border border-black bg-yellow-300">${data['ss'][1]['ss']}-${(100 * data['ss'][1]['ss_count'] / data['game_count']).toFixed(2)}%</td>`;
+                    html+=`<td class="border border-black bg-orange-500">${data['ss'][2]['ss']}-${(100 * data['ss'][2]['ss_count'] / data['game_count']).toFixed(2)}%</td>`;
+                    html+=`<td class="border border-black bg-rose-500">${data['ss'][3]['ss']}-${(100 * data['ss'][3]['ss_count'] / data['game_count']).toFixed(2)}%</td>`;
+                    html+='</tr>'
+                    html+=`<tr class="border border-black">`;
+                    html+=`<td class="border border-black bodyth" style="text-align: center;">LF</td>`;
+                    html+=`<td class="border border-black bg-green-500">${data['lf'][0]['lf']}-${(100 * data['lf'][0]['lf_count'] / data['game_count']).toFixed(2)}%</td>`;
+                    html+=`<td class="border border-black bg-yellow-300">${data['lf'][1]['lf']}-${(100 * data['lf'][1]['lf_count'] / data['game_count']).toFixed(2)}%</td>`;
+                    html+=`<td class="border border-black bg-orange-500">${data['lf'][2]['lf']}-${(100 * data['lf'][2]['lf_count'] / data['game_count']).toFixed(2)}%</td>`;
+                    html+=`<td class="border border-black bg-rose-500">${data['lf'][3]['lf']}-${(100 * data['lf'][3]['lf_count'] / data['game_count']).toFixed(2)}%</td>`;
+                    html+='</tr>'
+                    html+=`<tr class="border border-black">`;
+                    html+=`<td class="border border-black bodyth" style="text-align: center;">CF</td>`;
+                    html+=`<td class="border border-black bg-green-500">${data['cf'][0]['cf']}-${(100 * data['cf'][0]['cf_count'] / data['game_count']).toFixed(2)}%</td>`;
+                    html+=`<td class="border border-black bg-yellow-300">${data['cf'][1]['cf']}-${(100 * data['cf'][1]['cf_count'] / data['game_count']).toFixed(2)}%</td>`;
+                    html+=`<td class="border border-black bg-orange-500">${data['cf'][2]['cf']}-${(100 * data['cf'][2]['cf_count'] / data['game_count']).toFixed(2)}%</td>`;
+                    html+=`<td class="border border-black bg-rose-500">${data['cf'][3]['cf']}-${(100 * data['cf'][3]['cf_count'] / data['game_count']).toFixed(2)}%</td>`;
+                    html+='</tr>'
+                    html+=`<tr class="border border-black">`;
+                    html+=`<td class="border border-black bodyth" style="text-align: center;">RF</td>`;
+                    html+=`<td class="border border-black bg-green-500">${data['rf'][0]['rf']}-${(100 * data['rf'][0]['rf_count'] / data['game_count']).toFixed(2)}%</td>`;
+                    html+=`<td class="border border-black bg-yellow-300">${data['rf'][1]['rf']}-${(100 * data['rf'][1]['rf_count'] / data['game_count']).toFixed(2)}%</td>`;
+                    html+=`<td class="border border-black bg-orange-500">${data['rf'][2]['rf']}-${(100 * data['rf'][2]['rf_count'] / data['game_count']).toFixed(2)}%</td>`;
+                    html+=`<td class="border border-black bg-rose-500">${data['rf'][3]['rf']}-${(100 * data['rf'][3]['rf_count'] / data['game_count']).toFixed(2)}%</td>`;
+                    html+='</tr>'
+                    html+=`<tr class="border border-black">`;
+                    html+=`<td class="border border-black bodyth" style="text-align: center;">DH</td>`;
+                    html+=`<td class="border border-black bg-green-500">${data['dh'][0]['dh']}-${(100 * data['dh'][0]['dh_count'] / data['game_count']).toFixed(2)}%</td>`;
+                    html+=`<td class="border border-black bg-yellow-300">${data['dh'][1]['dh']}-${(100 * data['dh'][1]['dh_count'] / data['game_count']).toFixed(2)}%</td>`;
+                    html+=`<td class="border border-black bg-orange-500">${data['dh'][2]['dh']}-${(100 * data['dh'][2]['dh_count'] / data['game_count']).toFixed(2)}%</td>`;
+                    html+=`<td class="border border-black bg-rose-500">${data['dh'][3]['dh']}-${(100 * data['dh'][3]['dh_count'] / data['game_count']).toFixed(2)}%</td>`;
+                    html+='</tr>'
+                    html+='</tbody>'
+            
+                    $("#position_table").html(html);
+                }
+            })
+        } else if (player == 'pitcher') {
+            document.getElementById('position_page').style.display = 'none';
+            document.getElementById('bullpen_page').style.display = 'block';
+
+            $.ajax({
+                url: '/bullpen_page',
+                type: 'POST',
+                data: JSON.stringify(data),
+                dataType: 'json',
+                contentType: 'application/json',
+                beforeSend: function () {
+                    document.getElementById('pageloader').style.display = 'block';
+                },
+
+                success: function (data) {
+                    document.getElementById('pageloader').style.display = 'none';
+                    var html='';
+                    if(data['players'].length != 0) {
+
+                        html+='<thead><tr">';
+                        html+=`<th class="border border-black">Bullpen</th>`;
+                        html+=`<th class="border border-black">REST</th>`;
+                        html+=`<th class="border border-black">Game</th>`;
+                        html+=`<th class="border border-black">HR</th>`;
+                        html+=`<th class="border border-black">ERA</th>`;
+                        html+=`<th class="border border-black">WHIP</th>`;
+                        html+=`<th class="border border-black">BF</th>`;
+                        html+=`</tr></thead><tbody  class='border border-black'>`;
+
+                        for(var i=0; i<data['players'].length; i++) {
+                            html+=`<tr class="border border-black">`;
+                            html+=`<td class="border border-black bodyth" style="text-align: center;">${data['players'][i]['name']}</td>`;
+                            html+=`<td class="border border-black">${data['players'][i]['rest']}</td>`;
+                            html+=`<td class="border border-black">${data['players'][i]['game']}</td>`;
+                            html+=`<td class="border border-black">${(data['players'][i]['career']['HR']).toFixed(2)}</td>`;
+                            html+=`<td class="border border-black">${(data['players'][i]['career']['ERA']).toFixed(2)}</td>`;
+                            html+=`<td class="border border-black">${(data['players'][i]['career']['WHIP']).toFixed(2)}</td>`;
+                            html+=`<td class="border border-black">${(data['players'][i]['career']['BF']).toFixed(2)}</td>`;
+                            html+='</tr>'
+
+                            html+=`<tr class="border border-black">`;
+                            html+=`<td class="border border-black bodyth" style="text-align: center;">Last 5</td>`;
+                            html+=`<td class="border border-black"></td>`;
+                            html+=`<td class="border border-black">5</td>`;
+                            html+=`<td class="border border-black">${(data['players'][i]['recent']['HR']).toFixed(2)}</td>`;
+                            html+=`<td class="border border-black">${(data['players'][i]['recent']['ERA']).toFixed(2)}</td>`;
+                            html+=`<td class="border border-black">${(data['players'][i]['recent']['WHIP']).toFixed(2)}</td>`;
+                            html+=`<td class="border border-black">${(data['players'][i]['recent']['BF']).toFixed(2)}</td>`;
+                            html+='</tr>'
+                        }
+                        html+='</tbody>'
+                    }
+                    $("#bullpen_page").html(html);
+                }       
+            })
         }
     } else {
         document.getElementById('team_page').style.display = 'block';
@@ -266,7 +280,7 @@
 
                     var html='';
 
-                    html+='<thead><tr style="max-width: 1680px">';
+                    html+='<thead><tr">';
                     html+=`<th class="border border-black cursor-pointer" onclick="sortTable(this)">${data['name']}</th>`;
 
                     for (const [key, value] of Object.entries(data['game_date'])) {
@@ -314,7 +328,6 @@
                             }
                         }
                         else if(player == 'pitcher'){
-                            console.log(value)
                             if(value['p_name'] != name)
                             {
                                 if(name != '')
@@ -466,15 +479,15 @@
             </div>
             
             <div class="mt-10" role="region" aria-labelledby="caption" tabindex="0">
-                <table class="border-collapse border border-black border-collapse text-center scroll-smooth scroll-auto" style="max-width: 1920px" id="team_page">
+                <table class="border-collapse border border-black border-collapse text-center scroll-smooth scroll-auto" id="team_page">
                 </table>
-                <div id="position_page" style="display: block;">
-                    <div style="font-size: 30px; margin: auto; text-align: center;"><span >Season:&nbsp&nbsp&nbsp</span><span style="color: blue;">30</span></div>
-                    <div  style="font-size: 30px; margin: auto; text-align: center;"><span>Played :&nbsp&nbsp&nbsp</span><span style="color: red;">20</span></div>
+                <div id="position_page" style="display: none;">
+                    <div style="font-size: 30px; margin: auto; text-align: center;"><span >Season:&nbsp&nbsp&nbsp</span><span id="total_game" style="color: blue;">30</span></div>
+                    <div  style="font-size: 30px; margin: auto; text-align: center;"><span>Played :&nbsp&nbsp&nbsp</span><span id="game_count" style="color: red;">20</span></div>
                     <table class="border-collapse border border-black border-collapse text-center scroll-smooth scroll-auto" style="max-width: 1200px; margin: auto;  margin-top: 30px;" id="position_table">
                     </table>
                 </div>
-                <table class="border-collapse border border-black border-collapse text-center scroll-smooth scroll-auto" style="max-width: 1920px" id="bullpen_page">
+                <table class="border-collapse border border-black border-collapse text-center scroll-smooth scroll-auto" style="max-width: 1200px;  margin: auto; display: none;" id="bullpen_page">
                 </table>
             </div>
         </div>

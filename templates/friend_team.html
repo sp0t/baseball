@@ -126,7 +126,7 @@
 
                 success: function (data) {
                     document.getElementById('pageloader').style.display = 'none';
-                    $("#total_game").text(data['total_count']);
+                    // $("#total_game").text(data['total_count']);
                     $("#game_count").text(data['game_count']);
                     var html='';
                     html+='<thead><tr">';
@@ -482,7 +482,7 @@
                 <table class="border-collapse border border-black border-collapse text-center scroll-smooth scroll-auto" id="team_page">
                 </table>
                 <div id="position_page" style="display: none;">
-                    <div style="font-size: 30px; margin: auto; text-align: center;"><span >Season:&nbsp&nbsp&nbsp</span><span id="total_game" style="color: blue;">30</span></div>
+                    <!-- <div style="font-size: 30px; margin: auto; text-align: center;"><span >Season:&nbsp&nbsp&nbsp</span><span id="total_game" style="color: blue;">30</span></div> -->
                     <div  style="font-size: 30px; margin: auto; text-align: center;"><span>Played :&nbsp&nbsp&nbsp</span><span id="game_count" style="color: red;">20</span></div>
                     <table class="border-collapse border border-black border-collapse text-center scroll-smooth scroll-auto" style="max-width: 1200px; margin: auto;  margin-top: 30px;" id="position_table">
                     </table>

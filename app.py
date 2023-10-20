@@ -648,37 +648,28 @@ def getWinPredict():
     combinations_list = list(combinations(players_data['home_i_batter'], 2))
     home_lists = [list(combination) for combination in combinations_list]
 
-    # for away_list in away_lists:
-    #     awaybatter = players_data['away_f_batter'] + away_list
-    #     for i in players_data['awaypitcher']:
-    #         awaypitcher = []
-    #         awaypitcher.append(i)
-    #         for home_list in home_lists:
-    #             homebatter = players_data['home_f_batter'] + home_list
-    #             for j in players_data['homepitcher']:
-    #                 homepitcher = []
-    #                 homepitcher.append(j)
-    #                 params = {'away_batters': awaybatter, 
-    #                 'home_batters': homebatter, 
-    #                 'away_starters': awaypitcher, 
-    #                 'home_starters': homepitcher,
-    #                 }
-    #                 params['savestate'] = False
+    for away_list in away_lists:
+        awaybatter = players_data['away_f_batter'] + away_list
+        for home_list in home_lists:
+            homebatter = players_data['home_f_batter'] + home_list
+            params = {'away_batters': awaybatter, 
+            'home_batters': homebatter, 
+            'away_starters': players_data['awaypitcher'], 
+            'home_starters': players_data['homepitcher'],
+            }
+            params['savestate'] = False
 
-    #                 params['away_name'] = away_name
-    #                 params['home_name'] = home_name
-    #                 params['game_id'] = gameid
+            params['away_name'] = away_name
+            params['home_name'] = home_name
+            params['game_id'] = gameid
 
-    #                 win_predict = predict_c.get_probabilities(params)
-    #                 preds_1c = np.round(100 * win_predict[0], 2)
-    #                 preds_1c = {'away_prob': preds_1c[0], 'home_prob': preds_1c[1]}
-    #                 params['preds_1c'] = preds_1c
-    #                 data.append(params)
-                    
-    #                 homepitcher = ''
-    #             homebatter = []
-    #         awaypitcher = ''
-    #     awaybatter = []
+            win_predict = predict_c.get_probabilities(params)
+            preds_1c = np.round(100 * win_predict[0], 2)
+            preds_1c = {'away_prob': preds_1c[0], 'home_prob': preds_1c[1]}
+            params['preds_1c'] = preds_1c
+            data.append(params)
+            homebatter = []
+        awaybatter = []
     resdata = {'data': data}
     return jsonify(resdata) 
 

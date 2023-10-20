@@ -640,6 +640,8 @@ def getWinPredict():
     away_name = team_dict[away_name]
     home_name = team_dict[home_name]
 
+    print('=======================>players_data', players_data)
+
     combinations_list = list(combinations(players_data['away_i_batter'], 2))
     away_lists = [list(combination) for combination in combinations_list]
 

@@ -671,6 +671,7 @@ def getWinPredict():
             homebatter = []
         awaybatter = []
     resdata = {'data': data}
+    print('resdata=======>', resdata)
     return jsonify(resdata) 
 
 @app.route('/download_batter_data', methods = ["POST"])

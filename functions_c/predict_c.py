@@ -236,7 +236,6 @@ def get_probabilities(params):
     team_recent_data = {}
     team_career_data = {}
     for batter in away_batters:
-        print('awayBatter============>', batter)
         away_batter_res = pd.read_sql(f"SELECT * FROM predict_batter_stats WHERE game_id = '{game_id}' AND player_id = '{batter}';", con = engine).to_dict('records')
         if (len(away_batter_res) > 0 ):
             print('is in the table')
@@ -311,7 +310,6 @@ def get_probabilities(params):
     team_recent_data = {}
     team_career_data = {}
     for batter in home_batters:
-        print('homeBatter============>', batter)
         home_batter_res = pd.read_sql(f"SELECT * FROM predict_batter_stats WHERE game_id = '{game_id}' AND player_id = '{batter}';", con = engine).to_dict('records')
         if (len(home_batter_res) > 0):
             print('is in the table')
@@ -385,7 +383,6 @@ def get_probabilities(params):
         team_recent_data = {}
         team_career_data = {}
 
-        print('awaystarter============>', away_starter)
         away_pitcher_res = pd.read_sql(f"SELECT * FROM predict_pitcher_stats WHERE game_id = '{game_id}' AND player_id = '{away_starter}';", con = engine).to_dict('records')
         
         if (len(away_pitcher_res) > 0):
@@ -459,8 +456,6 @@ def get_probabilities(params):
         home_pitcher_res = pd.read_sql(f"SELECT * FROM predict_pitcher_stats WHERE game_id = '{game_id}' AND player_id = '{home_starter}';", con = engine).to_dict('records')
         team_recent_data = {}
         team_career_data = {}
-
-        print('homestarter============>', home_starter)
 
 
         if (len(home_pitcher_res) > 0):
@@ -626,7 +621,6 @@ def get_probabilities(params):
         away_starter_data.update(team_starter_data)
         team_starter_data = {}
 
-        print(team_recent_data)
         for i in range(len(team_recent_data)):
             obj = team_recent_data[i]
             obj['away_starter_recent_playerId'] = int(obj['away_starter_recent_playerId'])
@@ -756,8 +750,6 @@ def get_probabilities(params):
     game_data.update(home_bullpen_data)
     game_data.update(home_batter_data)
     game_data.update(home_starter_data)
-
-    print(game_data)
     
     X_test = pd.DataFrame(game_data, index = [0])
 

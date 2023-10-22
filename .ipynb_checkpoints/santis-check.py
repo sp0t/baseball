@@ -1,7 +1,7 @@
 input_team_name_1 = 'Philadelphia Phillies'
 input_team_name_2 = 'Arizona Diamondbacks'
 batter_name = []
-pitcher_name = ['Arizona Diamondbacks']
+pitcher_name = ['Matt Strahm']
 game_id = '748544'
 
 

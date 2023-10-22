@@ -278,7 +278,7 @@ def get_probabilities(params):
                 career_data = batting_c.process_career_batter_data(games, batter_stat_list)
             else: 
                 recent_data = dict(zip(batter_stat_list, np.repeat(0, len(batter_stat_list))))
-                recent_data['dificulty'] = 0
+                recent_data['difficulty'] = 0
                 print(recent_data)
                 career_data = dict(zip(batter_stat_list, np.repeat(0, len(batter_stat_list))))
 

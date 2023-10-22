@@ -153,14 +153,14 @@
                                 {% endfor %}
                             </div>
                         </div>
-                        <div class="scrolling-pitcher">
+                        <!-- <div class="scrolling-pitcher">
                             <div class="form-row">
                                 <label for="away_pitcher" style="margin: 0 9px; color: #5D6D7E">Starter</label>
                                 <select name="away_pitcher" id="away_pitcher" style="width: 80%;  text-align: center" onchange="selectAwayPitcher(this.value)" required>
                                     <option value="">—</option>
                                 </select>
                             </div>
-                        </div>
+                        </div> -->
                     </div>
                     <div style="width: 50%;">
                         <div id='homename_lineups' style="background-color: #a5a9ad; color: black; padding: 5px; font-size: 18px; border-bottom: 2px solid #5D6D7E;">
@@ -177,14 +177,14 @@
                                 {% endfor %}
                             </div>
                         </div>
-                        <div class="scrolling-pitcher">
+                        <!-- <div class="scrolling-pitcher">
                             <div class="form-row">
                                 <label for="home_pitcher" style="margin: 0 9px; color: #5D6D7E">Starter</label>
                                 <select name="home_pitcher" id="home_pitcher" style="width: 80%;  text-align: center" onchange="selectHomePitcher(this.value)" required>
                                     <option value="">—</option>
                                 </select>
                             </div>
-                        </div>
+                        </div> -->
                     </div>
                 </div>
             </div>
@@ -480,14 +480,14 @@
                     for (n = 0; n < data['rosters']['away'].length; n++){
                         awaypitcherhtml += `<option value='${data['rosters']['away'][n].id}' class='option'>${data['rosters']['away'][n].fullName}</option>`
                     }
-                    $(`#away_pitcher`).html(awaypitcherhtml);
+                    // $(`#away_pitcher`).html(awaypitcherhtml);
                     awaypitcherhtml = '';
 
                     homepitcherhtml += `<option value="">—</option>`
                     for (n = 0; n < data['rosters']['home'].length; n++){
                         homepitcherhtml += `<option value='${data['rosters']['home'][n].id}' class='option'>${data['rosters']['home'][n].fullName}</option>`
                     }
-                    $(`#home_pitcher`).html(homepitcherhtml);
+                    // $(`#home_pitcher`).html(homepitcherhtml);
                     homepitcherhtml = '';
 
                     players.away_f_batter = []

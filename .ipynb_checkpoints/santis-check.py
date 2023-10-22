@@ -1,14 +1,23 @@
+input_team_name_2 = 'Philadelphia Phillies'
+input_team_name_1 = 'Houston Astros'
+batter_name = []
+pitcher_name = ['Ranger Suarez']
+game_id = '715720'
+
+
 from datetime import date, time, datetime, timedelta
 import numpy as np
 import pandas as pd
 import statsapi as mlb
 from sqlalchemy import create_engine
-from database import database
-from sqlalchemy import text
+
+engine = create_engine('postgresql://postgres:123@localhost:5432/testdb', connect_args = {'connect_timeout': 10}, echo=False, pool_size=20, max_overflow=0)
+# engine = create_engine('postgresql://postgres:123@ec2-18-180-226-162.ap-northeast-1.compute.amazonaws.com:5432/betmlb', connect_args = {'connect_timeout': 10}, echo=False, pool_size=20, max_overflow=0)
+# res = pd.read_sql(f"SELECT * FROM schedule WHERE away_name = '{input_team_name_1}' and home_name = '{input_team_name_2}'", con = engine).iloc[0]
+# game_id = res['game_id']
 
 
 def get_batter_df(player_id): 
-    engine = database.connect_to_db()
     
     df = pd.read_sql("SELECT b.game_id, b.game_date, b.home_team, b.away_team, b.home_score, b.away_score,  (a.homeruns)homeRuns, (a.atbats)atBats, a.avg, "
             " a.slg,  a.obp,  a.ops, (a.baseonballs)baseonBalls, a.doubles, a.hits,"
@@ -74,8 +83,11 @@ def process_recent_batter_data(player_df, game_date, batter_stat_list):
         numeric_df = recent_df_copy[numeric_cols].astype(float)
         recent_df_float = pd.concat([recent_df_copy.drop(numeric_cols, axis=1), numeric_df], axis=1)
         recent_games = list(recent_df.index)
-
-    return recent_df_float
+    
+    print('----------------------Player Recent stats----------------------')
+    print(recent_df_float)
+        
+    return recent_df_float, recent_games, games
 
 def process_career_batter_data(player_id, games, recent_games, batter_stat_list, game_date): 
     
@@ -135,13 +147,12 @@ def process_career_batter_data(player_id, games, recent_games, batter_stat_list,
     
     return career_data
 
-def get_starter_df(player_id, year): 
-    engine = database.connect_to_db()
+def get_starter_df(player_id): 
     
-    df = pd.read_sql(text(f"SELECT b.game_id, b.game_date, b.home_team, b.away_team, b.home_score, b.away_score, (a.atbats)atBats, "
-            f"(a.baseonballs)baseonBalls, a.blownsaves, a.doubles, (a.earnedruns)earnedRuns, a.hits, a.holds, (a.homeruns)homeRuns, a.era, "
-            f"(a.inningspitched)inningsPitched, a.losses, (a.pitchesthrown)pitchesThrown, (a.playerid)playerId, a.rbi, a.runs, (a.strikeouts)strikeOuts, "
-            f"a.strikes, a.triples, a.whip, a.wins FROM pitcher_table a LEFT JOIN game_table b ON a.game_id = b.game_id WHERE a.playerid = '{player_id}' ORDER BY game_date DESC;"), con = engine)
+    df = pd.read_sql("SELECT b.game_id, b.game_date, b.home_team, b.away_team, b.home_score, b.away_score, (a.atbats)atBats, "
+            "(a.baseonballs)baseonBalls, a.blownsaves, a.doubles, (a.earnedruns)earnedRuns, a.hits, a.holds, (a.homeruns)homeRuns, a.era, "
+            "(a.inningspitched)inningsPitched, a.losses, (a.pitchesthrown)pitchesThrown, (a.playerid)playerId, a.rbi, a.runs, (a.strikeouts)strikeOuts, "
+            "a.strikes, a.triples, a.whip, a.wins FROM pitcher_table a LEFT JOIN game_table b ON a.game_id = b.game_id WHERE a.playerid = '%s' ORDER BY game_date DESC;" %(player_id), con = engine)
 
     string_cols = [col for col in df.columns if 'id' in col.lower()] + ['game_date', 'away_team', 'home_team']
 
@@ -176,7 +187,7 @@ def process_recent_starter_data(player_df, game_date, pitcher_stat_list):
     
     if len(games) == 0: 
         recent_games = []
-        recent_data = dict(zip(pitcher_stat_list, np.repeat(0, len(pitcher_stat_list))))
+        recent_data = dict(zip(pitcher_stat_list, np.repeat(np.nan, len(pitcher_stat_list))))
         
     else: 
         
@@ -201,9 +212,10 @@ def process_recent_starter_data(player_df, game_date, pitcher_stat_list):
         numeric_df = recent_df_copy[numeric_cols].astype(float)
         recent_df_float = pd.concat([recent_df_copy.drop(numeric_cols, axis=1), numeric_df], axis=1)
         recent_games = list(recent_df.index)
-        recent_df_copy = recent_df_copy.drop('GameDate',axis = 1,errors = 'ignore')
-        recent_data = recent_df_copy.mul(weights,axis=0).sum().to_dict()
-    return recent_df_float, recent_games, games, recent_data
+     
+    print('----------------------Player Recent stats----------------------')
+    print(recent_df_float)
+    return recent_df_float, recent_games, games
 
 def process_career_starter_data(player_id, games, recent_games, pitcher_stat_list, game_date): 
     
@@ -212,7 +224,8 @@ def process_career_starter_data(player_id, games, recent_games, pitcher_stat_lis
     seasons = sorted(set(games['season']))[-3:]
     
     if len(seasons)==0: 
-        return {'HR': 0, 'ERA': 0, 'WHIP': 0, 'BattersFaced': 0}
+        career_data = dict(zip(pitcher_stat_list, np.repeat(np.nan, len(pitcher_stat_list))))
+        return career_data
     
     # Get Season Game Count 
     s0 = seasons[-1]
@@ -233,17 +246,14 @@ def process_career_starter_data(player_id, games, recent_games, pitcher_stat_lis
         s_list = [s0,s1,s2] if season_game_count>15 else [s1,s2]
         weights = [2/3,1/6,1/6] if season_game_count>15 else [1/2,1/2]
     else: 
-        return {'HR': 0, 'ERA': 0, 'WHIP': 0, 'BattersFaced': 0}
+        career_data = dict(zip(pitcher_stat_list, np.repeat(np.nan, len(pitcher_stat_list))))
+        return career_data
 
     all_s_data=[]
     for s in s_list: 
         s_df = games[games['season']==s]
         if len(s_df)==0: 
-            s_data = dict(zip(pitcher_stat_list, np.repeat(0, len(pitcher_stat_list))))
-            s_data['HR'] = 0
-            s_data['ERA'] = 0
-            s_data['WHIP'] = 0
-            s_data['BattersFaced'] = 0
+            s_data = dict(zip(pitcher_stat_list, np.repeat(np.nan, len(pitcher_stat_list))))
             all_s_data.append(s_data)
         else:
             s_df_copy = s_df.copy()
@@ -251,7 +261,6 @@ def process_career_starter_data(player_id, games, recent_games, pitcher_stat_lis
             s_df_copy['WHIP'] = s_df.apply(lambda x: (x['baseOnBalls']+x['hits'])/x['inningsPitched'] if x['inningsPitched']>0 else 0 ,axis=1)
             s_df_copy['BattersFaced'] = s_df_copy['baseOnBalls'] + s_df_copy['atBats']  
             s_data = s_df_copy.mean(numeric_only=True).to_dict()
-            print(s_data)
             all_s_data.append(s_data)
                     
     career_df = pd.DataFrame(all_s_data)
@@ -259,7 +268,87 @@ def process_career_starter_data(player_id, games, recent_games, pitcher_stat_lis
                     'inningsPitched', 'losses', 'pitchesThrown', 'rbi', 'runs', 'strikeOuts', 'strikes', 'triples', 'wins']
     career_df = career_df.drop(drop_cols,axis = 1,errors = 'ignore')
     career_data = career_df.mul(weights,axis=0).sum().to_dict()
-    print(career_df)
-    print(career_data)
+    
+    print('----------------------Career stats----------------------')
+    df = pd.DataFrame([career_data], columns=career_data.keys())
+    print(df)
     
     return career_data
+
+
+data = mlb.boxscore_data(game_id)
+
+away_team_id = data['teamInfo']['away']['id']
+home_team_id = data['teamInfo']['home']['id']
+away_roster = mlb.get('team_roster', params = {'teamId':away_team_id,'date':date.today()})['roster']
+away_roster = [el['person'] for el in away_roster]
+away_roster = [{k:v for k,v in el.items() if k!='link'} for el in away_roster]
+home_roster = mlb.get('team_roster', params = {'teamId':home_team_id,'date':date.today()})['roster']
+home_roster = [el['person'] for el in home_roster]
+home_roster = [{k:v for k,v in el.items() if k!='link'} for el in home_roster]  
+rosters = home_roster + away_roster
+
+print('###################################################################################')
+print('####                              Batters Data                                 ####')
+print('###################################################################################')
+print('===================================================================')
+
+
+for player_name in batter_name:
+    print(player_name)
+    print('===================================================================')
+    player_id = [x['id'] for x in rosters if x['fullName'] == player_name][0]
+ 
+    game_date = datetime.today()
+
+    
+    batter_stat_list = ['runs', 'doubles', 'triples', 'homeRuns', 'strikeOuts', 'baseOnBalls',
+                     'hits', 'atBats', 'rbi', 'singles', 'avg', 'slg', 'obp', 'ops']
+    
+    player_df = get_batter_df(player_id)
+    
+    recent_data = {}
+    career_data = {}
+    
+    if len(player_df) > 0 : 
+            
+            recent_data, recent_games, games = process_recent_batter_data(player_df, game_date, batter_stat_list)
+            career_data = process_career_batter_data(player_id, games, recent_games, batter_stat_list, game_date)
+    else: 
+        recent_data = dict(zip(batter_stat_list, np.repeat(np.nan, len(batter_stat_list))))
+        career_data = dict(zip(batter_stat_list, np.repeat(np.nan, len(batter_stat_list))))
+
+    print('===================================================================')
+
+print('###################################################################################')
+print('####                              Pitchers Data                                ####')
+print('###################################################################################')
+print('===================================================================')
+
+for player_name in pitcher_name:
+    print(player_name)
+    print('===================================================================')
+    player_id = [x['id'] for x in rosters if x['fullName'] == player_name][0]
+
+    game_date = datetime.today()
+    
+    pitcher_stat_list=[
+        'runs', 'doubles', 'triples', 'homeRuns', 'strikeOuts', 'baseOnBalls', 'hits', 'atBats', 
+        'stolenBases', 'inningsPitched', 'wins', 'losses', 'holds', 'blownSave',
+        'pitchesThrown', 'strikes', 'rbi', 'era', 'whip', 'obp']
+    
+    
+    player_df = get_starter_df(player_id)
+    
+    recent_data = {}
+    career_data = {}
+    
+    if len(player_df) > 0 : 
+        recent_data, recent_games, games = process_recent_starter_data(player_df, game_date, pitcher_stat_list)
+        career_data = process_career_starter_data(player_id, games, recent_games, pitcher_stat_list, game_date)
+    else: 
+        recent_data = dict(zip(pitcher_stat_list, np.repeat(np.nan, len(pitcher_stat_list))))
+        career_data = dict(zip(pitcher_stat_list, np.repeat(np.nan, len(pitcher_stat_list))))
+
+    print('===================================================================')
+

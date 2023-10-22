@@ -274,10 +274,12 @@ def get_probabilities(params):
 
             if len(player_df) > 0 : 
                 recent_data, games = batting_c.process_recent_batter_data(player_df, game_date, '', batter_stat_list)
+                print(recent_data)
                 career_data = batting_c.process_career_batter_data(games, batter_stat_list)
             else: 
                 recent_data = dict(zip(batter_stat_list, np.repeat(0, len(batter_stat_list))))
                 recent_data['dificulty'] = 0
+                print(recent_data)
                 career_data = dict(zip(batter_stat_list, np.repeat(0, len(batter_stat_list))))
 
             player_name_res = pd.read_sql(f"SELECT * FROM player_table WHERE p_id = '{batter}';", con = engine).to_dict('records')

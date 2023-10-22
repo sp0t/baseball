@@ -1,8 +1,8 @@
-input_team_name_2 = 'Philadelphia Phillies'
-input_team_name_1 = 'Houston Astros'
+input_team_name_1 = 'Philadelphia Phillies'
+input_team_name_2 = 'Arizona Diamondbacks'
 batter_name = []
-pitcher_name = ['Ranger Suarez']
-game_id = '715720'
+pitcher_name = ['Arizona Diamondbacks']
+game_id = '748544'
 
 
 from datetime import date, time, datetime, timedelta

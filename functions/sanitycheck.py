@@ -138,7 +138,7 @@ def get_starter_df(player_id, year):
     df = pd.read_sql(text(f"SELECT b.game_id, b.game_date, b.home_team, b.away_team, b.home_score, b.away_score, (a.atbats)atBats, "
             f"(a.baseonballs)baseonBalls, a.blownsaves, a.doubles, (a.earnedruns)earnedRuns, a.hits, a.holds, (a.homeruns)homeRuns, a.era, "
             f"(a.inningspitched)inningsPitched, a.losses, (a.pitchesthrown)pitchesThrown, (a.playerid)playerId, a.rbi, a.runs, (a.strikeouts)strikeOuts, "
-            f"a.strikes, a.triples, a.whip, a.wins FROM pitcher_table a LEFT JOIN game_table b ON a.game_id = b.game_id WHERE a.playerid = '{player_id}' ORDER BY game_date DESC;"), con = engine)
+            f"a.strikes, a.triples, a.whip, a.wins FROM pitcher_table a LEFT JOIN game_table b ON a.game_id = b.game_id WHERE a.playerid = '{player_id}' ORDER BY game_date;"), con = engine)
 
     print(player_id)
     if(player_id == '685314' or player_id == '573009'):

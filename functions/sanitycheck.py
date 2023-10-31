@@ -181,7 +181,7 @@ def process_recent_starter_data(player_df, game_date, pitcher_stat_list):
         
         if len(games) >= 5: 
             recent_df = games.tail(5)
-            weights = [0.15,.175,.175,.25,.25]
+            weights = [0.15,0.175,0.175,0.25,0.25]
             
         else: 
             recent_df = games

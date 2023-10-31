@@ -192,6 +192,7 @@ def process_recent_starter_data(player_df, game_date, pitcher_stat_list):
         recent_df_copy['ERA'] = recent_df.apply(lambda x: 9*x['earnedRuns']/x['inningsPitched'] if x['inningsPitched']>0 else 0,axis=1)
         recent_df_copy['WHIP'] = recent_df.apply(lambda x: (x['baseOnBalls']+x['hits'])/x['inningsPitched'] if x['inningsPitched']>0 else 0 ,axis=1)
         recent_df_copy['BattersFaced'] = recent_df['baseOnBalls'] + recent_df['atBats'] 
+        print(recent_df_copy)
         
         drop_cols = ['note', 'game_id', 'away_team', 'home_team', 'away_score', 'home_score', 'playerId', 'atBats', 'baseOnBalls', 'blownsaves', 'doubles', 'earnedRuns', 'hits', 'holds',
                     'inningsPitched', 'losses', 'pitchesThrown', 'rbi', 'runs', 'strikeOuts', 'strikes', 'triples', 'wins']

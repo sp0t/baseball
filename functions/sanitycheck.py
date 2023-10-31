@@ -143,6 +143,9 @@ def get_starter_df(player_id, year):
             f"(a.inningspitched)inningsPitched, a.losses, (a.pitchesthrown)pitchesThrown, (a.playerid)playerId, a.rbi, a.runs, (a.strikeouts)strikeOuts, "
             f"a.strikes, a.triples, a.whip, a.wins FROM pitcher_table a LEFT JOIN game_table b ON a.game_id = b.game_id WHERE a.playerid = '{player_id}' ORDER BY game_date DESC;"), con = engine)
 
+    if(player_id == '685314' and  player_id == '573009'):
+        print(df)
+
     string_cols = [col for col in df.columns if 'id' in col.lower()] + ['game_date', 'away_team', 'home_team']
 
     player_df = df.loc[:,:]

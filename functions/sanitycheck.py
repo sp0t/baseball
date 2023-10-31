@@ -141,9 +141,7 @@ def get_starter_df(player_id, year):
             f"a.strikes, a.triples, a.whip, a.wins FROM pitcher_table a LEFT JOIN game_table b ON a.game_id = b.game_id WHERE a.playerid = '{player_id}' ORDER BY game_date;"), con = engine)
 
     print(player_id)
-    if(player_id == '685314' or player_id == '573009'):
-        print(df)
-
+    
     string_cols = [col for col in df.columns if 'id' in col.lower()] + ['game_date', 'away_team', 'home_team']
 
     player_df = df.loc[:,:]
@@ -183,6 +181,7 @@ def process_recent_starter_data(player_df, game_date, pitcher_stat_list):
         
         if len(games) >= 5: 
             recent_df = games.tail(5)
+            print(recent_df)
             weights = [0.15,.175,.175,.25,.25]
             
         else: 

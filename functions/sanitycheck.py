@@ -130,9 +130,6 @@ def process_career_batter_data(player_id, games, recent_games, batter_stat_list,
     career_data=pd.DataFrame(all_s_data).mul(weights,axis=0).sum().to_dict()
     df = pd.DataFrame([career_data], columns=career_data.keys())
     
-    print('----------------------Career stats----------------------')
-    print(df)
-    
     return career_data
 
 def get_starter_df(player_id, year): 
@@ -143,6 +140,7 @@ def get_starter_df(player_id, year):
             f"(a.inningspitched)inningsPitched, a.losses, (a.pitchesthrown)pitchesThrown, (a.playerid)playerId, a.rbi, a.runs, (a.strikeouts)strikeOuts, "
             f"a.strikes, a.triples, a.whip, a.wins FROM pitcher_table a LEFT JOIN game_table b ON a.game_id = b.game_id WHERE a.playerid = '{player_id}' ORDER BY game_date DESC;"), con = engine)
 
+    print(player_id)
     if(player_id == '685314' and  player_id == '573009'):
         print(df)
 
@@ -254,7 +252,6 @@ def process_career_starter_data(player_id, games, recent_games, pitcher_stat_lis
             s_df_copy['WHIP'] = s_df.apply(lambda x: (x['baseOnBalls']+x['hits'])/x['inningsPitched'] if x['inningsPitched']>0 else 0 ,axis=1)
             s_df_copy['BattersFaced'] = s_df_copy['baseOnBalls'] + s_df_copy['atBats']  
             s_data = s_df_copy.mean(numeric_only=True).to_dict()
-            print(s_data)
             all_s_data.append(s_data)
                     
     career_df = pd.DataFrame(all_s_data)
@@ -262,7 +259,5 @@ def process_career_starter_data(player_id, games, recent_games, pitcher_stat_lis
                     'inningsPitched', 'losses', 'pitchesThrown', 'rbi', 'runs', 'strikeOuts', 'strikes', 'triples', 'wins']
     career_df = career_df.drop(drop_cols,axis = 1,errors = 'ignore')
     career_data = career_df.mul(weights,axis=0).sum().to_dict()
-    print(career_df)
-    print(career_data)
     
     return career_data

@@ -5,6 +5,7 @@ import statsapi as mlb
 from sqlalchemy import create_engine
 from database import database
 from sqlalchemy import text
+import math
 
 
 def get_batter_df(player_id): 
@@ -192,6 +193,9 @@ def process_recent_starter_data(player_df, game_date, pitcher_stat_list):
         
         recent_df = recent_df.drop(drop_cols,axis = 1,errors = 'ignore')
         recent_data = recent_df.sum().to_dict()
+        beforeDec = math.floor(recent_data['inningsPitched']) 
+        afterDec = recent_data['inningsPitched'] * 10 % 10
+        recent_data['inningsPitched'] = beforeDec + math.floor(afterDec / 3) + (afterDec % 10) / 10
         recent_data['ERA'] = 9*recent_data['earnedRuns']/recent_data['inningsPitched'] if recent_data['inningsPitched']>0 else 0
         recent_data['WHIP'] = (recent_data['baseOnBalls']+recent_data['hits'])/recent_data['inningsPitched'] if recent_data['inningsPitched']>0 else 0
         recent_data['BattersFaced'] = recent_data['baseOnBalls'] + recent_data['atBats'] 

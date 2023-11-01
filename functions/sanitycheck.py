@@ -196,6 +196,7 @@ def process_recent_starter_data(player_df, game_date, pitcher_stat_list):
         recent_data['WHIP'] = (recent_data['baseOnBalls']+recent_data['hits'])/recent_data['inningsPitched'] if recent_data['inningsPitched']>0 else 0
         recent_data['BattersFaced'] = recent_data['baseOnBalls'] + recent_data['atBats'] 
         recent_games = list(recent_df.index)
+        print(recent_data)
     return recent_games, games, recent_data
 
 def process_career_starter_data(player_id, games, recent_games, pitcher_stat_list, game_date): 

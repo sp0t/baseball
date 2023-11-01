@@ -201,9 +201,7 @@ def process_recent_starter_data(player_df, game_date, pitcher_stat_list):
         recent_df_float = pd.concat([recent_df_copy.drop(numeric_cols, axis=1), numeric_df], axis=1)
         recent_games = list(recent_df.index)
         recent_df_copy = recent_df_copy.drop('GameDate',axis = 1,errors = 'ignore')
-        print(recent_df_copy)
-        print(weights)
-        recent_data = recent_df_copy.mul(weights,axis=0).sum().to_dict()
+        recent_data = recent_df_copy.sum().to_dict()
         print(recent_data)
     return recent_df_float, recent_games, games, recent_data
 

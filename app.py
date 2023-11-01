@@ -882,7 +882,7 @@ def bullpen_page():
         career_data = {}
 
         if len(player_df) > 0 : 
-            recent_df, recent_games, games, recent_data= sanitycheck.process_recent_starter_data(player_df, game_date, pitcher_stat_list)
+            recent_games, games, recent_data= sanitycheck.process_recent_starter_data(player_df, game_date, pitcher_stat_list)
             career_data = sanitycheck.process_career_starter_data(el['playerid'], games, recent_games, pitcher_stat_list, game_date)
             player['recent'] = {}
             player['recent']['HR'] = recent_data['HR']

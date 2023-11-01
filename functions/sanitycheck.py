@@ -187,23 +187,15 @@ def process_recent_starter_data(player_df, game_date, pitcher_stat_list):
             recent_df = games
             weights = list(np.repeat(1/len(recent_df), len(recent_df)))
          
-        recent_df_copy = recent_df.copy()
-        recent_df_copy['ERA'] = recent_df.apply(lambda x: 9*x['earnedRuns']/x['inningsPitched'] if x['inningsPitched']>0 else 0,axis=1)
-        recent_df_copy['WHIP'] = recent_df.apply(lambda x: (x['baseOnBalls']+x['hits'])/x['inningsPitched'] if x['inningsPitched']>0 else 0 ,axis=1)
-        recent_df_copy['BattersFaced'] = recent_df['baseOnBalls'] + recent_df['atBats'] 
         
-        drop_cols = ['note', 'game_id', 'away_team', 'home_team', 'away_score', 'home_score', 'playerId', 'atBats', 'baseOnBalls', 'blownsaves', 'doubles', 'earnedRuns', 'hits', 'holds',
-                    'inningsPitched', 'losses', 'pitchesThrown', 'rbi', 'runs', 'strikeOuts', 'strikes', 'triples', 'wins']
+        drop_cols = ['note', 'game_id', 'away_team', 'home_team', 'away_score', 'home_score', 'playerId', 'atBats', 'blownsaves', 'doubles',  'holds',
+                     'losses', 'pitchesThrown', 'rbi', 'runs', 'strikeOuts', 'strikes', 'triples', 'wins']
         
-        recent_df_copy = recent_df_copy.drop(drop_cols,axis = 1,errors = 'ignore')
-        numeric_cols = recent_df_copy.select_dtypes(include=['float64', 'int64']).columns
-        numeric_df = recent_df_copy[numeric_cols].astype(float)
-        recent_df_float = pd.concat([recent_df_copy.drop(numeric_cols, axis=1), numeric_df], axis=1)
-        recent_games = list(recent_df.index)
-        recent_df_copy = recent_df_copy.drop('GameDate',axis = 1,errors = 'ignore')
-        recent_data = recent_df_copy.sum().to_dict()
+        recent_df = recent_df.drop(drop_cols,axis = 1,errors = 'ignore')
+        recent_data = recent_df.sum().to_dict()
         print(recent_data)
-    return recent_df_float, recent_games, games, recent_data
+        recent_games = list(recent_df.index)
+    return recent_games, games, recent_data
 
 def process_career_starter_data(player_id, games, recent_games, pitcher_stat_list, game_date): 
     

@@ -186,14 +186,15 @@ def process_recent_starter_data(player_df, game_date, pitcher_stat_list):
         else: 
             recent_df = games
             weights = list(np.repeat(1/len(recent_df), len(recent_df)))
-         
-        
-        drop_cols = ['note', 'game_id', 'away_team', 'home_team', 'away_score', 'home_score', 'playerId', 'atBats', 'blownsaves', 'doubles',  'holds',
+
+        drop_cols = ['note', 'game_id', 'away_team', 'home_team', 'away_score', 'home_score', 'playerId', 'blownsaves', 'doubles',  'holds',
                      'losses', 'pitchesThrown', 'rbi', 'runs', 'strikeOuts', 'strikes', 'triples', 'wins']
         
         recent_df = recent_df.drop(drop_cols,axis = 1,errors = 'ignore')
         recent_data = recent_df.sum().to_dict()
-        print(recent_data)
+        recent_data['ERA'] = 9*recent_data['earnedRuns']/recent_data['inningsPitched'] if recent_data['inningsPitched']>0 else 0
+        recent_data['WHIP'] = (recent_data['baseOnBalls']+recent_data['hits'])/recent_data['inningsPitched'] if recent_data['inningsPitched']>0 else 0
+        recent_data['BattersFaced'] = recent_data['baseOnBalls'] + recent_data['atBats'] 
         recent_games = list(recent_df.index)
     return recent_games, games, recent_data
 

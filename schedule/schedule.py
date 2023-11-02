@@ -102,9 +102,9 @@ def get_rosters(game_id):
     return rosters
 
 def get_schedule_from_mlb():
-    game_sched = mlb.schedule(start_date = date.today())
+    # game_sched = mlb.schedule(start_date = date.today())
     #testcommit
-    # game_sched = mlb.schedule(start_date = "2022-10-14")
+    game_sched = mlb.schedule(start_date = "2023-11-01")
     info_keys = ['game_id', 'game_datetime','away_name', 'home_name']
     game_sched = [{k:v for k,v in el.items() if k in info_keys} for el in game_sched]
     

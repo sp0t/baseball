@@ -11,10 +11,10 @@ for game in game_sched:
     away_team = data['teamInfo']['away']['abbreviation']
     home_team = data['teamInfo']['home']['abbreviation']
     print(game_date, away_team, home_team)
-    away_res = pd.read_sql(f"SELECT * FROM (SELECT * FROM game_table WHERE away_team = '{data['teamInfo']['away']['abbreviation']}' or home_team = '{data['teamInfo']['away']['abbreviation']}' ORDER BY game_date DESC LIMIT 30) games INNER JOIN batter_table ON games.game_id = batter_table.game_id \ 
+    away_res = pd.read_sql(f"SELECT * FROM (SELECT * FROM game_table WHERE away_team = '{data['teamInfo']['away']['abbreviation']}' or home_team = '{data['teamInfo']['away']['abbreviation']}' ORDER BY game_date DESC LIMIT 30) games INNER JOIN batter_table ON games.game_id = batter_table.game_id 
         WHERE (games.away_team='{data['teamInfo']['away']['abbreviation']}' AND batter_table.team = 'away') OR (games.home_team='{data['teamInfo']['away']['abbreviation']}' AND batter_table.team = 'home');", con = engine).to_dict('records')
 
-    home_res = pd.read_sql(f"SELECT * FROM (SELECT * FROM game_table WHERE away_team = '{data['teamInfo']['home']['abbreviation']}' or home_team = '{data['teamInfo']['home']['abbreviation']}' ORDER BY game_date DESC LIMIT 30) games INNER JOIN batter_table ON games.game_id = batter_table.game_id \ 
+    home_res = pd.read_sql(f"SELECT * FROM (SELECT * FROM game_table WHERE away_team = '{data['teamInfo']['home']['abbreviation']}' or home_team = '{data['teamInfo']['home']['abbreviation']}' ORDER BY game_date DESC LIMIT 30) games INNER JOIN batter_table ON games.game_id = batter_table.game_id 
         WHERE (games.away_team='{data['teamInfo']['home']['abbreviation']}' AND batter_table.team = 'away') OR (games.home_team='{data['teamInfo']['home']['abbreviation']}' AND batter_table.team = 'home');", con = engine).to_dict('records')
 
 

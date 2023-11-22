@@ -13,6 +13,7 @@ for bet in bet_res:
     if len(gameid_res) == 0:
         print(bet)
         print(away_res)
+        print(home_res)
         print(gameid_res)
         continue
     print(gameid_res[0]['game_id'])

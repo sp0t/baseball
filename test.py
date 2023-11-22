@@ -13,5 +13,5 @@ for bet in bet_res:
     home_res = pd.read_sql(text(f"SELECT * FROM team_table WHERE team_name = '{bet['team2']}';"), con = engine).to_dict('records')
     print(home_res)
     gameid_res = pd.read_sql(text(f"SELECT * FROM game_table WHERE away_team = '{away_res[0]['team_abbr']}' AND home_team = '{home_res[0]['team_abbr']}' AND game_date = '{bet['betdate']}';"), con = engine).to_dict('records')
-    print(gameid_res)
+    print(gameid_res[0]['game_id'])
     # engine.execute(f"UPDATE test_betting SET game_id = '{gameid_res[0]['game_id']}' WHERE team1 = '{bet['team1']}' AND team2 = '{bet['team2']}' AND betdate = '{bet['betdate']}';") 

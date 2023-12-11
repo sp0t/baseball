@@ -339,25 +339,56 @@ def make_prediction():
     
     return prediction
 
-@app.route('/teams')
+# @app.route('/teams')
+# @login_required
+# def teams():
+#     if session["state"] == 0:
+#         return redirect(url_for("show_betting"))
+#     res = mlb.get('teams', params={'sportId':1})['teams']
+#     team_dict = [{k:v for k,v in el.items() if k in ['id', 'name', 'abbreviation', 'division', 'teamName']} for el in res]
+#     team_dict = {item['name']: item for item in team_dict}
+
+#     print(team_dict)
+
+#     res = list(mlb.standings_data().values())
+
+#     print(res)
+#     for league in res: 
+#         for team in league['teams']: 
+#             team.update({'abbreviation':team_dict[team['name']]['abbreviation']})
+#             team.update({'name':team_dict[team['name']]['teamName']})
+#     al=res[:3]
+#     nl=res[3:]
+
+
+#     return render_template('teams.html', al = al, nl = nl)
+
+@app.route('/teams', methods = ["GET", "POST"]) 
 @login_required
-def teams():
-    if session["state"] == 0:
-        return redirect(url_for("show_betting"))
-    res = mlb.get('teams', params={'sportId':1})['teams']
-    team_dict = [{k:v for k,v in el.items() if k in ['id', 'name', 'abbreviation', 'division', 'teamName']} for el in res]
-    team_dict = {item['name']: item for item in team_dict}
+def teams():  
+    engine = database.connect_to_db()
 
-    res = list(mlb.standings_data().values())
-    for league in res: 
-        for team in league['teams']: 
-            team.update({'abbreviation':team_dict[team['name']]['abbreviation']})
-            team.update({'name':team_dict[team['name']]['teamName']})
-    al=res[:3]
-    nl=res[3:]
+    if request.method == 'GET':
+        game_table = pd.read_sql(f"SELECT (team_name)tname, (team_abbr)abbreviation FROM team_table ORDER BY team_name;", con = engine).to_dict('records')
+        return render_template("teams.html", data = game_table)
+    if request.method == 'POST':
+        team_data = request.get_json()
 
+        print(team_data)
 
-    return render_template('teams.html', al = al, nl = nl)
+        data = {}
+        data['win_loss'] = {}
+
+        win_loss_res = list(mlb.standings_data().values())
+        for league in win_loss_res: 
+            for team in league['teams']: 
+                if team['name'] == team_data['name']:
+                    data['win_loss']['win'] = team['w']
+                    data['win_loss']['loss'] = team['l']
+
+        print(data)
+
+        return data
 
 @app.route('/teams/<team_abbreviation>', methods=["GET", "POST"])
 @login_required
@@ -669,7 +700,6 @@ def season_state():
 def betting_proc(): 
     if request.method == 'POST':
         betting_data = request.get_json()
-        print('=====================>betting_data', betting_data)
         engine = database.connect_to_db()
         for betting in betting_data:
             stake = betting["stake"].replace(',', '')

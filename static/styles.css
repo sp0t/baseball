@@ -742,3 +742,77 @@ table {
   .get-predict :hover {
 	background-color: #0a63c2;
   }
+
+  .team-tabs{
+    font-family:'Poppins',sans-serif;
+    display:flex;
+    align-items:center;
+    flex-direction:column;
+    width:100%;
+    min-height:100vh;
+  }
+  .sidebar{
+     display:flex;
+     align-items:center;
+     justify-content:center;
+     width:100%;
+  }
+  .tab-btn{
+    background-color:#fff;
+    border:none;
+    border-bottom:1px solid gray;
+    color:#000;
+    cursor:pointer;
+    padding:10px 40px;
+    margin:10px 0;
+    outline:none;
+    /* width:15%; */
+	font-size: 15px;
+  }
+  .tab-btn-active{
+    border-bottom:2px solid hsl(0, 94%, 66%);
+    color:hsl(0, 94%, 66%);
+    /* font-weight:bold; */
+  }
+  /* tabs content */
+  .content{
+    width:100%;
+  }
+  .tab-content{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    /* justify-content:center; */
+    text-align:center;
+    width:100%;
+    height:100vh;
+    display: none;
+  }
+  .tab-content-active{
+    display:flex;
+  }
+  .tab-content img{
+    width:350px;
+  }
+ 
+  .win-loss-container {
+	margin-top: 100px;
+    color: black;
+  }
+
+  .win-loss-row {
+	display: flex;
+    align-content: center;
+    justify-content: space-between;
+    gap: 40px;
+	font-size: 30px;
+	padding-top: 20px;
+  }
+
+  .win-text {
+	color: blue;
+  }
+
+  .loss-text {
+	color: red;
+  }

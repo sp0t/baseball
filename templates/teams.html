@@ -13,8 +13,82 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></script>
         <script type="text/javascript" src="{{ url_for('static', filename='index.js') }}"></script>
         <!-- Latest compiled and minified CSS -->
+        <script type="text/javascript">
+            function setupTabs (){
+                document.querySelectorAll('.tab-btn').forEach(button=>{
+                    button.addEventListener('click',()=>{
+                    
+                    
+                    const sidebar = button.parentElement;
+                    const tabs = sidebar.parentElement;
+                    const tabNumber = button.dataset.forTab;
+                    const tabActivate = tabs.querySelector(`.tab-content[data-tab="${tabNumber}"]`)
+                    
+                    sidebar.querySelectorAll('.tab-btn').forEach(button=>{
+                        button.classList.remove('tab-btn-active')
+                    })
+                    tabs.querySelectorAll('.tab-content').forEach(tab=>{
+                        tab.classList.remove('tab-content-active')
+                    })
+                    button.classList.add('tab-btn-active')
+                    tabActivate.classList.add('tab-content-active')
+                    })
+                })
+                }
+
+                document.addEventListener('DOMContentLoaded',()=>{
+                setupTabs();
+            });
+
+            document.addEventListener('DOMContentLoaded', function() {
+                var select = document.getElementById('teams');
+                
+                select.addEventListener('change', function() {
+                var abbreviation = select.value;
+                var tname = select.options[select.selectedIndex].text;
+
+                getData(abbreviation, tname);
+                });
+            });
+
+            function getData(abbreviation, name) {
+                data = {}
+                data['name'] = name
+                data['abbreviation'] = abbreviation
+
+                $.ajax({
+                    url: '/teams', 
+                    type: 'POST', 
+                    data: JSON.stringify(data),
+                    dataType: 'json',
+                    contentType: 'application/json',
+
+                    beforeSend: function(){ 
+                        $('#loader').show();
+                        $('#tab-content').hide();
+                    },
+
+                    success: function (data) {
+                        $('#loader').hide();
+                        $('#tab-content').show();
+
+                        var html='';
+                        html += '<div class="win-text">WIN count:</div>';
+                        html += `<div>${data['win_loss']['win']}</div>`;
+
+                        $("#win-count").html(html);
+                        html = '<div class="loss-text">LOSS count:</div>';
+                        html += `<div>${data['win_loss']['loss']}</div>`;
+                        $("#loss-count").html(html);
+                    },
+                    error: function (xhr, status, error) {
+                        console.error("AJAX request failed:", error);
+                    }
+                })
+            }
+        </script>
     </head>
-    <body>
+    <body onload="getData('{{data[0].abbreviation}}', '{{data[0].tname}}')">
         <div class="nav">
             <input type="checkbox" id="nav-check">
             <div class="nav-header"><div class="nav-title">BetMLB</div></div>
@@ -33,170 +107,52 @@
               <a href="#" onclick="updateTeam()" >UpdateTeam</a>
             </div>
             <div id="update-loader" style="display: none;"><img style="width: 50px;" src="/static/loader.gif"/></div>
-          </div>
+        </div>
+        <div style="margin-left: 50px; margin-top: 100px; display: flex; justify-content: space-between; align-items: center;">
+            <div style="display: flex; align-items: center;">
+                <label for="teams" style="font-size: 25px;">Select team:</label>
+                <select name="teams" id="teams" style="font-size: 20px; height: auto; width: auto; text-align: center; color: white; background-color: rgb(49, 47, 47); padding: 5px; margin-left: 20px;">
+                    {% for team in data %}
+                        <option value="{{team.abbreviation}}">{{team.tname}}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
         <div class="container">
-            <div class="grid-container">
-                <div class="team-grid">
-                    <div class="al-east">
-                        <span class="team-title">AL East</span>
-                        <table class="table">
-                            <thead>
-                                <th>Rank</th>
-                                <th>Team</th>
-                                <th>Wins</th>
-                                <th>Losses</th>
-                            </thead>
-        
-                            <tbody>
-                                {% for team in al[0].teams %}
-        
-                                <tr>
-                                    <td>{{team.div_rank}}</td>
-                                    <td><a href ='/teams/{{team.abbreviation}}'>{{team.abbreviation}}</a></td>
-                                    <td>{{team.w}}</td>
-                                    <td>{{team.l}}</td>
-                                </tr>
-        
-                                {% endfor %}
-                            </tbody>
-        
-                        </table>
-        
+            <div class="team-tabs">
+                <div class="sidebar">
+                   <button class="tab-btn tab-btn-active" data-for-tab="1">Win Loss</button>
+                   <button class="tab-btn" data-for-tab="2">P/L Win Loss</button>
+                   <button class="tab-btn" data-for-tab="3">Bet On</button>
+                   <button class="tab-btn" data-for-tab="4">Bet Against</button>
+                   <button class="tab-btn" data-for-tab="5">Performance-Price</button>
+                   <button class="tab-btn" data-for-tab="6">Price Movements Team</button>
+                   <button class="tab-btn" data-for-tab="7">Price Movements Starting Pitcher</button>
+                 </div>
+                <div id="loader"><img style="width: 50px; margin-top: 220px;" src="/static/loader.gif"/></div>
+                <div class="content" id="tab-content">
+                    <div class="tab-content tab-content-active" data-tab="1">
+                        <div class="win-loss-container">
+                            <div class="win-loss-row" id="win-count">
+                            </div>
+                            <div class="win-loss-row" id="loss-count">
+                            </div>
+                        </div>
                     </div>
-    
-                    <div class="al-central">
-                        <span class="team-title">AL Central</span>
-                        <table class="table">
-                            <thead>
-                                <th>Rank</th>
-                                <th>Team</th>
-                                <th>Wins</th>
-                                <th>Losses</th>
-                            </thead>
-        
-                            <tbody>
-                                {% for team in al[1].teams %}
-        
-                                <tr>
-                                    <td>{{team.div_rank}}</td>
-                                    <td><a href ='/teams/{{team.abbreviation}}'>{{team.abbreviation}}</a></td>
-                                    <td>{{team.w}}</td>
-                                    <td>{{team.l}}</td>
-                                </tr>
-        
-                                {% endfor %}
-                            </tbody>
-        
-                        </table>
+                    <div class="tab-content" data-tab="2">
                     </div>
-    
-                    <div class="al-west">
-                        <span class="team-title">AL West</span>
-                        <table class="table">
-                            <thead>
-                                <th>Rank</th>
-                                <th>Team</th>
-                                <th>Wins</th>
-                                <th>Losses</th>
-                            </thead>
-        
-                            <tbody>
-                                {% for team in al[2].teams %}
-        
-                                <tr>
-                                    <td>{{team.div_rank}}</td>
-                                    <td><a href ='/teams/{{team.abbreviation}}'>{{team.abbreviation}}</a></td>
-                                    <td>{{team.w}}</td>
-                                    <td>{{team.l}}</td>
-                                </tr>
-        
-                                {% endfor %}
-                            </tbody>
-        
-                        </table>
+                    <div class="tab-content" data-tab="3">
                     </div>
-    
-                    <div class="nl-east">
-                        <span class="team-title">NL East</span>
-                        <table class="table">
-                            <thead>
-                                <th>Rank</th>
-                                <th>Team</th>
-                                <th>Wins</th>
-                                <th>Losses</th>
-                            </thead>
-        
-                            <tbody>
-                                {% for team in nl[0].teams %}
-        
-                                <tr>
-                                    <td>{{team.div_rank}}</td>
-                                    <td><a href ='/teams/{{team.abbreviation}}'>{{team.abbreviation}}</a></td>
-                                    <td>{{team.w}}</td>
-                                    <td>{{team.l}}</td>
-                                </tr>
-        
-                                {% endfor %}
-                            </tbody>
-        
-                        </table>
+                    <div class="tab-content" data-tab="4">
                     </div>
-    
-                    <div class="nl-central">
-                        <span class="team-title">NL Central</span>
-                        <table class="table">
-                            <thead>
-                                <th>Rank</th>
-                                <th>Team</th>
-                                <th>Wins</th>
-                                <th>Losses</th>
-                            </thead>
-        
-                            <tbody>
-                                {% for team in nl[1].teams %}
-        
-                                <tr>
-                                    <td>{{team.div_rank}}</td>
-                                    <td><a href ='/teams/{{team.abbreviation}}'>{{team.abbreviation}}</a></td>
-                                    <td>{{team.w}}</td>
-                                    <td>{{team.l}}</td>
-                                </tr>
-        
-                                {% endfor %}
-                            </tbody>
-        
-                        </table>
+                    <div class="tab-content" data-tab="5">
                     </div>
-    
-                    <div class="nl-west">
-                        <span class="team-title">NL West</span>
-                        <table class="table">
-                            <thead>
-                                <th>Rank</th>
-                                <th>Team</th>
-                                <th>Wins</th>
-                                <th>Losses</th>
-                            </thead>
-        
-                            <tbody>
-                                {% for team in nl[2].teams %}
-        
-                                <tr>
-                                    <td>{{team.div_rank}}</td>
-                                    <td><a href ='/teams/{{team.abbreviation}}'>{{team.abbreviation}}</a></td>
-                                    <td>{{team.w}}</td>
-                                    <td>{{team.l}}</td>
-                                </tr>
-        
-                                {% endfor %}
-                            </tbody>
-        
-                        </table>
+                    <div class="tab-content" data-tab="6">
+                    </div>
+                    <div class="tab-content" data-tab="7">
                     </div>
                 </div>
             </div>
-            
-                
         </div>
     </body>
 </html>

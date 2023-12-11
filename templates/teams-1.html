@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>BetMLB</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="/static/styles.css"> 
+        <link rel="stylesheet" href="/static/nav.css"> 
+        <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🚀</text></svg>"> 
+        <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></script>
+        <script type="text/javascript" src="{{ url_for('static', filename='index.js') }}"></script>
+        <!-- Latest compiled and minified CSS -->
+    </head>
+    <body>
+        <div class="nav">
+            <input type="checkbox" id="nav-check">
+            <div class="nav-header"><div class="nav-title">BetMLB</div></div>
+            <div class="nav-btn">
+              <label for="nav-check">
+                <span></span>
+                <span></span>
+                <span></span>
+              </label>
+            </div>
+            
+            <div class="nav-links">
+              <a href="/">Home</a>
+              <a href="/database">Database</a>
+              <a href="/showbetting">Accounting</a>
+              <a href="#" onclick="updateTeam()" >UpdateTeam</a>
+            </div>
+            <div id="update-loader" style="display: none;"><img style="width: 50px;" src="/static/loader.gif"/></div>
+          </div>
+        <div class="container">
+            <div class="grid-container">
+                <div class="team-grid">
+                    <div class="al-east">
+                        <span class="team-title">AL East</span>
+                        <table class="table">
+                            <thead>
+                                <th>Rank</th>
+                                <th>Team</th>
+                                <th>Wins</th>
+                                <th>Losses</th>
+                            </thead>
+        
+                            <tbody>
+                                {% for team in al[0].teams %}
+        
+                                <tr>
+                                    <td>{{team.div_rank}}</td>
+                                    <td><a href ='/teams/{{team.abbreviation}}'>{{team.abbreviation}}</a></td>
+                                    <td>{{team.w}}</td>
+                                    <td>{{team.l}}</td>
+                                </tr>
+        
+                                {% endfor %}
+                            </tbody>
+        
+                        </table>
+        
+                    </div>
+    
+                    <div class="al-central">
+                        <span class="team-title">AL Central</span>
+                        <table class="table">
+                            <thead>
+                                <th>Rank</th>
+                                <th>Team</th>
+                                <th>Wins</th>
+                                <th>Losses</th>
+                            </thead>
+        
+                            <tbody>
+                                {% for team in al[1].teams %}
+        
+                                <tr>
+                                    <td>{{team.div_rank}}</td>
+                                    <td><a href ='/teams/{{team.abbreviation}}'>{{team.abbreviation}}</a></td>
+                                    <td>{{team.w}}</td>
+                                    <td>{{team.l}}</td>
+                                </tr>
+        
+                                {% endfor %}
+                            </tbody>
+        
+                        </table>
+                    </div>
+    
+                    <div class="al-west">
+                        <span class="team-title">AL West</span>
+                        <table class="table">
+                            <thead>
+                                <th>Rank</th>
+                                <th>Team</th>
+                                <th>Wins</th>
+                                <th>Losses</th>
+                            </thead>
+        
+                            <tbody>
+                                {% for team in al[2].teams %}
+        
+                                <tr>
+                                    <td>{{team.div_rank}}</td>
+                                    <td><a href ='/teams/{{team.abbreviation}}'>{{team.abbreviation}}</a></td>
+                                    <td>{{team.w}}</td>
+                                    <td>{{team.l}}</td>
+                                </tr>
+        
+                                {% endfor %}
+                            </tbody>
+        
+                        </table>
+                    </div>
+    
+                    <div class="nl-east">
+                        <span class="team-title">NL East</span>
+                        <table class="table">
+                            <thead>
+                                <th>Rank</th>
+                                <th>Team</th>
+                                <th>Wins</th>
+                                <th>Losses</th>
+                            </thead>
+        
+                            <tbody>
+                                {% for team in nl[0].teams %}
+        
+                                <tr>
+                                    <td>{{team.div_rank}}</td>
+                                    <td><a href ='/teams/{{team.abbreviation}}'>{{team.abbreviation}}</a></td>
+                                    <td>{{team.w}}</td>
+                                    <td>{{team.l}}</td>
+                                </tr>
+        
+                                {% endfor %}
+                            </tbody>
+        
+                        </table>
+                    </div>
+    
+                    <div class="nl-central">
+                        <span class="team-title">NL Central</span>
+                        <table class="table">
+                            <thead>
+                                <th>Rank</th>
+                                <th>Team</th>
+                                <th>Wins</th>
+                                <th>Losses</th>
+                            </thead>
+        
+                            <tbody>
+                                {% for team in nl[1].teams %}
+        
+                                <tr>
+                                    <td>{{team.div_rank}}</td>
+                                    <td><a href ='/teams/{{team.abbreviation}}'>{{team.abbreviation}}</a></td>
+                                    <td>{{team.w}}</td>
+                                    <td>{{team.l}}</td>
+                                </tr>
+        
+                                {% endfor %}
+                            </tbody>
+        
+                        </table>
+                    </div>
+    
+                    <div class="nl-west">
+                        <span class="team-title">NL West</span>
+                        <table class="table">
+                            <thead>
+                                <th>Rank</th>
+                                <th>Team</th>
+                                <th>Wins</th>
+                                <th>Losses</th>
+                            </thead>
+        
+                            <tbody>
+                                {% for team in nl[2].teams %}
+        
+                                <tr>
+                                    <td>{{team.div_rank}}</td>
+                                    <td><a href ='/teams/{{team.abbreviation}}'>{{team.abbreviation}}</a></td>
+                                    <td>{{team.w}}</td>
+                                    <td>{{team.l}}</td>
+                                </tr>
+        
+                                {% endfor %}
+                            </tbody>
+        
+                        </table>
+                    </div>
+                </div>
+            </div>
+            
+                
+        </div>
+    </body>
+</html>

@@ -14,6 +14,7 @@ df = pd.read_csv("MLB_Basic.csv")
 data = df.T.to_dict('dict')
 
 for el in data:
+    print(data[el]['Game ID'])
     gameData = pd.read_sql(f"SELECT * FROM game_table WHERE game_id = '{data[el]['Game ID']}';", con = engine).to_dict('records')
     if(len(gameData) == 0):
         continue

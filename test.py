@@ -32,7 +32,7 @@ for el in data:
     if(len(homeData) == 0):
         continue
 
-    print(data[el]['Game ID'], formatted_date, data[el]['Away Team'], data[el]['Home Team'], int(data[el]['Away ML Open']), int(data[el]['Away ML Close']), int(data[el]['Home ML Open']), int(data[el]['Home ML Close']))
+    print(data[el]['Game ID'], formatted_date, data[el]['Away Team'], data[el]['Home Team'], data[el]['Away ML Open'], data[el]['Away ML Close'], data[el]['Home ML Open'], data[el]['Home ML Close'])
     if data[el]['Away ML Open'] == None or data[el]['Away ML Close'] == None or data[el]['Home ML Open'] == None or data[el]['Home ML Close'] == None:
         continue
 

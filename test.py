@@ -7,7 +7,7 @@ import numpy as np
 from database import database
 
 def format_date(date_string):
-    date = datetime.strptime(date_string, "%Y%m%d")
+    date = datetime.strptime(str(date_string), "%Y%m%d")
     return date.strftime("%Y/%m/%d")
 
 engine = database.connect_to_db()

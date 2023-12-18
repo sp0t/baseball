@@ -6,6 +6,10 @@ from pytz import timezone
 import numpy as np
 from database import database
 
+def format_date(date_string):
+    date = datetime.strptime(date_string, "%Y%m%d")
+    return date.strftime("%Y/%m/%d")
+
 engine = database.connect_to_db()
 
 # engine.execute("CREATE TABLE IF NOT EXISTS odds_table(game_id TEXT, game_date TEXT, away TEXT, home TEXT, start_time TEXT, away_open INT, away_close INT, home_open INT, home_close INT);")
@@ -14,8 +18,9 @@ df = pd.read_csv("MLB_Basic.csv")
 data = df.T.to_dict('dict')
 
 for el in data:
-    print(data[el]['Game ID'])
-    gameData = pd.read_sql(f"SELECT * FROM game_table WHERE game_id = '{data[el]['Game ID']}';", con = engine).to_dict('records')
+    formatted_date = format_date(data[el]['Date'])
+    print(formatted_date)
+    gameData = pd.read_sql(f"SELECT * FROM game_table WHERE game_date = '{formatted_date}' AND away_team = '{data[el]['Away Team']}' AND home_team = '{data[el]['Home Team']}';", con = engine).to_dict('records')
     if(len(gameData) == 0):
         continue
 

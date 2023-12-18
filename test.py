@@ -34,4 +34,4 @@ for el in data:
 
     print(data[el]['Game ID'], formatted_date, data[el]['Away Team'], data[el]['Home Team'], int(data[el]['Away ML Open']), int(data[el]['Away ML Close']), int(data[el]['Home ML Open']), int(data[el]['Home ML Close']))
 
-    engine.execute((f"INSERT INTO odds_table(game_id, game_date, away, home, away_open, away_close, home_open, home_close  VALUES('{gameData[0]['game_id']}', '{gameData[0]['game_date']}', '{awayData[0]['team_name']}', '{homeData[0]['team_name']}', '{int(data[el]['Away ML Open'])}', '{int(data[el]['Away ML Close'])}', '{int(data[el]['Home ML Open'])}', '{int(data[el]['Home ML Close'])}');"))
+    engine.execute((f"INSERT INTO odds_table(game_id, game_date, away, home, away_open, away_close, home_open, home_close) VALUES('{gameData[0]['game_id']}', '{gameData[0]['game_date']}', '{awayData[0]['team_name']}', '{homeData[0]['team_name']}', '{int(data[el]['Away ML Open'])}', '{int(data[el]['Away ML Close'])}', '{int(data[el]['Home ML Open'])}', '{int(data[el]['Home ML Close'])}');"))

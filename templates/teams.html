@@ -80,6 +80,32 @@
                         html = '<div class="loss-text">LOSS count:</div>';
                         html += `<div>${data['win_loss']['loss']}</div>`;
                         $("#loss-count").html(html);
+
+                        html='';
+                        html += '<div class="risk-text">Total risk:</div>';
+                        html += `<div>${data['pl_win_loss']['total']}</div>`;
+                        $("#total-risk").html(html);
+
+                        html = '<div class="risk-text">P/L:</div>';
+                        html += `<div>${data['pl_win_loss']['pl']}</div>`;
+                        $("#pl-risk").html(html);
+
+                        html = '<div class="risk-text">Yield:</div>';
+                        html += `<div>${data['pl_win_loss']['yield']}%</div>`;
+                        $("#yield-risk").html(html);
+
+                        html='';
+                        html += '<div class="risk-text">Total risk:</div>';
+                        html += `<div>${data['bet_on']['total']}</div>`;
+                        $("#beton-total").html(html);
+
+                        html = '<div class="risk-text">P/L:</div>';
+                        html += `<div>${data['bet_on']['pl']}</div>`;
+                        $("#beton-pl").html(html);
+
+                        html = '<div class="risk-text">Yield:</div>';
+                        html += `<div>${data['bet_on']['yield']}%</div>`;
+                        $("#beton-yield").html(html);
                     },
                     error: function (xhr, status, error) {
                         console.error("AJAX request failed:", error);
@@ -140,8 +166,24 @@
                         </div>
                     </div>
                     <div class="tab-content" data-tab="2">
+                        <div class="win-loss-container">
+                            <div class="win-loss-row" id="total-risk">
+                            </div>
+                            <div class="win-loss-row" id="pl-risk">
+                            </div>
+                            <div class="win-loss-row" id="yield-risk">
+                            </div>
+                        </div>
                     </div>
                     <div class="tab-content" data-tab="3">
+                        <div class="win-loss-container">
+                            <div class="win-loss-row" id="beton-total">
+                            </div>
+                            <div class="win-loss-row" id="beton-pl">
+                            </div>
+                            <div class="win-loss-row" id="beton-yield">
+                            </div>
+                        </div>
                     </div>
                     <div class="tab-content" data-tab="4">
                     </div>

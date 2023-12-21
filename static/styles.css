@@ -816,3 +816,7 @@ table {
   .loss-text {
 	color: red;
   }
+
+  .risk-text {
+	color: black
+  }

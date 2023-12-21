@@ -378,6 +378,9 @@ def teams():
 
         data = {}
         data['win_loss'] = {}
+        data['pl_win_loss'] = {}
+        data['bet_on'] = {}
+        data['bet_against'] = {}
 
         win_loss_res = list(mlb.standings_data().values())
         for league in win_loss_res: 
@@ -386,8 +389,92 @@ def teams():
                     data['win_loss']['win'] = team['w']
                     data['win_loss']['loss'] = team['l']
 
-        print(data)
+        today = date.today()
+        today_str = today.strftime("%Y/%m/%d")
+        year = today.year
+        pl_res = pd.read_sql(f"SELECT * FROM odds_table INNER JOIN game_table ON odds_table.game_id = game_table.game_id WHERE (odds_table.away = '{team_data['name']}' OR odds_table.home = '{team_data['name']}') AND odds_table.game_date != '{today_str}' AND odds_table.game_date LIKE '{year}%%' ORDER BY odds_table.game_date;", con = engine).to_dict('records')
 
+        total = 0
+        pl = 0
+        yd = 0
+
+        if len(pl_res) == 0:
+            data['pl_win_loss']['total'] = total
+            data['pl_win_loss']['pl'] = pl
+            data['pl_win_loss']['yield'] = yd
+        else:
+            for game in pl_res:
+                if game['away'] == team_data['name']:
+                    if game['away_score'] > game['home_score']:
+                        if game['away_open'] > 0:
+                            total += 1
+                            pl += game['away_open'] / 100
+                        else:
+                            total += abs(game['away_open'] / 100)
+                            pl += 1
+                    elif game['away_score'] < game['home_score']:
+                        if game['away_open'] > 0:
+                            total += 1
+                            pl -= 1
+                        else:
+                            total += abs(game['away_open'] / 100)
+                            pl += game['away_open'] / 100
+                elif game['home'] == team_data['name']:
+                    total += game['home_open'] / 100
+                    if game['home_score'] > game['away_score']:
+                        if game['home_open'] > 0:
+                            total += 1
+                            pl += game['home_open'] / 100
+                        else:
+                            total += abs(game['home_open'] / 100)
+                            pl += 1
+                    elif game['home_score'] < game['away_score']:
+                        if game['home_open'] > 0:
+                            total += 1
+                            pl -= 1
+                        else:
+                            total += abs(game['home_open'] / 100)
+                            pl += game['home_open'] / 100
+            yd = pl / total * 100
+            data['pl_win_loss']['total'] = round(total, 2)
+            data['pl_win_loss']['pl'] = round(pl, 2)
+            data['pl_win_loss']['yield'] = round(yd, 2)
+
+        total = 0
+        pl = 0
+        yd = 0
+
+        beton_res = pd.read_sql(f"SELECT * FROM betting_table WHERE place = '{team_data['name']}' AND betdate LIKE '{year}%%' ORDER BY betdate;", con = engine).to_dict('records')
+
+        if len(beton_res) == 0:
+            data['bet_on']['total'] = total
+            data['bet_on']['pl'] = pl
+            data['bet_on']['yield'] = yd
+        else:
+            for bet in beton_res:
+                if int(bet['status']) == 1:
+                    if int(bet['odds']) < 0:
+                        total += abs(int(bet['odds']) / 100)
+                        pl += int(bet['odds']) / 100
+                    else:
+                        total += 1
+                        pl -= 1
+                elif int(bet['status']) == 2:
+                    if int(bet['odds']) < 0:
+                        total += abs(int(bet['odds']) / 100)
+                        pl += 1
+                    else:
+                        total += 1
+                        pl += int(bet['odds']) / 100
+
+            yd = pl / total * 100
+
+            data['bet_on']['total'] = round(total, 2)
+            data['bet_on']['pl'] = round(pl, 2)
+            data['bet_on']['yield'] = round(yd, 2)
+
+
+            
         return data
 
 @app.route('/teams/<team_abbreviation>', methods=["GET", "POST"])

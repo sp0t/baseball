@@ -800,6 +800,18 @@ table {
     color: black;
   }
 
+  .bet-container {
+	margin-top: 50px;
+    color: black;
+  }
+
+  .group-container {
+	margin-top: 50px;
+    color: black;
+	border: 1px solid gray;
+	padding: 20px;
+  }
+
   .win-loss-row {
 	display: flex;
     align-content: center;
@@ -807,6 +819,30 @@ table {
     gap: 40px;
 	font-size: 30px;
 	padding-top: 20px;
+  }
+
+  .odds-group-title {
+	display: flex;
+    align-content: center;
+    justify-content: space-between;
+    gap: 40px;
+	font-size: 25px;
+	margin-bottom: 20px;
+	color: blue;
+  }
+
+  .odds-group-row {
+	display: flex;
+    align-content: center;
+    justify-content: space-between;
+    gap: 40px;
+	font-size: 20px;
+	padding-top: 20px;
+  }
+
+  .odds-group-container {
+	display: flex;
+	gap: 100px;
   }
 
   .win-text {
@@ -819,4 +855,8 @@ table {
 
   .risk-text {
 	color: black
+  }
+
+  .table-content {
+	margin-top: 40px;
   }

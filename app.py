@@ -381,6 +381,13 @@ def teams():
         data['pl_win_loss'] = {}
         data['bet_on'] = {}
         data['bet_against'] = {}
+        data['HeavyU'] = {}
+        data['LightU'] = {}
+        data['Even'] = {}
+        data['LightF'] = {}
+        data['HeavyF'] = {}
+        data['price'] = []
+        data['players'] = []
 
         win_loss_res = list(mlb.standings_data().values())
         for league in win_loss_res: 
@@ -392,7 +399,8 @@ def teams():
         today = date.today()
         today_str = today.strftime("%Y/%m/%d")
         year = today.year
-        pl_res = pd.read_sql(f"SELECT * FROM odds_table INNER JOIN game_table ON odds_table.game_id = game_table.game_id WHERE (odds_table.away = '{team_data['name']}' OR odds_table.home = '{team_data['name']}') AND odds_table.game_date != '{today_str}' AND odds_table.game_date LIKE '{year}%%' ORDER BY odds_table.game_date;", con = engine).to_dict('records')
+        pl_res = pd.read_sql(f"SELECT odds_table.game_date, odds_table.away, odds_table.home, CASE WHEN away = '{team_data['name']}' THEN away_open WHEN home = '{team_data['name']}' THEN home_open ELSE 0 END as open_price, CASE WHEN away = '{team_data['name']}' THEN away_close WHEN home = '{team_data['name']}' THEN home_close ELSE 0 END as close_price, \
+                                CASE WHEN away = '{team_data['name']}' AND winner = '0' THEN 0 WHEN away = '{team_data['name']}' AND winner = '1' THEN 1 WHEN home = '{team_data['name']}' AND winner = '0' THEN 1 WHEN home = '{team_data['name']}' AND winner = '1' THEN 0 ELSE 0 END as win FROM odds_table INNER JOIN game_table ON odds_table.game_id = game_table.game_id WHERE (odds_table.away = '{team_data['name']}' OR odds_table.home = '{team_data['name']}') AND odds_table.game_date != '{today_str}' AND odds_table.game_date LIKE '{year}%%' ORDER BY odds_table.game_date;", con = engine).to_dict('records')
 
         total = 0
         pl = 0
@@ -404,78 +412,283 @@ def teams():
             data['pl_win_loss']['yield'] = yd
         else:
             for game in pl_res:
-                if game['away'] == team_data['name']:
-                    if game['away_score'] > game['home_score']:
-                        if game['away_open'] > 0:
-                            total += 1
-                            pl += game['away_open'] / 100
-                        else:
-                            total += abs(game['away_open'] / 100)
-                            pl += 1
-                    elif game['away_score'] < game['home_score']:
-                        if game['away_open'] > 0:
-                            total += 1
-                            pl -= 1
-                        else:
-                            total += abs(game['away_open'] / 100)
-                            pl += game['away_open'] / 100
-                elif game['home'] == team_data['name']:
-                    total += game['home_open'] / 100
-                    if game['home_score'] > game['away_score']:
-                        if game['home_open'] > 0:
-                            total += 1
-                            pl += game['home_open'] / 100
-                        else:
-                            total += abs(game['home_open'] / 100)
-                            pl += 1
-                    elif game['home_score'] < game['away_score']:
-                        if game['home_open'] > 0:
-                            total += 1
-                            pl -= 1
-                        else:
-                            total += abs(game['home_open'] / 100)
-                            pl += game['home_open'] / 100
+                if game['open_price'] >= 100:
+                    total += 1
+                    if game['win'] == 0:
+                        pl += game['open_price'] / 100
+                    elif game['win'] == 1:
+                        pl -= 1
+                elif game['open_price'] < 100:
+                    total += abs(game['open_price']) / 100
+                    if game['win'] == 0:
+                        pl += 1
+                    elif game['win'] == 1:
+                        pl += game['open_price'] / 100
+
             yd = pl / total * 100
             data['pl_win_loss']['total'] = round(total, 2)
             data['pl_win_loss']['pl'] = round(pl, 2)
             data['pl_win_loss']['yield'] = round(yd, 2)
 
-        total = 0
-        pl = 0
-        yd = 0
-
-        beton_res = pd.read_sql(f"SELECT * FROM betting_table WHERE place = '{team_data['name']}' AND betdate LIKE '{year}%%' ORDER BY betdate;", con = engine).to_dict('records')
-
+        beton_res = pd.read_sql(f"SELECT 'ON team' AS total, COUNT(*) AS number_of_bets, \
+                                    SUM(CASE WHEN status = '2' THEN 1 ELSE 0 END) AS won_count, \
+                                    SUM(CASE WHEN status = '1' THEN 1 ELSE 0 END) AS lost_count, \
+                                    to_char(ROUND(SUM(stake)::numeric, 2), 'FM999999999.00') AS total_stake, \
+                                SUM(CASE \
+                                        WHEN status::integer = 1 THEN stake * -1 \
+                                        WHEN status::integer = 2 THEN wins \
+                                    ELSE 0 \
+                                    END) AS total_P_L, \
+                                (SUM(CASE \
+                                        WHEN status::integer = 1 THEN stake * -1 \
+                                        WHEN status::integer = 2 THEN wins \
+                                    ELSE 0 \
+                                    END) / SUM(stake)) * 100 AS Yield \
+                                FROM betting_table \
+                                WHERE place = '{team_data['name']}' AND betdate LIKE '{year}%%';", con = engine).to_dict('records')
+        
         if len(beton_res) == 0:
-            data['bet_on']['total'] = total
-            data['bet_on']['pl'] = pl
-            data['bet_on']['yield'] = yd
+            data['bet_on']['num_bet'] = 0
+            data['bet_on']['win'] = 0
+            data['bet_on']['loss'] = 0
+            data['bet_on']['stake'] = 0
+            data['bet_on']['pl'] = 0
+            data['bet_on']['yield'] = 0
         else:
-            for bet in beton_res:
-                if int(bet['status']) == 1:
-                    if int(bet['odds']) < 0:
-                        total += abs(int(bet['odds']) / 100)
-                        pl += int(bet['odds']) / 100
-                    else:
-                        total += 1
-                        pl -= 1
-                elif int(bet['status']) == 2:
-                    if int(bet['odds']) < 0:
-                        total += abs(int(bet['odds']) / 100)
-                        pl += 1
-                    else:
-                        total += 1
-                        pl += int(bet['odds']) / 100
+            data['bet_on']['num_bet'] = beton_res[0]['number_of_bets']
+            data['bet_on']['win'] = beton_res[0]['won_count']
+            data['bet_on']['loss'] = beton_res[0]['lost_count']
+            data['bet_on']['stake'] = "${:,.2f}".format(round(float(beton_res[0]['total_stake']), 2))
+            data['bet_on']['pl'] = "${:,.2f}".format(round(float(beton_res[0]['total_p_l']), 2))
+            data['bet_on']['yield'] = round(beton_res[0]['yield'], 2)
 
-            yd = pl / total * 100
+        beton_details_res = pd.read_sql(f"SELECT * FROM betting_table WHERE place = '{team_data['name']}' AND betdate LIKE '{year}%%' ORDER BY betdate DESC;", con = engine).to_dict('records')
 
-            data['bet_on']['total'] = round(total, 2)
-            data['bet_on']['pl'] = round(pl, 2)
-            data['bet_on']['yield'] = round(yd, 2)
+        data['bet_on']['details'] = beton_details_res
 
+        betagainst_res = pd.read_sql(f"SELECT 'Against team' AS total, COUNT(*) AS number_of_bets, \
+                                    SUM(CASE WHEN status = '2' THEN 1 ELSE 0 END) AS won_count, \
+                                    SUM(CASE WHEN status = '1' THEN 1 ELSE 0 END) AS lost_count, \
+                                    to_char(ROUND(SUM(stake)::numeric, 2), 'FM999999999.00') AS total_stake, \
+                                SUM(CASE \
+                                        WHEN status::integer = 1 THEN stake * -1 \
+                                        WHEN status::integer = 2 THEN wins \
+                                    ELSE 0 \
+                                    END) AS total_P_L, \
+                                (SUM(CASE \
+                                        WHEN status::integer = 1 THEN stake * -1 \
+                                        WHEN status::integer = 2 THEN wins \
+                                    ELSE 0 \
+                                    END) / SUM(stake)) * 100 AS Yield \
+                                FROM betting_table \
+                                WHERE (team1 = '{team_data['name']}' OR team2 = '{team_data['name']}') AND place != '{team_data['name']}' AND betdate LIKE '{year}%%';", con = engine).to_dict('records')
+        if len(betagainst_res) == 0:
+            data['bet_against']['num_bet'] = 0
+            data['bet_against']['win'] = 0
+            data['bet_against']['loss'] = 0
+            data['bet_against']['stake'] = 0
+            data['bet_against']['pl'] = 0
+            data['bet_against']['yield'] = 0
+        else:
+            data['bet_against']['num_bet'] = betagainst_res[0]['number_of_bets']
+            data['bet_against']['win'] = betagainst_res[0]['won_count']
+            data['bet_against']['loss'] = betagainst_res[0]['lost_count']
+            data['bet_against']['stake'] = "${:,.2f}".format(round(float(betagainst_res[0]['total_stake']), 2))
+            data['bet_against']['pl'] = "${:,.2f}".format(round(float(betagainst_res[0]['total_p_l']), 2))
+            data['bet_against']['yield'] = round(betagainst_res[0]['yield'], 2)
 
-            
+        betagainst_details_res = pd.read_sql(f"SELECT * FROM betting_table WHERE (team1 = '{team_data['name']}' OR team2 = '{team_data['name']}') AND place != '{team_data['name']}' AND betdate LIKE '{year}%%' ORDER BY betdate DESC;", con = engine).to_dict('records')
+        
+        data['bet_against']['details'] = betagainst_details_res
+
+        HeavyU_res = pd.read_sql(f"SELECT 'HeavyU' AS total, COUNT(*) AS number_of_bets, \
+                                    SUM(CASE WHEN status = '2' THEN 1 ELSE 0 END) AS won_count, \
+                                    SUM(CASE WHEN status = '1' THEN 1 ELSE 0 END) AS lost_count, \
+                                    to_char(ROUND(SUM(stake)::numeric, 2), 'FM999999999.00') AS total_stake, \
+                                SUM(CASE \
+                                        WHEN status::integer = 1 THEN stake * -1 \
+                                        WHEN status::integer = 2 THEN wins \
+                                    ELSE 0 \
+                                    END) AS total_P_L, \
+                                (SUM(CASE \
+                                        WHEN status::integer = 1 THEN stake * -1 \
+                                        WHEN status::integer = 2 THEN wins \
+                                    ELSE 0 \
+                                    END) / SUM(stake)) * 100 AS Yield \
+                                FROM betting_table \
+                                WHERE CAST(odds AS DECIMAL) >= 150 AND betdate LIKE '{year}%%';", con = engine).to_dict('records')
+
+        if len(HeavyU_res) == 0:
+            data['HeavyU']['num_bet'] = 0
+            data['HeavyU']['win'] = 0
+            data['HeavyU']['loss'] = 0
+            data['HeavyU']['stake'] = 0
+            data['HeavyU']['pl'] = 0
+            data['HeavyU']['yield'] = 0
+        else:
+            data['HeavyU']['num_bet'] = HeavyU_res[0]['number_of_bets']
+            data['HeavyU']['win'] = HeavyU_res[0]['won_count']
+            data['HeavyU']['loss'] = HeavyU_res[0]['lost_count']
+            data['HeavyU']['stake'] = "${:,.2f}".format(round(float(HeavyU_res[0]['total_stake']), 2))
+            data['HeavyU']['pl'] = "${:,.2f}".format(round(float(HeavyU_res[0]['total_p_l']), 2))
+            data['HeavyU']['yield'] = round(HeavyU_res[0]['yield'], 2)
+        
+        LightU_res = pd.read_sql(f"SELECT 'LightU' AS total, COUNT(*) AS number_of_bets, \
+                                    SUM(CASE WHEN status = '2' THEN 1 ELSE 0 END) AS won_count, \
+                                    SUM(CASE WHEN status = '1' THEN 1 ELSE 0 END) AS lost_count, \
+                                    to_char(ROUND(SUM(stake)::numeric, 2), 'FM999999999.00') AS total_stake, \
+                                SUM(CASE \
+                                        WHEN status::integer = 1 THEN stake * -1 \
+                                        WHEN status::integer = 2 THEN wins \
+                                    ELSE 0 \
+                                    END) AS total_P_L, \
+                                (SUM(CASE \
+                                        WHEN status::integer = 1 THEN stake * -1 \
+                                        WHEN status::integer = 2 THEN wins \
+                                    ELSE 0 \
+                                    END) / SUM(stake)) * 100 AS Yield \
+                                FROM betting_table \
+                                WHERE CAST(odds AS DECIMAL) BETWEEN 115 AND 149 AND betdate LIKE '{year}%%';", con = engine).to_dict('records')
+        if len(LightU_res) == 0:
+            data['LightU']['num_bet'] = 0
+            data['LightU']['win'] = 0
+            data['LightU']['loss'] = 0
+            data['LightU']['stake'] = 0
+            data['LightU']['pl'] = 0
+            data['LightU']['yield'] = 0
+        else:
+            data['LightU']['num_bet'] = LightU_res[0]['number_of_bets']
+            data['LightU']['win'] = LightU_res[0]['won_count']
+            data['LightU']['loss'] = LightU_res[0]['lost_count']
+            data['LightU']['stake'] = "${:,.2f}".format(round(float(LightU_res[0]['total_stake']), 2))
+            data['LightU']['pl'] = "${:,.2f}".format(round(float(LightU_res[0]['total_p_l']), 2))
+            data['LightU']['yield'] = round(LightU_res[0]['yield'], 2)
+        
+        Even_res = pd.read_sql(f"SELECT 'Even' AS total, COUNT(*) AS number_of_bets, \
+                                    SUM(CASE WHEN status = '2' THEN 1 ELSE 0 END) AS won_count, \
+                                    SUM(CASE WHEN status = '1' THEN 1 ELSE 0 END) AS lost_count, \
+                                    to_char(ROUND(SUM(stake)::numeric, 2), 'FM999999999.00') AS total_stake, \
+                                SUM(CASE \
+                                        WHEN status::integer = 1 THEN stake * -1 \
+                                        WHEN status::integer = 2 THEN wins \
+                                    ELSE 0 \
+                                    END) AS total_P_L, \
+                                (SUM(CASE \
+                                        WHEN status::integer = 1 THEN stake * -1 \
+                                        WHEN status::integer = 2 THEN wins \
+                                    ELSE 0 \
+                                    END) / SUM(stake)) * 100 AS Yield \
+                                FROM betting_table \
+                                WHERE CAST(odds AS DECIMAL) BETWEEN -114 AND 114 AND betdate LIKE '{year}%%';", con = engine).to_dict('records')
+        if len(Even_res) == 0:
+            data['Even']['num_bet'] = 0
+            data['Even']['win'] = 0
+            data['Even']['loss'] = 0
+            data['Even']['stake'] = 0
+            data['Even']['pl'] = 0
+            data['Even']['yield'] = 0
+        else:
+            data['Even']['num_bet'] = Even_res[0]['number_of_bets']
+            data['Even']['win'] = Even_res[0]['won_count']
+            data['Even']['loss'] = Even_res[0]['lost_count']
+            data['Even']['stake'] = "${:,.2f}".format(round(float(Even_res[0]['total_stake']), 2))
+            data['Even']['pl'] = "${:,.2f}".format(round(float(Even_res[0]['total_p_l']), 2))
+            data['Even']['yield'] = round(Even_res[0]['yield'], 2)
+        
+        LightF_res = pd.read_sql(f"SELECT 'LightF' AS total, COUNT(*) AS number_of_bets, \
+                                    SUM(CASE WHEN status = '2' THEN 1 ELSE 0 END) AS won_count, \
+                                    SUM(CASE WHEN status = '1' THEN 1 ELSE 0 END) AS lost_count, \
+                                    to_char(ROUND(SUM(stake)::numeric, 2), 'FM999999999.00') AS total_stake, \
+                                SUM(CASE \
+                                        WHEN status::integer = 1 THEN stake * -1 \
+                                        WHEN status::integer = 2 THEN wins \
+                                    ELSE 0 \
+                                    END) AS total_P_L, \
+                                (SUM(CASE \
+                                        WHEN status::integer = 1 THEN stake * -1 \
+                                        WHEN status::integer = 2 THEN wins \
+                                    ELSE 0 \
+                                    END) / SUM(stake)) * 100 AS Yield \
+                                FROM betting_table \
+                                WHERE CAST(odds AS DECIMAL) BETWEEN -149 AND -115 AND betdate LIKE '{year}%%';", con = engine).to_dict('records')
+        
+        if len(LightF_res) == 0:
+            data['LightF']['num_bet'] = 0
+            data['LightF']['win'] = 0
+            data['LightF']['loss'] = 0
+            data['LightF']['stake'] = 0
+            data['LightF']['pl'] = 0
+            data['LightF']['yield'] = 0
+        else:
+            data['LightF']['num_bet'] = LightF_res[0]['number_of_bets']
+            data['LightF']['win'] = LightF_res[0]['won_count']
+            data['LightF']['loss'] = LightF_res[0]['lost_count']
+            data['LightF']['stake'] = "${:,.2f}".format(round(float(LightF_res[0]['total_stake']), 2))
+            data['LightF']['pl'] = "${:,.2f}".format(round(float(LightF_res[0]['total_p_l']), 2))
+            data['LightF']['yield'] = round(LightF_res[0]['yield'], 2)
+        
+        HeavyF_res = pd.read_sql(f"SELECT 'HeavyF' AS total, COUNT(*) AS number_of_bets, \
+                                    SUM(CASE WHEN status = '2' THEN 1 ELSE 0 END) AS won_count, \
+                                    SUM(CASE WHEN status = '1' THEN 1 ELSE 0 END) AS lost_count, \
+                                    to_char(ROUND(SUM(stake)::numeric, 2), 'FM999999999.00') AS total_stake, \
+                                SUM(CASE \
+                                        WHEN status::integer = 1 THEN stake * -1 \
+                                        WHEN status::integer = 2 THEN wins \
+                                    ELSE 0 \
+                                    END) AS total_P_L, \
+                                (SUM(CASE \
+                                        WHEN status::integer = 1 THEN stake * -1 \
+                                        WHEN status::integer = 2 THEN wins \
+                                    ELSE 0 \
+                                    END) / SUM(stake)) * 100 AS Yield \
+                                FROM betting_table \
+                                WHERE CAST(odds AS DECIMAL) <= -150 AND betdate LIKE '{year}%%';", con = engine).to_dict('records')
+        
+        if len(HeavyF_res) == 0:
+            data['HeavyF']['num_bet'] = 0
+            data['HeavyF']['win'] = 0
+            data['HeavyF']['loss'] = 0
+            data['HeavyF']['stake'] = 0
+            data['HeavyF']['pl'] = 0
+            data['HeavyF']['yield'] = 0
+        else:
+            data['HeavyF']['num_bet'] = HeavyF_res[0]['number_of_bets']
+            data['HeavyF']['win'] = HeavyF_res[0]['won_count']
+            data['HeavyF']['loss'] = HeavyF_res[0]['lost_count']
+            data['HeavyF']['stake'] = "${:,.2f}".format(round(float(HeavyF_res[0]['total_stake']), 2))
+            data['HeavyF']['pl'] = "${:,.2f}".format(round(float(HeavyF_res[0]['total_p_l']), 2))
+            data['HeavyF']['yield'] = round(HeavyF_res[0]['yield'], 2)
+
+        price_res = pd.read_sql(f"SELECT game_id, game_date, away, home, CASE WHEN away = '{team_data['name']}' THEN away_open WHEN home = '{team_data['name']}' THEN home_open ELSE 0 END as open_price, \
+                                CASE WHEN away = '{team_data['name']}' THEN away_close WHEN home = '{team_data['name']}' THEN home_close ELSE 0 END as close_price FROM odds_table WHERE (away = '{team_data['name']}' OR home = '{team_data['name']}') AND game_date LIKE '{year}%%' ORDER BY game_date DESC LIMIT 15;", con = engine).to_dict('records')   
+        data['price'] = price_res
+
+        players_res = pd.read_sql(f"SELECT p_id, p_name FROM team_table INNER JOIN player_table ON team_table.team_id = player_table.t_id WHERE team_table.team_name = '{team_data['name']}';", con = engine).to_dict('records')   
+
+        data['players'] = players_res
+
         return data
+
+@app.route('/starterprice', methods = ["GET", "POST"]) 
+@login_required
+def starterprice():
+    if request.method == 'POST':
+        player_data = request.get_json()
+        playerID = player_data['pid']
+        print(playerID)
+
+        engine = database.connect_to_db()
+
+        today = date.today()
+        today_str = today.strftime("%Y/%m/%d")
+        year = today.year
+
+        price_res = pd.read_sql(f"SELECT game_date, away, home,  CASE WHEN team = 'away' THEN away_open WHEN team = 'home' THEN home_open ELSE 0 END as open_price, \
+                                CASE WHEN team = 'away' THEN away_close WHEN team = 'home' THEN home_close ELSE 0 END as close_price  FROM odds_table INNER JOIN pitcher_table oN odds_table.game_id = pitcher_table.game_id WHERE pitcher_table.playerid = '{playerID}' AND pitcher_table.role = 'starter' AND game_date LIKE '{year}%%' ORDER BY game_date DESC LIMIT 5;", con = engine).to_dict('records')   
+
+        data = {}
+        data['playerprice'] = price_res
+        return data 
 
 @app.route('/teams/<team_abbreviation>', methods=["GET", "POST"])
 @login_required
@@ -485,6 +698,7 @@ def team(team_abbreviation):
     team_id = team_info['id']
     team_name = team_info['name']
     roster = mlb.get('team_roster', params = {'teamId' : team_id, 'date' : date.today()})['roster']
+
     
     return render_template("team.html", team = team_abbreviation, team_name = team_name, roster = roster)
 

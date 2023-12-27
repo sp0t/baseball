@@ -12,6 +12,21 @@
         <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></script>
         <script type="text/javascript" src="{{ url_for('static', filename='index.js') }}"></script>
+        <style>
+            table, td, th {  
+              border: 1px solid #ddd;
+              color: black;
+            }
+            
+            table {
+              border-collapse: collapse;
+              width: 100%;
+            }
+            
+            th, td {
+              padding: 15px 30px;
+            }
+        </style>
         <!-- Latest compiled and minified CSS -->
         <script type="text/javascript">
             function setupTabs (){
@@ -95,9 +110,21 @@
                         $("#yield-risk").html(html);
 
                         html='';
-                        html += '<div class="risk-text">Total risk:</div>';
-                        html += `<div>${data['bet_on']['total']}</div>`;
-                        $("#beton-total").html(html);
+                        html += '<div class="risk-text">Number of bets:</div>';
+                        html += `<div>${data['bet_on']['num_bet']}</div>`;
+                        $("#beton-count").html(html);
+
+                        html = '<div class="risk-text">W:</div>';
+                        html += `<div>${data['bet_on']['win']}</div>`;
+                        $("#beton-win").html(html);
+
+                        html = '<div class="risk-text">L:</div>';
+                        html += `<div>${data['bet_on']['loss']}%</div>`;
+                        $("#beton-loss").html(html);
+
+                        html = '<div class="risk-text">Stake:</div>';
+                        html += `<div>${data['bet_on']['stake']}</div>`;
+                        $("#beton-stake").html(html);
 
                         html = '<div class="risk-text">P/L:</div>';
                         html += `<div>${data['bet_on']['pl']}</div>`;
@@ -106,6 +133,227 @@
                         html = '<div class="risk-text">Yield:</div>';
                         html += `<div>${data['bet_on']['yield']}%</div>`;
                         $("#beton-yield").html(html);
+
+
+                        html='';
+                        html += '<table><tr><th>BetDate</th><th>Team1</th><th>Team2</th><th>Place</th><th>Odds</th><th>Stake</th><th>Wins</th><th>Status</th><th>Site</th></tr>';
+                        for(var i = 0; i < data['bet_on']['details'].length; i++) {
+                            html += `<tr><td>${data['bet_on']['details'][i].betdate}</td><td>${data['bet_on']['details'][i].team1}</td><td>${data['bet_on']['details'][i].team2}</td><td>${data['bet_on']['details'][i].place}</td><td>${data['bet_on']['details'][i].odds}</td><td>${data['bet_on']['details'][i].stake}</td><td>${data['bet_on']['details'][i].wins}</td><td>${data['bet_on']['details'][i].status == 2? 'W':'L'}</td><td>${data['bet_on']['details'][i].site}</td></tr>`;
+                        }
+                        html += '</table>';
+                        $("#beton-table").html(html);
+
+
+                        html='';
+                        html += '<div class="risk-text">Number of bets:</div>';
+                        html += `<div>${data['bet_against']['num_bet']}</div>`;
+                        $("#betagainst-count").html(html);
+
+                        html = '<div class="risk-text">W:</div>';
+                        html += `<div>${data['bet_against']['win']}</div>`;
+                        $("#betagainst-win").html(html);
+
+                        html = '<div class="risk-text">L:</div>';
+                        html += `<div>${data['bet_against']['loss']}</div>`;
+                        $("#betagainst-loss").html(html);
+
+                        html = '<div class="risk-text">Stake:</div>';
+                        html += `<div>${data['bet_against']['stake']}</div>`;
+                        $("#betagainst-stake").html(html);
+
+                        html = '<div class="risk-text">P/L:</div>';
+                        html += `<div>${data['bet_against']['pl']}</div>`;
+                        $("#betagainst-pl").html(html);
+
+                        html = '<div class="risk-text">Yield:</div>';
+                        html += `<div>${data['bet_against']['yield']}%</div>`;
+                        $("#betagainst-yield").html(html);
+
+                        html='';
+                        html += '<table><tr><th>BetDate</th><th>Team1</th><th>Team2</th><th>Place</th><th>Odds</th><th>Stake</th><th>Wins</th><th>Status</th><th>Site</th></tr>';
+                        for(var i = 0; i < data['bet_against']['details'].length; i++) {
+                            html += `<tr><td>${data['bet_against']['details'][i].betdate}</td><td>${data['bet_against']['details'][i].team1}</td><td>${data['bet_against']['details'][i].team2}</td><td>${data['bet_against']['details'][i].place}</td><td>${data['bet_against']['details'][i].odds}</td><td>${data['bet_against']['details'][i].stake}</td><td>${data['bet_against']['details'][i].wins}</td><td>${data['bet_against']['details'][i].status == 2? 'W':'L'}</td><td>${data['bet_against']['details'][i].site}</td></tr>`;
+                        }
+                        html += '</table>';
+                        $("#betagainst-table").html(html);
+
+                        html='';
+                        html += '<div class="risk-text">Number of bets:</div>';
+                        html += `<div>${data['HeavyU']['num_bet']}</div>`;
+                        $("#HeavyU-count").html(html);
+
+                        html = '<div class="risk-text">W:</div>';
+                        html += `<div>${data['HeavyU']['win']}</div>`;
+                        $("#HeavyU-win").html(html);
+
+                        html = '<div class="risk-text">L:</div>';
+                        html += `<div>${data['HeavyU']['loss']}</div>`;
+                        $("#HeavyU-loss").html(html);
+
+                        html = '<div class="risk-text">Stake:</div>';
+                        html += `<div>${data['HeavyU']['stake']}</div>`;
+                        $("#HeavyU-stake").html(html);
+
+                        html = '<div class="risk-text">P/L:</div>';
+                        html += `<div>${data['HeavyU']['pl']}</div>`;
+                        $("#HeavyU-pl").html(html);
+
+                        html = '<div class="risk-text">Yield:</div>';
+                        html += `<div>${data['HeavyU']['yield']}%</div>`;
+                        $("#HeavyU-yield").html(html);
+
+                        html='';
+                        html += '<div class="risk-text">Number of bets:</div>';
+                        html += `<div>${data['LightU']['num_bet']}</div>`;
+                        $("#LightU-count").html(html);
+
+                        html = '<div class="risk-text">W:</div>';
+                        html += `<div>${data['LightU']['win']}</div>`;
+                        $("#LightU-win").html(html);
+
+                        html = '<div class="risk-text">L:</div>';
+                        html += `<div>${data['LightU']['loss']}</div>`;
+                        $("#LightU-loss").html(html);
+
+                        html = '<div class="risk-text">Stake:</div>';
+                        html += `<div>${data['LightU']['stake']}</div>`;
+                        $("#LightU-stake").html(html);
+
+                        html = '<div class="risk-text">P/L:</div>';
+                        html += `<div>${data['LightU']['pl']}</div>`;
+                        $("#LightU-pl").html(html);
+
+                        html = '<div class="risk-text">Yield:</div>';
+                        html += `<div>${data['LightU']['yield']}%</div>`;
+                        $("#LightU-yield").html(html);
+
+                        html='';
+                        html += '<div class="risk-text">Number of bets:</div>';
+                        html += `<div>${data['Even']['num_bet']}</div>`;
+                        $("#Even-count").html(html);
+
+                        html = '<div class="risk-text">W:</div>';
+                        html += `<div>${data['Even']['win']}</div>`;
+                        $("#Even-win").html(html);
+
+                        html = '<div class="risk-text">L:</div>';
+                        html += `<div>${data['Even']['loss']}</div>`;
+                        $("#Even-loss").html(html);
+
+                        html = '<div class="risk-text">Stake:</div>';
+                        html += `<div>${data['Even']['stake']}</div>`;
+                        $("#Even-stake").html(html);
+
+                        html = '<div class="risk-text">P/L:</div>';
+                        html += `<div>${data['Even']['pl']}</div>`;
+                        $("#Even-pl").html(html);
+
+                        html = '<div class="risk-text">Yield:</div>';
+                        html += `<div>${data['Even']['yield']}%</div>`;
+                        $("#Even-yield").html(html);
+
+                        html='';
+                        html += '<div class="risk-text">Number of bets:</div>';
+                        html += `<div>${data['LightF']['num_bet']}</div>`;
+                        $("#LightF-count").html(html);
+
+                        html = '<div class="risk-text">W:</div>';
+                        html += `<div>${data['LightF']['win']}</div>`;
+                        $("#LightF-win").html(html);
+
+                        html = '<div class="risk-text">L:</div>';
+                        html += `<div>${data['LightF']['loss']}</div>`;
+                        $("#LightF-loss").html(html);
+
+                        html = '<div class="risk-text">Stake:</div>';
+                        html += `<div>${data['LightF']['stake']}</div>`;
+                        $("#LightF-stake").html(html);
+
+                        html = '<div class="risk-text">P/L:</div>';
+                        html += `<div>${data['LightF']['pl']}</div>`;
+                        $("#LightF-pl").html(html);
+
+                        html = '<div class="risk-text">Yield:</div>';
+                        html += `<div>${data['LightF']['yield']}%</div>`;
+                        $("#LightF-yield").html(html);
+
+                        html='';
+                        html += '<div class="risk-text">Number of bets:</div>';
+                        html += `<div>${data['HeavyF']['num_bet']}</div>`;
+                        $("#HeavyF-count").html(html);
+
+                        html = '<div class="risk-text">W:</div>';
+                        html += `<div>${data['HeavyF']['win']}</div>`;
+                        $("#HeavyF-win").html(html);
+
+                        html = '<div class="risk-text">L:</div>';
+                        html += `<div>${data['HeavyF']['loss']}</div>`;
+                        $("#HeavyF-loss").html(html);
+
+                        html = '<div class="risk-text">Stake:</div>';
+                        html += `<div>${data['HeavyF']['stake']}</div>`;
+                        $("#HeavyF-stake").html(html);
+
+                        html = '<div class="risk-text">P/L:</div>';
+                        html += `<div>${data['HeavyF']['pl']}</div>`;
+                        $("#HeavyF-pl").html(html);
+
+                        html = '<div class="risk-text">Yield:</div>';
+                        html += `<div>${data['HeavyF']['yield']}%</div>`;
+                        $("#HeavyF-yield").html(html);
+
+                        html='';
+                        html += '<table><tr><th>GameDate</th><th>Team1</th><th>Team2</th><th>Open Price</th><th>Close Price</th><th>Price Movement</th></tr>';
+                        for(var i = 0; i < data['price'].length; i++) {
+                            html += `<tr><td>${data['price'][i].game_date}</td><td>${data['price'][i].away}</td><td>${data['price'][i].home}</td><td>${data['price'][i].open_price}</td><td>${data['price'][i].close_price}</td><td>${data['price'][i].close_price - data['price'][i].open_price}</td></tr>`;
+                        }
+                        html += '</table>';
+                        $("#price-table").html(html);
+
+                        html = ''
+                        
+                        html += `<option value="" style="text-align: center; padding:5px 10px; font-size: 20px;">—</option>`
+                        for (var n = 0; n < data['players'].length; n++){
+                            html += `<option value='${data['players'][n].p_id}' style="text-align: center; padding:5px 10px; font-size: 20px;">${data['players'][n].p_name}</option>`
+                        }
+                        $('#team-player').html(html);
+                    },
+                    error: function (xhr, status, error) {
+                        console.error("AJAX request failed:", error);
+                    }
+                })
+            }
+
+            function selectStarter(pid) {
+                if (pid == '')
+                    reutrn;
+
+                data = {}
+                data['pid'] = pid
+                
+                $.ajax({
+                    url: '/starterprice', 
+                    type: 'POST', 
+                    data: JSON.stringify(data),
+                    dataType: 'json',
+                    contentType: 'application/json',
+
+                    beforeSend: function(){ 
+                        $('#loader').show();
+                        $('#tab-content').hide();
+                    },
+
+                    success: function (data) {
+                        $('#loader').hide();
+                        $('#tab-content').show();
+                        
+                        html='';
+                        html += '<table><tr><th>GameDate</th><th>Team1</th><th>Team2</th><th>Open Price</th><th>Close Price</th><th>Price Movement</th></tr>';
+                        for(var i = 0; i < data['playerprice'].length; i++) {
+                            html += `<tr><td>${data['playerprice'][i].game_date}</td><td>${data['playerprice'][i].away}</td><td>${data['playerprice'][i].home}</td><td>${data['playerprice'][i].open_price}</td><td>${data['playerprice'][i].close_price}</td><td>${data['playerprice'][i].close_price - data['playerprice'][i].open_price}</td></tr>`;
+                        }
+                        html += '</table>';
+                        $("#starter-price-table").html(html);
                     },
                     error: function (xhr, status, error) {
                         console.error("AJAX request failed:", error);
@@ -176,22 +424,144 @@
                         </div>
                     </div>
                     <div class="tab-content" data-tab="3">
-                        <div class="win-loss-container">
-                            <div class="win-loss-row" id="beton-total">
+                        <div class="bet-container">
+                            <div class="win-loss-row" id="beton-count">
+                            </div>
+                            <div class="win-loss-row" id="beton-win">
+                            </div>
+                            <div class="win-loss-row" id="beton-loss">
+                            </div>
+                            <div class="win-loss-row" id="beton-stake">
                             </div>
                             <div class="win-loss-row" id="beton-pl">
                             </div>
                             <div class="win-loss-row" id="beton-yield">
                             </div>
                         </div>
+                        <div class="table-content" id = 'beton-table'>
+                        </div>
                     </div>
                     <div class="tab-content" data-tab="4">
+                        <div class="bet-container">
+                            <div class="win-loss-row" id="betagainst-count">
+                            </div>
+                            <div class="win-loss-row" id="betagainst-win">
+                            </div>
+                            <div class="win-loss-row" id="betagainst-loss">
+                            </div>
+                            <div class="win-loss-row" id="betagainst-stake">
+                            </div>
+                            <div class="win-loss-row" id="betagainst-pl">
+                            </div>
+                            <div class="win-loss-row" id="betagainst-yield">
+                            </div>
+                        </div>
+                        <div class="table-content" id = 'betagainst-table'>
+                        </div>
                     </div>
                     <div class="tab-content" data-tab="5">
+                        <div class="odds-group-container">
+                            <div class="group-container">
+                                <div class="odds-group-title">
+                                    <div>Heavy Underdog (above 150)</div>
+                                </div>
+                                <div class="odds-group-row" id="HeavyU-count">
+                                </div>
+                                <div class="odds-group-row" id="HeavyU-win">
+                                </div>
+                                <div class="odds-group-row" id="HeavyU-loss">
+                                </div>
+                                <div class="odds-group-row" id="HeavyU-stake">
+                                </div>
+                                <div class="odds-group-row" id="HeavyU-pl">
+                                </div>
+                                <div class="odds-group-row" id="HeavyU-yield">
+                                </div>
+                            </div>
+                            <div class="group-container">
+                                <div class="odds-group-title">
+                                    <div>Light Underdog (115 ~ 149)</div>
+                                </div>
+                                <div class="odds-group-row" id="LightU-count">
+                                </div>
+                                <div class="odds-group-row" id="LightU-win">
+                                </div>
+                                <div class="odds-group-row" id="LightU-loss">
+                                </div>
+                                <div class="odds-group-row" id="LightU-stake">
+                                </div>
+                                <div class="odds-group-row" id="LightU-pl">
+                                </div>
+                                <div class="odds-group-row" id="LightU-yield">
+                                </div>
+                            </div>
+                            <div class="group-container">
+                                <div class="odds-group-title">
+                                    <div>Even game (-114 ~ 114)</div>
+                                </div>
+                                <div class="odds-group-row" id="Even-count">
+                                </div>
+                                <div class="odds-group-row" id="Even-win">
+                                </div>
+                                <div class="odds-group-row" id="Even-loss">
+                                </div>
+                                <div class="odds-group-row" id="Even-stake">
+                                </div>
+                                <div class="odds-group-row" id="Even-pl">
+                                </div>
+                                <div class="odds-group-row" id="Even-yield">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="odds-group-container">
+                            <div class="group-container">
+                                <div class="odds-group-title">
+                                    <div>Light Favourite (-149 ~ -115)</div>
+                                </div>
+                                <div class="odds-group-row" id="LightF-count">
+                                </div>
+                                <div class="odds-group-row" id="LightF-win">
+                                </div>
+                                <div class="odds-group-row" id="LightF-loss">
+                                </div>
+                                <div class="odds-group-row" id="LightF-stake">
+                                </div>
+                                <div class="odds-group-row" id="LightF-pl">
+                                </div>
+                                <div class="odds-group-row" id="LightF-yield">
+                                </div>
+                            </div>
+                            <div class="group-container">
+                                <div class="odds-group-title">
+                                    <div>Heavy Favourite ( under -150)</div>
+                                </div>
+                                <div class="odds-group-row" id="HeavyF-count">
+                                </div>
+                                <div class="odds-group-row" id="HeavyF-win">
+                                </div>
+                                <div class="odds-group-row" id="HeavyF-loss">
+                                </div>
+                                <div class="odds-group-row" id="HeavyF-stake">
+                                </div>
+                                <div class="odds-group-row" id="HeavyF-pl">
+                                </div>
+                                <div class="odds-group-row" id="HeavyF-yield">
+                                </div>
+                            </div>
+                        </div>
                     </div>
                     <div class="tab-content" data-tab="6">
+                        <div class="table-content" id = 'price-table'>
+                        </div>
                     </div>
                     <div class="tab-content" data-tab="7">
+                        <div style="margin-top: 50px;">
+                            <select name="team-player" id="team-player" style="width: 100%; text-align: center; padding:5px 10px; font-size: 20px; height: 40px;" onchange="selectStarter(this.value)" required>
+                                <option value="" style="text-align: center; padding:5px 10px; font-size: 20px;">—</option>
+                            </select>
+                        </div>
+                        <div class="table-content" id = 'starter-price-table'>
+                        </div>
                     </div>
                 </div>
             </div>

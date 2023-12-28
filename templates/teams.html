@@ -305,7 +305,7 @@
                         html='';
                         html += '<table><tr><th>GameDate</th><th>Team1</th><th>Team2</th><th>Open Price</th><th>Close Price</th><th>Price Movement</th></tr>';
                         for(var i = 0; i < data['price'].length; i++) {
-                            html += `<tr><td>${data['price'][i].game_date}</td><td>${data['price'][i].away}</td><td>${data['price'][i].home}</td><td>${data['price'][i].open_price}</td><td>${data['price'][i].close_price}</td><td>${data['price'][i].close_price - data['price'][i].open_price}</td></tr>`;
+                            html += `<tr><td>${data['price'][i].game_date}</td><td>${data['price'][i].away}</td><td>${data['price'][i].home}</td><td>${data['price'][i].open_price}</td><td>${data['price'][i].close_price}</td><td ${getPriceMovement(data['price'][i].open_price, data['price'][i].close_price) > 0 ? 'style="background-color: green;"': 'style="background-color: red;"'}>${getPriceMovement(data['price'][i].open_price, data['price'][i].close_price)}</td></tr>`;
                         }
                         html += '</table>';
                         $("#price-table").html(html);
@@ -350,7 +350,7 @@
                         html='';
                         html += '<table><tr><th>GameDate</th><th>Team1</th><th>Team2</th><th>Open Price</th><th>Close Price</th><th>Price Movement</th></tr>';
                         for(var i = 0; i < data['playerprice'].length; i++) {
-                            html += `<tr><td>${data['playerprice'][i].game_date}</td><td>${data['playerprice'][i].away}</td><td>${data['playerprice'][i].home}</td><td>${data['playerprice'][i].open_price}</td><td>${data['playerprice'][i].close_price}</td><td>${data['playerprice'][i].close_price - data['playerprice'][i].open_price}</td></tr>`;
+                            html += `<tr><td>${data['playerprice'][i].game_date}</td><td>${data['playerprice'][i].away}</td><td>${data['playerprice'][i].home}</td><td>${data['playerprice'][i].open_price}</td><td>${data['playerprice'][i].close_price}</td><td ${getPriceMovement(data['playerprice'][i].open_price, data['playerprice'][i].close_price) > 0 ? 'style="background-color: green;"': 'style="background-color: red;"'}>${getPriceMovement(data['playerprice'][i].open_price, data['playerprice'][i].close_price)}</td></tr>`;
                         }
                         html += '</table>';
                         $("#starter-price-table").html(html);
@@ -360,6 +360,16 @@
                     }
                 })
             }
+        function getPriceMovement(openprice, closeprice) {
+            if (openprice >= 100 && closeprice >= 100) 
+                return closeprice - openprice;
+            else if (openprice <= -100 && closeprice <= -100)
+                return closeprice - openprice;
+            else if (openprice >= 100 && closeprice <= -100)
+                return closeprice - openprice + 200;
+            else if (openprice <= -100 && closeprice >= 100)
+                return closeprice - openprice - 200;
+        }
         </script>
     </head>
     <body onload="getData('{{data[0].abbreviation}}', '{{data[0].tname}}')">

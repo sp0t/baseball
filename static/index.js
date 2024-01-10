@@ -5,13 +5,15 @@ function openCard(buttonId){
         url: '/get_game_info', 
         data: {'data' : gameId},
         beforeSend: function(){ 
-            $('.large-card').show();
+            $('.large-card').css('width', '50%').css('height', '670px').show();
             $('#large-card-wrapper').hide();
             $('#loader').show();
 
             if (!!$('#calc')){ 
                 $('#calc').hide()
             }
+
+            $('#betform').hide();
 
         },
         success: function (data){ 
@@ -111,6 +113,28 @@ function openCard(buttonId){
     })
 }
 
+
+function openBetModal(gameid){ 
+    $.ajax({
+        type: 'POST', 
+        url: '/get_bet_info', 
+        data: {'data' : gameid},
+        beforeSend: function(){ 
+            $('.large-card').css('width', '350px').css('height', '430px').show();
+            $('#large-card-wrapper').hide();
+            $('#loader').show();
+
+        },
+        success: function (data){ 
+            $('#loader').hide();
+            $('#large-card-wrapper').show();
+            $('#form').hide();
+            $('#calc').hide();
+            $('#betform').show();
+        }, 
+    })
+}
+
 function closeCard(){ 
     
     var allOptions = document.querySelectorAll('.option');
@@ -174,6 +198,7 @@ function makePrediction(model){
             $('#loader').hide();
             $('#large-card-wrapper').show();
             $('#form').hide();
+            $('#betform').hide();
             $('#calc').show();
 
             if(data['model'] == 'a') {

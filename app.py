@@ -257,6 +257,24 @@ def get_game_info():
     data = jsonify(data)
     return data
 
+
+@app.route('/get_bet_info', methods = ["POST"])
+def get_bet_info(): 
+    data = {}
+    game_id = str(json.loads(request.form['data']))
+
+    gameinfo = mlb.boxscore_data(game_id)
+    engine = database.connect_to_db()
+    away_res = pd.read_sql(f"SELECT * FROM team_table WHERE team_id = '{gameinfo['teamInfo']['away']['id']}'", con = engine).to_dict('records')
+    home_res = pd.read_sql(f"SELECT * FROM team_table WHERE team_id = '{gameinfo['teamInfo']['home']['id']}'", con = engine).to_dict('records')
+    gamedate = gameinfo['gameId'][:10]
+
+    data['away'] = away_res[0]['team_name']
+    data['home'] = home_res[0]['team_name']
+    data['date'] = gamedate.replace('/', '-')
+
+    return data
+
 @app.route('/get_player_info', methods = ["POST"])
 def get_player_info(): 
     engine = database.connect_to_db()
@@ -447,7 +465,9 @@ def teams():
                                 FROM betting_table \
                                 WHERE place = '{team_data['name']}' AND betdate LIKE '{year}%%';", con = engine).to_dict('records')
         
-        if len(beton_res) == 0:
+        print(beton_res)
+        
+        if len(beton_res) == 0 or beton_res[0]['total_stake'] == None:
             data['bet_on']['num_bet'] = 0
             data['bet_on']['win'] = 0
             data['bet_on']['loss'] = 0
@@ -482,7 +502,7 @@ def teams():
                                     END) / SUM(stake)) * 100 AS Yield \
                                 FROM betting_table \
                                 WHERE (team1 = '{team_data['name']}' OR team2 = '{team_data['name']}') AND place != '{team_data['name']}' AND betdate LIKE '{year}%%';", con = engine).to_dict('records')
-        if len(betagainst_res) == 0:
+        if len(betagainst_res) == 0 or betagainst_res[0]['total_stake'] == None:
             data['bet_against']['num_bet'] = 0
             data['bet_against']['win'] = 0
             data['bet_against']['loss'] = 0
@@ -518,7 +538,7 @@ def teams():
                                 FROM betting_table \
                                 WHERE CAST(odds AS DECIMAL) >= 150 AND betdate LIKE '{year}%%';", con = engine).to_dict('records')
 
-        if len(HeavyU_res) == 0:
+        if len(HeavyU_res) == 0 or HeavyU_res[0]['total_stake'] == None:
             data['HeavyU']['num_bet'] = 0
             data['HeavyU']['win'] = 0
             data['HeavyU']['loss'] = 0
@@ -549,7 +569,7 @@ def teams():
                                     END) / SUM(stake)) * 100 AS Yield \
                                 FROM betting_table \
                                 WHERE CAST(odds AS DECIMAL) BETWEEN 115 AND 149 AND betdate LIKE '{year}%%';", con = engine).to_dict('records')
-        if len(LightU_res) == 0:
+        if len(LightU_res) == 0 or LightU_res[0]['total_stake'] == None:
             data['LightU']['num_bet'] = 0
             data['LightU']['win'] = 0
             data['LightU']['loss'] = 0
@@ -580,7 +600,7 @@ def teams():
                                     END) / SUM(stake)) * 100 AS Yield \
                                 FROM betting_table \
                                 WHERE CAST(odds AS DECIMAL) BETWEEN -114 AND 114 AND betdate LIKE '{year}%%';", con = engine).to_dict('records')
-        if len(Even_res) == 0:
+        if len(Even_res) == 0 or Even_res[0]['total_stake'] == None:
             data['Even']['num_bet'] = 0
             data['Even']['win'] = 0
             data['Even']['loss'] = 0
@@ -612,7 +632,7 @@ def teams():
                                 FROM betting_table \
                                 WHERE CAST(odds AS DECIMAL) BETWEEN -149 AND -115 AND betdate LIKE '{year}%%';", con = engine).to_dict('records')
         
-        if len(LightF_res) == 0:
+        if len(LightF_res) == 0 or LightF_res[0]['total_stake'] == None:
             data['LightF']['num_bet'] = 0
             data['LightF']['win'] = 0
             data['LightF']['loss'] = 0
@@ -644,7 +664,7 @@ def teams():
                                 FROM betting_table \
                                 WHERE CAST(odds AS DECIMAL) <= -150 AND betdate LIKE '{year}%%';", con = engine).to_dict('records')
         
-        if len(HeavyF_res) == 0:
+        if len(HeavyF_res) == 0 or HeavyF_res[0]['total_stake'] == None:
             data['HeavyF']['num_bet'] = 0
             data['HeavyF']['win'] = 0
             data['HeavyF']['loss'] = 0

@@ -860,3 +860,86 @@ table {
   .table-content {
 	margin-top: 40px;
   }
+
+.bet-add {
+	position: absolute;
+    right: 10px;
+    padding: 3px 12px;
+    background-color: green;
+    color: white;
+    border: none;
+	border-radius: 5px;
+	cursor: pointer;
+}
+
+.bet-add:hover {
+    background-color: rgb(33, 187, 33);
+}
+
+.bet-form-row {
+	display: flex;
+	padding: 3px 5px;
+	font-size: 15px;
+	color: black;
+	margin-top: 5px;
+}
+
+.bet-form-row-left {
+	width: 30%;
+	text-align: center;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.bet-form-row-right {
+	display: flex;
+	width: 70%;
+	align-items:center;
+	padding: 0px 10px;
+	text-align: center;
+	justify-content: space-around
+}
+
+.bet-input-form {
+	font-size: 15px;
+	text-align: center;
+	padding: 3px 3px;
+}
+
+.bet-button-row {
+	display: flex;
+    align-content: space-between;
+    justify-content: center;
+    width: 100%;
+    margin-top: 10px;
+	justify-content: space-around;
+}
+
+.bet-add-button {
+	background-color: #3e3e3e;
+    color: white;
+    border-radius: 5px;
+    padding: 5px 10px;
+    border: none;
+    font-size: 16px;
+	cursor: pointer;
+}
+
+.bet-add-button:hover {
+	background-color: gray;
+}
+
+.site-add-button {
+	background-color: green;
+    color: white;
+    border-radius: 5px;
+    padding: 5px 10px;
+    border: none;
+    font-size: 16px;
+	cursor: pointer;
+}
+
+.site-add-button:hover {
+	background-color: rgb(35, 216, 35);
+}

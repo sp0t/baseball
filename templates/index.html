@@ -91,9 +91,9 @@
                 {% for game in schedule %}
                     <div class="div-container">
                         <div class="card" id ="{{game.game_id}}">
-                            <div onmouseover="showDiv('{{game.game_id}}', 0)">
+                            <div>
                                 <div style="position: relative;">
-                                    <span class="card-title">{{game.away_name}} @ {{game.home_name}}</span>
+                                    <span onmouseover="showDiv('{{game.game_id}}', 0)" class="card-title">{{game.away_name}} @ {{game.home_name}}</span>
                                     <button class="bet-add" onclick="openBetModal('{{game.game_id}}')">Add</button>
                                 </div>
                                 <p class="game-date">{{game.game_datetime}} EST</p>
@@ -670,62 +670,58 @@
                     <div id = 'betform' style="border: 1px solid gray; padding: 10px 5px;">
                         <div class="bet-form-row">
                             <div class="bet-form-row-left"><span>BetDate:</span></div>
-                            <div class="bet-form-row-right"><span>2023-11-01</div>
+                            <div class="bet-form-row-right"><span id="betdate" style="color: blue;"></span></div>
                         </div>
                         <div class="bet-form-row">
                             <div class="bet-form-row-left">away:</div>
                             <div class="bet-form-row-right">
-                                <input type="text" placeholder="Texas Rangers" class="bet-input-form"> 
+                                <input type="text" placeholder="Texas Rangers" class="bet-input-form" id = 'awayname'>
                             </div>
                         </div>
                         <div class="bet-form-row">
                             <div class="bet-form-row-left">home:</div>
                             <div class="bet-form-row-right">
-                                <input type="text" placeholder="Arizona Diamondbacks" class="bet-input-form"> 
+                                <input type="text" placeholder="Arizona Diamondbacks" class="bet-input-form" id = 'homename'>
                             </div>
                         </div>
                         <div class="bet-form-row">
                             <div class="bet-form-row-left">Place:</div>
                             <div class="bet-form-row-right">
-                                <select id="cars" name="cars" class="bet-input-form" style="height: auto;">
-                                    <option value="volvo" class="bet-input-form">Texas Rangers</option>
-                                    <option value="saab" class="bet-input-form">Arizona Diamondbacks</option>
+                                <select id="teams" name="teams" class="bet-input-form" style="height: auto;">
+                                    <option class="bet-input-form" value="">-</option>
                                   </select>
                             </div>
                         </div>
                         <div class="bet-form-row">
                             <div class="bet-form-row-left">Odds:</div>
                             <div class="bet-form-row-right">
-                                <input type="text" placeholder="+137" class="bet-input-form"> 
+                                <input type="text" placeholder="+137" class="bet-input-form" id = 'oddvalue' oninput="calWinsWithOdds(this.value)"> 
                             </div>
                         </div>
                         <div class="bet-form-row">
                             <div class="bet-form-row-left">Stake:</div>
                             <div class="bet-form-row-right">
-                                <input type="text" placeholder="4671.53" class="bet-input-form"> 
+                                <input type="number" placeholder="4671.53" class="bet-input-form" id = 'stakevalue' oninput="calWinsWithStake(this.value)"> 
                             </div>
                         </div>
                         <div class="bet-form-row">
                             <div class="bet-form-row-left">Wins:</div>
                             <div class="bet-form-row-right">
-                                <input type="text" placeholder="6400" class="bet-input-form"> 
+                                <input type="number" placeholder="6400" class="bet-input-form" id = 'winvalue'> 
                             </div>
                         </div>
                         <div class="bet-form-row">
                             <div class="bet-form-row-left">Site:</div>
                             <div class="bet-form-row-right" style="padding: 0px 10px;">
                                 <select id="sites" name="sites" class="bet-input-form" style="height: auto;">
-                                    <option value="volvo" class="bet-input-form">bet487.org</option>
-                                    <option value="saab" class="bet-input-form">sports411.ag</option>
-                                    <option value="saab" class="bet-input-form">probet42.com</option>
-                                    <option value="saab" class="bet-input-form">shiba.ag</option>
+                                    <option class="bet-input-form" value="">-</option>
                                   </select>
                             </div>
                         </div>
                         <div class="bet-form-row">
                             <div class="bet-button-row">
-                                <button class="bet-add-button">Add</button>
-                                <button class="bet-add-button">Update</button>
+                                <button class="bet-add-button" onclick="updateBetInformation(0)">Add</button>
+                                <button class="bet-add-button" onclick="updateBetInformation(1)">Update</button>
                             </div>
                         </div>
                     </div>                

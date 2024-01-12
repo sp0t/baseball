@@ -269,9 +269,36 @@ def get_bet_info():
     home_res = pd.read_sql(f"SELECT * FROM team_table WHERE team_id = '{gameinfo['teamInfo']['home']['id']}'", con = engine).to_dict('records')
     gamedate = gameinfo['gameId'][:10]
 
+    
+
     data['away'] = away_res[0]['team_name']
     data['home'] = home_res[0]['team_name']
     data['date'] = gamedate.replace('/', '-')
+    data['site_list'] = []
+
+    site_res = pd.read_sql(f"SELECT * FROM site_list", con = engine).to_dict('records')
+    for el in site_res:
+        data['site_list'].append(el['site'])
+
+    bet_res = pd.read_sql(f"SELECT * FROM betting_table WHERE betdate = '{data['date']}' AND team1 = '{data['away']}' AND team2 = '{data['home']}'", con = engine).to_dict('records')
+
+    if(len(bet_res) == 0):
+        data['state'] = 0
+        data['odds'] = ''
+        data['place'] = ''
+        data['stake'] = 0
+        data['wins'] = 0
+        data['site'] = ''
+    else:
+        data['state'] = 1
+        data['odds'] = bet_res[0]['odds']
+        data['place'] = bet_res[0]['place']
+        data['stake'] = bet_res[0]['stake']
+        data['wins'] = bet_res[0]['wins']
+        data['site'] = bet_res[0]['site']
+
+    print(data)
+
 
     return data
 
@@ -1019,27 +1046,27 @@ def season_state():
 
 @app.route('/betting', methods = ["POST"])    
 def betting_proc(): 
-    if request.method == 'POST':
-        betting_data = request.get_json()
-        engine = database.connect_to_db()
-        for betting in betting_data:
-            stake = betting["stake"].replace(',', '')
-            wins = betting["wins"].replace(',', '')
-            away = betting["team1"].replace('Action', '')
-            home = betting["team2"].replace('Action', '')
+    data = {}
+    betting_data = request.get_json()
+    engine = database.connect_to_db()
+    current_GMT = time.gmtime()
+    regtime = calendar.timegm(current_GMT)
 
-            current_GMT = time.gmtime()
-            regtime = calendar.timegm(current_GMT)
-
-            betting_table_sql = 'INSERT INTO betting_table(betdate, game, team1, team2, market, place, odds, stake, wins, status, site, regtime, regstate, betindex) '\
-                                'VALUES (' + \
-                                '\'' + betting["gamedate"] + '\'' + ',' + '\'' + betting["game"].lower() + '\'' + ','+  '\'' + away + '\'' +  ',' + \
-                                '\'' + home + '\'' +  ',' + '\'' + betting["market"] + '\'' +  ',' + '\'' + betting["place"] + '\'' +  ','\
-                                '\'' + str(betting["odds"]) + '\'' +  ',' + '\'' + stake + '\'' +  ',' + '\'' + wins + '\'' +  ',' + \
-                                '\'' + '0' + '\'' +  ',' + '\'' + betting["site"] + '\'' +  ',' + '\'' + str(regtime) + '\'' +  ',' + '\'' + "0" + '\'' +  ',' + '\'' + "0" + '\''+ ');'
-            engine.execute(betting_table_sql)
-    ret = "ok"
-    return ret
+    if betting_data['flag'] == 0:
+        betting_table_sql = 'INSERT INTO betting_table(betdate, game, team1, team2, market, place, odds, stake, wins, status, site, regtime, regstate, betindex) '\
+                        'VALUES (' + \
+                        '\'' + betting_data["date"] + '\'' + ',' + '\'' + 'baseball' + '\'' + ','+  '\'' + betting_data["away"] + '\'' +  ',' + \
+                        '\'' + betting_data["home"] + '\'' +  ',' + '\'' +  'Money' + '\'' +  ',' + '\'' + betting_data["place"] + '\'' +  ','\
+                        '\'' + betting_data["odds"] + '\'' +  ',' + '\'' + betting_data["stake"] + '\'' +  ',' + '\'' + betting_data["wins"] + '\'' +  ',' + \
+                        '\'' + '0' + '\'' +  ',' + '\'' + betting_data["site"] + '\'' +  ',' + '\'' + str(regtime) + '\'' +  ',' + '\'' + "0" + '\'' +  ',' + '\'' + "0" + '\''+ ');'
+    
+        engine.execute(betting_table_sql)
+    elif betting_data['flag'] == 1:
+        betting_table_sql = f'UPDATE betting_table SET place = {betting_data["place"]}, odds = {betting_data["odds"]}, stake = {betting_data["stake"]}, wins = {betting_data["wins"]}, regtime = {regtime} WHERE betdate = {betting_data["date"]} AND team1 = {betting_data["away"]} AND team2 = {betting_data["home"]} AND site = {betting_data["site"]};'
+    
+        engine.execute(betting_table_sql)
+    data['result'] = 'OK'
+    return jsonify(data)
 
 @app.route("/download_game_table")
 def get_game_csv_table():

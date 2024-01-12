@@ -131,8 +131,103 @@ function openBetModal(gameid){
             $('#form').hide();
             $('#calc').hide();
             $('#betform').show();
+
+            var betdate = document.getElementById('betdate');
+            betdate.innerHTML = data['date'];
+
+            var away = document.getElementById('awayname');
+            away.value = data['away'];
+
+            var home = document.getElementById('homename');
+            home.value = data['home'];
+
+            var teams = document.getElementById('teams'); 
+
+            var awayOption = document.createElement('option');
+            awayOption.value = data['away']; 
+            awayOption.className = 'bet-input-form'
+            awayOption.innerHTML = data['away'];
+            if(data['away'] == data['place'])
+                awayOption.setAttribute('selected', true);
+
+            teams.append(awayOption);
+
+            var homeOption = document.createElement('option');
+            homeOption.value = data['home']; 
+            homeOption.className = 'bet-input-form'
+            homeOption.innerHTML = data['home'];
+
+            if(data['home'] == data['place'])
+                homeOption.setAttribute('selected', true);
+
+            teams.append(homeOption);
+
+            var sites = document.getElementById('sites'); 
+
+            for (var i = 0; i<data['site_list'].length; i++) {
+                var newOption = document.createElement('option');
+                newOption.value = data['site_list'][i]; 
+                newOption.className = 'bet-input-form'
+                newOption.innerHTML = data['site_list'][i];
+                if (data['site_list'][i] == data['site'])
+                    newOption.setAttribute('selected', true);
+                sites.append(newOption);
+            }
+
+            if (data['state'] == 1) {
+                var oddvalue = document.getElementById('oddvalue');
+                oddvalue.value = data['odds'];
+
+                var stakevalue = document.getElementById('stakevalue');
+                stakevalue.value = data['stake'];
+
+                var winvalue = document.getElementById('winvalue');
+                winvalue.value = data['wins'];
+            }
+
         }, 
     })
+}
+
+function roundToNearestInteger(value) {
+    const threshold = 0.04;
+    const multiplier = 1 / threshold;
+    const floatValue = Math.round(value * multiplier);
+    return floatValue / multiplier;
+}
+
+function calWinsWithOdds(value) {
+    var stake = document.getElementById('stakevalue').value;
+    if(stake == 0)
+        return;
+
+    if(value == '' || value == '+' || value == '-')
+        return;
+    var intodd = parseInt(value)
+
+    var decodd = intodd > 0 ? intodd / 100: 1 - 100 / intodd;
+
+    var wins = intodd > 0 ? decodd * stake: (decodd - 1) * stake;
+
+    var winvalue = document.getElementById('winvalue');
+    winvalue.value = roundToNearestInteger(wins);
+}
+
+function calWinsWithStake(value) {
+    var odds = document.getElementById('oddvalue').value;
+    if(odds == '' || odds == '+' || odds == '-')
+        return;
+
+    if(value == 0)
+        return;
+
+    var intodd = parseInt(odds)
+    var decodd = intodd > 0 ? intodd / 100: 1 - 100 / intodd;
+
+    var wins = intodd > 0 ? decodd * value: (decodd - 1) * value;
+
+    var winvalue = document.getElementById('winvalue');
+    winvalue.value = roundToNearestInteger(wins);
 }
 
 function closeCard(){ 
@@ -146,6 +241,83 @@ function closeCard(){
     $('.large-card').hide(); 
 
 }
+
+
+function updateBetInformation(value) {
+    var data = {};
+    var betdate = document.getElementById('betdate').textContent;
+    var away = document.getElementById('awayname').value;
+    var home = document.getElementById('homename').value;
+    var place = document.getElementById('teams').value;
+    var odds = document.getElementById('oddvalue').value;
+    var stake = document.getElementById('stakevalue').value;
+    var wins = document.getElementById('winvalue').value;
+    var site = document.getElementById('sites').value;
+
+    if (betdate == '') {
+        alert('invalid betdate!');
+        return;
+    }
+
+    if (away == '') {
+        alert('Please input away team!');
+        return;
+    }
+
+    if (home == '') {
+        alert('Please input home team!');
+        return;
+    }
+
+    if (place == '') {
+        alert('Please select betplace!');
+        return;
+    }
+
+    if (odds == '') {
+        alert('Please input Odd value!');
+        return;
+    }
+
+    if (stake == 0) {
+        alert('Please input stake amount!');
+        return;
+    }
+
+    if (wins == 0) {
+        alert('Please input win amount!');
+        return;
+    }
+
+    if (site == '') {
+        alert('Please select betting site!');
+        return;
+    }
+    
+    data['betdate'] = betdate;
+    data['away'] = away;
+    data['home'] = home;
+    data['place'] = place;
+    data['odds'] = odds;
+    data['stake'] = stake;
+    data['wins'] = wins;
+    data['flag'] = value;
+    data['site'] = site;
+
+    $.ajax({
+        type: 'POST', 
+        url: '/betting', 
+        data: JSON.stringify(data),
+        dataType: 'json',
+        contentType: 'application/json',
+        beforeSend: function(){ 
+        },
+        success: function (data){ 
+            closeCard();
+        }
+    })
+}
+
 
 function makePrediction(model){ 
 

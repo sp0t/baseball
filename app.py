@@ -1055,14 +1055,16 @@ def betting_proc():
     if betting_data['flag'] == 0:
         betting_table_sql = 'INSERT INTO betting_table(betdate, game, team1, team2, market, place, odds, stake, wins, status, site, regtime, regstate, betindex) '\
                         'VALUES (' + \
-                        '\'' + betting_data["date"] + '\'' + ',' + '\'' + 'baseball' + '\'' + ','+  '\'' + betting_data["away"] + '\'' +  ',' + \
+                        '\'' + betting_data["betdate"] + '\'' + ',' + '\'' + 'baseball' + '\'' + ','+  '\'' + betting_data["away"] + '\'' +  ',' + \
                         '\'' + betting_data["home"] + '\'' +  ',' + '\'' +  'Money' + '\'' +  ',' + '\'' + betting_data["place"] + '\'' +  ','\
                         '\'' + betting_data["odds"] + '\'' +  ',' + '\'' + betting_data["stake"] + '\'' +  ',' + '\'' + betting_data["wins"] + '\'' +  ',' + \
                         '\'' + '0' + '\'' +  ',' + '\'' + betting_data["site"] + '\'' +  ',' + '\'' + str(regtime) + '\'' +  ',' + '\'' + "0" + '\'' +  ',' + '\'' + "0" + '\''+ ');'
     
         engine.execute(betting_table_sql)
     elif betting_data['flag'] == 1:
-        betting_table_sql = f'UPDATE betting_table SET place = {betting_data["place"]}, odds = {betting_data["odds"]}, stake = {betting_data["stake"]}, wins = {betting_data["wins"]}, regtime = {regtime} WHERE betdate = {betting_data["date"]} AND team1 = {betting_data["away"]} AND team2 = {betting_data["home"]} AND site = {betting_data["site"]};'
+        betting_table_sql = f"UPDATE betting_table SET place = '{betting_data['place']}', odds = '{betting_data['odds']}', stake = '{betting_data['stake']}', wins = '{betting_data['wins']}', regtime = '{regtime}' WHERE betdate = '{betting_data['betdate']}' AND team1 = '{betting_data['away']}' AND team2 = '{betting_data['home']}' AND site = '{betting_data['site']}';"
+
+        print(betting_table_sql)
     
         engine.execute(betting_table_sql)
     data['result'] = 'OK'

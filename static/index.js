@@ -143,6 +143,12 @@ function openBetModal(gameid){
 
             var teams = document.getElementById('teams'); 
 
+            var newOption = document.createElement('option');
+            newOption.value = ''; 
+            newOption.className = 'bet-input-form'
+            newOption.innerHTML = '-';
+            teams.append(newOption);
+
             var awayOption = document.createElement('option');
             awayOption.value = data['away']; 
             awayOption.className = 'bet-input-form'
@@ -164,8 +170,14 @@ function openBetModal(gameid){
 
             var sites = document.getElementById('sites'); 
 
+            var newOption = document.createElement('option');
+            newOption.value = ''; 
+            newOption.className = 'bet-input-form'
+            newOption.innerHTML = '-';
+            sites.append(newOption);
+
             for (var i = 0; i<data['site_list'].length; i++) {
-                var newOption = document.createElement('option');
+                newOption = document.createElement('option');
                 newOption.value = data['site_list'][i]; 
                 newOption.className = 'bet-input-form'
                 newOption.innerHTML = data['site_list'][i];
@@ -234,6 +246,20 @@ function closeCard(){
     
     var allOptions = document.querySelectorAll('.option');
     allOptions.forEach(option => {
+        option.remove();
+    });
+
+    var selectElement = document.getElementById('teams');
+    var options = selectElement.querySelectorAll('.bet-input-form');
+
+    options.forEach(option => {
+        option.remove();
+    });
+
+    selectElement = document.getElementById('sites');
+    var options = selectElement.querySelectorAll('.bet-input-form');
+
+    options.forEach(option => {
         option.remove();
     });
 

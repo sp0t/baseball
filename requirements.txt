@@ -27,46 +27,4 @@ urllib3==1.26.9
 Werkzeug==2.1.2
 zipp==3.8.0
 
-tablestyle__StyledTable-sc-wsl6eq-0 kfhorh BoxscoreTeamTablestyle__TeamTable-sc-15fvlso-1 dgwGLd batters
 
-tablestyle__StyledTable-sc-wsl6eq-0 kfhorh BoxscoreTeamTablestyle__TeamTable-sc-15fvlso-1 dgwGLd batters
-tablestyle__StyledTable-sc-wsl6eq-0 kfhorh BoxscoreTeamTablestyle__TeamTable-sc-15fvlso-1 dgwGLd batters
-
-
-A lot home so I'm just sending you this whole focus of the otherwise it would take me too long to write this down, but basically I'm struggling to find which are the differences between the two sets of data that you set over but I'm looking at the box for that game and basically the only two pictures.
-Sorry I'm players that's should have the stats difference between our database and the original one should be Bragman, Marsh and Harper because these are the three guys that were hit by pitchers in that specific game.
-So all the statistics for the others should be exactly the same apart from this three, but then I just looked at Harper and he starts from the two sets of data is not different.
-Why should it be different because basically as he got hit by pitch.
-He's on base percentage should be higher on the original database and lower on mine, but it appears that the two numbers are the same.
-His player ID 54718 in the game, He was positioned for the same.
-He was positioned for the home team.
-You will see that his OBD is 0.75 in both in theory because he got hit by pitch the original database should be higher, so I'm not exactly sure where you got that data from but my thingking is that because it's already random that we get the stats for the game well rare than random that we get the stats wrong for a game.
-Then I guess that in that game we can just create whichever data is easier for you without carrying too much about this hit by pitch.
-So basically it means that in 30 games.
-We may have the OBP for some players. Just slightly altered which I don't think is going to move the needle so I'm happy for you to go ahead and just whichever way is faster and easier as long as it's the data is right and I think that by giving a look at this game.
-It appears that the stats are good.
-So yeah I think let me know exactly what is the procedure that you're going through when you're scraping this data ?
-If you're writing the form or not because that will help me, but otherwise I do not care how much we make a mistake by potentially  in those games because you so when I rent a query on how many we had it was 30 games.
-The databases got thousands of games, So if for those 30 games, the starts are not exactly as I want.
-It's no big deal but it's important that there.
-They are actually right for the most part, so at that hits and all that.
-
-A lot home so I'm just sending you this whole focus of the otherwise it would take me too long to write this down, but basically I'm struggling to find which are the differences between the two sets of data that you set over but I'm looking at the box for that game and basically the only two pictures.
-Sorry I'm players that's should have the stats difference between our database and the original one should be Bragman, Marsh and Harper because these are the three guys that were hit by pit   chers in that specific game.
-So all the statistics for the others should be exactly the same apart from this three, but then I just looked at Harper and he starts from the two sets of data is not different.
-Why should it be different because basically as he got hit by pitch.
-He's on base percentage should be higher on the original database and lower on mine, but it appears that the two numbers are the same.
-His player ID 54718 in the game, He was positioned for the same.
-He was positioned for the home team.
-You will see that his OBD is 0.75 in both in theory because he got hit by pitch the original database should be higher, so I'm not exactly sure where you got that data from but my thingking is that because it's already random that we get the stats for the game well rare than random that we get the stats wrong for a game.
-Then I guess that in that game we can just create whichever data is easier for you without carrying too much about this hit by pitch.
-So basically it means that in 30 games.
-We may have the OBP for some players. Just slightly altered which I don't think is going to move the needle so I'm happy for you to go ahead and just whichever way is faster and easier as long as it's the data is right and I think that by giving a look at this game.
-It appears that the stats are good.
-So yeah I think let me know exactly what is the procedure that you're going through when you're scraping this data ?
-If you're writing the form or not because that will help me, but otherwise I do not care how much we make a mistake by potentially  in those games because you so when I rent a query on how many we had it was 30 games.
-The databases got thousands of games, So if for those 30 games, the starts are not exactly as I want.
-It's no big deal but it's important that there.
-They are actually right for the most part, so at that hits and all that.
-
-SELECT * FROM batter_table WHERE game_id = '715720'

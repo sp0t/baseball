@@ -1,6 +1,7 @@
 import itertools
 import math
 from sqlalchemy import text
+from database import database
 
 coordinate = {
     'AZ':{

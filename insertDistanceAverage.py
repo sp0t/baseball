@@ -6,7 +6,7 @@ import pandas as pd
 
 engine = database.connect_to_db()
 teams = ['OAK', 'PIT', 'SD', 'SEA', 'SF', 'STL', 'TB', 'TEX', 'TOR', 'MIN', 'PHI', 'ATL', 'CWS', 'MIA', 'NYY', 'MIL', 'LAA', 'AZ', 'BAL', 'BOS', 'CHC', 'CIN', 'CLE', 'COL', 'DET', 'HOU', 'KC', 'LAD', 'WSH', 'NYM']
-seasons = ['2021', '2023']
+seasons = ['2021', '2022', '2023']
 
 for team in teams:
     print('======================================================')

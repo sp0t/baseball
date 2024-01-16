@@ -152,5 +152,5 @@ filtered_combinations = [[x[0],x[1]] for x in game_combinations if (x[1], x[0]) 
 # Print the filtered game combinations
 for combination in filtered_combinations:
     print(combination[0], combination[1], round(haversine(coordinate[combination[0]]['x'], coordinate[combination[0]]['y'], coordinate[combination[1]]['x'], coordinate[combination[1]]['y']), 2))
-    engine.execute(f"INSERT INTO distance_table({combination[0]}, {combination[1]}, {round(haversine(coordinate[combination[0]]['x'], coordinate[combination[0]]['y'], coordinate[combination[1]]['x'], coordinate[combination[1]]['y']), 2)});")
+    engine.execute(f"INSERT INTO distance_table(team1, team2, distance) VALUES('{combination[0]}', '{combination[1]}', '{round(haversine(coordinate[combination[0]]['x'], coordinate[combination[0]]['y'], coordinate[combination[1]]['x'], coordinate[combination[1]]['y']), 2)}');")
 

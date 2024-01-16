@@ -9,6 +9,13 @@ teams = ['OAK', 'PIT', 'SD', 'SEA', 'SF', 'STL', 'TB', 'TEX', 'TOR', 'MIN', 'PHI
 seasons = ['2021', '2023']
 
 for team in teams:
+    print('======================================================')
+    print('======================================================')
+    print('======================================================')
+    print(team)
+    print('======================================================')
+    print('======================================================')
+    print('======================================================')
     for season in seasons:
         game_res = pd.read_sql(f"SELECT * FROM game_table WHERE (away_team = '{team}' OR home_team = '{team}') AND game_date LIKE '{season}%%';", con = engine).to_dict('records')
         for game in game_res:

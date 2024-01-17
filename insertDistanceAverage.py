@@ -12,6 +12,8 @@ engine.execute(text("CREATE TABLE IF NOT EXISTS distance_average_table(team TEXT
 
 for team in teams:
     for season in seasons:
+        if season != '2023' and team = 'AZ':
+            team = 'ARI'
         distance = 0
         count = 0
         state = False
@@ -40,7 +42,13 @@ for team in teams:
                     team2 = pre_home_team
 
             if state == True:
+                if team1 == 'ARI':
+                    team1 = 'AZ'
+
+                if team2 == 'ARI':
+                    team1 = 'AZ'
                 distance_res = pd.read_sql(f"SELECT * FROM distance_table WHERE (team1 = '{team1}' AND team2 = '{team2}') OR (team1 = '{team2}' AND team2 = '{team1}');", con = engine).to_dict('records')
+                
                 if len(distance_res) != 0:
                     distance = distance + distance_res[0]['distance']
                 else:
@@ -52,5 +60,7 @@ for team in teams:
 
         if (count != 0):
             average = round(distance / count, 2)
+            if team == 'ARI'
+                team = 'AZ'
             engine.execute(f"INSERT INTO distance_average_table(team, season, distance) VALUES('{team}', '{season}', '{average}');")
             

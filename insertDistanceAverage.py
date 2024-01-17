@@ -31,7 +31,7 @@ for team in teams:
                     team1 = game['home_team']
                     team2 = pre_home_team
                 elif pre_away_team == team and pre_home_team == game['home_team']:
-                    print('===================4')
+                    print('===================5')
                     state = False
             elif game['home_team'] == team:
                 if pre_away_team == '' or pre_home_team == '' or pre_home_team == team:

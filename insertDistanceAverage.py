@@ -24,8 +24,11 @@ for team in teams:
                 state = True
                 if pre_away_team == '' or pre_home_team == '' or pre_home_team == team:
                     print('==================1')
+                    print('pre', pre_away_team, pre_home_team)
+                    print('current', game['away_team'], game['home_team'])
                     team1 = team
                     team2 = game['home_team']
+                    print(team1, team2)
                 elif pre_away_team == team and pre_home_team != game['home_team']:
                     print('==================2')
                     team1 = game['home_team']

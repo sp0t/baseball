@@ -39,6 +39,8 @@ for team in teams:
 
             if state == True:
                 distance_res = pd.read_sql(f"SELECT * FROM distance_table WHERE (team1 = '{team1}' AND team2 = '{team2}') OR (team1 = '{team2}' AND team2 = '{team1}');", con = engine).to_dict('records')
+                
                 print(distance_res)
-
+            pre_away_team = game['away_team']
+            pre_home_team = game['home_team']
             

@@ -50,6 +50,7 @@ for team in teams:
             pre_away_team = game['away_team']
             pre_home_team = game['home_team']
 
-        average = round(distance / count, 2)
-        engine.execute(f"INSERT INTO distance_average_table(team, season, distance) VALUES('{team}', '{season}', '{average}');")
+        if (count != 0):
+            average = round(distance / count, 2)
+            engine.execute(f"INSERT INTO distance_average_table(team, season, distance) VALUES('{team}', '{season}', '{average}');")
             

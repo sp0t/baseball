@@ -19,19 +19,19 @@ for team in teams:
         pre_home_team = ''
         game_res = pd.read_sql(f"SELECT * FROM game_table WHERE (away_team = '{team}' OR home_team = '{team}') AND game_date LIKE '{season}%%';", con = engine).to_dict('records')
         for game in game_res:
-            if game['away_team'] = team:
+            if game['away_team'] == team:
                 count = count + 1
                 state = True
                 if pre_away_team == '' or pre_home_team == '' or pre_home_team = team:
                     team1 = team
                     team2 = game['home_team']
-                elif pre_away_team = team:
+                elif pre_away_team == team:
                     team1 = game['home_team']
                     team2 = pre_home_team
-            elif game['home_team'] = team:
+            elif game['home_team'] == team:
                 if pre_away_team == '' or pre_home_team == '' or pre_home_team = team:
                     state = False
-                elif pre_away_team = team:
+                elif pre_away_team == team:
                     count = count + 1
                     state = True
                     team1 = team

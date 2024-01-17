@@ -6,7 +6,7 @@ import pandas as pd
 
 engine = database.connect_to_db()
 teams = ['OAK', 'PIT', 'SD', 'SEA', 'SF', 'STL', 'TB', 'TEX', 'TOR', 'MIN', 'PHI', 'ATL', 'CWS', 'MIA', 'NYY', 'MIL', 'LAA', 'AZ', 'BAL', 'BOS', 'CHC', 'CIN', 'CLE', 'COL', 'DET', 'HOU', 'KC', 'LAD', 'WSH', 'NYM']
-seasons = ['2021', '2022', '2023']
+seasons = ['2023']
 
 engine.execute(text("CREATE TABLE IF NOT EXISTS distance_average_table(team TEXT, season TEXT, distance FLOAT);"))
 
@@ -38,6 +38,8 @@ for team in teams:
                     team2 = pre_home_team
 
             if state == True:
+                print(game['away_team'], game['home_team'])
+                print(team1, team2)
                 distance_res = pd.read_sql(f"SELECT * FROM distance_table WHERE (team1 = '{team1}' AND team2 = '{team2}') OR (team1 = '{team2}' AND team2 = '{team1}');", con = engine).to_dict('records')
                 
                 print(distance_res)

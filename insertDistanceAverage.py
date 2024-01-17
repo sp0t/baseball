@@ -23,25 +23,17 @@ for team in teams:
                 count = count + 1
                 state = True
                 if pre_away_team == '' or pre_home_team == '' or pre_home_team == team:
-                    print('==================1')
-                    print('pre', pre_away_team, pre_home_team)
-                    print('current', game['away_team'], game['home_team'])
                     team1 = team
                     team2 = game['home_team']
-                    print(team1, team2)
                 elif pre_away_team == team and pre_home_team != game['home_team']:
-                    print('==================2')
                     team1 = game['home_team']
                     team2 = pre_home_team
                 elif pre_away_team == team and pre_home_team == game['home_team']:
-                    print('==================3')
                     state = False
             elif game['home_team'] == team:
                 if pre_away_team == '' or pre_home_team == '' or pre_home_team == team:
-                    print('==================4')
                     state = False
                 elif pre_away_team == team:
-                    print('==================5')
                     count = count + 1
                     state = True
                     team1 = team
@@ -49,10 +41,11 @@ for team in teams:
 
             if state == True:
                 distance_res = pd.read_sql(f"SELECT * FROM distance_table WHERE (team1 = '{team1}' AND team2 = '{team2}') OR (team1 = '{team2}' AND team2 = '{team1}');", con = engine).to_dict('records')
-                print(distance_res)
-                distance = distance + distance_res[0]['distance']
-                
-                print(distance_res)
+                if len(distance_res) != 0
+                    distance = distance + distance_res[0]['distance']
+                else:
+                    print(team1, team2)
+                    count = count - 1
 
             pre_away_team = game['away_team']
             pre_home_team = game['home_team']

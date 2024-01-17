@@ -18,6 +18,7 @@ for team in teams:
         pre_away_team = ''
         pre_home_team = ''
         game_res = pd.read_sql(f"SELECT * FROM game_table WHERE (away_team = '{team}' OR home_team = '{team}') AND game_date LIKE '{season}%%';", con = engine).to_dict('records')
+        print(game_res)
         for game in game_res:
             if game['away_team'] == team:
                 count = count + 1

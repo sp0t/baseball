@@ -41,7 +41,7 @@ for team in teams:
 
             if state == True:
                 distance_res = pd.read_sql(f"SELECT * FROM distance_table WHERE (team1 = '{team1}' AND team2 = '{team2}') OR (team1 = '{team2}' AND team2 = '{team1}');", con = engine).to_dict('records')
-                if len(distance_res) != 0
+                if len(distance_res) != 0:
                     distance = distance + distance_res[0]['distance']
                 else:
                     print(team1, team2)

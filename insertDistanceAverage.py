@@ -60,7 +60,7 @@ for team in teams:
 
         if (count != 0):
             average = round(distance / count, 2)
-            if team == 'ARI'
+            if team == 'ARI':
                 team = 'AZ'
             engine.execute(f"INSERT INTO distance_average_table(team, season, distance) VALUES('{team}', '{season}', '{average}');")
             

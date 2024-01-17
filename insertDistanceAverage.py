@@ -22,14 +22,14 @@ for team in teams:
             if game['away_team'] == team:
                 count = count + 1
                 state = True
-                if pre_away_team == '' or pre_home_team == '' or pre_home_team = team:
+                if pre_away_team == '' or pre_home_team == '' or pre_home_team == team:
                     team1 = team
                     team2 = game['home_team']
                 elif pre_away_team == team:
                     team1 = game['home_team']
                     team2 = pre_home_team
             elif game['home_team'] == team:
-                if pre_away_team == '' or pre_home_team == '' or pre_home_team = team:
+                if pre_away_team == '' or pre_home_team == '' or pre_home_team == team:
                     state = False
                 elif pre_away_team == team:
                     count = count + 1

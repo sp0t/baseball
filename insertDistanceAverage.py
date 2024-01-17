@@ -8,15 +8,37 @@ engine = database.connect_to_db()
 teams = ['OAK', 'PIT', 'SD', 'SEA', 'SF', 'STL', 'TB', 'TEX', 'TOR', 'MIN', 'PHI', 'ATL', 'CWS', 'MIA', 'NYY', 'MIL', 'LAA', 'AZ', 'BAL', 'BOS', 'CHC', 'CIN', 'CLE', 'COL', 'DET', 'HOU', 'KC', 'LAD', 'WSH', 'NYM']
 seasons = ['2021', '2022', '2023']
 
+engine.execute(text("CREATE TABLE IF NOT EXISTS distance_average_table(team TEXT, season TEXT, distance FLOAT);"))
+
 for team in teams:
-    print('======================================================')
-    print('======================================================')
-    print('======================================================')
-    print(team)
-    print('======================================================')
-    print('======================================================')
-    print('======================================================')
     for season in seasons:
+        distance = 0
+        count = 0
+        state = False
+        pre_away_team = ''
+        pre_home_team = ''
         game_res = pd.read_sql(f"SELECT * FROM game_table WHERE (away_team = '{team}' OR home_team = '{team}') AND game_date LIKE '{season}%%';", con = engine).to_dict('records')
         for game in game_res:
-            print(game)
+            if game['away_team'] = team:
+                count = count + 1
+                state = True
+                if pre_away_team == '' or pre_home_team == '' or pre_home_team = team:
+                    team1 = team
+                    team2 = game['home_team']
+                elif pre_away_team = team:
+                    team1 = game['home_team']
+                    team2 = pre_home_team
+            elif game['home_team'] = team:
+                if pre_away_team == '' or pre_home_team == '' or pre_home_team = team:
+                    state = False
+                elif pre_away_team = team:
+                    count = count + 1
+                    state = True
+                    team1 = team
+                    team2 = pre_home_team
+
+            if state == True:
+                distance_res = pd.read_sql(f"SELECT * FROM distance_table WHERE (team1 = '{team1}' AND team2 = '{team2}') OR (team1 = '{team2}' AND team2 = '{team1}');", con = engine).to_dict('records')
+                print(distance_res)
+
+            

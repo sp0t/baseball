@@ -78,7 +78,8 @@ for season in seasons:
     if season_count != 0:
         season_average[season] = average = round(season_distance / season_count, 2)
 
-print(data)
-print(season_average)        
+for season in seasons:      
+    for team in teams:
+        engine.execute(f"INSERT INTO distance_average_table(team, season, distance, average) VALUES('{team}', '{season}', '{data[team][season]}', '{season_average[season]}');")
 
             

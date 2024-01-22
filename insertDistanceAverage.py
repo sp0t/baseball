@@ -6,7 +6,8 @@ import pandas as pd
 
 engine = database.connect_to_db()
 teams = ['OAK', 'PIT', 'SD', 'SEA', 'SF', 'STL', 'TB', 'TEX', 'TOR', 'MIN', 'PHI', 'ATL', 'CWS', 'MIA', 'NYY', 'MIL', 'LAA', 'AZ', 'BAL', 'BOS', 'CHC', 'CIN', 'CLE', 'COL', 'DET', 'HOU', 'KC', 'LAD', 'WSH', 'NYM']
-seasons = ['2021', '2022', '2023']
+# seasons = ['2021', '2022', '2023']
+seasons = ['2021']
 
 engine.execute(text("CREATE TABLE IF NOT EXISTS distance_average_table(team TEXT, season TEXT, distance FLOAT, average FLOAT);"))
 data = {}
@@ -69,6 +70,7 @@ for season in seasons:
 
         if (count != 0):
             average = round(distance / count, 2)
+            print(season, team, distance, count)
             if team == 'ARI':
                 team = 'AZ'
             # engine.execute(f"INSERT INTO distance_average_table(team, season, distance) VALUES('{team}', '{season}', '{average}');")
@@ -76,7 +78,8 @@ for season in seasons:
                 data[team] = {}
             data[team][season] = average
     if season_count != 0:
-        season_average[season] = average = round(season_distance / season_count, 2)
+        season_average[season] = round(season_distance / season_count, 2)
+        print(season, season_distance, season_count)
 
 for season in seasons:      
     for team in teams:

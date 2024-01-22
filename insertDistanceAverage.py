@@ -72,7 +72,7 @@ for season in seasons:
             if team == 'ARI':
                 team = 'AZ'
             # engine.execute(f"INSERT INTO distance_average_table(team, season, distance) VALUES('{team}', '{season}', '{average}');")
-            if not data.has_key(team):
+            if not team in data.keys():
                 data[team] = {}
             data[team][season] = average
     if season_count != 0:

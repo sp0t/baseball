@@ -45,6 +45,7 @@ for season in seasons:
                     state = False
                 elif pre_away_team == team:
                     count = count + 1
+                    season_count = season_count + 1
                     state = True
                     team1 = team
                     team2 = pre_home_team

@@ -322,7 +322,7 @@ def get_player_info():
 def get_betting_info(): 
     engine = database.connect_to_db()
     year = request.form['year']
-    res = pd.read_sql(f"SELECT betdate, SUM(stake) stake, SUM(CASE WHEN status = '2' THEN wins ELSE 0 END) wins, SUM(CASE WHEN status = '1' THEN stake ELSE 0 END) losses FROM betting_table WHERE betdate LIKE '{year}%%' GROUP BY betdate ORDER BY betdate;", con = engine).to_dict('records')
+    res = pd.read_sql(f"SELECT betdate, SUM(stake) stake, SUM(CASE WHEN status = '2' THEN wins ELSE 0 END) wins, SUM(CASE WHEN status = '1' THEN stake ELSE 0 END) losses FROM betting_table WHERE betdate LIKE '{2023}%%' GROUP BY betdate ORDER BY betdate;", con = engine).to_dict('records')
     return res
 
 @app.route('/make_prediction', methods = ["POST"])

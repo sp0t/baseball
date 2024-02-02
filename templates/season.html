@@ -37,6 +37,7 @@
             var today = new Date();
             var year = today.getFullYear();
             var datapoits = [];
+            var averagepoits = [];
 
             $.ajax({
                 url: '/get_betting_info', 
@@ -51,17 +52,36 @@
                         style: 'currency',
                         currency: 'USD',
                     });
+                    var pl_vlaue = {}
                     for(var i = 0; i < data.length; i++)
                     {
                         var date = new Date(data[i]['betdate'])
                         var stats = 0;
+                        var average = 0;
 
                         for(var j = 0; j <= i; j++)
                         {
                             stats = stats + data[j]['wins'] - data[j]['losses']
                         }
+                        pl_vlaue[i] = stats
                         var price =  USDollar.format(stats);
+                        console.log(pl_vlaue)
                         datapoits.push({x: date, y: stats, indexLabel: price})
+
+                        if (i>=50) {
+                            for (var k=i-50 + 1; k <= i; k++) {
+                                average = average + pl_vlaue[k];
+                                console.log(pl_vlaue[k])
+                            }
+                            console.log(average)
+                            average = average / 50;
+                            console.log(average)
+
+                            var average_price =  USDollar.format(average);
+                            averagepoits.push({x: date, y: average})
+                            console.log(i)
+                            
+                        }
                     }
             
                     var chart = new CanvasJS.Chart("chartContainer", {
@@ -87,15 +107,26 @@
                             titleFontWeight: 'bold',
                             titleFontColor: 'red'
                         },
-                        data: [{        
+                        data: [
+                        {        
                             type: "line",
                             markerSize: 10,
                             xValueFormatString: "YYYY/MM/DD",
                             yValueFormatString: "$##,###.#",
                             indexLabelWrap: false,
                             indexLabelFontColor: 'blue',
+                            color: "blue",
                             dataPoints: datapoits
-                        }]
+                        },
+                        {        
+                            type: "spline",
+                            markerType: "none",
+                            xValueFormatString: "YYYY/MM/DD",
+                            yValueFormatString: "$##,###.#",
+                            color: "red",
+                            dataPoints: averagepoits
+                        },
+                    ]
                     });
                     chart.render();
                  }               

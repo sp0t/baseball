@@ -1033,6 +1033,9 @@ def season_state():
         elif(item["status"] == "2"):
             profit += float(item["wins"])
     data = {}
+    stake = stake * 14
+    losses = losses * 14
+    profit = profit * 14
     data["stake"] = "${:,.2f}".format(stake)
     data["pl"] = "${:,.2f}".format(profit - losses)
     if (profit - losses) >= 0:

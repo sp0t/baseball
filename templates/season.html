@@ -19,7 +19,8 @@
         <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
         <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.3/moment-with-locales.min.js"
         integrity="sha512-vFABRuf5oGUaztndx4KoAEUVQnOvAIFs59y4tO0DILGWhQiFnFHiR+ZJfxLDyJlXgeut9Z07Svuvm+1Jv89w5g=="  crossorigin="anonymous" referrerpolicy="no-referrer"> </script>
-        <script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
+        <script type="text/javascript" src="https://canvasjs.com/assets/script/jquery-1.11.1.min.js"></script>
+        <script type="text/javascript" src="https://cdn.canvasjs.com/canvasjs.stock.min.js"></script>
         <style>
             th, td {
                 padding-left: 30px;
@@ -36,7 +37,6 @@
 
             var today = new Date();
             var year = today.getFullYear();
-            var datapoits = [];
             var averagepoit_50 = [];
             var averagepoit_100 = [];
             var averagepoit_250 = [];
@@ -50,25 +50,115 @@
 
                 success: function (data){ 
 
+                    var dataPoints = [];
+
                     let USDollar = new Intl.NumberFormat('en-US', {
                         style: 'currency',
                         currency: 'USD',
                     });
+
+                    var stockChart = new CanvasJS.StockChart("chartContainer",{
+                        theme: "light2",
+                        charts: [{
+                        title: {
+                            fontColor:'black',
+                            margin: 10,
+                            text: `P/L analysis-${year}`   
+                        },
+                        toolTip:{          
+                            shared: true,   
+                            content: function(e) {
+                                // Extracting data point
+                                var dataPoint = e.entries[0].dataPoint;
+                                
+                                // Calculating movement
+                                var movement = dataPoint.y[3] - dataPoint.y[0];
+
+                                let d = new Date(dataPoint.x),
+                                month = '' + (d.getMonth() + 1), // Months are zero based
+                                day = '' + d.getDate(),
+                                year = d.getFullYear();
+
+                                // Add leading zero to month and day if needed
+                                if (month.length < 2) 
+                                    month = '0' + month;
+                                if (day.length < 2) 
+                                    day = '0' + day;
+                                var daystring = [year, month, day].join('-');
+                                
+                                // Formatting content
+                                var content = `<div style='padding:3px'><div style='color: red; font-size:16px; font-weight:bold; text-align: center;'>${daystring}</div><div style='display:flex; width:100%; padding-top: 3px'><div style='width:50%; text-align: right; padding-right:5px'>Open Price:</div><div style='width:50%; text-align: left; padding-left:5px'> ${USDollar.format(dataPoint.y[0].toFixed(2))}</div></div>
+                                <div style='display:flex; width:100%; padding-top: 3px'><div style='width:50%; text-align: right; padding-right:5px'>Close Price:</div><div style='width:50%; text-align: left; padding-left:5px'> ${USDollar.format(dataPoint.y[3].toFixed(2))}</div></div>
+                                <div style='display:flex; width:100%; padding-top: 3px'><div style='width:50%; text-align: right; padding-right:5px'>Movement: </div><div style="width:50%; text-align: left; padding-left:5px; ${movement>0? 'color:green':'color:red'}"> ${USDollar.format(movement.toFixed(2))}</div></div>`;
+
+                                var str = "";
+                                for (var i = 1; i < e.entries.length; i++){
+                                    var  temp = `<div style='display:flex; width:100%; padding-top: 3px'><div style='width:50%; text-align: right; padding-right:5px'>${e.entries[i].dataSeries.name}:</div><div style="width:50%; text-align: left; padding-left:5px;Yes">${USDollar.format(e.entries[i].dataPoint.y.toFixed(2))}</div></div>` ; 
+                                    str = str.concat(temp);
+                                }
+
+                                str = str + '</div>'
+
+                                content = content.concat(str);
+                                
+                                return content;
+                            }
+                        },
+                        axisY: {
+                            prefix: "$"
+                        },
+                        axisX: {
+                            crosshair: {
+                            enabled: true
+                            }
+                        },
+                        data: [
+                            {
+                            type: "candlestick",
+                            risingColor: "green",
+                            color: "red",
+                            yValueFormatString: "$#,###.##",
+                            dataPoints : dataPoints
+                            },
+                            {        
+                                type: "spline",
+                                name: "avg-50",
+                                markerType: "none",
+                                color: "blue",
+                                dataPoints: averagepoit_50
+                            },
+
+                            {        
+                                type: "spline",
+                                name: "avg-100",
+                                markerType: "none",
+                                color: "yellow",
+                                dataPoints: averagepoit_100
+                            },
+
+                            {        
+                                type: "spline",
+                                name: "avg-250",
+                                markerType: "none",
+                                color: "purple",
+                                dataPoints: averagepoit_250
+                            },
+                            ]
+                        }],
+                    });
+
                     var pl_vlaue = {}
+                    var value = 0;
+                    var update = 0;
                     for(var i = 0; i < data.length; i++)
                     {
                         var date = new Date(data[i]['betdate'])
-                        var stats = 0;
                         var average = 0;
 
-                        for(var j = 0; j <= i; j++)
-                        {
-                            stats = stats + data[j]['wins'] - data[j]['losses']
-                        }
-                        pl_vlaue[i] = stats
-                        var price =  USDollar.format(stats);
-                        console.log(pl_vlaue)
-                        datapoits.push({x: date, y: stats, indexLabel: price})
+                        update = value + data[i]['wins'] * 14 - data[i]['losses'] * 14
+                        pl_vlaue[i] = update
+                        dataPoints.push({x: date,  y: [Number(value), Number(value > update? value: update), Number(value > update? update: value), Number(update)]})
+                        value = update
 
                         if (i>=50) {
                             for (var k=i-50 + 1; k <= i; k++) {
@@ -107,71 +197,7 @@
                             
                         }
                     }
-            
-                    var chart = new CanvasJS.Chart("chartContainer", {
-                        theme: "light2",
-                        animationEnabled: true,
-                        zoomEnabled: true, 
-                        title:{
-                            fontColor:'black',
-                            margin: 10,
-                            text: `P/L analysis-${year}`   
-                        },
-                        axisX: {
-                            labelWrap: true,
-                            labelAngle: -90,
-                            labelFontColor: 'black',
-                            titleFontWeight: 'bold',
-                            titleFontColor: 'red'
-                        },
-                        axisY:{
-                            title: "P/L Price (in USD)",
-                            includeZero: true,
-                            valueFormatString: "$##,###.#",
-                            labelFontColor: 'black',
-                            titleFontWeight: 'bold',
-                            titleFontColor: 'red'
-                        },
-                        data: [
-                        {        
-                            type: "line",
-                            markerSize: 10,
-                            xValueFormatString: "YYYY/MM/DD",
-                            yValueFormatString: "$##,###.#",
-                            indexLabelWrap: false,
-                            indexLabelFontColor: 'gray',
-                            color: "gray",
-                            dataPoints: datapoits
-                        },
-                        {        
-                            type: "spline",
-                            markerType: "none",
-                            xValueFormatString: "YYYY/MM/DD",
-                            yValueFormatString: "$##,###.#",
-                            color: "blue",
-                            dataPoints: averagepoit_50
-                        },
-
-                        {        
-                            type: "spline",
-                            markerType: "none",
-                            xValueFormatString: "YYYY/MM/DD",
-                            yValueFormatString: "$##,###.#",
-                            color: "yellow",
-                            dataPoints: averagepoit_100
-                        },
-
-                        {        
-                            type: "spline",
-                            markerType: "none",
-                            xValueFormatString: "YYYY/MM/DD",
-                            yValueFormatString: "$##,###.#",
-                            color: "purple",
-                            dataPoints: averagepoit_250
-                        },
-                    ]
-                    });
-                    chart.render();
+                    stockChart.render();
                  }               
             });      
             }
@@ -206,7 +232,7 @@
             </div>
         </div>
         
-        <div style="margin: 100px auto">
+        <div style="margin-top: 100px; margin-bottom: 50px;">
             <table class="table" style="margin: 0 auto; text-align: center; width: auto; border: none;">
                 <thead style="font-size: 30px;color: black; font-weight: bold; height: 80px;">
                     <tr>
@@ -228,6 +254,11 @@
                     </tr>
                 </tbody>
             </table>
+            <div style="text-align: center; padding-top: 30px; font-size: 16px; font-weight: bold;">
+                <div>50 days average (blue)</div>
+                <div>100 days average (yellow)</div>
+                <div>250 days average (purple)</div>
+            </div>
         </div>
 
         <div style="border: solid 2px; border-color: aqua; margin-left: 5px; margin-right: 5px; padding: 20px; padding-top: 30px;">

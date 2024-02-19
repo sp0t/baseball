@@ -39,7 +39,7 @@
             var year = today.getFullYear();
             var averagepoit_50 = [];
             var averagepoit_100 = [];
-            var averagepoit_250 = [];
+            var averagepoit_200 = [];
 
             $.ajax({
                 url: '/get_betting_info', 
@@ -61,7 +61,7 @@
 
                     var averagepoit_50 = [];
                     var averagepoit_100 = [];
-                    var averagepoit_250 = [];
+                    var averagepoit_200 = [];
 
                     var pl_vlaue = {}
                     var value = 0;
@@ -69,7 +69,7 @@
 
                     var stockChartSeason = new CanvasJS.StockChart("chartContainerSeasson",{
                         theme: "light2",
-                        width: 1400,
+                        width: 1600,
                         height: 800,
                         charts: [{
                         title: {
@@ -153,7 +153,7 @@
                                 name: "avg-250",
                                 markerType: "none",
                                 color: "purple",
-                                dataPoints: averagepoit_250
+                                dataPoints: averagepoit_200
                             },
                             ]
                         }],
@@ -196,13 +196,13 @@
                         average = 0
 
                         if (i>=250) {
-                            for (var k=i-250 + 1; k <= i; k++) {
+                            for (var k=i-200 + 1; k <= i; k++) {
                                 average = average + pl_vlaue[k];
                             }
-                            average = average / 250;
+                            average = average / 200;
 
                             var average_price =  USDollar.format(average);
-                            averagepoit_250.push({x: date, y: average})
+                            averagepoit_200.push({x: date, y: average})
                             
                         }
                     }
@@ -210,7 +210,7 @@
 
                     averagepoit_50 = [];
                     averagepoit_100 = [];
-                    averagepoit_250 = [];
+                    averagepoit_200 = [];
                     dataPoints = [];
 
                     pl_vlaue = {}
@@ -219,7 +219,7 @@
 
                     var stockChartTotal = new CanvasJS.StockChart("chartContainerTotal",{
                         theme: "light2",
-                        width: 1400,
+                        width: 1600,
                         height: 800,
                         charts: [{
                         title: {
@@ -303,7 +303,7 @@
                                 name: "avg-250",
                                 markerType: "none",
                                 color: "purple",
-                                dataPoints: averagepoit_250
+                                dataPoints: averagepoit_200
                             },
                             ]
                         }],
@@ -347,13 +347,13 @@
                         average = 0
 
                         if (i>=250) {
-                            for (var k=i-250 + 1; k <= i; k++) {
+                            for (var k=i-200 + 1; k <= i; k++) {
                                 average = average + pl_vlaue[k];
                             }
-                            average = average / 250;
+                            average = average / 200;
 
                             var average_price =  USDollar.format(average);
-                            averagepoit_250.push({x: date, y: average})
+                            averagepoit_200.push({x: date, y: average})
                             
                         }
                     }

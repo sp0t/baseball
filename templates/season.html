@@ -50,6 +50,8 @@
 
                 success: function (data){ 
 
+                    console.log(data)
+
                     var dataPoints = [];
 
                     let USDollar = new Intl.NumberFormat('en-US', {
@@ -57,8 +59,18 @@
                         currency: 'USD',
                     });
 
-                    var stockChart = new CanvasJS.StockChart("chartContainer",{
+                    var averagepoit_50 = [];
+                    var averagepoit_100 = [];
+                    var averagepoit_250 = [];
+
+                    var pl_vlaue = {}
+                    var value = 0;
+                    var update = 0;
+
+                    var stockChartSeason = new CanvasJS.StockChart("chartContainerSeasson",{
                         theme: "light2",
+                        width: 1400,
+                        height: 800,
                         charts: [{
                         title: {
                             fontColor:'black',
@@ -116,7 +128,7 @@
                             {
                             type: "candlestick",
                             risingColor: "green",
-                            color: "red",
+                            fallingColor: "red",
                             yValueFormatString: "$#,###.##",
                             dataPoints : dataPoints
                             },
@@ -147,15 +159,12 @@
                         }],
                     });
 
-                    var pl_vlaue = {}
-                    var value = 0;
-                    var update = 0;
-                    for(var i = 0; i < data.length; i++)
+                    for(var i = 0; i < data['season'].length; i++)
                     {
-                        var date = new Date(data[i]['betdate'])
+                        var date = new Date(data['season'][i]['betdate'])
                         var average = 0;
 
-                        update = value + data[i]['wins'] * 14 - data[i]['losses'] * 14
+                        update = value + data['season'][i]['wins'] * 14 - data['season'][i]['losses'] * 14
                         pl_vlaue[i] = update
                         dataPoints.push({x: date,  y: [Number(value), Number(value > update? value: update), Number(value > update? update: value), Number(update)]})
                         value = update
@@ -197,7 +206,158 @@
                             
                         }
                     }
-                    stockChart.render();
+                    stockChartSeason.render();
+
+                    averagepoit_50 = [];
+                    averagepoit_100 = [];
+                    averagepoit_250 = [];
+                    dataPoints = [];
+
+                    pl_vlaue = {}
+                    value = 0;
+                    update = 0;
+
+                    var stockChartTotal = new CanvasJS.StockChart("chartContainerTotal",{
+                        theme: "light2",
+                        width: 1400,
+                        height: 800,
+                        charts: [{
+                        title: {
+                            fontColor:'black',
+                            margin: 10,
+                            text: `P/L analysis-Total`   
+                        },
+                        toolTip:{          
+                            shared: true,   
+                            content: function(e) {
+                                // Extracting data point
+                                var dataPoint = e.entries[0].dataPoint;
+                                
+                                // Calculating movement
+                                var movement = dataPoint.y[3] - dataPoint.y[0];
+
+                                let d = new Date(dataPoint.x),
+                                month = '' + (d.getMonth() + 1), // Months are zero based
+                                day = '' + d.getDate(),
+                                year = d.getFullYear();
+
+                                // Add leading zero to month and day if needed
+                                if (month.length < 2) 
+                                    month = '0' + month;
+                                if (day.length < 2) 
+                                    day = '0' + day;
+                                var daystring = [year, month, day].join('-');
+                                
+                                // Formatting content
+                                var content = `<div style='padding:3px'><div style='color: red; font-size:16px; font-weight:bold; text-align: center;'>${daystring}</div><div style='display:flex; width:100%; padding-top: 3px'><div style='width:50%; text-align: right; padding-right:5px'>Open Price:</div><div style='width:50%; text-align: left; padding-left:5px'> ${USDollar.format(dataPoint.y[0].toFixed(2))}</div></div>
+                                <div style='display:flex; width:100%; padding-top: 3px'><div style='width:50%; text-align: right; padding-right:5px'>Close Price:</div><div style='width:50%; text-align: left; padding-left:5px'> ${USDollar.format(dataPoint.y[3].toFixed(2))}</div></div>
+                                <div style='display:flex; width:100%; padding-top: 3px'><div style='width:50%; text-align: right; padding-right:5px'>Movement: </div><div style="width:50%; text-align: left; padding-left:5px; ${movement>0? 'color:green':'color:red'}"> ${USDollar.format(movement.toFixed(2))}</div></div>`;
+
+                                var str = "";
+                                for (var i = 1; i < e.entries.length; i++){
+                                    var  temp = `<div style='display:flex; width:100%; padding-top: 3px'><div style='width:50%; text-align: right; padding-right:5px'>${e.entries[i].dataSeries.name}:</div><div style="width:50%; text-align: left; padding-left:5px;Yes">${USDollar.format(e.entries[i].dataPoint.y.toFixed(2))}</div></div>` ; 
+                                    str = str.concat(temp);
+                                }
+
+                                str = str + '</div>'
+
+                                content = content.concat(str);
+                                
+                                return content;
+                            }
+                        },
+                        axisY: {
+                            prefix: "$"
+                        },
+                        axisX: {
+                            crosshair: {
+                            enabled: true
+                            }
+                        },
+                        data: [
+                            {
+                            type: "candlestick",
+                            risingColor: "green",
+                            fallingColor: "red",
+                            yValueFormatString: "$#,###.##",
+                            dataPoints : dataPoints
+                            },
+                            {        
+                                type: "spline",
+                                name: "avg-50",
+                                markerType: "none",
+                                color: "blue",
+                                dataPoints: averagepoit_50
+                            },
+
+                            {        
+                                type: "spline",
+                                name: "avg-100",
+                                markerType: "none",
+                                color: "yellow",
+                                dataPoints: averagepoit_100
+                            },
+
+                            {        
+                                type: "spline",
+                                name: "avg-250",
+                                markerType: "none",
+                                color: "purple",
+                                dataPoints: averagepoit_250
+                            },
+                            ]
+                        }],
+                    });
+                    
+                    
+                    for(var i = 0; i < data['total'].length; i++)
+                    {
+                        var date = new Date(data['total'][i]['betdate'])
+                        var average = 0;
+
+                        update = value + data['total'][i]['wins'] * 14 - data['total'][i]['losses'] * 14
+                        pl_vlaue[i] = update
+                        dataPoints.push({x: date,  y: [Number(value), Number(value > update? value: update), Number(value > update? update: value), Number(update)]})
+                        value = update
+
+                        if (i>=50) {
+                            for (var k=i-50 + 1; k <= i; k++) {
+                                average = average + pl_vlaue[k];
+                            }
+                            average = average / 50;
+
+                            var average_price =  USDollar.format(average);
+                            averagepoit_50.push({x: date, y: average})
+                            
+                        }
+
+                        average = 0
+
+                        if (i>=100) {
+                            for (var k=i-100 + 1; k <= i; k++) {
+                                average = average + pl_vlaue[k];
+                            }
+                            average = average / 100;
+
+                            var average_price =  USDollar.format(average);
+                            averagepoit_100.push({x: date, y: average})
+                            
+                        }
+
+                        average = 0
+
+                        if (i>=250) {
+                            for (var k=i-250 + 1; k <= i; k++) {
+                                average = average + pl_vlaue[k];
+                            }
+                            average = average / 250;
+
+                            var average_price =  USDollar.format(average);
+                            averagepoit_250.push({x: date, y: average})
+                            
+                        }
+                    }
+                    stockChartTotal.render();
                  }               
             });      
             }
@@ -261,8 +421,11 @@
             </div>
         </div>
 
-        <div style="border: solid 2px; border-color: aqua; margin-left: 5px; margin-right: 5px; padding: 20px; padding-top: 30px;">
-            <div id="chartContainer" style="height: 370px; width: 100%;"></div>
+        <div style="display: flex; justify-content: center; align-items: center;">
+            <div id="chartContainerSeasson" style="height: 810px; width: 1410px;border: solid 2px; border-color: aqua;"></div>
+        </div>
+        <div style="display: flex; justify-content: center; align-items: center; padding-top: 50px; padding-bottom: 50px;">
+            <div id="chartContainerTotal" style="height: 810px; width: 1410px;border: solid 2px; border-color: aqua;"></div>
         </div>
     </body>
 </html>

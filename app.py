@@ -762,7 +762,8 @@ def update_data():
     update_data = jsonify(update_data = update_data)
 
     engine = database.connect_to_db()
-    game_sched = mlb.schedule(start_date = "2023-11-01")
+    game_sched = mlb.schedule(start_date = date.today())
+
     playerData = {}
 
     for game in game_sched:

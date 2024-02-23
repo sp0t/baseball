@@ -8,8 +8,11 @@ import pandas as pd
 
 from database import database
 from schedule import schedule
-
+from passlib.hash import sha256_crypt
 #conn, cur = database.connect_to_db()
 
-database.update_database()
-schedule.update_schedule()
+# database.update_database()
+# schedule.update_schedule()
+
+
+

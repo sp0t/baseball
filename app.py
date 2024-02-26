@@ -1070,7 +1070,7 @@ def betting_proc():
     
         # engine.execute(betting_table_sql)
 
-        decimal_odd = (1 + int(betting_data["odds"])/100) if int(betting_data["odds"]) > 0 else (-100 / int(betting_data["odds"]) + 1)
+        decimal_odd = (1 + int(betting_data["odds"])/100).toFixed(2) if int(betting_data["odds"]) > 0 else (-100 / int(betting_data["odds"]) + 1).toFixed(2)
         win_count_res = pd.read_sql(f"SELECT COUNT(*) FROM staking_table WHERE result = 'W' AND game_date != '{betting_data['betdate']}';", con = engine).to_dict('records')
         bet_count_res = pd.read_sql(f"SELECT COUNT(*) FROM staking_table WHERE game_date != '{betting_data['betdate']}';", con = engine).to_dict('records')
 

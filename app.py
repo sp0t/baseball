@@ -1075,8 +1075,8 @@ def betting_proc():
         bet_count_res = pd.read_sql(f"SELECT COUNT(*) FROM staking_table WHERE game_date != '{betting_data['betdate']}';", con = engine).to_dict('records')
 
         print(decimal_odd)
-        print(win_count_res)
-        print(bet_count_res)
+        print(win_count_res[0]['count'])
+        print(bet_count_res[0]['count'])
 
     elif betting_data['flag'] == 1:
         betting_table_sql = f"UPDATE betting_table SET place = '{betting_data['place']}', odds = '{betting_data['odds']}', stake = '{betting_data['stake']}', wins = '{betting_data['wins']}', regtime = '{regtime}' WHERE betdate = '{betting_data['betdate']}' AND team1 = '{betting_data['away']}' AND team2 = '{betting_data['home']}' AND site = '{betting_data['site']}';"

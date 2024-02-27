@@ -1105,7 +1105,7 @@ def betting_proc():
         total_count_res = pd.read_sql(f"SELECT COUNT(*) FROM staking_table;", con = engine).to_dict('records')
         count = win_count_res[0]['count'] + 1
 
-        engine.execute(text(f"INSERT INTO staking_table(game_date, away, home, bet, american_odd, decimal_odd, bet_size, win_count, bet_count, bet_win, risk_coeff, stake_size VALUES('{betting_data['betdate']}', '{betting_data['away']}', '{betting_data['away']}', '{betting_data['place']}', '{int(betting_data['odds'])}', '{decimal_odd}', '{betting_data['stake']}', '{win_count_res[0]['count']}', '{count}', '{win_percent}', '{risk_coeff}', '{stake_size}';"))
+        engine.execute(text(f"INSERT INTO staking_table(game_date, away, home, bet, american_odd, decimal_odd, bet_size, win_count, bet_count, bet_win, risk_coeff, stake_size) VALUES('{betting_data['betdate']}', '{betting_data['away']}', '{betting_data['away']}', '{betting_data['place']}', '{int(betting_data['odds'])}', '{decimal_odd}', '{betting_data['stake']}', '{win_count_res[0]['count']}', '{count}', '{win_percent}', '{risk_coeff}', '{stake_size}';"))
 
 
     elif betting_data['flag'] == 1:

@@ -360,8 +360,11 @@ def make_prediction():
         params['savestate'] = True
         engine = database.connect_to_db()
 
-        win_count_res = pd.read_sql(f"SELECT COUNT(*) FROM staking_table WHERE result = 'W' AND game_date != '{betting_data['betdate']}';", con = engine).to_dict('records')
-        bet_count_res = pd.read_sql(f"SELECT COUNT(*) FROM staking_table WHERE game_date != '{betting_data['betdate']}';", con = engine).to_dict('records')
+        now = datetime.now()
+        date_string = now.strftime('%Y-%m-%d')
+
+        win_count_res = pd.read_sql(f"SELECT COUNT(*) FROM staking_table WHERE result = 'W' AND game_date != '{date_string}';", con = engine).to_dict('records')
+        bet_count_res = pd.read_sql(f"SELECT COUNT(*) FROM staking_table WHERE game_date != '{date_string}';", con = engine).to_dict('records')
 
         win_precent = 0
         risk_coeff = 0

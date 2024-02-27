@@ -981,16 +981,18 @@ def show_betting():
         res = pd.read_sql(f"SELECT * FROM betting_table WHERE game = 'baseball' AND betid = '{modify_data['betid']}';", con = engine)
         betstate = res.to_dict('records')
 
-        if betstate[0]['regstate'] == '0':
-            Index = smartContract.betIndex
-            engine.execute(f"UPDATE betting_table SET regstate = '1', betindex = '{Index + 1}' WHERE betid = '{modify_data['betid']}';")
-            smartContract.createBetData(betstate[0])
+        print(betstate)
 
-        res = engine.execute(f"SELECT betindex FROM betting_table WHERE betid = '{modify_data['betid']}';").fetchall()
-        betIndex = int(res[0][0])
-        status = "L" if modify_data["status"] == 1 else "W"
-        smartContract.changeBetStatus(betIndex, status)
-        engine.execute(f"UPDATE betting_table SET status = '{modify_data['status']}' WHERE betid = '{modify_data['betid']}';")
+        # if betstate[0]['regstate'] == '0':
+        #     Index = smartContract.betIndex
+        #     engine.execute(f"UPDATE betting_table SET regstate = '1', betindex = '{Index + 1}' WHERE betid = '{modify_data['betid']}';")
+        #     smartContract.createBetData(betstate[0])
+
+        # res = engine.execute(f"SELECT betindex FROM betting_table WHERE betid = '{modify_data['betid']}';").fetchall()
+        # betIndex = int(res[0][0])
+        # status = "L" if modify_data["status"] == 1 else "W"
+        # smartContract.changeBetStatus(betIndex, status)
+        # engine.execute(f"UPDATE betting_table SET status = '{modify_data['status']}' WHERE betid = '{modify_data['betid']}';")
     elif modify_data["status"] == 3:
         res = engine.execute(f"SELECT regstate FROM betting_table WHERE betid = '{modify_data['betid']}';").fetchall()
         if int(res[0][0]) == 0:

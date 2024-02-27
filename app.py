@@ -400,16 +400,20 @@ def make_prediction():
             away_dec_odd = 0
             home_dec_odd = 0
             away_dec_odd = round(1.03 / preds_1a[0], 2)
+            print('away_dec_odd', away_dec_odd)
             if away_dec_odd >= 2:
                 away_odd = (away_dec_odd - 1) * 100
             elif away_dec_odd < 2:
                 away_odd = round(100/(1-away_dec_odd), 2)
+            print('away_odd', away_odd)
 
             home_dec_odd = round(1.03 / preds_1a[1], 2)
+            print('home_dec_odd', home_dec_odd)
             if home_dec_odd >= 2:
                 home_odd = (home_dec_odd - 1) * 100
             elif home_dec_odd < 2:
                 home_odd = round(100/(1-home_dec_odd), 2)
+            print('home_odd', home_odd)
 
             preds_1a = {'away_prob': preds_1a[0], 'home_prob': preds_1a[1], 'away_odd': away_odd, 'home_odd': home_odd, 'stake': stake_size}
             

@@ -981,8 +981,13 @@ def show_betting():
         res = pd.read_sql(f"SELECT * FROM betting_table WHERE game = 'baseball' AND betid = '{modify_data['betid']}';", con = engine)
         betstate = res.to_dict('records')
 
-        print(betstate)
+        win_count_res = pd.read_sql(f"SELECT COUNT(*) FROM staking_table WHERE result = 'W';", con = engine).to_dict('records')
+        bet_count_res = pd.read_sql(f"SELECT COUNT(*) FROM staking_table WHERE result != 'P';", con = engine).to_dict('records')
 
+        if modify_data["status"] == 1:
+            engine.execute(f"UPDATE staking_table SET result = 'L', win_count = '{win_count_res[0]['count']}', bet_count = '{bet_count_res[0]['count'] + 1}',  bet_win = {round(win_count_res[0]['count'] / (bet_count_res[0]['count'] + 1) * 100, 2)}, pl_coeff = -1 * stake_size WHERE game_date = '{betstate[0]['betdate']}' AND away = '{betstate[0]['team1']}' AND home = '{betstate[0]['team2']}' AND bet = '{betstate[0]['place']}' AND american_odd = '{int(betstate[0]['odds'])}';")
+        elif modify_data["status"] == 2:
+            engine.execute(f"UPDATE staking_table SET result = 'W', win_count = '{win_count_res[0]['count'] + 1}', bet_count = '{bet_count_res[0]['count'] + 1}',  bet_win = {round((win_count_res[0]['count'] + 1) / (bet_count_res[0]['count'] + 1) * 100, 2)}, pl_coeff = (decimal_odd -1) * stake_size WHERE game_date = '{betstate[0]['betdate']}' AND away = '{betstate[0]['team1']}' AND home = '{betstate[0]['team2']}' AND bet = '{betstate[0]['place']}' AND american_odd = '{int(betstate[0]['odds'])}';")
         # if betstate[0]['regstate'] == '0':
         #     Index = smartContract.betIndex
         #     engine.execute(f"UPDATE betting_table SET regstate = '1', betindex = '{Index + 1}' WHERE betid = '{modify_data['betid']}';")
@@ -1100,11 +1105,7 @@ def betting_proc():
         else:
             stake_size = 70000 + risk_coeff * 70000
 
-
-        total_count_res = pd.read_sql(f"SELECT COUNT(*) FROM staking_table;", con = engine).to_dict('records')
-        count = total_count_res[0]['count'] + 1
-
-        engine.execute(text(f"INSERT INTO staking_table(game_date, away, home, bet, american_odd, decimal_odd, bet_size, win_count, bet_count, bet_win, risk_coeff, stake_size) VALUES('{betting_data['betdate']}', '{betting_data['away']}', '{betting_data['away']}', '{betting_data['place']}', '{int(betting_data['odds'])}', '{decimal_odd}', '{betting_data['stake']}', '{win_count_res[0]['count']}', '{count}', '{win_percent}', '{risk_coeff}', '{stake_size}');"))
+        engine.execute(text(f"INSERT INTO staking_table(game_date, away, home, bet, american_odd, decimal_odd, bet_size, result, win_count, bet_count, bet_win, risk_coeff, stake_size) VALUES('{betting_data['betdate']}', '{betting_data['away']}', '{betting_data['away']}', '{betting_data['place']}', '{int(betting_data['odds'])}', '{decimal_odd}', '{betting_data['stake']}', 'P','{win_count_res[0]['count']}', '{bet_count_res[0]['count']}', '{win_percent}', '{risk_coeff}', '{stake_size}');"))
 
 
     elif betting_data['flag'] == 1:

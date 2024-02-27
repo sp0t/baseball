@@ -399,7 +399,7 @@ function makePrediction(model){
             $('#betform').hide();
             $('#calc').show();
 
-            console.log('================= staking model ==============', data)
+            document.getElementsByName('stake_size').textContent = '‘Today Bet Size is ' + data['1a']['stake'];
 
             if(data['model'] == 'a') {
                 document.getElementsByName('away_prob')[0].textContent = data['1a']['away_prob'] + '%'

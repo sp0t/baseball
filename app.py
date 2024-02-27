@@ -1086,7 +1086,7 @@ def betting_proc():
             win_percent = 0
             risk_coeff = 0
         else:
-            win_percent = bet_count_res[0]['count'] / bet_count_res[0]['count'] * 100
+            win_percent = win_count_res[0]['count'] / bet_count_res[0]['count'] * 100
             if win_percent > 49.25 and win_percent <= 49.75:
                 risk_coeff = 0.1
             elif win_percent <= 49.25:

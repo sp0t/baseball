@@ -399,36 +399,31 @@ def make_prediction():
             home_odd = 0
             away_dec_odd = 0
             home_dec_odd = 0
-            print('preds_1a[0]', preds_1a[0])
-            away_dec_odd = round(1.03 / preds_1a[0], 2)
-            print('away_dec_odd', away_dec_odd)
+    
+            away_dec_odd = round(1.03 / (preds_1a[0] / 100 ), 2)
             if away_dec_odd >= 2:
                 away_odd = (away_dec_odd - 1) * 100
             elif away_dec_odd < 2:
                 away_odd = round(100/(1-away_dec_odd), 2)
-            print('away_odd', away_odd)
 
-            print('preds_1a[1]', preds_1a[1])
-            home_dec_odd = round(1.03 / preds_1a[1], 2)
-            print('home_dec_odd', home_dec_odd)
+            home_dec_odd = round(1.03 / (preds_1a[1] / 100 ), 2)
             if home_dec_odd >= 2:
                 home_odd = (home_dec_odd - 1) * 100
             elif home_dec_odd < 2:
                 home_odd = round(100/(1-home_dec_odd), 2)
-            print('home_odd', home_odd)
 
             preds_1a = {'away_prob': preds_1a[0], 'home_prob': preds_1a[1], 'away_odd': away_odd, 'home_odd': home_odd, 'stake': stake_size}
             
             preds_1b = predictions['1b']
             preds_1b = np.round(100 * preds_1b[0], 2)
 
-            away_dec_odd = round(1.03 / preds_1b[0], 2)
+            away_dec_odd = round(1.03 / ( preds_1b[0] / 100 ), 2)
             if away_dec_odd >= 2:
                 away_odd = (away_dec_odd - 1) * 100
             elif away_dec_odd < 2:
                 away_odd = round(100/(1-away_dec_odd), 2)
 
-            home_dec_odd = round(1.03 / preds_1b[1], 2)
+            home_dec_odd = round(1.03 / ( preds_1b[1] / 100 ), 2)
             if home_dec_odd >= 2:
                 home_odd = (home_dec_odd - 1) * 100
             elif home_dec_odd < 2:
@@ -449,13 +444,13 @@ def make_prediction():
             home_odd = 0
             away_dec_odd = 0
             home_dec_odd = 0
-            away_dec_odd = round(1.03 / preds_1c[0], 2)
+            away_dec_odd = round(1.03 / (preds_1c[0] / 100), 2)
             if away_dec_odd >= 2:
                 away_odd = (away_dec_odd - 1) * 100
             elif away_dec_odd < 2:
                 away_odd = round(100/(1-away_dec_odd), 2)
 
-            home_dec_odd = round(1.03 / preds_1c[1], 2)
+            home_dec_odd = round(1.03 / (preds_1c[1] / 100), 2)
             if home_dec_odd >= 2:
                 home_odd = (home_dec_odd - 1) * 100
             elif home_dec_odd < 2:

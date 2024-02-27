@@ -402,15 +402,15 @@ def make_prediction():
     
             away_dec_odd = round(1.03 / (preds_1a[0] / 100 ), 2)
             if away_dec_odd >= 2:
-                away_odd = (away_dec_odd - 1) * 100
+                away_odd = math.ceil((away_dec_odd - 1) * 100)
             elif away_dec_odd < 2:
-                away_odd = round(100/(1-away_dec_odd), 2)
+                away_odd = math.ceil(100/(1-away_dec_odd))
 
             home_dec_odd = round(1.03 / (preds_1a[1] / 100 ), 2)
             if home_dec_odd >= 2:
-                home_odd = (home_dec_odd - 1) * 100
+                home_odd = math.ceil((home_dec_odd - 1) * 100)
             elif home_dec_odd < 2:
-                home_odd = round(100/(1-home_dec_odd), 2)
+                home_odd = math.ceil(100/(1-home_dec_odd))
 
             preds_1a = {'away_prob': preds_1a[0], 'home_prob': preds_1a[1], 'away_odd': away_odd, 'home_odd': home_odd, 'stake': stake_size}
             
@@ -419,15 +419,15 @@ def make_prediction():
 
             away_dec_odd = round(1.03 / ( preds_1b[0] / 100 ), 2)
             if away_dec_odd >= 2:
-                away_odd = (away_dec_odd - 1) * 100
+                away_odd = math.ceil((away_dec_odd - 1) * 100)
             elif away_dec_odd < 2:
-                away_odd = round(100/(1-away_dec_odd), 2)
+                away_odd = math.ceil(100/(1-away_dec_odd))
 
             home_dec_odd = round(1.03 / ( preds_1b[1] / 100 ), 2)
             if home_dec_odd >= 2:
-                home_odd = (home_dec_odd - 1) * 100
+                home_odd = math.ceil((home_dec_odd - 1) * 100)
             elif home_dec_odd < 2:
-                home_odd = round(100/(1-home_dec_odd), 2)
+                home_odd = math.ceil(100/(1-home_dec_odd))
 
             preds_1b = {'away_prob': preds_1b[0], 'home_prob': preds_1b[1], 'away_odd': away_odd, 'home_odd': home_odd, 'stake': stake_size}
             engine.execute(f"INSERT INTO predict_table(game_id, la_away_prob, la_home_prob, lb_away_prob, lb_home_prob) VALUES('{gameId}', '{preds_1a['away_prob']}', '{preds_1a['home_prob']}','{preds_1b['away_prob']}', '{preds_1b['home_prob']}') ON CONFLICT (game_id) DO UPDATE SET la_away_prob = excluded.la_away_prob, la_home_prob = excluded.la_home_prob, lb_away_prob = excluded.lb_away_prob, lb_home_prob = excluded.lb_home_prob;")
@@ -446,15 +446,15 @@ def make_prediction():
             home_dec_odd = 0
             away_dec_odd = round(1.03 / (preds_1c[0] / 100), 2)
             if away_dec_odd >= 2:
-                away_odd = (away_dec_odd - 1) * 100
+                away_odd = math.ceil((away_dec_odd - 1) * 100)
             elif away_dec_odd < 2:
-                away_odd = round(100/(1-away_dec_odd), 2)
+                away_odd = math.ceil(100/(1-away_dec_odd))
 
             home_dec_odd = round(1.03 / (preds_1c[1] / 100), 2)
             if home_dec_odd >= 2:
-                home_odd = (home_dec_odd - 1) * 100
+                home_odd = math.ceil((home_dec_odd - 1) * 100)
             elif home_dec_odd < 2:
-                home_odd = round(100/(1-home_dec_odd), 2)
+                home_odd = math.ceil(100/(1-home_dec_odd))
 
             preds_1c = {'away_prob': preds_1c[0], 'home_prob': preds_1c[1], 'away_odd': away_odd, 'home_odd': home_odd, 'stake': stake_size}
             engine.execute(f"INSERT INTO predict_table(game_id, lc_away_prob, lc_home_prob) VALUES('{gameId}', '{preds_1c['away_prob']}', '{preds_1c['home_prob']}') ON CONFLICT (game_id) DO UPDATE SET lc_away_prob = excluded.lc_away_prob, lc_home_prob = excluded.lc_home_prob;")

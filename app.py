@@ -1087,6 +1087,7 @@ def betting_proc():
             risk_coeff = 0
         else:
             win_percent = win_count_res[0]['count'] / bet_count_res[0]['count'] * 100
+            print(win_percent)
             if win_percent > 49.25 and win_percent <= 49.75:
                 risk_coeff = 0.1
             elif win_percent <= 49.25:
@@ -1101,6 +1102,8 @@ def betting_proc():
             stake_size = 70000
         else:
             stake_size = 70000 + risk_coeff * 70000
+
+        print(risk_coeff)
 
         total_count_res = pd.read_sql(f"SELECT COUNT(*) FROM staking_table;", con = engine).to_dict('records')
         count = total_count_res[0]['count'] + 1

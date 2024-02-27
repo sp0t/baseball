@@ -1074,9 +1074,39 @@ def betting_proc():
         win_count_res = pd.read_sql(f"SELECT COUNT(*) FROM staking_table WHERE result = 'W' AND game_date != '{betting_data['betdate']}';", con = engine).to_dict('records')
         bet_count_res = pd.read_sql(f"SELECT COUNT(*) FROM staking_table WHERE game_date != '{betting_data['betdate']}';", con = engine).to_dict('records')
 
+        win_precent = 0
+        risk_coeff = 0
+        stake_size = 0
+
         print(decimal_odd)
         print(win_count_res[0]['count'])
         print(bet_count_res[0]['count'])
+
+        if win_count_res[0]['count'] == 0 or bet_count_res[0]['count']:
+            win_percent = 0
+            risk_coeff = 0
+        else:
+            win_percent = bet_count_res[0]['count'] / bet_count_res[0]['count'] * 100
+            if win_percent > 49.25 and win_percent <= 49.75:
+                risk_coeff = 0.1
+            elif win_percent <= 49.25:
+                risk_coeff = 0.5
+            elif win_percent >= 50.25 and win_percent < 50.75:
+                risk_coeff = -0.1
+            elif win_percent >= 50.75:
+                risk_coeff = -0.5
+            else:
+                risk_coeff = 0
+        if risk_coeff == 0:
+            stake_size = 70000
+        else:
+            stake_size = 70000 + risk_coeff * 70000
+
+        total_count_res = pd.read_sql(f"SELECT COUNT(*) FROM staking_table;", con = engine).to_dict('records')
+        count = win_count_res[0]['count'] + 1
+
+        engine.execute(text(f"INSERT INTO staking_table(game_date, away, home, bet, american_odd, decimal_odd, bet_size, win_count, bet_count, bet_win, risk_coeff, stake_size VALUES('{betting_data['betdate']}', '{betting_data['away']}', '{betting_data['away']}', '{betting_data['place']}', '{int(betting_data['odds'])}', '{decimal_odd}', '{betting_data['stake']}', '{win_count_res[0]['count']}', '{count}', '{win_percent}', '{risk_coeff}', '{stake_size}';"))
+
 
     elif betting_data['flag'] == 1:
         betting_table_sql = f"UPDATE betting_table SET place = '{betting_data['place']}', odds = '{betting_data['odds']}', stake = '{betting_data['stake']}', wins = '{betting_data['wins']}', regtime = '{regtime}' WHERE betdate = '{betting_data['betdate']}' AND team1 = '{betting_data['away']}' AND team2 = '{betting_data['home']}' AND site = '{betting_data['site']}';"

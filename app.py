@@ -12,6 +12,7 @@ from database import database
 from flask_basicauth import BasicAuth
 from sqlalchemy import text
 from itertools import combinations
+import math
 
 # Modules
 from functions import batting, predict, starters, smartContract, sanitycheck

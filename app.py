@@ -1061,14 +1061,14 @@ def betting_proc():
     regtime = calendar.timegm(current_GMT)
 
     if betting_data['flag'] == 0:
-        # betting_table_sql = 'INSERT INTO betting_table(betdate, game, team1, team2, market, place, odds, stake, wins, status, site, regtime, regstate, betindex) '\
-        #                 'VALUES (' + \
-        #                 '\'' + betting_data["betdate"] + '\'' + ',' + '\'' + 'baseball' + '\'' + ','+  '\'' + betting_data["away"] + '\'' +  ',' + \
-        #                 '\'' + betting_data["home"] + '\'' +  ',' + '\'' +  'Money' + '\'' +  ',' + '\'' + betting_data["place"] + '\'' +  ','\
-        #                 '\'' + betting_data["odds"] + '\'' +  ',' + '\'' + betting_data["stake"] + '\'' +  ',' + '\'' + betting_data["wins"] + '\'' +  ',' + \
-        #                 '\'' + '0' + '\'' +  ',' + '\'' + betting_data["site"] + '\'' +  ',' + '\'' + str(regtime) + '\'' +  ',' + '\'' + "0" + '\'' +  ',' + '\'' + "0" + '\''+ ');'
+        betting_table_sql = 'INSERT INTO betting_table(betdate, game, team1, team2, market, place, odds, stake, wins, status, site, regtime, regstate, betindex) '\
+                        'VALUES (' + \
+                        '\'' + betting_data["betdate"] + '\'' + ',' + '\'' + 'baseball' + '\'' + ','+  '\'' + betting_data["away"] + '\'' +  ',' + \
+                        '\'' + betting_data["home"] + '\'' +  ',' + '\'' +  'Money' + '\'' +  ',' + '\'' + betting_data["place"] + '\'' +  ','\
+                        '\'' + betting_data["odds"] + '\'' +  ',' + '\'' + betting_data["stake"] + '\'' +  ',' + '\'' + betting_data["wins"] + '\'' +  ',' + \
+                        '\'' + '0' + '\'' +  ',' + '\'' + betting_data["site"] + '\'' +  ',' + '\'' + str(regtime) + '\'' +  ',' + '\'' + "0" + '\'' +  ',' + '\'' + "0" + '\''+ ');'
     
-        # engine.execute(betting_table_sql)
+        engine.execute(betting_table_sql)
 
         decimal_odd = (1 + round(int(betting_data["odds"])/100, 2)) if int(betting_data["odds"]) > 0 else (round(-100 / int(betting_data["odds"]), 2) + 1)
         win_count_res = pd.read_sql(f"SELECT COUNT(*) FROM staking_table WHERE result = 'W' AND game_date != '{betting_data['betdate']}';", con = engine).to_dict('records')
@@ -1078,16 +1078,11 @@ def betting_proc():
         risk_coeff = 0
         stake_size = 0
 
-        print(decimal_odd)
-        print(win_count_res[0]['count'])
-        print(bet_count_res[0]['count'])
-
         if win_count_res[0]['count'] == 0 or bet_count_res[0]['count'] == 0:
             win_percent = 0
             risk_coeff = 0
         else:
             win_percent = round((win_count_res[0]['count'] / bet_count_res[0]['count']) * 100, 2)
-            print(win_percent)
             if win_percent > 49.25 and win_percent <= 49.75:
                 risk_coeff = 0.1
             elif win_percent <= 49.25:
@@ -1103,7 +1098,6 @@ def betting_proc():
         else:
             stake_size = 70000 + risk_coeff * 70000
 
-        print(risk_coeff)
 
         total_count_res = pd.read_sql(f"SELECT COUNT(*) FROM staking_table;", con = engine).to_dict('records')
         count = total_count_res[0]['count'] + 1

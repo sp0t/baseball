@@ -399,6 +399,7 @@ def make_prediction():
             home_odd = 0
             away_dec_odd = 0
             home_dec_odd = 0
+            print('preds_1a[0]', preds_1a[0])
             away_dec_odd = round(1.03 / preds_1a[0], 2)
             print('away_dec_odd', away_dec_odd)
             if away_dec_odd >= 2:
@@ -407,6 +408,7 @@ def make_prediction():
                 away_odd = round(100/(1-away_dec_odd), 2)
             print('away_odd', away_odd)
 
+            print('preds_1a[1]', preds_1a[1])
             home_dec_odd = round(1.03 / preds_1a[1], 2)
             print('home_dec_odd', home_dec_odd)
             if home_dec_odd >= 2:

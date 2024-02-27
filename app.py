@@ -1105,7 +1105,7 @@ def betting_proc():
         else:
             stake_size = 70000 + risk_coeff * 70000
 
-        engine.execute(text(f"INSERT INTO staking_table(game_date, away, home, bet, american_odd, decimal_odd, bet_size, result, win_count, bet_count, bet_win, risk_coeff, stake_size) VALUES('{betting_data['betdate']}', '{betting_data['away']}', '{betting_data['away']}', '{betting_data['place']}', '{int(betting_data['odds'])}', '{decimal_odd}', '{betting_data['stake']}', 'P','{win_count_res[0]['count']}', '{bet_count_res[0]['count']}', '{win_percent}', '{risk_coeff}', '{stake_size}');"))
+        engine.execute(text(f"INSERT INTO staking_table(game_date, away, home, bet, american_odd, decimal_odd, bet_size, result, win_count, bet_count, bet_win, risk_coeff, stake_size) VALUES('{betting_data['betdate']}', '{betting_data['away']}', '{betting_data['home']}', '{betting_data['place']}', '{int(betting_data['odds'])}', '{decimal_odd}', '{betting_data['stake']}', 'P','{win_count_res[0]['count']}', '{bet_count_res[0]['count']}', '{win_percent}', '{risk_coeff}', '{stake_size}');"))
 
 
     elif betting_data['flag'] == 1:

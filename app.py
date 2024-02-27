@@ -359,30 +359,103 @@ def make_prediction():
         params['home_name'] = team_dict[home_full_name]
         params['savestate'] = True
         engine = database.connect_to_db()
+
+        win_count_res = pd.read_sql(f"SELECT COUNT(*) FROM staking_table WHERE result = 'W' AND game_date != '{betting_data['betdate']}';", con = engine).to_dict('records')
+        bet_count_res = pd.read_sql(f"SELECT COUNT(*) FROM staking_table WHERE game_date != '{betting_data['betdate']}';", con = engine).to_dict('records')
+
+        win_precent = 0
+        risk_coeff = 0
+        stake_size = 0
+
+        if win_count_res[0]['count'] == 0 or bet_count_res[0]['count'] == 0:
+            win_percent = 0
+            risk_coeff = 0
+        else:
+            win_percent = round((win_count_res[0]['count'] / bet_count_res[0]['count']) * 100, 2)
+            if win_percent > 49.25 and win_percent <= 49.75:
+                risk_coeff = 0.1
+            elif win_percent <= 49.25:
+                risk_coeff = 0.5
+            elif win_percent >= 50.25 and win_percent < 50.75:
+                risk_coeff = -0.1
+            elif win_percent >= 50.75:
+                risk_coeff = -0.5
+            else:
+                risk_coeff = 0
+        if risk_coeff == 0:
+            stake_size = 70000
+        else:
+            stake_size = 70000 + risk_coeff * 70000
         
         # Make Prediction
         if form_data['model'] == 'a':
             predictions = predict.get_probabilities(params)
             preds_1a = predictions['1a']
             preds_1a = np.round(100 * preds_1a[0], 2)
-            preds_1a = {'away_prob': preds_1a[0], 'home_prob': preds_1a[1]}
+            away_odd = 0
+            home_odd = 0
+            away_dec_odd = 0
+            home_dec_odd = 0
+            away_dec_odd = round(1.03 / preds_1a[0], 2)
+            if away_dec_odd >= 2:
+                away_odd = (away_dec_odd - 1) * 100
+            elif away_dec_odd < 2:
+                away_odd = round(100/(1-away_dec_odd), 2)
+
+            home_dec_odd = round(1.03 / preds_1a[1], 2)
+            if home_dec_odd >= 2:
+                home_odd = (home_dec_odd - 1) * 100
+            elif home_dec_odd < 2:
+                home_odd = round(100/(1-home_dec_odd), 2)
+
+            preds_1a = {'away_prob': preds_1a[0], 'home_prob': preds_1a[1], 'away_odd': away_odd, 'home_odd': home_odd, 'stake': stake_size}
             
             preds_1b = predictions['1b']
             preds_1b = np.round(100 * preds_1b[0], 2)
-            preds_1b = {'away_prob': preds_1b[0], 'home_prob': preds_1b[1]}
+
+            away_dec_odd = round(1.03 / preds_1b[0], 2)
+            if away_dec_odd >= 2:
+                away_odd = (away_dec_odd - 1) * 100
+            elif away_dec_odd < 2:
+                away_odd = round(100/(1-away_dec_odd), 2)
+
+            home_dec_odd = round(1.03 / preds_1b[1], 2)
+            if home_dec_odd >= 2:
+                home_odd = (home_dec_odd - 1) * 100
+            elif home_dec_odd < 2:
+                home_odd = round(100/(1-home_dec_odd), 2)
+
+            preds_1b = {'away_prob': preds_1b[0], 'home_prob': preds_1b[1], 'away_odd': away_odd, 'home_odd': home_odd, 'stake': stake_size}
             engine.execute(f"INSERT INTO predict_table(game_id, la_away_prob, la_home_prob, lb_away_prob, lb_home_prob) VALUES('{gameId}', '{preds_1a['away_prob']}', '{preds_1a['home_prob']}','{preds_1b['away_prob']}', '{preds_1b['home_prob']}') ON CONFLICT (game_id) DO UPDATE SET la_away_prob = excluded.la_away_prob, la_home_prob = excluded.la_home_prob, lb_away_prob = excluded.lb_away_prob, lb_home_prob = excluded.lb_home_prob;")
             engine.execute(f"INSERT INTO win_percent(game_id, away_prob_a, home_prob_a, away_prob_b, home_prob_b) VALUES('{gameId}', '{preds_1a['away_prob']}', '{preds_1a['home_prob']}','{preds_1b['away_prob']}', '{preds_1b['home_prob']}') ON CONFLICT (game_id) DO UPDATE SET away_prob_a = excluded.away_prob_a, home_prob_a = excluded.home_prob_a, away_prob_b = excluded.away_prob_b, home_prob_b = excluded.home_prob_b;") 
+
             prediction = {'model':'a', '1a': preds_1a, '1b': preds_1b}
         elif form_data['model'] == 'c':
             prediction_c = predict_c.get_probabilities(params)
         
             preds_1c = prediction_c
             preds_1c = np.round(100 * preds_1c[0], 2)
-            preds_1c = {'away_prob': preds_1c[0], 'home_prob': preds_1c[1]}
+
+            away_odd = 0
+            home_odd = 0
+            away_dec_odd = 0
+            home_dec_odd = 0
+            away_dec_odd = round(1.03 / preds_1c[0], 2)
+            if away_dec_odd >= 2:
+                away_odd = (away_dec_odd - 1) * 100
+            elif away_dec_odd < 2:
+                away_odd = round(100/(1-away_dec_odd), 2)
+
+            home_dec_odd = round(1.03 / preds_1c[1], 2)
+            if home_dec_odd >= 2:
+                home_odd = (home_dec_odd - 1) * 100
+            elif home_dec_odd < 2:
+                home_odd = round(100/(1-home_dec_odd), 2)
+
+            preds_1c = {'away_prob': preds_1c[0], 'home_prob': preds_1c[1], 'away_odd': away_odd, 'home_odd': home_odd, 'stake': stake_size}
             engine.execute(f"INSERT INTO predict_table(game_id, lc_away_prob, lc_home_prob) VALUES('{gameId}', '{preds_1c['away_prob']}', '{preds_1c['home_prob']}') ON CONFLICT (game_id) DO UPDATE SET lc_away_prob = excluded.lc_away_prob, lc_home_prob = excluded.lc_home_prob;")
             engine.execute(f"INSERT INTO win_percent_c(game_id, away_prob, home_prob) VALUES('{gameId}', '{preds_1c['away_prob']}', '{preds_1c['home_prob']}') ON CONFLICT (game_id) DO UPDATE SET away_prob = excluded.away_prob, home_prob = excluded.home_prob;")  
             prediction = {'model':'c', '1c': preds_1c}
-
 
         prediction = jsonify(prediction)
     
@@ -981,23 +1054,23 @@ def show_betting():
         res = pd.read_sql(f"SELECT * FROM betting_table WHERE game = 'baseball' AND betid = '{modify_data['betid']}';", con = engine)
         betstate = res.to_dict('records')
 
-        win_count_res = pd.read_sql(f"SELECT COUNT(*) FROM staking_table WHERE result = 'W';", con = engine).to_dict('records')
-        bet_count_res = pd.read_sql(f"SELECT COUNT(*) FROM staking_table WHERE result != 'P';", con = engine).to_dict('records')
+        win_count_res = pd.read_sql(f"SELECT COUNT(*) FROM staking_table WHERE result = 'W' AND ;", con = engine).to_dict('records')
+        bet_count_res = pd.read_sql(f"SELECT COUNT(*) FROM staking_table WHERE result != 'P' AND ;", con = engine).to_dict('records')
 
         if modify_data["status"] == 1:
             engine.execute(f"UPDATE staking_table SET result = 'L', win_count = '{win_count_res[0]['count']}', bet_count = '{bet_count_res[0]['count'] + 1}',  bet_win = {round(win_count_res[0]['count'] / (bet_count_res[0]['count'] + 1) * 100, 2)}, pl_coeff = -1 * stake_size WHERE game_date = '{betstate[0]['betdate']}' AND away = '{betstate[0]['team1']}' AND home = '{betstate[0]['team2']}' AND bet = '{betstate[0]['place']}' AND american_odd = '{int(betstate[0]['odds'])}';")
         elif modify_data["status"] == 2:
             engine.execute(f"UPDATE staking_table SET result = 'W', win_count = '{win_count_res[0]['count'] + 1}', bet_count = '{bet_count_res[0]['count'] + 1}',  bet_win = {round((win_count_res[0]['count'] + 1) / (bet_count_res[0]['count'] + 1) * 100, 2)}, pl_coeff = (decimal_odd -1) * stake_size WHERE game_date = '{betstate[0]['betdate']}' AND away = '{betstate[0]['team1']}' AND home = '{betstate[0]['team2']}' AND bet = '{betstate[0]['place']}' AND american_odd = '{int(betstate[0]['odds'])}';")
-        # if betstate[0]['regstate'] == '0':
-        #     Index = smartContract.betIndex
-        #     engine.execute(f"UPDATE betting_table SET regstate = '1', betindex = '{Index + 1}' WHERE betid = '{modify_data['betid']}';")
-        #     smartContract.createBetData(betstate[0])
+        if betstate[0]['regstate'] == '0':
+            Index = smartContract.betIndex
+            engine.execute(f"UPDATE betting_table SET regstate = '1', betindex = '{Index + 1}' WHERE betid = '{modify_data['betid']}';")
+            smartContract.createBetData(betstate[0])
 
-        # res = engine.execute(f"SELECT betindex FROM betting_table WHERE betid = '{modify_data['betid']}';").fetchall()
-        # betIndex = int(res[0][0])
-        # status = "L" if modify_data["status"] == 1 else "W"
-        # smartContract.changeBetStatus(betIndex, status)
-        # engine.execute(f"UPDATE betting_table SET status = '{modify_data['status']}' WHERE betid = '{modify_data['betid']}';")
+        res = engine.execute(f"SELECT betindex FROM betting_table WHERE betid = '{modify_data['betid']}';").fetchall()
+        betIndex = int(res[0][0])
+        status = "L" if modify_data["status"] == 1 else "W"
+        smartContract.changeBetStatus(betIndex, status)
+        engine.execute(f"UPDATE betting_table SET status = '{modify_data['status']}' WHERE betid = '{modify_data['betid']}';")
     elif modify_data["status"] == 3:
         res = engine.execute(f"SELECT regstate FROM betting_table WHERE betid = '{modify_data['betid']}';").fetchall()
         if int(res[0][0]) == 0:
@@ -1110,8 +1183,6 @@ def betting_proc():
 
     elif betting_data['flag'] == 1:
         betting_table_sql = f"UPDATE betting_table SET place = '{betting_data['place']}', odds = '{betting_data['odds']}', stake = '{betting_data['stake']}', wins = '{betting_data['wins']}', regtime = '{regtime}' WHERE betdate = '{betting_data['betdate']}' AND team1 = '{betting_data['away']}' AND team2 = '{betting_data['home']}' AND site = '{betting_data['site']}';"
-
-        print(betting_table_sql)
     
         engine.execute(betting_table_sql)
     data['result'] = 'OK'

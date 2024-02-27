@@ -399,6 +399,8 @@ function makePrediction(model){
             $('#betform').hide();
             $('#calc').show();
 
+            console.log('================= staking model ==============', data)
+
             if(data['model'] == 'a') {
                 document.getElementsByName('away_prob')[0].textContent = data['1a']['away_prob'] + '%'
                 document.getElementsByName('away_prob_1')[0].textContent = data['1a']['away_prob'] + '%'

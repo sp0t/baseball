@@ -9,6 +9,7 @@ from schedule import schedule
 
 
 game_sched = mlb.schedule(start_date = date.today())
+print(game_sched)
 #testcommit
 # game_sched = mlb.schedule(start_date = "2023-11-01")
 info_keys = ['game_id', 'game_datetime','away_name', 'home_name']

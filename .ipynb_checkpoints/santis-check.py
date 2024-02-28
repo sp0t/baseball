@@ -1,8 +1,8 @@
-input_team_name_1 = 'Philadelphia Phillies'
-input_team_name_2 = 'Arizona Diamondbacks'
-batter_name = []
-pitcher_name = ['Orion Kerkering']
-game_id = '748544'
+input_team_name_2 = 'Boston Red Sox'
+input_team_name_1 = 'Washington Nationals'
+batter_name = ['Rafael Devers']
+pitcher_name = ['Josh Winckowski', 'Jackson Rutledge']
+game_id = '748196'
 
 
 from datetime import date, time, datetime, timedelta
@@ -11,10 +11,10 @@ import pandas as pd
 import statsapi as mlb
 from sqlalchemy import create_engine
 
-# engine = create_engine('postgresql://postgres:123@localhost:5432/testdb', connect_args = {'connect_timeout': 10}, echo=False, pool_size=20, max_overflow=0)
-engine = create_engine('postgresql://postgres:lucamlb123@localhost:5432/betmlb', connect_args = {'connect_timeout': 10}, echo=False, pool_size=20, max_overflow=0)
-# res = pd.read_sql(f"SELECT * FROM schedule WHERE away_name = '{input_team_name_1}' and home_name = '{input_team_name_2}'", con = engine).iloc[0]
-# game_id = res['game_id']
+engine = create_engine('postgresql://postgres:123@localhost:5432/testdb', connect_args = {'connect_timeout': 10}, echo=False, pool_size=20, max_overflow=0)
+# engine = create_engine('postgresql://postgres:123@ec2-13-230-35-170.ap-northeast-1.compute.amazonaws.com:5432/betmlb', connect_args = {'connect_timeout': 10}, echo=False, pool_size=20, max_overflow=0)
+res = pd.read_sql(f"SELECT * FROM schedule WHERE away_name = '{input_team_name_1}' and home_name = '{input_team_name_2}'", con = engine).iloc[0]
+game_id = res['game_id']
 
 
 def get_batter_df(player_id): 

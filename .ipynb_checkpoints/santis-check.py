@@ -11,8 +11,8 @@ import pandas as pd
 import statsapi as mlb
 from sqlalchemy import create_engine
 
-engine = create_engine('postgresql://postgres:123@localhost:5432/testdb', connect_args = {'connect_timeout': 10}, echo=False, pool_size=20, max_overflow=0)
-# engine = create_engine('postgresql://postgres:123@ec2-13-230-35-170.ap-northeast-1.compute.amazonaws.com:5432/betmlb', connect_args = {'connect_timeout': 10}, echo=False, pool_size=20, max_overflow=0)
+# engine = create_engine('postgresql://postgres:123@localhost:5432/testdb', connect_args = {'connect_timeout': 10}, echo=False, pool_size=20, max_overflow=0)
+engine = create_engine('postgresql://postgres:123@ec2-13-230-35-170.ap-northeast-1.compute.amazonaws.com:5432/betmlb', connect_args = {'connect_timeout': 10}, echo=False, pool_size=20, max_overflow=0)
 res = pd.read_sql(f"SELECT * FROM schedule WHERE away_name = '{input_team_name_1}' and home_name = '{input_team_name_2}'", con = engine).iloc[0]
 game_id = res['game_id']
 

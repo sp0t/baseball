@@ -5,8 +5,22 @@ from datetime import date, time, datetime, timedelta
 from pytz import timezone
 import numpy as np
 from database import database
+from schedule import schedule
 
-engine = database.connect_to_db()
 
-engine.execute("CREATE TABLE IF NOT EXISTS staking_table(id SERIAL PRIMARY KEY, game_date TEXT, away TEXT, home TEXT, bet TEXT, american_odd INT, decimal_odd FLOAT(8), bet_size FLOAT(8), result TEXT, win_count INT, bet_count INT, bet_win FLOAT(8), risk_coeff FLOAT(8), stake_size FLOAT(8), pl_coeff FLOAT(8));")
+game_sched = mlb.schedule(start_date = date.today())
+#testcommit
+# game_sched = mlb.schedule(start_date = "2023-11-01")
+info_keys = ['game_id', 'game_datetime','away_name', 'home_name']
 
+game_sched = [{k:v for k,v in el.items() if k in info_keys} for el in game_sched]
+
+tz = timezone('US/Eastern')
+for el in game_sched: 
+    el['game_datetime'] = el['game_datetime'].split('T')[1][:-1] 
+    el['game_id'] = str(el['game_id'])
+    el['game_datetime'] = datetime.strptime(el['game_datetime'], '%H:%M:%S')-timedelta(hours = 3)
+    el['game_datetime'] = datetime.strftime(el['game_datetime'], '%H:%M:%S')
+    
+game_sched = pd.DataFrame(game_sched)
+print(game_sched)

@@ -19,7 +19,7 @@ tz = timezone('US/Eastern')
 for el in game_sched: 
     el['game_datetime'] = el['game_datetime'].split('T')[1][:-1] 
     el['game_id'] = str(el['game_id'])
-    el['game_datetime'] = datetime.strptime(el['game_datetime'], '%H:%M:%S')-timedelta(hours = 3)
+    # el['game_datetime'] = datetime.strptime(el['game_datetime'], '%H:%M:%S')-timedelta(hours = 3)
     el['game_datetime'] = datetime.strftime(el['game_datetime'], '%H:%M:%S')
     
 game_sched = pd.DataFrame(game_sched)

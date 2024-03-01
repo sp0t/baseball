@@ -444,11 +444,14 @@ function getAwayBet(){
     var awayModelType = document.querySelector('input[name="away_model_type"]:checked').value;
     if (awayModelType == 'away_model_1a'){ 
         document.getElementsByName('away_prob')[0].textContent = document.getElementsByName('away_prob_1')[0].textContent
+        document.getElementsByName('away_odds')[0].value = parseInt(document.getElementsByName('away_prob_1')[0].getAttribute('odd-value'), 10)
     }
     else if (awayModelType == 'away_model_1b'){ 
         document.getElementsByName('away_prob')[0].textContent = document.getElementsByName('away_prob_2')[0].textContent
+        document.getElementsByName('away_odds')[0].value = parseInt(document.getElementsByName('home_prob_2')[0].getAttribute('odd-value'), 10)
     } else {
         document.getElementsByName('away_prob')[0].textContent = document.getElementsByName('away_prob_3')[0].textContent
+        document.getElementsByName('away_odds')[0].value = parseInt(document.getElementsByName('away_prob_3')[0].getAttribute('odd-value'), 10)
     }
 
 
@@ -526,12 +529,15 @@ function getHomeBet(){
     var homeModelType = document.querySelector('input[name="home_model_type"]:checked').value;
     if (homeModelType == 'home_model_1a'){ 
         document.getElementsByName('home_prob')[0].textContent = document.getElementsByName('home_prob_1')[0].textContent
+        document.getElementsByName('home_odds')[0].value = parseInt(document.getElementsByName('home_prob_1')[0].getAttribute('odd-value'), 10)
 
     }
     else if (homeModelType == 'home_model_1b'){ 
         document.getElementsByName('home_prob')[0].textContent = document.getElementsByName('home_prob_2')[0].textContent
+        document.getElementsByName('home_odds')[0].value = parseInt(document.getElementsByName('home_prob_2')[0].getAttribute('odd-value'), 10)
     } else {
         document.getElementsByName('home_prob')[0].textContent = document.getElementsByName('home_prob_3')[0].textContent
+        document.getElementsByName('home_odds')[0].value = parseInt(document.getElementsByName('home_prob_3')[0].getAttribute('odd-value'), 10)
     }
 
     // Get Data

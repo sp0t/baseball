@@ -448,7 +448,7 @@ function getAwayBet(){
     }
     else if (awayModelType == 'away_model_1b'){ 
         document.getElementsByName('away_prob')[0].textContent = document.getElementsByName('away_prob_2')[0].textContent
-        document.getElementsByName('away_odds')[0].value = parseInt(document.getElementsByName('home_prob_2')[0].getAttribute('odd-value'), 10)
+        document.getElementsByName('away_odds')[0].value = parseInt(document.getElementsByName('away_prob_2')[0].getAttribute('odd-value'), 10)
     } else {
         document.getElementsByName('away_prob')[0].textContent = document.getElementsByName('away_prob_3')[0].textContent
         document.getElementsByName('away_odds')[0].value = parseInt(document.getElementsByName('away_prob_3')[0].getAttribute('odd-value'), 10)

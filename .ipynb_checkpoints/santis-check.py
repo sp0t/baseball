@@ -1,5 +1,5 @@
-input_team_name_2 = 'Boston Red Sox'
-input_team_name_1 = 'Washington Nationals'
+input_team_name_1 = 'Boston Red Sox'
+input_team_name_2 = 'Washington Nationals'
 batter_name = ['Rafael Devers']
 pitcher_name = ['Josh Winckowski', 'Jackson Rutledge']
 game_id = '748196'

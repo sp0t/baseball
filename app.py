@@ -371,7 +371,7 @@ def make_prediction():
         risk_coeff = 0
         stake_size = 0
 
-        if win_count_res[0]['count'] == 0 or bet_count_res[0]['count'] == 0:
+        if bet_count_res[0]['count'] <= 20:
             win_percent = 0
             risk_coeff = 0
         else:
@@ -386,8 +386,8 @@ def make_prediction():
                 risk_coeff = -0.5
             else:
                 risk_coeff = 0
-        if risk_coeff == 0:
-            stake_size = 70000
+        if bet_count_res[0]['count'] <= 20:
+            stake_size = 50000
         else:
             stake_size = 70000 + risk_coeff * 70000
         
@@ -1163,7 +1163,7 @@ def betting_proc():
         risk_coeff = 0
         stake_size = 0
 
-        if win_count_res[0]['count'] == 0 or bet_count_res[0]['count'] == 0:
+        if bet_count_res[0]['count'] <= 20:
             win_percent = 0
             risk_coeff = 0
         else:
@@ -1178,8 +1178,8 @@ def betting_proc():
                 risk_coeff = -0.5
             else:
                 risk_coeff = 0
-        if risk_coeff == 0:
-            stake_size = 70000
+        if bet_count_res[0]['count'] <= 20:
+            stake_size = 50000
         else:
             stake_size = 70000 + risk_coeff * 70000
 

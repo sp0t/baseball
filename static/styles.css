@@ -348,11 +348,24 @@ input[type=date]{
 .form-left-wrapper{
     margin: 0 auto; 
     width: 80%;
+	display: flex;
+	justify-content: center;
 }
 .form-right-wrapper{
     margin: 0 auto; 
     width: 80%;
+	display: flex;
+	justify-content: center;
 }
+
+.stake-size {
+	font-size: 20px;
+    color: red;
+    padding: 10px;
+    margin-top: 10px;
+	font-weight: bold;
+}
+
 .label{
     float: left;
     line-height: 45px;

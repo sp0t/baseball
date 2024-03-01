@@ -407,17 +407,27 @@ function makePrediction(model){
                 document.getElementsByName('away_prob')[0].textContent = data['1a']['away_prob'] + '%'
                 document.getElementsByName('away_prob_1')[0].textContent = data['1a']['away_prob'] + '%'
                 document.getElementsByName('away_prob_2')[0].textContent = data['1b']['away_prob'] + '%'
+                document.getElementsByName('away_prob_1')[0].setAttribute('odd-value', data['1a']['away_odd']);
+                document.getElementsByName('away_prob_2')[0].setAttribute('odd-value', data['1b']['away_odd']);
+                document.getElementsByName('away_odds')[0].value = data['1a']['away_odd'];
     
                 document.getElementsByName('home_prob')[0].textContent = data['1a']['home_prob'] + '%'
                 document.getElementsByName('home_prob_1')[0].textContent = data['1a']['home_prob'] + '%'
                 document.getElementsByName('home_prob_2')[0].textContent = data['1b']['home_prob'] + '%'
+                document.getElementsByName('home_prob_1')[0].setAttribute('odd-value', data['1a']['home_odd']);
+                document.getElementsByName('home_prob_2')[0].setAttribute('odd-value', data['1b']['home_odd']);
+                document.getElementsByName('home_odds')[0].value = data['1a']['home_odd'];
 
             } else if (data['model'] == 'c') {
                 document.getElementsByName('away_prob')[0].textContent = data['1c']['away_prob'] + '%'
                 document.getElementsByName('away_prob_3')[0].textContent = data['1c']['away_prob'] + '%'
+                document.getElementsByName('away_prob_3')[0].setAttribute('odd-value', data['1c']['away_odd']);
+                document.getElementsByName('away_odds')[0].value = data['1c']['away_odd'];
     
                 document.getElementsByName('home_prob')[0].textContent = data['1c']['home_prob'] + '%'
                 document.getElementsByName('home_prob_3')[0].textContent = data['1c']['home_prob'] + '%'
+                document.getElementsByName('home_prob_3')[0].setAttribute('odd-value', data['1c']['home_odd']);
+                document.getElementsByName('home_odds')[0].value = data['1c']['home_odd'];
             }
 
         }

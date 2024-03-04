@@ -484,25 +484,25 @@ function getAwayBet(){
     awayEV = (awayProbValue)*(awayOddsDecimal-1) - (1-awayProbValue)
     awayEV = awayEV.toFixed(3)
 
-    if (awayEV > 0.03 && awayProbValue > 0.48){ 
+    // if (awayEV > 0.03 && awayProbValue > 0.48){ 
 
-        var awayBetSize = 0.05*(((awayOddsDecimal*awayProbValue)-(1-awayProbValue))/awayProbValue)
-        awayBetSize = awayBetSize.toFixed(3)
+    //     var awayBetSize = 0.05*(((awayOddsDecimal*awayProbValue)-(1-awayProbValue))/awayProbValue)
+    //     awayBetSize = awayBetSize.toFixed(3)
 
-        var data;
+    //     var data;
 
-        if(awayModelType == 'away_model_1a')
-            data = {'game_id':gameId, 'team':'away', 'modal':'A', 'Ev': awayEV * 100, 'betSize': awayBetSize * 100}
-        else
-            data = {'game_id':gameId, 'team':'away', 'modal':'B', 'Ev': awayEV * 100, 'betSize': awayBetSize * 100}
-    }
-    else{ 
-        var awayBetSize = 'No Bet!'
-    }
+    //     if(awayModelType == 'away_model_1a')
+    //         data = {'game_id':gameId, 'team':'away', 'modal':'A', 'Ev': awayEV * 100, 'betSize': awayBetSize * 100}
+    //     else
+    //         data = {'game_id':gameId, 'team':'away', 'modal':'B', 'Ev': awayEV * 100, 'betSize': awayBetSize * 100}
+    // }
+    // else{ 
+    //     var awayBetSize = 'No Bet!'
+    // }
 
     // Fill in new values 
     document.getElementsByName('away_edge')[0].textContent = awayEV; 
-    document.getElementsByName('away_bet_size')[0].textContent = awayBetSize
+    // document.getElementsByName('away_bet_size')[0].textContent = awayBetSize
 
     // $.ajax({
     //     url: '/update_predicdata', 
@@ -514,12 +514,12 @@ function getAwayBet(){
     // })
 
     // Change Color 
-    if (awayBetSize != 'No Bet!'){ 
-        document.getElementsByName('away_bet_size')[0].style.color = 'green'
-    }
-    else{ 
-        document.getElementsByName('away_bet_size')[0].style.color = 'red'
-    }
+    // if (awayBetSize != 'No Bet!'){ 
+    //     document.getElementsByName('away_bet_size')[0].style.color = 'green'
+    // }
+    // else{ 
+    //     document.getElementsByName('away_bet_size')[0].style.color = 'red'
+    // }
 
 }
 
@@ -566,25 +566,25 @@ function getHomeBet(){
     homeEV = (homeProbValue)*(homeOddsDecimal-1) - (1-homeProbValue)
     homeEV = homeEV.toFixed(3)
 
-    if (homeEV > 0.03 && homeProbValue > 0.48){ 
+    // if (homeEV > 0.03 && homeProbValue > 0.48){ 
 
-        var homeBetSize = 0.05*(((homeOddsDecimal*homeProbValue)-(1-homeProbValue))/homeProbValue)
-        homeBetSize = homeBetSize.toFixed(3)
+    //     var homeBetSize = 0.05*(((homeOddsDecimal*homeProbValue)-(1-homeProbValue))/homeProbValue)
+    //     homeBetSize = homeBetSize.toFixed(3)
 
-        var data;
+    //     var data;
 
-        if(homeModelType == 'home_model_1a')
-            data = {'game_id':gameId, 'team':'home', 'modal':'A','Ev': homeEV * 100, 'betSize': homeBetSize * 100}
-        else
-            data = {'game_id':gameId, 'team':'home', 'modal':'B','Ev': homeEV * 100, 'betSize': homeBetSize * 100}
-    }
-    else{ 
-        var homeBetSize = 'No Bet!'
-    }
+    //     if(homeModelType == 'home_model_1a')
+    //         data = {'game_id':gameId, 'team':'home', 'modal':'A','Ev': homeEV * 100, 'betSize': homeBetSize * 100}
+    //     else
+    //         data = {'game_id':gameId, 'team':'home', 'modal':'B','Ev': homeEV * 100, 'betSize': homeBetSize * 100}
+    // }
+    // else{ 
+    //     var homeBetSize = 'No Bet!'
+    // }
 
     // Fill in new values 
     document.getElementsByName('home_edge')[0].textContent = homeEV; 
-    document.getElementsByName('home_bet_size')[0].textContent = homeBetSize
+    // document.getElementsByName('home_bet_size')[0].textContent = homeBetSize
 
     // $.ajax({
     //     url: '/update_predicdata', 
@@ -597,12 +597,51 @@ function getHomeBet(){
 
 
     // Change Color 
-    if (homeBetSize != 'No Bet!'){ 
-        document.getElementsByName('home_bet_size')[0].style.color = 'green'
-    }
-    else{ 
-        document.getElementsByName('home_bet_size')[0].style.color = 'red'
-    }
+    // if (homeBetSize != 'No Bet!'){ 
+    //     document.getElementsByName('home_bet_size')[0].style.color = 'green'
+    // }
+    // else{ 
+    //     document.getElementsByName('home_bet_size')[0].style.color = 'red'
+    // }
+
+}
+
+function changeAwayAdjustment() {
+    // Get Data
+    var awayProbValue = document.getElementsByName('away_prob')[0].textContent
+    var awayAdjustment = document.getElementsByName('away_adjustment')[0].value
+
+    awayProbValue = parseFloat(awayProbValue.replace("%",""))
+    awayProbValue = awayProbValue + awayAdjustment * 100
+    document.getElementsByName('away_prob')[0].textContent = awayProbValue + '%'
+
+    away_dec_odd = (1.03 / (awayProbValue / 100)).toFixed(2)
+    if(away_dec_odd >= 2)
+        away_odd = ((away_dec_odd - 1) * 100).toFixed(2)
+    else if(away_dec_odd < 2)
+        away_odd = (100/(1-away_dec_odd)).toFixed(2)
+
+    document.getElementsByName('away_odds')[0].value = away_odd
+
+}
+
+
+function changeHomeAdjustment() {
+    // Get Data
+    var homeProbValue = document.getElementsByName('home_prob')[0].textContent
+    var homeAdjustment = document.getElementsByName('home_adjustment')[0].value
+
+    homeProbValue = parseFloat(homeProbValue.replace("%",""))
+    homeProbValue = homeProbValue + homeAdjustment * 100
+    document.getElementsByName('home_prob')[0].textContent = awayProbValue + '%'
+
+    home_dec_odd = (1.03 / (homeProbValue / 100)).toFixed(2)
+    if(home_dec_odd >= 2)
+        home_odd = ((home_dec_odd - 1) * 100).toFixed(2)
+    else if(home_dec_odd < 2)
+    home_odd = (100/(1-home_dec_odd)).toFixed(2)
+
+    document.getElementsByName('home_odds')[0].value = home_odd
 
 }
 

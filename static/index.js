@@ -623,6 +623,10 @@ function changeAwayAdjustment() {
 
     document.getElementsByName('away_odds')[0].value = away_odd
 
+    var awayEV = (awayProbValue)*(away_dec_odd-1) - (1-awayProbValue)
+    awayEV = awayEV.toFixed(3)
+
+    document.getElementsByName('away_edge')[0].textContent = awayEV; 
 }
 
 
@@ -633,7 +637,7 @@ function changeHomeAdjustment() {
 
     homeProbValue = parseFloat(homeProbValue.replace("%",""))
     homeProbValue = homeProbValue + homeAdjustment * 100
-    document.getElementsByName('home_prob')[0].textContent = awayProbValue + '%'
+    document.getElementsByName('home_prob')[0].textContent = homeProbValue + '%'
 
     home_dec_odd = (1.03 / (homeProbValue / 100)).toFixed(2)
     if(home_dec_odd >= 2)
@@ -643,6 +647,10 @@ function changeHomeAdjustment() {
 
     document.getElementsByName('home_odds')[0].value = home_odd
 
+    var homeEV = (homeProbValue)*(home_dec_odd-1) - (1-homeProbValue)
+    homeEV = homeEV.toFixed(3)
+
+    document.getElementsByName('home_edge')[0].textContent = homeEV;
 }
 
 $(document).ready(function() {

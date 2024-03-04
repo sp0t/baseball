@@ -623,7 +623,7 @@ function changeAwayAdjustment() {
 
     document.getElementsByName('away_odds')[0].value = away_odd
 
-    var awayEV = (awayProbValue)*(away_dec_odd-1) - (1-awayProbValue)
+    var awayEV = (awayProbValue/100)*(away_dec_odd-1) - (1-awayProbValue/100)
     awayEV = awayEV.toFixed(3)
 
     document.getElementsByName('away_edge')[0].textContent = awayEV; 
@@ -647,7 +647,7 @@ function changeHomeAdjustment() {
 
     document.getElementsByName('home_odds')[0].value = home_odd
 
-    var homeEV = (homeProbValue)*(home_dec_odd-1) - (1-homeProbValue)
+    var homeEV = (homeProbValue/100)*(home_dec_odd-1) - (1-homeProbValue/100)
     homeEV = homeEV.toFixed(3)
 
     document.getElementsByName('home_edge')[0].textContent = homeEV;

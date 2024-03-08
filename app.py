@@ -1414,7 +1414,7 @@ def friend_page():
                                         FROM game_table \
                                         WHERE (away_team = '{team_data['abbr']}' OR home_team = '{team_data['abbr']}') AND game_date LIKE {year}%%' \
                                         ORDER BY game_date DESC \
-                                        LIMIT '{count}' \
+                                        LIMIT {count} \
                                     ) a \
                                     LEFT JOIN pitcher_table p ON a.game_id = p.game_id \
                                         AND ( \

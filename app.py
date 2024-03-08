@@ -1482,7 +1482,7 @@ def friend_page():
         data['game_table'] = game_table
         data['name'] = team_data['name']
         data['abbr'] = team_data['abbr']
-        print(game_date)
+    
         return data
 
 @app.route('/position_page', methods = ["POST"]) 

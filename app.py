@@ -1412,14 +1412,14 @@ def friend_page():
                                             (CASE away_team WHEN '{team_data['abbr']}' THEN '1' ELSE '0' END) AS pos, \
                                             (CASE away_team WHEN '{team_data['abbr']}' THEN home_team ELSE away_team END) AS oppoteam \
                                         FROM game_table \
-                                        WHERE (away_team = '{team_data['abbr']}' OR home_team = '{team_data['abbr']}') AND game_date LIKE {year}%%' \
+                                        WHERE (away_team = '{team_data['abbr']}' OR home_team = '{team_data['abbr']}') AND game_date LIKE '{year}%%' \
                                         ORDER BY game_date DESC \
                                         LIMIT {count} \
                                     ) a \
                                     LEFT JOIN pitcher_table p ON a.game_id = p.game_id \
                                         AND ( \
-                                            (a.pos = 1 AND p.team = 'home' AND p.role = 'starter') OR \
-                                            (a.pos = 0 AND p.team = 'away' AND p.role = 'starter') \
+                                            (a.pos = '1' AND p.team = 'home' AND p.role = 'starter') OR \
+                                            (a.pos = '0' AND p.team = 'away' AND p.role = 'starter') \
                                         ) \
                                     ORDER BY a.game_date;", con = engine).to_dict('records')
       

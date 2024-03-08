@@ -1406,10 +1406,22 @@ def friend_page():
 
         today = date.today()
         year = team_data['year']
-        date_table = pd.read_sql(f"SELECT * FROM(SELECT game_id, game_date, (CASE away_team WHEN '{team_data['abbr']}' THEN '1' ELSE '0' END)pos, \
-                        (CASE away_team WHEN '{team_data['abbr']}' THEN home_team ELSE away_team END)oppoteam FROM game_table \
-                        WHERE (away_team = '{team_data['abbr']}' OR home_team = '{team_data['abbr']}') AND game_date LIKE '{year}%%' \
-                        ORDER BY game_date DESC LIMIT '{count}')a ORDER BY game_date;", con = engine).to_dict('records')
+        date_table = pd.read_sql(f"SELECT a.game_id, a.game_date, a.pos, a.oppoteam, p.playerid \
+                                    FROM ( \
+                                        SELECT game_id, game_date, \
+                                            (CASE away_team WHEN '{team_data['abbr']}' THEN '1' ELSE '0' END) AS pos, \
+                                            (CASE away_team WHEN '{team_data['abbr']}' THEN home_team ELSE away_team END) AS oppoteam \
+                                        FROM game_table \
+                                        WHERE (away_team = '{team_data['abbr']}' OR home_team = '{team_data['abbr']}') AND game_date LIKE {year}%%' \
+                                        ORDER BY game_date DESC \
+                                        LIMIT '{count}' \
+                                    ) a \
+                                    LEFT JOIN pitcher_table p ON a.game_id = p.game_id \
+                                        AND ( \
+                                            (a.pos = '1' AND p.team = 'home' AND p.role = 'starter') OR \
+                                            (a.pos = '0' AND p.team = 'away' AND p.role = 'starter') \
+                                        ) \
+                                    ORDER BY a.game_date;", con = engine).to_dict('records')
       
         if team_data['player'] == 'batter':
             game_table = pd.read_sql(f"SELECT p_name, atbats, position, substitution, pitcher FROM ( \
@@ -1453,12 +1465,24 @@ def friend_page():
             game_date[str(i)]['oppoteam'] = el['oppoteam']
             game_date[str(i)]['pos'] = el['pos']
             game_date[str(i)]['game_date'] = el['game_date']
+
+            url = f"https://statsapi.mlb.com/api/v1/people/{el['playerid']}"
+            response = requests.get(url)
+            if response.status_code == 200:
+                result = response.json()
+                hander = result['people'][0]['batSide']['code']
+            else:
+                hander = 'R'
+
+            game_date[str(i)]['hander'] = hander
             i+=1
+
         data={}
         data['game_date'] = game_date
         data['game_table'] = game_table
         data['name'] = team_data['name']
         data['abbr'] = team_data['abbr']
+        print(game_date)
         return data
 
 @app.route('/position_page', methods = ["POST"]) 

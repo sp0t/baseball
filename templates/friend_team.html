@@ -284,8 +284,8 @@
                     html+=`<th class="border border-black cursor-pointer" onclick="sortTable(this)">${data['name']}</th>`;
 
                     for (const [key, value] of Object.entries(data['game_date'])) {
-                        html+=`<th class="border border-black cursor-pointer" onclick="sortTable(this)">${value['game_date'].slice(5,)}`;
-                        html+=`<hr>${value['pos']=='1'?`@<br>${value['oppoteam']}`:`vs<br>${value['oppoteam']}`}</th>`
+                        html+=`<th class=${value['hander'] == 'R' ? "border border-black cursor-pointer bg-blue-400": "border border-black cursor-pointer bg-orange-400"} onclick="sortTable(this)">${value['game_date'].slice(5,)}`;
+                        html+=`<hr>${value['pos']=='1'?`@<br>${value['oppoteam']} (${value['hander']})`:`vs<br>${value['oppoteam']} (${value['hander']})`}</th>`
                     }
 
                     html+=`</tr></thead><tbody  class='border border-black'><tr class="border border-black">`;

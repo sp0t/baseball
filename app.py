@@ -1418,8 +1418,8 @@ def friend_page():
                                     ) a \
                                     LEFT JOIN pitcher_table p ON a.game_id = p.game_id \
                                         AND ( \
-                                            (a.pos = '1' AND p.team = 'home' AND p.role = 'starter') OR \
-                                            (a.pos = '0' AND p.team = 'away' AND p.role = 'starter') \
+                                            (a.pos = 1 AND p.team = 'home' AND p.role = 'starter') OR \
+                                            (a.pos = 0 AND p.team = 'away' AND p.role = 'starter') \
                                         ) \
                                     ORDER BY a.game_date;", con = engine).to_dict('records')
       

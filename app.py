@@ -431,7 +431,7 @@ def make_prediction():
                 home_odd = math.ceil(100/(1-home_dec_odd))
 
             preds_1b = {'away_prob': preds_1b[0], 'home_prob': preds_1b[1], 'away_odd': away_odd, 'home_odd': home_odd, 'stake': stake_size}
-            engine.execute(f"INSERT INTO predict_table(game_id, la_away_prob, la_home_prob, lb_away_prob, lb_home_prob) VALUES('{gameId}', '{preds_1a['away_prob']}', '{preds_1a['home_prob']}','{preds_1b['away_prob']}', '{preds_1b['home_prob']}') ON CONFLICT (game_id) DO UPDATE SET la_away_prob = excluded.la_away_prob, la_home_prob = excluded.la_home_prob, lb_away_prob = excluded.lb_away_prob, lb_home_prob = excluded.lb_home_prob;")
+            engine.execute(f"INSERT INTO predict_table(game_id, la_away_prob, la_home_prob, lb_away_prob, lb_home_prob, la_away_odd, la_home_odd, lb_away_odd, lb_home_odd) VALUES('{gameId}', '{preds_1a['away_prob']}', '{preds_1a['home_prob']}','{preds_1b['away_prob']}', '{preds_1b['home_prob']}', '{preds_1a['away_odd']}', '{preds_1a['home_odd']}', '{preds_1b['away_odd']}', '{preds_1b['home_odd']}') ON CONFLICT (game_id) DO UPDATE SET la_away_prob = excluded.la_away_prob, la_home_prob = excluded.la_home_prob, lb_away_prob = excluded.lb_away_prob, lb_home_prob = excluded.lb_home_prob, la_away_odd = excluded.la_away_odd, la_home_odd = excluded.la_home_odd, lb_away_odd = excluded.lb_away_odd, lb_home_odd = excluded.lb_home_odd;")
             engine.execute(f"INSERT INTO win_percent(game_id, away_prob_a, home_prob_a, away_prob_b, home_prob_b) VALUES('{gameId}', '{preds_1a['away_prob']}', '{preds_1a['home_prob']}','{preds_1b['away_prob']}', '{preds_1b['home_prob']}') ON CONFLICT (game_id) DO UPDATE SET away_prob_a = excluded.away_prob_a, home_prob_a = excluded.home_prob_a, away_prob_b = excluded.away_prob_b, home_prob_b = excluded.home_prob_b;") 
 
             prediction = {'model':'a', '1a': preds_1a, '1b': preds_1b}
@@ -458,7 +458,7 @@ def make_prediction():
                 home_odd = math.ceil(100/(1-home_dec_odd))
 
             preds_1c = {'away_prob': preds_1c[0], 'home_prob': preds_1c[1], 'away_odd': away_odd, 'home_odd': home_odd, 'stake': stake_size}
-            engine.execute(f"INSERT INTO predict_table(game_id, lc_away_prob, lc_home_prob) VALUES('{gameId}', '{preds_1c['away_prob']}', '{preds_1c['home_prob']}') ON CONFLICT (game_id) DO UPDATE SET lc_away_prob = excluded.lc_away_prob, lc_home_prob = excluded.lc_home_prob;")
+            engine.execute(f"INSERT INTO predict_table(game_id, lc_away_prob, lc_home_prob, lc_away_odd, lc_home_odd) VALUES('{gameId}', '{preds_1c['away_prob']}', '{preds_1c['home_prob']}', '{preds_1c['away_odd']}', '{preds_1c['home_odd']}') ON CONFLICT (game_id) DO UPDATE SET lc_away_prob = excluded.lc_away_prob, lc_home_prob = excluded.lc_home_prob, lc_away_odd = excluded.lc_away_odd, lc_home_odd = excluded.lc_home_odd;")
             engine.execute(f"INSERT INTO win_percent_c(game_id, away_prob, home_prob) VALUES('{gameId}', '{preds_1c['away_prob']}', '{preds_1c['home_prob']}') ON CONFLICT (game_id) DO UPDATE SET away_prob = excluded.away_prob, home_prob = excluded.home_prob;")  
             prediction = {'model':'c', '1c': preds_1c}
 

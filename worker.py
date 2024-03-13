@@ -9,4 +9,5 @@ from pytz import timezone
 end_date = date.today()
 print(end_date)
 schedule = mlb.schedule(start_date="2024-03-14")
-print(schedule)
+current_dateTime = datetime.now()
+print(current_dateTime)

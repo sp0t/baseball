@@ -155,7 +155,25 @@
                                 </div>
                             </div>
                             <div class="betting-title">
-                                Kelly Prediction
+                                <div style="display: flex; justify-content: center; padding: 10px;">
+                                    <div>Target</div>
+                                </div>
+                                <div style="justify-content: center; color: red; margin-bottom: 5px;">
+                                    {% if game.predict.la_away_odd != null and game.predict.la_away_odd != None and game.predict.lb_away_odd !=null and game.predict.lb_away_odd != None and game.predict.lc_away_odd !=null and game.predict.lc_away_odd != None %}
+                                        <div>{{game.away_name}} : {{(game.predict.la_away_odd * 0.5 + game.predict.lb_away_odd * 0.2 + game.predict.lc_away_odd * 0.3) | round(1)}}</div>
+                                    {% elif game.predict.la_away_odd !=null and game.predict.la_away_odd != None and game.predict.lb_away_odd !=null and game.predict.lb_away_odd != None %}
+                                        <div>{{game.away_name}} : {{(game.predict.la_away_odd * 0.6 + game.predict.lb_away_odd * 0.4) | round(1)}}</div>
+                                    {% else %}
+                                        <div>{{game.away_name}}</div>
+                                    {% endif %}             
+                                    {% if game.predict.la_home_odd !=null and game.predict.la_home_odd != None and game.predict.lb_home_odd !=null and game.predict.lb_home_odd != None and game.predict.lc_home_odd !=null and game.predict.lc_home_odd != None %}
+                                        <div>{{game.home_name}} : {{(game.predict.la_home_odd * 0.5 + game.predict.lb_home_odd * 0.2 + game.predict.lc_home_odd * 0.3) | round(1)}}</div>
+                                    {% elif game.predict.la_home_odd !=null and game.predict.la_home_odd != None and game.predict.lb_home_odd !=null and game.predict.lb_home_odd != None %}
+                                        <div>{{game.home_name}} : {{(game.predict.la_home_odd * 0.6 + game.predict.lb_home_odd * 0.4) | round(1)}}</div>
+                                    {% else %}
+                                        <div>{{game.home_name}}</div>
+                                    {% endif %}
+                                </div>
                             </div>
                             <div class="kelly-wrapper">
                                 <div class="kelly-col">
@@ -239,7 +257,7 @@
                                 </div>
                             </div>
                             <hr> -->
-                            <div class="betting-title">
+                            <!-- <div class="betting-title">
                                 Betting State
                             </div>
                             <div class="betting-wrapper">
@@ -422,7 +440,7 @@
                                     </table>
                                 </div>
                                 
-                            </div>
+                            </div> -->
                             <button class="small-solid-button" id="game_button_{{game.game_id}}" onclick="openCard(this.id)">Set Lineups</button>
                             <div class="hover-div"></div>
                         </div>

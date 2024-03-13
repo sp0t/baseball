@@ -47,7 +47,20 @@ def get_schedule():
         game['home_name'] = team_dict[game['home_name']]
         game['betting'] = betting
         if predict != []:
+            if predict[0]['la_away_odd'] != None:
+                predict[0]['la_away_odd'] = round(float(predict[0]['la_away_odd']), 2)
+            if predict[0]['la_home_odd'] != None:
+                predict[0]['la_home_odd'] = round(float(predict[0]['la_home_odd']), 2)
+            if predict[0]['lb_away_odd'] != None:
+                predict[0]['lb_away_odd'] = round(float(predict[0]['lb_away_odd']), 2)
+            if predict[0]['lb_home_odd'] != None:
+                predict[0]['lb_home_odd'] = round(float(predict[0]['lb_home_odd']), 2)
+            if predict[0]['lc_away_odd'] != None:
+                predict[0]['lc_away_odd'] = round(float(predict[0]['lc_away_odd']), 2)
+            if predict[0]['lc_home_odd'] != None:
+                predict[0]['lc_home_odd'] = round(float(predict[0]['lc_home_odd']), 2)
             game['predict'] = predict[0]
+            print(predict[0])
         else:
             game['predict'] = []
 

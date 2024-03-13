@@ -194,12 +194,12 @@
                                     <table class = 'kelly-table'>
                                         <tr>
                                             {% if game.predict.la_away_odd  != null and game.predict.la_away_odd  != None %}
-                                                <td class="betting-content">{{game.predict.la_away_odd | int}}</td>
+                                                <td class="betting-content">{{(game.predict.la_away_odd) | int}}</td>
                                             {% endif %}
                                         </tr>
                                         <tr>
                                             {% if game.predict.la_home_odd  != null and game.predict.la_home_odd  != None %}
-                                                <td class="betting-content">{{game.predict.la_home_odd} | int}</td>
+                                                <td class="betting-content">{{(game.predict.la_home_odd) | int}}</td>
                                             {% endif %}
                                         </tr>         
                                     </table>
@@ -210,12 +210,12 @@
                                     <table class = 'kelly-table'>
                                         <tr>
                                             {% if game.predict.lb_away_odd  != null and game.predict.lb_away_odd  != None %}
-                                                <td class="betting-content">{{game.predict.lb_away_odd | int}}</td>
+                                                <td class="betting-content">{{(game.predict.lb_away_odd) | int}}</td>
                                             {% endif %}
                                         </tr>
                                         <tr>
                                             {% if game.predict.lb_home_odd  != null and game.predict.lb_home_odd  != None %}
-                                                <td class="betting-content">{{game.predict.lb_home_odd | int}}</td>
+                                                <td class="betting-content">{{(game.predict.lb_home_odd) | int}}</td>
                                             {% endif %}
                                         </tr>            
                                     </table>
@@ -226,12 +226,12 @@
                                     <table class = 'kelly-table'>
                                         <tr>
                                             {% if game.predict.lc_away_odd  != null and game.predict.lc_away_odd  != None %}
-                                                <td class="betting-content">{{game.predict.lc_away_odd | int}}</td>
+                                                <td class="betting-content">{{(game.predict.lc_away_odd) | int}}</td>
                                             {% endif %}
                                         </tr>
                                         <tr>
                                             {% if game.predict.lc_home_odd  != null and game.predict.lc_home_odd  != None %}
-                                                <td class="betting-content">{{game.predict.lc_home_odd | int}}</td>
+                                                <td class="betting-content">{{(game.predict.lc_home_odd) | int}}</td>
                                             {% endif %}
                                         </tr>            
                                     </table>

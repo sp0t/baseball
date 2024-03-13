@@ -8,5 +8,5 @@ from pytz import timezone
 # data = mlb.boxscore_data("748104")
 end_date = date.today()
 print(end_date)
-schedule = mlb.schedule(start_date=end_date)
+schedule = mlb.schedule(start_date="2024-03-14")
 print(schedule)

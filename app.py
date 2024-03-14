@@ -1008,8 +1008,8 @@ def update_data():
         playerData[game['game_id']]['home_pitcher'] = home_pitcher
         playerData[game['game_id']]['name'] = name
 
-    thread = threading.Thread(target=calculate, args=(playerData,))
-    thread.start()
+    # thread = threading.Thread(target=calculate, args=(playerData,))
+    # thread.start()
 
     return update_data
 

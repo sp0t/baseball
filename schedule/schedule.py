@@ -123,9 +123,12 @@ def get_schedule_from_mlb():
     
     tz = timezone('US/Eastern')
     for el in game_sched: 
+        print(el)
         el['game_datetime'] = el['game_datetime'].split('T')[1][:-1] 
         el['game_id'] = str(el['game_id'])
+        print(el['game_datetime'])
         el['game_datetime'] = datetime.strptime(el['game_datetime'], '%H:%M:%S')
+        print(el['game_datetime'])
         el['game_datetime'] = el['game_datetime'].astimezone(tz) 
         el['game_datetime'] = datetime.strftime(el['game_datetime'], '%H:%M:%S')
         

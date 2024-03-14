@@ -5,9 +5,20 @@ from datetime import date, time, datetime, timedelta
 from database import database
 from pytz import timezone
 
-# data = mlb.boxscore_data("748104")
-end_date = date.today()
-print(end_date)
-schedule = mlb.schedule(start_date="2024-03-14")
-current_dateTime = datetime.now()
-print(current_dateTime)
+game_sched = mlb.schedule(start_date = date.today())
+#testcommit
+# game_sched = mlb.schedule(start_date = "2023-11-01")
+info_keys = ['game_id', 'game_datetime','away_name', 'home_name']
+game_sched = [{k:v for k,v in el.items() if k in info_keys} for el in game_sched]
+
+tz = timezone('US/Eastern')
+for el in game_sched: 
+    print(el)
+    el['game_datetime'] = el['game_datetime'].split('T')[1][:-1] 
+    el['game_id'] = str(el['game_id'])
+    print(el['game_datetime'])
+    el['game_datetime'] = datetime.strptime(el['game_datetime'], '%H:%M:%S')
+    print(el['game_datetime'])
+    el['game_datetime'] = el['game_datetime'].astimezone(tz) 
+    el['game_datetime'] = datetime.strftime(el['game_datetime'], '%H:%M:%S')
+    print(el['game_datetime'])

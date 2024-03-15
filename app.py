@@ -950,6 +950,7 @@ def update_data():
             name[str(away['id'])] = away['fullName']
 
         for home in rosters['home']:
+            print(home)
             name[str(home['id'])] = home['fullName']
 
         count = 0

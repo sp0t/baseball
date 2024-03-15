@@ -947,11 +947,16 @@ def update_data():
         name = {}
 
         for away in rosters['away']:
-            name[str(away['id'])] = away['fullName']
+            if 'fullName' in away:
+                name[str(away['id'])] = away['fullName']
+            else:
+                name[str(away['id'])] = ''
 
         for home in rosters['home']:
-            print(home)
-            name[str(home['id'])] = home['fullName']
+            if 'fullName' in home:
+                name[str(home['id'])] = home['fullName']
+            else:
+                name[str(home['id'])] = ''
 
         count = 0
         for key in away_batter_sort_atbats.keys():

@@ -3,6 +3,7 @@ import pandas as pd
 from datetime import date, time, datetime, timedelta
 from database import database
 from pytz import timezone
+import math
 
 
 def get_schedule(): 
@@ -47,20 +48,71 @@ def get_schedule():
         game['home_name'] = team_dict[game['home_name']]
         game['betting'] = betting
         if predict != []:
-            if predict[0]['la_away_odd'] != None:
-                predict[0]['la_away_odd'] = round(float(predict[0]['la_away_odd']), 2)
-            if predict[0]['la_home_odd'] != None:
-                predict[0]['la_home_odd'] = round(float(predict[0]['la_home_odd']), 2)
-            if predict[0]['lb_away_odd'] != None:
-                predict[0]['lb_away_odd'] = round(float(predict[0]['lb_away_odd']), 2)
-            if predict[0]['lb_home_odd'] != None:
-                predict[0]['lb_home_odd'] = round(float(predict[0]['lb_home_odd']), 2)
-            if predict[0]['lc_away_odd'] != None:
-                predict[0]['lc_away_odd'] = round(float(predict[0]['lc_away_odd']), 2)
-            if predict[0]['lc_home_odd'] != None:
-                predict[0]['lc_home_odd'] = round(float(predict[0]['lc_home_odd']), 2)
+            if predict[0]['la_away_odd'] != None and float(predict[0]['la_away_odd']) > 0:
+                predict[0]['la_away_odd'] = float(predict[0]['la_away_odd']) / 100 + 1
+            elif predict[0]['la_away_odd'] != None and float(predict[0]['la_away_odd']) < 0:
+                predict[0]['la_away_odd'] = 100 / abs(float(predict[0]['la_away_odd'])) + 1
+            if predict[0]['la_home_odd'] != None and float(predict[0]['la_home_odd']) > 0:
+                predict[0]['la_home_odd'] = float(predict[0]['la_home_odd']) / 100 + 1
+            elif predict[0]['la_home_odd'] != None and float(predict[0]['la_home_odd']) < 0:
+                predict[0]['la_home_odd'] = 100 / abs(float(predict[0]['la_home_odd'])) + 1
+            if predict[0]['lb_away_odd'] != None and float(predict[0]['lb_away_odd']) > 0:
+                predict[0]['lb_away_odd'] = float(predict[0]['lb_away_odd']) / 100 + 1
+            elif predict[0]['lb_away_odd'] != None and float(predict[0]['lb_away_odd']) < 0:
+                predict[0]['lb_away_odd'] = 100 / abs(float(predict[0]['lb_away_odd'])) + 1
+            if predict[0]['lb_home_odd'] != None and float(predict[0]['lb_home_odd']) > 0:
+                predict[0]['lb_home_odd'] = float(predict[0]['lb_home_odd']) / 100 + 1
+            elif predict[0]['lb_home_odd'] != None and float(predict[0]['lb_home_odd']) < 0:
+                predict[0]['lb_home_odd'] = 100 / abs(float(predict[0]['lb_home_odd'])) + 1
+            if predict[0]['lc_away_odd'] != None and float(predict[0]['lc_away_odd']) > 0:
+                predict[0]['lc_away_odd'] = float(predict[0]['lc_away_odd']) / 100 + 1
+            elif predict[0]['lc_away_odd'] != None and float(predict[0]['lc_away_odd']) < 0:
+                predict[0]['lc_away_odd'] = 100 / abs(float(predict[0]['lc_away_odd'])) + 1
+            if predict[0]['lc_home_odd'] != None and float(predict[0]['lc_home_odd']) > 0:
+                predict[0]['lc_home_odd'] = float(predict[0]['lc_home_odd']) / 100 + 1
+            elif predict[0]['lc_home_odd'] != None and float(predict[0]['lc_home_odd']) < 0:
+                predict[0]['lc_home_odd'] = 100 / abs(float(predict[0]['lc_home_odd'])) + 1
+
+            if (predict[0]['la_away_prob'] != None and predict[0]['lb_away_prob'] != None and predict[0]['lc_away_prob'] != None):
+                predict[0]['away_prob'] = float(predict[0]['la_away_prob']) * 0.5 + float(predict[0]['lb_away_prob']) * 0.2 + float(predict[0]['lc_away_prob']) * 0.3
+                predict[0]['home_prob'] = float(predict[0]['la_home_prob']) * 0.5 + float(predict[0]['lb_home_prob']) * 0.2 + float(predict[0]['lc_home_prob']) * 0.3
+            elif(predict[0]['la_away_prob'] != None and predict[0]['lb_away_prob'] != None ):
+                predict[0]['away_prob'] = float(predict[0]['la_away_prob']) * 0.7 + float(predict[0]['lb_away_prob']) * 0.3
+                predict[0]['home_prob'] = float(predict[0]['la_home_prob']) * 0.7 + float(predict[0]['lb_home_prob']) * 0.3
+            else:
+                predict[0]['away_prob'] = None
+                predict[0]['home_prob'] = None
+
+            if (predict[0]['away_prob'] != None and predict[0]['away_prob'] < 48):
+                predict[0]['away_odd'] = 'No Bet'
+            elif(predict[0]['away_prob'] == None):
+                predict[0]['away_odd'] = None
+            elif(predict[0]['la_away_odd'] != None and predict[0]['lb_away_odd'] != None and predict[0]['lc_away_odd'] != None):
+                predict[0]['away_odd'] = predict[0]['la_away_odd'] * 0.5 + predict[0]['lb_away_odd'] * 0.2 + predict[0]['lc_away_odd'] * 0.3
+            elif(predict[0]['la_away_odd'] != None and predict[0]['lb_away_odd'] != None):
+                predict[0]['away_odd'] = predict[0]['la_away_odd'] * 0.7 + predict[0]['lb_away_odd'] * 0.3
+
+            if(predict[0]['away_odd'] != None and predict[0]['away_odd'] != "No Bet" and predict[0]['away_odd'] >= 2):
+                predict[0]['away_odd'] = math.ceil((predict[0]['away_odd'] - 1) * 100)
+            elif(predict[0]['away_odd'] != None and predict[0]['away_odd'] != "No Bet" and predict[0]['away_odd'] < 2):
+                predict[0]['away_odd'] = math.ceil(-100 / (predict[0]['away_odd'] - 1))
+            
+            if (predict[0]['home_prob'] != None and predict[0]['home_prob'] < 48):
+                predict[0]['home_odd'] = 'No Bet'
+            elif(predict[0]['home_prob'] == None):
+                predict[0]['home_odd'] = None
+            elif(predict[0]['la_home_odd'] != None and predict[0]['lb_home_odd'] != None and predict[0]['lc_home_odd'] != None):
+                predict[0]['home_odd'] = predict[0]['la_home_odd'] * 0.5 + predict[0]['lb_home_odd'] * 0.2 + predict[0]['lc_home_odd'] * 0.3
+            elif(predict[0]['la_home_odd'] != None and predict[0]['lb_home_odd'] != None):
+                predict[0]['home_odd'] = predict[0]['la_home_odd'] * 0.7 + predict[0]['lb_home_odd'] * 0.3
+
+            if(predict[0]['home_odd'] != None and predict[0]['home_odd'] != "No Bet" and predict[0]['home_odd'] >= 2):
+                predict[0]['home_odd'] = math.ceil((predict[0]['home_odd'] - 1) * 100)
+            elif(predict[0]['home_odd'] != None and predict[0]['home_odd'] != "No Bet" and predict[0]['home_odd'] < 2):
+                predict[0]['home_odd'] = math.ceil(-100 / (predict[0]['home_odd'] - 1))
+
             game['predict'] = predict[0]
-            print(predict[0])
+            
         else:
             game['predict'] = []
 
@@ -123,13 +175,10 @@ def get_schedule_from_mlb():
     
     tz = timezone('US/Eastern')
     for el in game_sched: 
-        print(el)
         el['game_datetime'] = el['game_datetime'].split('T')[1][:-1] 
         el['game_id'] = str(el['game_id'])
-        print(el['game_datetime'])
         el['game_datetime'] = datetime.strptime(el['game_datetime'], '%H:%M:%S')
-        print(el['game_datetime'])
-        el['game_datetime'] = el['game_datetime'].astimezone(tz) 
+        # el['game_datetime'] = el['game_datetime'].astimezone(tz) 
         el['game_datetime'] = datetime.strftime(el['game_datetime'], '%H:%M:%S')
         
     game_sched = pd.DataFrame(game_sched)

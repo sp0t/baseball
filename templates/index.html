@@ -158,18 +158,14 @@
                                 <div style="display: flex; justify-content: center; padding: 10px;">
                                     <div>Target</div>
                                 </div>
-                                <div style="justify-content: center; color: red; margin-bottom: 5px; font-weight: 400">
-                                    {% if game.predict.la_away_odd != null and game.predict.la_away_odd != None and game.predict.lb_away_odd !=null and game.predict.lb_away_odd != None and game.predict.lc_away_odd !=null and game.predict.lc_away_odd != None %}
-                                        <div>{{game.away_name}} : {{(game.predict.la_away_odd * 0.5 + game.predict.lb_away_odd * 0.2 + game.predict.lc_away_odd * 0.3) | int}}</div>
-                                    {% elif game.predict.la_away_odd !=null and game.predict.la_away_odd != None and game.predict.lb_away_odd !=null and game.predict.lb_away_odd != None %}
-                                        <div>{{game.away_name}} : {{(game.predict.la_away_odd * 0.6 + game.predict.lb_away_odd * 0.4) | int}}</div>
+                                <div style="justify-content: center; color: blue; margin-bottom: 5px; font-weight: 400">
+                                    {% if game.predict.away_odd != null and game.predict.away_odd != None %}
+                                        <div>{{game.away_name}} : {{game.predict.away_odd}}</div>
                                     {% else %}
                                         <div>{{game.away_name}}</div>
                                     {% endif %}             
-                                    {% if game.predict.la_home_odd !=null and game.predict.la_home_odd != None and game.predict.lb_home_odd !=null and game.predict.lb_home_odd != None and game.predict.lc_home_odd !=null and game.predict.lc_home_odd != None %}
-                                        <div>{{game.home_name}} : {{(game.predict.la_home_odd * 0.5 + game.predict.lb_home_odd * 0.2 + game.predict.lc_home_odd * 0.3) | int}}</div>
-                                    {% elif game.predict.la_home_odd !=null and game.predict.la_home_odd != None and game.predict.lb_home_odd !=null and game.predict.lb_home_odd != None %}
-                                        <div>{{game.home_name}} : {{(game.predict.la_home_odd * 0.6 + game.predict.lb_home_odd * 0.4) | int}}</div>
+                                    {% if game.predict.home_odd != null and game.predict.home_odd != None %}
+                                        <div>{{game.home_name}} : {{game.predict.home_odd}}</div>
                                     {% else %}
                                         <div>{{game.home_name}}</div>
                                     {% endif %}

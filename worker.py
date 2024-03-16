@@ -18,5 +18,6 @@ for el in game_sched:
     el['game_id'] = str(el['game_id'])
     el['game_datetime'] = datetime.strptime(el['game_datetime'], '%H:%M:%S')
     el['game_datetime'] = el['game_datetime'].astimezone(tz) 
+    el['game_datetime'] += timedelta(hours=1)
     el['game_datetime'] = datetime.strftime(el['game_datetime'], '%H:%M:%S')
     print(el['game_datetime'])

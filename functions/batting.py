@@ -24,6 +24,8 @@ def get_batter_df(team_batter):
     player_df[string_cols] = df[string_cols].astype(str)
     non_string_cols = [col for col in df.columns if col not in string_cols]
     player_df[non_string_cols] = df[non_string_cols].astype(float)
+
+    print(team_batter)
     player_df['game_date'] = pd.to_datetime(df['game_date'])
     rename_dict = {'pitchesthrown': 'pitchesThrown', 'playerid': 'playerId', 'strikeouts': 'strikeOuts', 
             'baseonballs': 'baseOnBalls', 'homeruns': 'homeRuns', 'atbats': 'atBats', 

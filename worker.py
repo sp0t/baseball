@@ -4,7 +4,6 @@ import pandas as pd
 from datetime import date, time, datetime, timedelta
 from database import database
 from pytz import timezone
-from zoneinfo import ZoneInfo
 
 
 game_sched = mlb.schedule(start_date = date.today())

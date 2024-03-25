@@ -2,6 +2,7 @@ import statsapi as mlb
 import pandas as pd
 from datetime import date, time, datetime, timedelta
 from database import database
+from functions import odds
 from pytz import timezone
 import math
 
@@ -48,30 +49,18 @@ def get_schedule():
         game['home_name'] = team_dict[game['home_name']]
         game['betting'] = betting
         if predict != []:
-            if predict[0]['la_away_odd'] != None and float(predict[0]['la_away_odd']) > 0:
-                predict[0]['la_away_odd'] = float(predict[0]['la_away_odd']) / 100 + 1
-            elif predict[0]['la_away_odd'] != None and float(predict[0]['la_away_odd']) < 0:
-                predict[0]['la_away_odd'] = 100 / abs(float(predict[0]['la_away_odd'])) + 1
-            if predict[0]['la_home_odd'] != None and float(predict[0]['la_home_odd']) > 0:
-                predict[0]['la_home_odd'] = float(predict[0]['la_home_odd']) / 100 + 1
-            elif predict[0]['la_home_odd'] != None and float(predict[0]['la_home_odd']) < 0:
-                predict[0]['la_home_odd'] = 100 / abs(float(predict[0]['la_home_odd'])) + 1
-            if predict[0]['lb_away_odd'] != None and float(predict[0]['lb_away_odd']) > 0:
-                predict[0]['lb_away_odd'] = float(predict[0]['lb_away_odd']) / 100 + 1
-            elif predict[0]['lb_away_odd'] != None and float(predict[0]['lb_away_odd']) < 0:
-                predict[0]['lb_away_odd'] = 100 / abs(float(predict[0]['lb_away_odd'])) + 1
-            if predict[0]['lb_home_odd'] != None and float(predict[0]['lb_home_odd']) > 0:
-                predict[0]['lb_home_odd'] = float(predict[0]['lb_home_odd']) / 100 + 1
-            elif predict[0]['lb_home_odd'] != None and float(predict[0]['lb_home_odd']) < 0:
-                predict[0]['lb_home_odd'] = 100 / abs(float(predict[0]['lb_home_odd'])) + 1
-            if predict[0]['lc_away_odd'] != None and float(predict[0]['lc_away_odd']) > 0:
-                predict[0]['lc_away_odd'] = float(predict[0]['lc_away_odd']) / 100 + 1
-            elif predict[0]['lc_away_odd'] != None and float(predict[0]['lc_away_odd']) < 0:
-                predict[0]['lc_away_odd'] = 100 / abs(float(predict[0]['lc_away_odd'])) + 1
-            if predict[0]['lc_home_odd'] != None and float(predict[0]['lc_home_odd']) > 0:
-                predict[0]['lc_home_odd'] = float(predict[0]['lc_home_odd']) / 100 + 1
-            elif predict[0]['lc_home_odd'] != None and float(predict[0]['lc_home_odd']) < 0:
-                predict[0]['lc_home_odd'] = 100 / abs(float(predict[0]['lc_home_odd'])) + 1
+            if predict[0]['la_away_odd'] != None:
+                predict[0]['la_away_odd'] = odds.americanToDecimal(float(predict[0]['la_away_odd']))
+            if predict[0]['la_home_odd'] != None:
+                predict[0]['la_home_odd'] = odds.americanToDecimal(float(predict[0]['la_home_odd']))
+            if predict[0]['lb_away_odd'] != None:
+                predict[0]['lb_away_odd'] = odds.americanToDecimal(float(predict[0]['lb_away_odd']))
+            if predict[0]['lb_home_odd'] != None:
+                predict[0]['lb_home_odd'] = odds.americanToDecimal(float(predict[0]['lb_home_odd']))
+            if predict[0]['lc_away_odd'] != None:
+                predict[0]['lc_away_odd'] = odds.americanToDecimal(float(predict[0]['lc_away_odd']))
+            if predict[0]['lc_home_odd'] != None:
+                predict[0]['lc_home_odd'] = odds.americanToDecimal(float(predict[0]['lc_home_odd']))
 
             if (predict[0]['la_away_prob'] != None and predict[0]['lb_away_prob'] != None and predict[0]['lc_away_prob'] != None):
                 predict[0]['away_prob'] = float(predict[0]['la_away_prob']) * 0.5 + float(predict[0]['lb_away_prob']) * 0.2 + float(predict[0]['lc_away_prob']) * 0.3
@@ -92,10 +81,8 @@ def get_schedule():
             elif(predict[0]['la_away_odd'] != None and predict[0]['lb_away_odd'] != None):
                 predict[0]['away_odd'] = predict[0]['la_away_odd'] * 0.7 + predict[0]['lb_away_odd'] * 0.3
 
-            if(predict[0]['away_odd'] != None and predict[0]['away_odd'] != "No Bet" and predict[0]['away_odd'] >= 2):
-                predict[0]['away_odd'] = math.ceil((predict[0]['away_odd'] - 1) * 100)
-            elif(predict[0]['away_odd'] != None and predict[0]['away_odd'] != "No Bet" and predict[0]['away_odd'] < 2):
-                predict[0]['away_odd'] = math.ceil(-100 / (predict[0]['away_odd'] - 1))
+            if(predict[0]['away_odd'] != None and predict[0]['away_odd'] != "No Bet"):
+                predict[0]['away_odd'] = odds.decimalToAmerian(predict[0]['away_odd'])
             
             if (predict[0]['home_prob'] != None and predict[0]['home_prob'] < 48):
                 predict[0]['home_odd'] = 'No Bet'
@@ -106,10 +93,8 @@ def get_schedule():
             elif(predict[0]['la_home_odd'] != None and predict[0]['lb_home_odd'] != None):
                 predict[0]['home_odd'] = predict[0]['la_home_odd'] * 0.7 + predict[0]['lb_home_odd'] * 0.3
 
-            if(predict[0]['home_odd'] != None and predict[0]['home_odd'] != "No Bet" and predict[0]['home_odd'] >= 2):
-                predict[0]['home_odd'] = math.ceil((predict[0]['home_odd'] - 1) * 100)
-            elif(predict[0]['home_odd'] != None and predict[0]['home_odd'] != "No Bet" and predict[0]['home_odd'] < 2):
-                predict[0]['home_odd'] = math.ceil(-100 / (predict[0]['home_odd'] - 1))
+            if(predict[0]['home_odd'] != None and predict[0]['home_odd'] != "No Bet"):
+                predict[0]['home_odd'] = odds.decimalToAmerian(predict[0]['home_odd'])
 
             game['predict'] = predict[0]
             
@@ -167,14 +152,20 @@ def get_rosters(game_id):
     return rosters
 
 def get_schedule_from_mlb():
+    engine = database.connect_to_db()
     game_sched = mlb.schedule(start_date = date.today())
     #testcommit
     # game_sched = mlb.schedule(start_date = "2023-11-01")
     info_keys = ['game_id', 'game_datetime','away_name', 'home_name']
     game_sched = [{k:v for k,v in el.items() if k in info_keys} for el in game_sched]
+    game_date = game_sched[0]['game_datetime'][0:10]
+    date_obj = datetime.strptime(game_date, "%Y-%m-%d")
+    game_date = date_obj.strftime("%Y/%m/%d") 
     
     tz = timezone('US/Eastern')
-    for el in game_sched: 
+    for el in game_sched:
+        engine.execute(f"INSERT INTO odds_table(game_id, game_date, away, home, start_time, state) VALUES('{el['game_id']}', '{game_date}', '{el['away_name']}', '{el['home_name']}', '{el['game_datetime']}', '0');") 
+
         el['game_datetime'] = el['game_datetime'].split('T')[1][:-1] 
         el['game_id'] = str(el['game_id'])
         el['game_datetime'] = datetime.strptime(el['game_datetime'], '%H:%M:%S')

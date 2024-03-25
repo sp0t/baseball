@@ -15,6 +15,7 @@ deployed_contract = w3.eth.contract(address=contractAddress, abi=abi)
 data = {'betdate':'1', 'game':'1', 'team1':'1', 'team2':'2', 'market':'1', 'place':'1', 'stake':'1', 'odds':'1', 'wins':'1', 'site':'1'}
 
 def betIndex():
+  print('call func')
   betindex = deployed_contract.functions.betIndex().call()
   print(betindex)
   return betindex
@@ -43,9 +44,10 @@ def createBetData(betData):
   add_tx = add_tx.build_transaction({'from': public_key, 'chainId': chainId, 'gasPrice': gasprice, 'nonce': nonce})
   tx_create = w3.eth.account.sign_transaction(add_tx, private_key)
   txn_hash = w3.eth.send_raw_transaction(tx_create.rawTransaction)
-  w3.eth.wait_for_transaction_receipt(txn_hash)
+  receipt = w3.eth.wait_for_transaction_receipt(txn_hash)
+  print(receipt.transactionHash.hex())
   
-  return
+  return receipt.transactionHash.hex()
 
 def changeBetStatus(betID, status):
   betid = int(betID)
@@ -55,6 +57,6 @@ def changeBetStatus(betID, status):
   add_tx = add_tx.build_transaction({'from': public_key, 'chainId': chainId, 'gasPrice': gasprice, 'nonce': nonce})
   tx_create = w3.eth.account.sign_transaction(add_tx, private_key)
   txn_hash = w3.eth.send_raw_transaction(tx_create.rawTransaction)
-  w3.eth.wait_for_transaction_receipt(txn_hash)
+  receipt = w3.eth.wait_for_transaction_receipt(txn_hash)
 
-  return
+  return receipt.transactionHash.hex() 

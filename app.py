@@ -15,7 +15,7 @@ from itertools import combinations
 import math
 
 # Modules
-from functions import batting, predict, starters, smartContract, sanitycheck
+from functions import batting, predict, starters, smartContract, sanitycheck, odds
 from functions_c import batting_c, starters_c, predict_c
 from schedule import schedule
 import time
@@ -262,7 +262,10 @@ def get_game_info():
 @app.route('/get_bet_info', methods = ["POST"])
 def get_bet_info(): 
     data = {}
-    game_id = str(json.loads(request.form['data']))
+    request_data = request.get_json()
+
+    game_id = request_data['gameid']
+    site = request_data['site']
 
     gameinfo = mlb.boxscore_data(game_id)
     engine = database.connect_to_db()
@@ -281,7 +284,10 @@ def get_bet_info():
     for el in site_res:
         data['site_list'].append(el['site'])
 
-    bet_res = pd.read_sql(f"SELECT * FROM betting_table WHERE betdate = '{data['date']}' AND team1 = '{data['away']}' AND team2 = '{data['home']}'", con = engine).to_dict('records')
+    if site == 'NOSITE':
+        bet_res = pd.read_sql(f"SELECT * FROM betting_table WHERE betdate = '{data['date']}' AND team1 = '{data['away']}' AND team2 = '{data['home']}';", con = engine).to_dict('records')
+    else:
+        bet_res = pd.read_sql(f"SELECT * FROM betting_table WHERE betdate = '{data['date']}' AND team1 = '{data['away']}' AND team2 = '{data['home']}' AND site = '{site}';", con = engine).to_dict('records')
 
     if(len(bet_res) == 0):
         data['state'] = 0
@@ -297,9 +303,6 @@ def get_bet_info():
         data['stake'] = bet_res[0]['stake']
         data['wins'] = bet_res[0]['wins']
         data['site'] = bet_res[0]['site']
-
-    print(data)
-
 
     return data
 
@@ -402,16 +405,10 @@ def make_prediction():
             home_dec_odd = 0
     
             away_dec_odd = round(1.03 / (preds_1a[0] / 100 ), 2)
-            if away_dec_odd >= 2:
-                away_odd = math.ceil((away_dec_odd - 1) * 100)
-            elif away_dec_odd < 2:
-                away_odd = math.ceil(100/(1-away_dec_odd))
+            away_odd = odds.decimalToAmerian(away_dec_odd)
 
             home_dec_odd = round(1.03 / (preds_1a[1] / 100 ), 2)
-            if home_dec_odd >= 2:
-                home_odd = math.ceil((home_dec_odd - 1) * 100)
-            elif home_dec_odd < 2:
-                home_odd = math.ceil(100/(1-home_dec_odd))
+            home_odd = odds.decimalToAmerian(home_dec_odd)
 
             preds_1a = {'away_prob': preds_1a[0], 'home_prob': preds_1a[1], 'away_odd': away_odd, 'home_odd': home_odd, 'stake': stake_size}
             
@@ -419,16 +416,10 @@ def make_prediction():
             preds_1b = np.round(100 * preds_1b[0], 2)
 
             away_dec_odd = round(1.03 / ( preds_1b[0] / 100 ), 2)
-            if away_dec_odd >= 2:
-                away_odd = math.ceil((away_dec_odd - 1) * 100)
-            elif away_dec_odd < 2:
-                away_odd = math.ceil(100/(1-away_dec_odd))
+            away_odd = odds.decimalToAmerian(away_dec_odd)
 
             home_dec_odd = round(1.03 / ( preds_1b[1] / 100 ), 2)
-            if home_dec_odd >= 2:
-                home_odd = math.ceil((home_dec_odd - 1) * 100)
-            elif home_dec_odd < 2:
-                home_odd = math.ceil(100/(1-home_dec_odd))
+            home_odd = odds.decimalToAmerian(home_dec_odd)
 
             preds_1b = {'away_prob': preds_1b[0], 'home_prob': preds_1b[1], 'away_odd': away_odd, 'home_odd': home_odd, 'stake': stake_size}
             engine.execute(f"INSERT INTO predict_table(game_id, la_away_prob, la_home_prob, lb_away_prob, lb_home_prob, la_away_odd, la_home_odd, lb_away_odd, lb_home_odd) VALUES('{gameId}', '{preds_1a['away_prob']}', '{preds_1a['home_prob']}','{preds_1b['away_prob']}', '{preds_1b['home_prob']}', '{preds_1a['away_odd']}', '{preds_1a['home_odd']}', '{preds_1b['away_odd']}', '{preds_1b['home_odd']}') ON CONFLICT (game_id) DO UPDATE SET la_away_prob = excluded.la_away_prob, la_home_prob = excluded.la_home_prob, lb_away_prob = excluded.lb_away_prob, lb_home_prob = excluded.lb_home_prob, la_away_odd = excluded.la_away_odd, la_home_odd = excluded.la_home_odd, lb_away_odd = excluded.lb_away_odd, lb_home_odd = excluded.lb_home_odd;")
@@ -446,16 +437,10 @@ def make_prediction():
             away_dec_odd = 0
             home_dec_odd = 0
             away_dec_odd = round(1.03 / (preds_1c[0] / 100), 2)
-            if away_dec_odd >= 2:
-                away_odd = math.ceil((away_dec_odd - 1) * 100)
-            elif away_dec_odd < 2:
-                away_odd = math.ceil(100/(1-away_dec_odd))
+            away_odd = odds.decimalToAmerian(away_dec_odd)
 
             home_dec_odd = round(1.03 / (preds_1c[1] / 100), 2)
-            if home_dec_odd >= 2:
-                home_odd = math.ceil((home_dec_odd - 1) * 100)
-            elif home_dec_odd < 2:
-                home_odd = math.ceil(100/(1-home_dec_odd))
+            home_odd = odds.decimalToAmerian(home_dec_odd)
 
             preds_1c = {'away_prob': preds_1c[0], 'home_prob': preds_1c[1], 'away_odd': away_odd, 'home_odd': home_odd, 'stake': stake_size}
             engine.execute(f"INSERT INTO predict_table(game_id, lc_away_prob, lc_home_prob, lc_away_odd, lc_home_odd) VALUES('{gameId}', '{preds_1c['away_prob']}', '{preds_1c['home_prob']}', '{preds_1c['away_odd']}', '{preds_1c['home_odd']}') ON CONFLICT (game_id) DO UPDATE SET lc_away_prob = excluded.lc_away_prob, lc_home_prob = excluded.lc_home_prob, lc_away_odd = excluded.lc_away_odd, lc_home_odd = excluded.lc_home_odd;")
@@ -1051,46 +1036,58 @@ def show_database():
     return render_template("database.html", data = list(res_15_cols.T.to_dict().values()))
 
 @app.route('/showbetting', methods = ["GET", "POST"])
-@login_required
 def show_betting():
+    print('start1')
     engine = database.connect_to_db()
     if request.method == 'GET':
         return render_template("betting.html")
 
+    print('start')
     modify_data = request.get_json()
+    print(modify_data)
     daystr = modify_data["gamedate"]
 
     if modify_data["status"] == 1 or modify_data["status"] == 2:
         global res
-        res = pd.read_sql(f"SELECT * FROM betting_table WHERE game = 'baseball' AND betid = '{modify_data['betid']}';", con = engine)
+        res = pd.read_sql(f"SELECT * FROM betting_table WHERE betdate = '{modify_data['gamedate']}' AND team1 = '{modify_data['away']}' AND team2 = '{modify_data['home']}'AND place = '{modify_data['place']}';", con = engine)
         betstate = res.to_dict('records')
 
-        win_count_res = pd.read_sql(f"SELECT COUNT(*) FROM staking_table WHERE result = 'W' AND ;", con = engine).to_dict('records')
-        bet_count_res = pd.read_sql(f"SELECT COUNT(*) FROM staking_table WHERE result != 'P' AND ;", con = engine).to_dict('records')
+        win_count_res = pd.read_sql(f"SELECT COUNT(*) FROM staking_table WHERE result = 'W';", con = engine).to_dict('records')
+        bet_count_res = pd.read_sql(f"SELECT COUNT(*) FROM staking_table WHERE result != 'P';", con = engine).to_dict('records')
 
         if modify_data["status"] == 1:
-            engine.execute(f"UPDATE staking_table SET result = 'L', win_count = '{win_count_res[0]['count']}', bet_count = '{bet_count_res[0]['count'] + 1}',  bet_win = {round(win_count_res[0]['count'] / (bet_count_res[0]['count'] + 1) * 100, 2)}, pl_coeff = -1 * stake_size WHERE game_date = '{betstate[0]['betdate']}' AND away = '{betstate[0]['team1']}' AND home = '{betstate[0]['team2']}' AND bet = '{betstate[0]['place']}' AND american_odd = '{int(betstate[0]['odds'])}';")
+            engine.execute(f"UPDATE staking_table SET result = 'L', win_count = '{win_count_res[0]['count']}', bet_count = '{bet_count_res[0]['count'] + 1}',  bet_win = {round(win_count_res[0]['count'] / (bet_count_res[0]['count'] + 1) * 100, 2)}, pl_coeff = -1 * stake_size WHERE game_date = '{modify_data['gamedate']}' AND away = '{modify_data['away']}' AND home = '{modify_data['home']}' AND bet = '{modify_data['place']}';")
         elif modify_data["status"] == 2:
-            engine.execute(f"UPDATE staking_table SET result = 'W', win_count = '{win_count_res[0]['count'] + 1}', bet_count = '{bet_count_res[0]['count'] + 1}',  bet_win = {round((win_count_res[0]['count'] + 1) / (bet_count_res[0]['count'] + 1) * 100, 2)}, pl_coeff = (decimal_odd -1) * stake_size WHERE game_date = '{betstate[0]['betdate']}' AND away = '{betstate[0]['team1']}' AND home = '{betstate[0]['team2']}' AND bet = '{betstate[0]['place']}' AND american_odd = '{int(betstate[0]['odds'])}';")
-        if betstate[0]['regstate'] == '0':
-            Index = smartContract.betIndex
-            engine.execute(f"UPDATE betting_table SET regstate = '1', betindex = '{Index + 1}' WHERE betid = '{modify_data['betid']}';")
-            smartContract.createBetData(betstate[0])
+            engine.execute(f"UPDATE staking_table SET result = 'W', win_count = '{win_count_res[0]['count'] + 1}', bet_count = '{bet_count_res[0]['count'] + 1}',  bet_win = {round((win_count_res[0]['count'] + 1) / (bet_count_res[0]['count'] + 1) * 100, 2)}, pl_coeff = (decimal_odd -1) * stake_size WHERE game_date = '{modify_data['gamedate']}' AND away = '{modify_data['away']}' AND home = '{modify_data['home']}' AND bet = '{modify_data['place']}';")
 
-        res = engine.execute(f"SELECT betindex FROM betting_table WHERE betid = '{modify_data['betid']}';").fetchall()
-        betIndex = int(res[0][0])
         status = "L" if modify_data["status"] == 1 else "W"
-        smartContract.changeBetStatus(betIndex, status)
-        engine.execute(f"UPDATE betting_table SET status = '{modify_data['status']}' WHERE betid = '{modify_data['betid']}';")
-    elif modify_data["status"] == 3:
-        res = engine.execute(f"SELECT regstate FROM betting_table WHERE betid = '{modify_data['betid']}';").fetchall()
-        if int(res[0][0]) == 0:
-            engine.execute(f"UPDATE betting_table SET regstate = '2' WHERE betid = '{modify_data['betid']}';")
 
-    res = pd.read_sql(f"SELECT * FROM betting_table WHERE betdate = '{daystr}' AND game = 'baseball' AND regstate != '2' ORDER BY betindex;", con = engine)
+        for bet in betstate:
+            if bet['regstate'] == '0':
+                index = smartContract.betIndex
+                betindex = int(index) + 1
+                engine.execute(f"UPDATE betting_table SET regstate = '1', betindex = '{betindex}' WHERE betid = '{bet['betid']}';")
+                smartContract.createBetData(bet)
+                smartContract.changeBetStatus(betindex, status)
+
+            betindex = int(bet['betindex'])
+
+            smartContract.changeBetStatus(betindex, status)
+
+        engine.execute(f"UPDATE betting_table SET status = '{modify_data['status']}' WHERE betdate = '{modify_data['gamedate']}' AND team1 = '{modify_data['away']}' AND team2 = '{modify_data['home']}'AND place = '{modify_data['place']}';")
+
+    elif modify_data["status"] == 3:
+        res = engine.execute(f"SELECT regstate FROM betting_table WHERE betdate = '{modify_data['gamedate']}' AND team1 = '{modify_data['away']}' AND team2 = '{modify_data['home']}'AND place = '{modify_data['place']}';").fetchall()
+        if int(res[0][0]) == 0:
+            engine.execute(f"UPDATE betting_table SET regstate = '2' WHERE betdate = '{modify_data['gamedate']}' AND team1 = '{modify_data['away']}' AND team2 = '{modify_data['home']}'AND place = '{modify_data['place']}';")
+
+    res = pd.read_sql(f"SELECT COUNT(betid), team1, team2, place, SUM(stake) as stake, SUM(wins) as wins, status FROM betting_table WHERE betdate = '{daystr}' AND game = 'baseball' AND regstate != '2' GROUP BY team1, team2, place, status;", con = engine)
     betdata = res.to_dict('records')
     
     for bet in betdata:
+        dec = float(bet['wins']) / float(bet['stake']) + 1
+        bet['odds'] = odds.decimalToAmerian(dec)
+
         if(bet["team1"] == bet["team2"]):
             bet["game"] = bet["team1"]
         else:    
@@ -1104,6 +1101,7 @@ def show_betting():
             bet["wins"] = -bet["stake"]
         elif bet["status"] == "2":
             bet["status"] = "W"
+
 
     stake = pd.read_sql(f"SELECT betdate, SUM(stake) stake, SUM(CASE WHEN status = '2' THEN wins ELSE 0 END) wins, SUM(CASE WHEN status = '1' THEN stake ELSE 0 END) losses FROM betting_table WHERE betdate = '{daystr}' GROUP BY betdate ORDER BY betdate;", con = engine).to_dict('records')
     
@@ -1161,7 +1159,7 @@ def betting_proc():
     
         engine.execute(betting_table_sql)
 
-        decimal_odd = (1 + round(int(betting_data["odds"])/100, 2)) if int(betting_data["odds"]) > 0 else (round(-100 / int(betting_data["odds"]), 2) + 1)
+        decimal_odd = odds.decimalToAmerian(int(betting_data["odds"]))
         win_count_res = pd.read_sql(f"SELECT COUNT(*) FROM staking_table WHERE result = 'W' AND game_date != '{betting_data['betdate']}';", con = engine).to_dict('records')
         bet_count_res = pd.read_sql(f"SELECT COUNT(*) FROM staking_table WHERE game_date != '{betting_data['betdate']}';", con = engine).to_dict('records')
 
@@ -1189,7 +1187,30 @@ def betting_proc():
         else:
             stake_size = 70000 + risk_coeff * 70000
 
-        engine.execute(text(f"INSERT INTO staking_table(game_date, away, home, bet, american_odd, decimal_odd, bet_size, result, win_count, bet_count, bet_win, risk_coeff, stake_size) VALUES('{betting_data['betdate']}', '{betting_data['away']}', '{betting_data['home']}', '{betting_data['place']}', '{int(betting_data['odds'])}', '{decimal_odd}', '{betting_data['stake']}', 'P','{win_count_res[0]['count']}', '{bet_count_res[0]['count']}', '{win_percent}', '{risk_coeff}', '{stake_size}');"))
+        query = text(f"""
+            INSERT INTO staking_table
+                (game_date, away, home, bet, american_odd, decimal_odd, bet_size, result, win_count, bet_count, bet_win, risk_coeff, stake_size)
+            VALUES
+                (:betdate, :away, :home, :place, :odds, :decimal_odd, :stake, 'P', :win_count, :bet_count, :win_percent, :risk_coeff, :stake_size)
+            ON CONFLICT (game_date, away, home, bet)
+            DO UPDATE SET
+                bet_size = staking_table.bet_size + EXCLUDED.bet_size;
+            """)
+
+        engine.execute(query, {
+            'betdate': betting_data['betdate'],
+            'away': betting_data['away'],
+            'home': betting_data['home'],
+            'place': betting_data['place'],
+            'odds': int(betting_data['odds']),
+            'decimal_odd': decimal_odd,
+            'stake': betting_data['stake'],
+            'win_count': win_count_res[0]['count'],
+            'bet_count': bet_count_res[0]['count'],
+            'win_percent': win_percent,
+            'risk_coeff': risk_coeff,
+            'stake_size': stake_size
+        })
 
 
     elif betting_data['flag'] == 1:
@@ -1670,6 +1691,50 @@ def selectPlayer():
     today_schedule = schedule.get_schedule()
     return render_template("selectplayer.html", schedule = today_schedule)
 
+@app.route('/getLastGameStatus', methods = ["POST"])
+def getLastGameStatus(): 
+    req_data = request.get_json()
+    data = mlb.boxscore_data(req_data['gameid'])
+    away_batter_data, away_batter_playerid = database.get_batting_box_score(data, 'away')
+    length = len(away_batter_data)
+    data ={}
+    data['state'] = length
+    return data 
+
+@app.route('/getLineupStatus', methods = ["POST"])
+def getLineupStatus(): 
+    req_data = request.get_json()
+    rosters = schedule.get_rosters(req_data['gameid'])
+    awaystate = not bool(rosters['position']['away'])
+    homestate = not bool(rosters['position']['home'])
+
+    data ={}
+    if awaystate:
+        data['away'] = 0
+    else:
+        data['away'] = 1
+    
+    if homestate:
+        data['home'] = 0
+    else:
+        data['home'] = 1
+
+    return data 
+
+@app.route('/getWinStatus', methods = ["POST"])
+def getWinStatus(): 
+    req_data = request.get_json()
+    data = mlb.boxscore_data(req_data['gameid'])
+    away_score = data['awayBattingTotals']['r']
+    home_score = data['homeBattingTotals']['r']
+
+    data ={}
+    data['away_score'] = away_score
+    data['home_score'] = home_score
+    
+
+    return data 
+
 @app.route('/startPrediction', methods = ["POST"])
 def startPrediction():
     predictionData = json.loads(request.form['data'])
@@ -1794,8 +1859,6 @@ def update_league_average():
     obp = round(obp, 3)
     slg = round(slg, 3)
     ops = round(ops, 3)
-
-    print(atbats, rbi, strikeouts, b_homeruns, avg, obp, slg, ops)
 
     pitcher_df = pd.read_sql(f"SELECT b.game_id, b.game_date, b.home_team, b.away_team, b.home_score, b.away_score, (a.atbats)atBats, \
             (a.baseonballs)baseonBalls, a.blownsaves, a.doubles, (a.earnedruns)earnedRuns, a.era, a.hits, a.holds, (a.homeruns)homeRuns, \

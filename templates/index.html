@@ -662,6 +662,7 @@
                         </div>
                     </form>
                     <div id = 'betform' style="border: 1px solid gray; padding: 10px 5px;">
+                        <input type="hidden" id="modal_game_id" name="modal_game_id" value="">
                         <div class="bet-form-row">
                             <div class="bet-form-row-left"><span>BetDate:</span></div>
                             <div class="bet-form-row-right"><span id="betdate" style="color: blue;"></span></div>
@@ -706,7 +707,7 @@
                         <div class="bet-form-row">
                             <div class="bet-form-row-left">Site:</div>
                             <div class="bet-form-row-right" style="padding: 0px 10px;">
-                                <select id="sites" name="sites" class="bet-input-form" style="height: auto;">
+                                <select id="sites" name="sites" class="bet-input-form" style="height: auto;" onchange="changeBetSite(this.value)">
                                   </select>
                             </div>
                         </div>

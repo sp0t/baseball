@@ -115,10 +115,15 @@ function openCard(buttonId){
 
 
 function openBetModal(gameid){ 
+    data = {}
+    data['gameid'] = gameid
+    data['site'] = 'NOSITE'
     $.ajax({
         type: 'POST', 
         url: '/get_bet_info', 
-        data: {'data' : gameid},
+        data: JSON.stringify(data),
+        dataType: 'json',
+        contentType: 'application/json',
         beforeSend: function(){ 
             $('.large-card').css('width', '350px').css('height', '430px').show();
             $('#large-card-wrapper').hide();
@@ -131,6 +136,7 @@ function openBetModal(gameid){
             $('#form').hide();
             $('#calc').hide();
             $('#betform').show();
+            $("#modal_game_id").val(gameid);
 
             var betdate = document.getElementById('betdate');
             betdate.innerHTML = data['date'];
@@ -197,6 +203,35 @@ function openBetModal(gameid){
                 winvalue.value = data['wins'];
             }
 
+        }, 
+    })
+}
+
+
+function changeBetSite(site) {
+    var gameid = $("#modal_game_id").val();
+
+    data = {}
+    data['gameid'] = gameid
+    data['site'] = site
+
+    $.ajax({
+        type: 'POST', 
+        url: '/get_bet_info', 
+        data: JSON.stringify(data),
+        dataType: 'json',
+        contentType: 'application/json',
+        beforeSend: function(){ 
+        },
+        success: function (data){ 
+            var oddvalue = document.getElementById('oddvalue');
+            oddvalue.value = data['odds'];
+
+            var stakevalue = document.getElementById('stakevalue');
+            stakevalue.value = data['stake'];
+
+            var winvalue = document.getElementById('winvalue');
+            winvalue.value = data['wins'];
         }, 
     })
 }

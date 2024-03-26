@@ -323,7 +323,14 @@
 
                         update = value + data['total'][i]['wins'] * 14 - data['total'][i]['losses'] * 14
                         pl_vlaue[i] = update
-                        dataPoints.push({x: date,  y: [Number(value), Number(value > update? value: update), Number(value > update? update: value), Number(update)]})
+                        // dataPoints.push({x: date,  y: [Number(value), Number(value > update? value: update), Number(value > update? update: value), Number(update)]})
+                        dataPoints = [
+                            { x: new Date(2023, 2, 4), y: [10, 20, 5, 15] },
+                            { x: new Date(2023, 2, 5), y: [20, 30, 10, 25] },
+                            // { x: new Date(2023, 2, 6), y: [15, 25, 10, 20] }, // Data missing for this date
+                            { x: new Date(2023, 2, 7), y: [25, 35, 20, 30] },
+                            // Add more data points as needed
+                        ];
                         // dataPoints = dataPoints.filter(function(dataPoint) {
                         //     return dataPoint.y !== undefined; // Only keep data points with defined values
                         // });

@@ -53,6 +53,7 @@
                     console.log(data)
 
                     var dataPoints = [];
+                    var xAxisLabels = [];
 
                     let USDollar = new Intl.NumberFormat('en-US', {
                         style: 'currency',
@@ -171,6 +172,7 @@
                         update = value + data['season'][i]['wins'] - data['season'][i]['losses']
                         pl_vlaue[i] = update
                         dataPoints.push({x: date,  y: [Number(value), Number(value > update? value: update), Number(value > update? update: value), Number(update)]})
+                        xAxisLabels.push(date.toISOString().split('T')[0]);
                         value = update
 
                         if (i>=50) {
@@ -210,12 +212,15 @@
                             
                         }
                     }
+
+                    stockChartSeason.options.charts[0].axisX.labels = xAxisLabels;
                     stockChartSeason.render();
 
                     averagepoit_50 = [];
                     averagepoit_100 = [];
                     averagepoit_200 = [];
                     dataPoints = [];
+                    xAxisLabels = [];
 
                     pl_vlaue = {}
                     value = 0;
@@ -322,6 +327,7 @@
                         update = value + data['total'][i]['wins'] * 14 - data['total'][i]['losses'] * 14
                         pl_vlaue[i] = update
                         dataPoints.push({x: date,  y: [Number(value), Number(value > update? value: update), Number(value > update? update: value), Number(update)]})
+                        xAxisLabels.push(date.toISOString().split('T')[0]);
                         value = update
 
                         if (i>=50) {
@@ -361,6 +367,8 @@
                             
                         }
                     }
+
+                    stockChartTotal.options.charts[0].axisX.labels = xAxisLabels;
                     stockChartTotal.render();
                  }               
             });      

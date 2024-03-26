@@ -326,8 +326,8 @@ def get_player_info():
 def get_betting_info(): 
     engine = database.connect_to_db()
     year = request.form['year']
-    season_res = pd.read_sql(f"SELECT betdate, SUM(stake) stake, SUM(CASE WHEN status = '2' THEN wins ELSE 0 END) wins, SUM(CASE WHEN status = '1' THEN stake ELSE 0 END) losses FROM betting_table WHERE betdate LIKE '{year}%%' GROUP BY betdate ORDER BY betdate;", con = engine).to_dict('records')
-    total_res = pd.read_sql(f"SELECT betdate, SUM(stake) stake, SUM(CASE WHEN status = '2' THEN wins ELSE 0 END) wins, SUM(CASE WHEN status = '1' THEN stake ELSE 0 END) losses FROM betting_table GROUP BY betdate ORDER BY betdate;", con = engine).to_dict('records')
+    season_res = pd.read_sql(f"SELECT betdate, SUM(stake) stake, SUM(CASE WHEN status = '2' THEN wins ELSE 0 END) wins, SUM(CASE WHEN status = '1' THEN stake ELSE 0 END) losses FROM betting_table WHERE status != '0' AND status != '3' betdate LIKE '{year}%%' GROUP BY betdate ORDER BY betdate;", con = engine).to_dict('records')
+    total_res = pd.read_sql(f"SELECT betdate, SUM(stake) stake, SUM(CASE WHEN status = '2' THEN wins ELSE 0 END) wins, SUM(CASE WHEN status = '1' THEN stake ELSE 0 END) losses FROM betting_table WHERE status != '0' AND status != '3' GROUP BY betdate ORDER BY betdate;", con = engine).to_dict('records')
     data = {}
     data['season'] = season_res
     data['total'] = total_res

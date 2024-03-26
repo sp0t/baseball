@@ -1118,8 +1118,8 @@ def season_state():
     engine = database.connect_to_db()
     year = date.today().year
 
-    total_res = pd.read_sql(f"SELECT stake, wins, status FROM betting_table WHERE game = 'baseball' AND regstate != '2' AND status != '0' AND status != '3' ORDER BY betid;", con = engine)
-    season_res = pd.read_sql(f"SELECT stake, wins, status FROM betting_table WHERE game = 'baseball' AND regstate != '2' AND status != '0' AND status != '3' AND betdate LIKE '{year}%%' ORDER BY betid;", con = engine)
+    total_res = pd.read_sql(f"SELECT betdate, stake, wins, status FROM betting_table WHERE game = 'baseball' AND regstate != '2' AND status != '0' AND status != '3' ORDER BY betid;", con = engine)
+    season_res = pd.read_sql(f"SELECT betdate, stake, wins, status FROM betting_table WHERE game = 'baseball' AND regstate != '2' AND status != '0' AND status != '3' AND betdate LIKE '{year}%%' ORDER BY betid;", con = engine)
     totaldata = total_res.to_dict('records')
     seasondata = season_res.to_dict('records')
 

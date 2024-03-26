@@ -165,8 +165,6 @@
                         var date = new Date(data['season'][i]['betdate'])
                         var average = 0;
 
-                        console.log(data['season'][i])
-
                         var seasonyear = data['season'][i].betdate.substring(0, 4);
 
                         update = value + data['season'][i]['wins'] - data['season'][i]['losses']
@@ -214,6 +212,7 @@
                     }
 
                     stockChartSeason.options.charts[0].axisX.labels = xAxisLabels;
+                    console.log(xAxisLabels)
                     stockChartSeason.render();
 
                     averagepoit_50 = [];

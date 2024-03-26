@@ -326,7 +326,7 @@
                         var date = new Date(data['total'][i]['betdate'])
                         var average = 0;
 
-                        var seasonyear = data['season'][i].betdate.substring(0, 4);
+                        var seasonyear = data['total'][i].betdate.substring(0, 4);
 
                         if(seasonyear == '2023')
                             update = value + data['total'][i]['wins'] * 14 - data['total'][i]['losses'] * 14

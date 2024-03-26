@@ -8,12 +8,6 @@ from functions import batting, predict, starters, smartContract, sanitycheck, od
 from schedule import schedule
 
 
-data = mlb.boxscore_data('747807')
-away_score = data['awayBattingTotals']['r']
-home_score = data['homeBattingTotals']['r']
+password = sha256_crypt.encrypt('MODALSAMEER!@#$')
 
-data ={}
-data['away_score'] = away_score
-data['home_score'] = home_score
-
-print(data)
+print(password)

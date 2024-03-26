@@ -166,7 +166,13 @@
 
                         console.log(data['season'][i])
 
-                        update = value + data['season'][i]['wins'] * 14 - data['season'][i]['losses'] * 14
+                        var seasonyear = data['season'][i].betdate.substring(0, 4);
+
+                        if(seasonyear == '2023')
+                            update = value + data['season'][i]['wins'] * 14 - data['season'][i]['losses'] * 14
+                        else
+                            update = value + data['season'][i]['wins'] - data['season'][i]['losses']
+
                         pl_vlaue[i] = update
                         dataPoints.push({x: date,  y: [Number(value), Number(value > update? value: update), Number(value > update? update: value), Number(update)]})
                         value = update
@@ -317,7 +323,13 @@
                         var date = new Date(data['total'][i]['betdate'])
                         var average = 0;
 
-                        update = value + data['total'][i]['wins'] * 14 - data['total'][i]['losses'] * 14
+                        var seasonyear = data['season'][i].betdate.substring(0, 4);
+
+                        if(seasonyear == '2023')
+                            update = value + data['season'][i]['wins'] * 14 - data['season'][i]['losses'] * 14
+                        else
+                            update = value + data['season'][i]['wins'] - data['season'][i]['losses']
+
                         pl_vlaue[i] = update
                         dataPoints.push({x: date,  y: [Number(value), Number(value > update? value: update), Number(value > update? update: value), Number(update)]})
                         value = update

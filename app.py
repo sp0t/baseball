@@ -1124,29 +1124,55 @@ def season_state():
     seasondata = season_res.to_dict('records')
 
     stake, profit, losses = 0, 0, 0
+    data = {}
+    data['season'] = {}
+    data['total'] = {}
 
     for item in totaldata:
         year = item['betdate'][:4]
-        print(year)
+        if year == '2023':
+            stake += item["stake"] * 14
+        else:
+            stake += item["stake"]
+
+        if(item["status"] == "1"):
+            if year == '2023':
+                losses += float(item["stake"]) * 14
+            else:  
+                losses += float(item["stake"])
+        elif(item["status"] == "2"):
+            if year == '2023':
+                profit += float(item["wins"]) * 14
+            else:
+                profit += float(item["wins"])
+    
+    data['total']["stake"] = "${:,.2f}".format(stake)
+    data['total']["pl"] = "${:,.2f}".format(profit - losses)
+    if (profit - losses) >= 0:
+        data['total']["color"] = "green"
+    else:
+        data['total']["color"] = "red"
+    yd = (profit - losses) / stake * 100
+    data['total']["yield"] = round(yd, 2)
+
+    stake, profit, losses = 0, 0, 0
+
+    for item in seasondata:
         stake += item["stake"]
+
         if(item["status"] == "1"):
             losses += float(item["stake"])
         elif(item["status"] == "2"):
             profit += float(item["wins"])
-    data = {}
-    # data['season'] = {}
-    # data['total'] = {}
-    # stake = stake * 14
-    # losses = losses * 14
-    # profit = profit * 14
-    # data["stake"] = "${:,.2f}".format(stake)
-    # data["pl"] = "${:,.2f}".format(profit - losses)
-    # if (profit - losses) >= 0:
-    #     data["color"] = "green"
-    # else:
-    #     data["color"] = "red"
-    # yd = (profit - losses) / stake * 100
-    # data["yield"] = round(yd, 2)
+    
+    data['season']["stake"] = "${:,.2f}".format(stake)
+    data['season']["pl"] = "${:,.2f}".format(profit - losses)
+    if (profit - losses) >= 0:
+        data['season']["color"] = "green"
+    else:
+        data['season']["color"] = "red"
+    yd = (profit - losses) / stake * 100
+    data['season']["yield"] = round(yd, 2)
 
     return render_template("season.html", data = data)
 

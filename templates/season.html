@@ -407,14 +407,14 @@
                 </thead>
                 <tbody style="font-size: 30px; height: 60px;">
                     <tr>
-                        <td style="color: rgba(0, 38, 255, 0.784);">{{data['stake']}}</td>
-                        {% if data.color == "green" %}
-                            <td style="color: green;">{{data['pl']}}</td>
+                        <td style="color: rgba(0, 38, 255, 0.784);">{{data['season']['stake']}}</td>
+                        {% if data['season'].color == "green" %}
+                            <td style="color: green;">{{data['season']['pl']}}</td>
                         {% endif %}
-                        {% if data.color == "red" %}
-                            <td style="color: red;">{{data['pl']}}</td>
+                        {% if data['season'].color == "red" %}
+                            <td style="color: red;">{{data['season']['pl']}}</td>
                         {% endif %}
-                        <td style="color: rgb(0, 0, 0);">{{data['yield']}}%</td>
+                        <td style="color: rgb(0, 0, 0);">{{data['season']['yield']}}%</td>
                     </tr>
                 </tbody>
             </table>
@@ -439,14 +439,14 @@
                 </thead>
                 <tbody style="font-size: 30px; height: 60px;">
                     <tr>
-                        <td style="color: rgba(0, 38, 255, 0.784);">{{data['stake']}}</td>
-                        {% if data.color == "green" %}
-                            <td style="color: green;">{{data['pl']}}</td>
+                        <td style="color: rgba(0, 38, 255, 0.784);">{{data['total']['stake']}}</td>
+                        {% if data['total'].color == "green" %}
+                            <td style="color: green;">{{data['total']['pl']}}</td>
                         {% endif %}
-                        {% if data.color == "red" %}
-                            <td style="color: red;">{{data['pl']}}</td>
+                        {% if data['total'].color == "red" %}
+                            <td style="color: red;">{{data['total']['pl']}}</td>
                         {% endif %}
-                        <td style="color: rgb(0, 0, 0);">{{data['yield']}}%</td>
+                        <td style="color: rgb(0, 0, 0);">{{data['total']['yield']}}%</td>
                     </tr>
                 </tbody>
             </table>

@@ -1126,7 +1126,8 @@ def season_state():
     stake, profit, losses = 0, 0, 0
 
     for item in totaldata:
-        print(item)
+        year = item["stake"]['betdate'][:4]
+        print(year)
         stake += item["stake"]
         if(item["status"] == "1"):
             losses += float(item["stake"])

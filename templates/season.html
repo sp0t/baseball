@@ -121,6 +121,7 @@
                             prefix: "$"
                         },
                         axisX: {
+                            labels: xAxisLabels,
                             crosshair: {
                             enabled: true
                             }
@@ -210,9 +211,6 @@
                             
                         }
                     }
-
-                    stockChartSeason.options.charts[0].axisX.labels = xAxisLabels;
-                    console.log(xAxisLabels)
                     stockChartSeason.render();
 
                     averagepoit_50 = [];
@@ -278,6 +276,7 @@
                             prefix: "$"
                         },
                         axisX: {
+                            labels: xAxisLabels,
                             crosshair: {
                             enabled: true
                             }
@@ -366,10 +365,6 @@
                             
                         }
                     }
-
-                    console.log(xAxisLabels)
-
-                    stockChartTotal.options.charts[0].axisX.labels = xAxisLabels;
                     stockChartTotal.render();
                  }               
             });      

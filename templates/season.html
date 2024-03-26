@@ -324,9 +324,9 @@
                         update = value + data['total'][i]['wins'] * 14 - data['total'][i]['losses'] * 14
                         pl_vlaue[i] = update
                         dataPoints.push({x: date,  y: [Number(value), Number(value > update? value: update), Number(value > update? update: value), Number(update)]})
-                        dataPoints = dataPoints.filter(function(dataPoint) {
-                            return dataPoint.y !== undefined; // Only keep data points with defined values
-                        });
+                        // dataPoints = dataPoints.filter(function(dataPoint) {
+                        //     return dataPoint.y !== undefined; // Only keep data points with defined values
+                        // });
                         value = update
 
                         if (i>=50) {

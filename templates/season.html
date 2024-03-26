@@ -218,6 +218,8 @@
                     pl_vlaue = {}
                     value = 0;
                     update = 0;
+                    // var startValue = new Date(data['total'][i]['betdate'])
+                    // var endValue = new Date(data['total'][i]['betdate'])
 
                     var stockChartTotal = new CanvasJS.StockChart("chartContainerTotal",{
                         theme: "light2",
@@ -288,29 +290,29 @@
                             yValueFormatString: "$#,###.##",
                             dataPoints : dataPoints
                             },
-                            // {        
-                            //     type: "spline",
-                            //     name: "avg-50",
-                            //     markerType: "none",
-                            //     color: "blue",
-                            //     dataPoints: averagepoit_50
-                            // },
+                            {        
+                                type: "spline",
+                                name: "avg-50",
+                                markerType: "none",
+                                color: "blue",
+                                dataPoints: averagepoit_50
+                            },
 
-                            // {        
-                            //     type: "spline",
-                            //     name: "avg-100",
-                            //     markerType: "none",
-                            //     color: "yellow",
-                            //     dataPoints: averagepoit_100
-                            // },
+                            {        
+                                type: "spline",
+                                name: "avg-100",
+                                markerType: "none",
+                                color: "yellow",
+                                dataPoints: averagepoit_100
+                            },
 
-                            // {        
-                            //     type: "spline",
-                            //     name: "avg-200",
-                            //     markerType: "none",
-                            //     color: "purple",
-                            //     dataPoints: averagepoit_200
-                            // },
+                            {        
+                                type: "spline",
+                                name: "avg-200",
+                                markerType: "none",
+                                color: "purple",
+                                dataPoints: averagepoit_200
+                            },
                             ]
                         }],
                     });
@@ -364,9 +366,6 @@
                             
                         }
                     }
-                    dataPoints = dataPoints.filter(function(dataPoint) {
-                        return dataPoint.y !== undefined; // Only keep data points with defined values
-                    });
                     stockChartTotal.render();
                  }               
             });      

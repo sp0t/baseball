@@ -428,6 +428,34 @@
         <div style="display: flex; justify-content: center; align-items: center;">
             <div id="chartContainerSeasson" style="height: 810px; width: 1610px;border: solid 2px; border-color: aqua;"></div>
         </div>
+        <div style="margin-top: 100px; margin-bottom: 50px;">
+            <table class="table" style="margin: 0 auto; text-align: center; width: auto; border: none;">
+                <thead style="font-size: 30px;color: black; font-weight: bold; height: 80px;">
+                    <tr>
+                        <td>Total Stake</td>
+                        <td style="padding-left: 40px; padding-right: 40px;">P/L</td>
+                        <td>Yield</td>
+                    </tr>
+                </thead>
+                <tbody style="font-size: 30px; height: 60px;">
+                    <tr>
+                        <td style="color: rgba(0, 38, 255, 0.784);">{{data['stake']}}</td>
+                        {% if data.color == "green" %}
+                            <td style="color: green;">{{data['pl']}}</td>
+                        {% endif %}
+                        {% if data.color == "red" %}
+                            <td style="color: red;">{{data['pl']}}</td>
+                        {% endif %}
+                        <td style="color: rgb(0, 0, 0);">{{data['yield']}}%</td>
+                    </tr>
+                </tbody>
+            </table>
+            <div style="text-align: center; padding-top: 30px; font-size: 16px; font-weight: bold;">
+                <div>50 days average (blue)</div>
+                <div>100 days average (yellow)</div>
+                <div>200 days average (purple)</div>
+            </div>
+        </div>
         <div style="display: flex; justify-content: center; align-items: center; padding-top: 50px; padding-bottom: 50px;">
             <div id="chartContainerTotal" style="height: 810px; width: 1610px;border: solid 2px; border-color: aqua;"></div>
         </div>

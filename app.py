@@ -1116,28 +1116,36 @@ def show_betting():
 def season_state():
     
     engine = database.connect_to_db()
-    res = pd.read_sql(f"SELECT stake, wins, status FROM betting_table WHERE game = 'baseball' AND regstate != '2' ORDER BY betid;", con = engine)
-    seasondata = res.to_dict('records')
+    year = date.today().year
+
+    total_res = pd.read_sql(f"SELECT stake, wins, status FROM betting_table WHERE game = 'baseball' AND regstate != '2' AND status != '0' AND status != '3' ORDER BY betid;", con = engine)
+    season_res = pd.read_sql(f"SELECT stake, wins, status FROM betting_table WHERE game = 'baseball' AND regstate != '2' AND status != '0' AND status != '3' AND betdate LIKE '{year}%%' ORDER BY betid;", con = engine)
+    totaldata = total_res.to_dict('records')
+    seasondata = season_res.to_dict('records')
+
     stake, profit, losses = 0, 0, 0
 
-    for item in seasondata:
+    for item in totaldata:
+        print(item)
         stake += item["stake"]
         if(item["status"] == "1"):
             losses += float(item["stake"])
         elif(item["status"] == "2"):
             profit += float(item["wins"])
     data = {}
-    stake = stake * 14
-    losses = losses * 14
-    profit = profit * 14
-    data["stake"] = "${:,.2f}".format(stake)
-    data["pl"] = "${:,.2f}".format(profit - losses)
-    if (profit - losses) >= 0:
-        data["color"] = "green"
-    else:
-        data["color"] = "red"
-    yd = (profit - losses) / stake * 100
-    data["yield"] = round(yd, 2)
+    # data['season'] = {}
+    # data['total'] = {}
+    # stake = stake * 14
+    # losses = losses * 14
+    # profit = profit * 14
+    # data["stake"] = "${:,.2f}".format(stake)
+    # data["pl"] = "${:,.2f}".format(profit - losses)
+    # if (profit - losses) >= 0:
+    #     data["color"] = "green"
+    # else:
+    #     data["color"] = "red"
+    # yd = (profit - losses) / stake * 100
+    # data["yield"] = round(yd, 2)
 
     return render_template("season.html", data = data)
 

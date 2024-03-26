@@ -218,8 +218,8 @@
                     pl_vlaue = {}
                     value = 0;
                     update = 0;
-                    // var startValue = new Date(data['total'][i]['betdate'])
-                    // var endValue = new Date(data['total'][i]['betdate'])
+                    var startValue = new Date('2023-09-29');
+                    var endValue = new Date('2024-03-23');
 
                     var stockChartTotal = new CanvasJS.StockChart("chartContainerTotal",{
                         theme: "light2",
@@ -278,8 +278,10 @@
                             enabled: true
                             },
                             scaleBreaks: {
-                                type: 'straight',
-                                autoCalculate: true
+                            customBreaks: [{
+                                    startValue: startValue,
+                                    endValue: endValue,
+                                }]
                             }
                         },
                         data: [

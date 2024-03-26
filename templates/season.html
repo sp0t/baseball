@@ -164,6 +164,8 @@
                         var date = new Date(data['season'][i]['betdate'])
                         var average = 0;
 
+                        console.log(data['season'][i])
+
                         update = value + data['season'][i]['wins'] * 14 - data['season'][i]['losses'] * 14
                         pl_vlaue[i] = update
                         dataPoints.push({x: date,  y: [Number(value), Number(value > update? value: update), Number(value > update? update: value), Number(update)]})

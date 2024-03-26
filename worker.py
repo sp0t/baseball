@@ -7,9 +7,13 @@ from pytz import timezone
 from functions import batting, predict, starters, smartContract, sanitycheck, odds
 from schedule import schedule
 
-rosters = schedule.get_rosters('745444')
 
-print(rosters['position']['away'])
-res = not bool(rosters['position']['away'])
-print(res)
-    
+data = mlb.boxscore_data('747807')
+away_score = data['awayBattingTotals']['r']
+home_score = data['homeBattingTotals']['r']
+
+data ={}
+data['away_score'] = away_score
+data['home_score'] = home_score
+
+print(data)

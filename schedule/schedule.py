@@ -158,9 +158,12 @@ def get_schedule_from_mlb():
     # game_sched = mlb.schedule(start_date = "2023-11-01")
     info_keys = ['game_id', 'game_datetime','away_name', 'home_name']
     game_sched = [{k:v for k,v in el.items() if k in info_keys} for el in game_sched]
-    game_date = game_sched[0]['game_datetime'][0:10]
-    date_obj = datetime.strptime(game_date, "%Y-%m-%d")
-    game_date = date_obj.strftime("%Y/%m/%d") 
+    game_date = ''
+
+    if len(game_sched) > 0:
+        game_date = game_sched[0]['game_datetime'][0:10]
+        date_obj = datetime.strptime(game_date, "%Y-%m-%d")
+        game_date = date_obj.strftime("%Y/%m/%d") 
     
     tz = timezone('US/Eastern')
     for el in game_sched:

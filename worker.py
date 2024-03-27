@@ -9,15 +9,15 @@ from schedule import schedule
 import requests
 
 
-version = 'v1'
-gamePk = '12345'
-url = f'https://statsapi.mlb.com/api/game/747818/feed/live'
+data = mlb.boxscore_data('747801')
+    
+# Game Info 
+game_date = data['gameId'][:10]
+away_team = data['teamInfo']['away']['abbreviation']
+home_team = data['teamInfo']['home']['abbreviation']
 
-# boxscore = mlb.boxscore_data('747800')
-boxscore = mlb.boxscore_data('747810')
+#insert position data
+awayBatters = data['awayBatters']
 
-print(len(boxscore['gameBoxInfo']))
-# Use data as needed
-for key in boxscore['gameBoxInfo']:
-    print(key)
+print(awayBatters)
 

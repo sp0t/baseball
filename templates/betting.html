@@ -177,14 +177,7 @@
                     html+='<td>'+betstate[i]["place"]+'</td>';
                     html+='<td>'+betstate[i]["stake"]+'</td>';
                     html+='<td>'+betstate[i]["odds"]+'</td>';
-                    if(betstate[i]["status"] == 0)
-                        html+='<td>P</td>';
-                    else if(betstate[i]["status"] == 1)
-                        html+='<td>L</td>';
-                    else if(betstate[i]["status"] == 2)
-                        html+='<td>W</td>';
-                    else
-                        html+='<td></td>';
+                    html+='<td>'+betstate[i]["status"]+'</td>';
                     html+='<td>'+betstate[i]["wins"]+'</td>';
                     html+='</tr>';
                 }

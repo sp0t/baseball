@@ -176,27 +176,15 @@
                     html+='<td>'+betstate[i]["place"]+'</td>';
                     html+='<td>'+betstate[i]["stake"]+'</td>';
                     html+='<td>'+betstate[i]["odds"]+'</td>';
-                    html+=`<td><select style="height: auto; text-align:center;border: none;" game = "${betstate[i]["game"]}" place = "${betstate[i]["place"]}" onchange="updatebett(this)">`;
-                    var item = ['PENDING', 'L', 'W'];
-                    for(var j = 0; j < item.length; j++){
-                        if(betstate[i]["status"] == item[j])
-                            html+=`<option value= ${betstate[i]["betid"]} selected>` + item[j] + "</option>";
-                        else
-                        html+=`<option value= ${betstate[i]["betid"]}>` + item[j] + "</option>";
-                    }
-                    html+='</td></select>';
+                    if(betstate[i]["status"] == 0)
+                        html+='<td>P</td>';
+                    else if(betstate[i]["status"] == 1)
+                        html+='<td>L</td>';
+                    else if(betstate[i]["status"] == 2)
+                        html+='<td>W</td>';
+                    else
+                        html+='<td></td>';
                     html+='<td>'+betstate[i]["wins"]+'</td>';
-
-                    // var btText = "Delete";
-                    // var disable = "";
-
-                    // if(betstate[i]["regstate"] != "0")
-                    // {
-                    //     disable = "disabled";
-                    //     btText = "Done";   
-                    // }
-
-                    // html+=`<td><button class = ${betstate[i]["betid"]} onclick='btClick(this)' style = 'border: none; color: blue' ${disable}>` + btText + '</button></td>';
                     html+='</tr>';
                 }
 

@@ -315,6 +315,11 @@ function updateBetInformation(value) {
     var wins = document.getElementById('winvalue').value;
     var site = document.getElementById('sites').value;
 
+    if(site == 'sports411.ag'){
+        wins = (wins * 0.9).toString();
+        stake = (stake * 0.9).toString();
+    }
+
     if (betdate == '') {
         alert('invalid betdate!');
         return;

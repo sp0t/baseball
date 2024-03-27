@@ -161,7 +161,6 @@ def get_pitching_box_score(data, team):
 def get_box_score(game_id): 
     
     engine = connect_to_db()
-    print(game_id)
     data = mlb.boxscore_data(game_id)
     
     # Game Info 

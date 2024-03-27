@@ -1729,9 +1729,8 @@ def selectPlayer():
 @app.route('/getLastGameStatus', methods = ["POST"])
 def getLastGameStatus(): 
     req_data = request.get_json()
-    data = mlb.boxscore_data(req_data['gameid'])
-    away_batter_data, away_batter_playerid = database.get_batting_box_score(data, 'away')
-    length = len(away_batter_data)
+    boxscore = mlb.boxscore_data(req_data['gameid'])
+    length = len(boxscore['gameBoxInfo'])
     data ={}
     data['state'] = length
     return data 
@@ -1759,14 +1758,18 @@ def getLineupStatus():
 @app.route('/getWinStatus', methods = ["POST"])
 def getWinStatus(): 
     req_data = request.get_json()
-    data = mlb.boxscore_data(req_data['gameid'])
-    away_score = data['awayBattingTotals']['r']
-    home_score = data['homeBattingTotals']['r']
+    boxscore = mlb.boxscore_data(req_data['gameid'])
+    away_score = boxscore['awayBattingTotals']['r']
+    home_score = boxscore['homeBattingTotals']['r']
+    length = len(boxscore['gameBoxInfo'])
 
     data ={}
     data['away_score'] = away_score
     data['home_score'] = home_score
-    
+
+    if length < 11:
+        data['away_score'] = 0
+        data['home_score'] = 0
 
     return data 
 

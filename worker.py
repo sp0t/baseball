@@ -9,15 +9,26 @@ from schedule import schedule
 import requests
 
 
-data = mlb.boxscore_data('747801')
-    
-# Game Info 
-game_date = data['gameId'][:10]
-away_team = data['teamInfo']['away']['abbreviation']
-home_team = data['teamInfo']['home']['abbreviation']
+# boxscore = mlb.boxscore_data('746418')
+boxscore = mlb.boxscore_data('745283')
+away_score = boxscore['awayBattingTotals']['r']
+home_score = boxscore['homeBattingTotals']['r']
+att_exists = False
+t_exists = False
 
-#insert position data
-awayBatters = data['awayBatters']
+for item in boxscore['gameBoxInfo']:
+    if item.get('label') == 'Att':
+        att_exists = True
+    elif item.get('label') == 'T':
+        t_exists = True
 
-print(awayBatters)
+data ={}
+data['away_score'] = 0
+data['home_score'] = 0
+
+if att_exists == True and t_exists == True:
+    data['away_score'] = away_score
+    data['home_score'] = home_score    
+
+print(data)
 

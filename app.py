@@ -559,7 +559,6 @@ def teams():
                                 FROM betting_table \
                                 WHERE place = '{team_data['name']}' AND betdate LIKE '{year}%%';", con = engine).to_dict('records')
         
-        print(beton_res)
         
         if len(beton_res) == 0 or beton_res[0]['total_stake'] == None:
             data['bet_on']['num_bet'] = 0
@@ -776,11 +775,11 @@ def teams():
         price_res = pd.read_sql(f"SELECT game_id, game_date, away, home, CASE WHEN away = '{team_data['name']}' THEN away_open WHEN home = '{team_data['name']}' THEN home_open ELSE 0 END as open_price, \
                                 CASE WHEN away = '{team_data['name']}' THEN away_close WHEN home = '{team_data['name']}' THEN home_close ELSE 0 END as close_price FROM odds_table WHERE (away = '{team_data['name']}' OR home = '{team_data['name']}') AND game_date LIKE '{year}%%' ORDER BY game_date DESC LIMIT 15;", con = engine).to_dict('records')   
         data['price'] = price_res
+        print(price_res)
 
         players_res = pd.read_sql(f"SELECT p_id, p_name FROM team_table INNER JOIN player_table ON team_table.team_id = player_table.t_id WHERE team_table.team_name = '{team_data['name']}';", con = engine).to_dict('records')   
 
         data['players'] = players_res
-        print(data)
 
         return data
 

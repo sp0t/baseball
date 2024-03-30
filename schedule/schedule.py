@@ -167,7 +167,7 @@ def get_schedule_from_mlb():
     
     tz = timezone('US/Eastern')
     for el in game_sched:
-        engine.execute(f"INSERT INTO odds_table(game_id, game_date, away, home, start_time, state) VALUES('{el['game_id']}', '{game_date}', '{el['away_name']}', '{el['home_name']}', '{el['game_datetime']}', '0');") 
+        engine.execute(f"INSERT INTO odds_table(game_id, game_date, away, home, start_time, away_open, away_close, home_open, home_close, state) VALUES('{el['game_id']}', '{game_date}', '{el['away_name']}', '{el['home_name']}', '{el['game_datetime']}', '0', '0', '0', '0', '0');") 
 
         el['game_datetime'] = el['game_datetime'].split('T')[1][:-1] 
         el['game_id'] = str(el['game_id'])

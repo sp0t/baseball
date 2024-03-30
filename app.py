@@ -780,6 +780,7 @@ def teams():
         players_res = pd.read_sql(f"SELECT p_id, p_name FROM team_table INNER JOIN player_table ON team_table.team_id = player_table.t_id WHERE team_table.team_name = '{team_data['name']}';", con = engine).to_dict('records')   
 
         data['players'] = players_res
+        print(data)
 
         return data
 

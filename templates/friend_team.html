@@ -138,66 +138,158 @@
                     html+=`</tr></thead><tbody  class='border border-black'>`;
                     html+=`<tr class="border border-black">`;
                     html+=`<td class="border border-black bodyth" style="text-align: center;">C</td>`;
-                    html+=`<td class="border border-black bg-green-500">${data['c'][0]['c']}-${(100 * data['c'][0]['c_count'] / data['game_count']).toFixed(2)}%</td>`;
-                    html+=`<td class="border border-black bg-yellow-300">${data['c'][1]['c']}-${(100 * data['c'][1]['c_count'] / data['game_count']).toFixed(2)}%</td>`;
-                    html+=`<td class="border border-black bg-orange-500">${data['c'][2]['c']}-${(100 * data['c'][2]['c_count'] / data['game_count']).toFixed(2)}%</td>`;
-                    html+=`<td class="border border-black bg-rose-500">${data['c'][3]['c']}-${(100 * data['c'][3]['c_count'] / data['game_count']).toFixed(2)}%</td>`;
+                    for(var i = 0; i < data['c'].length; i++) {
+                        if(i == 0)
+                            html+=`<td class="border border-black bg-green-500">${data['c'][i]['c']}-${(100 * data['c'][i]['c_count'] / data['game_count']).toFixed(2)}%</td>`;
+                        if(i == 1)
+                            html+=`<td class="border border-black bg-yellow-300">${data['c'][i]['c']}-${(100 * data['c'][i]['c_count'] / data['game_count']).toFixed(2)}%</td>`;
+                        if(i == 2)
+                            html+=`<td class="border border-black bg-orange-500">${data['c'][i]['c']}-${(100 * data['c'][i]['c_count'] / data['game_count']).toFixed(2)}%</td>`;
+                        if(i == 3)
+                            html+=`<td class="border border-black bg-rose-500">${data['c'][i]['c']}-${(100 * data['c'][i]['c_count'] / data['game_count']).toFixed(2)}%</td>`;
+
+                    }
+
+                    for(var j = 0; i < 3 - j; j++)
+                        html+=`<td class="border border-black bg-white"></td>`;
                     html+='</tr>'
+                        
                     html+=`<tr class="border border-black">`;
                     html+=`<td class="border border-black bodyth" style="text-align: center;">1B</td>`;
-                    html+=`<td class="border border-black bg-green-500">${data['b1'][0]['b1']}-${(100 * data['b1'][0]['b1_count'] / data['game_count']).toFixed(2)}%</td>`;
-                    html+=`<td class="border border-black bg-yellow-300">${data['b1'][1]['b1']}-${(100 * data['b1'][1]['b1_count'] / data['game_count']).toFixed(2)}%</td>`;
-                    html+=`<td class="border border-black bg-orange-500">${data['b1'][2]['b1']}-${(100 * data['b1'][2]['b1_count'] / data['game_count']).toFixed(2)}%</td>`;
-                    html+=`<td class="border border-black bg-rose-500">${data['b1'][3]['b1']}-${(100 * data['b1'][3]['b1_count'] / data['game_count']).toFixed(2)}%</td>`;
+                    for(var i = 0; i < data['b1'].length; i++) {
+                        if(i == 0)
+                            html+=`<td class="border border-black bg-green-500">${data['b1'][i]['b1']}-${(100 * data['b1'][i]['b1_count'] / data['game_count']).toFixed(2)}%</td>`;
+                        if(i == 1)
+                            html+=`<td class="border border-black bg-yellow-300">${data['b1'][i]['b1']}-${(100 * data['b1'][i]['b1_count'] / data['game_count']).toFixed(2)}%</td>`;
+                        if(i == 2)
+                            html+=`<td class="border border-black bg-orange-500">${data['b1'][i]['b1']}-${(100 * data['b1'][i]['b1_count'] / data['game_count']).toFixed(2)}%</td>`;
+                        if(i == 3)
+                            html+=`<td class="border border-black bg-rose-500">${data['b1'][i]['b1']}-${(100 * data['b1'][i]['b1_count'] / data['game_count']).toFixed(2)}%</td>`;
+
+                    }
+
+                    for(var j = 0; i < 3 - j; j++)
+                        html+=`<td class="border border-black bg-white"></td>`;
                     html+='</tr>'
+
                     html+=`<tr class="border border-black">`;
                     html+=`<td class="border border-black bodyth" style="text-align: center;">2B</td>`;
-                    html+=`<td class="border border-black bg-green-500">${data['b2'][0]['b2']}-${(100 * data['b2'][0]['b2_count'] / data['game_count']).toFixed(2)}%</td>`;
-                    html+=`<td class="border border-black bg-yellow-300">${data['b2'][1]['b2']}-${(100 * data['b2'][1]['b2_count'] / data['game_count']).toFixed(2)}%</td>`;
-                    html+=`<td class="border border-black bg-orange-500">${data['b2'][2]['b2']}-${(100 * data['b2'][2]['b2_count'] / data['game_count']).toFixed(2)}%</td>`;
-                    html+=`<td class="border border-black bg-rose-500">${data['b2'][3]['b2']}-${(100 * data['b2'][3]['b2_count'] / data['game_count']).toFixed(2)}%</td>`;
+                    for(var i = 0; i < data['b2'].length; i++) {
+                        if(i == 0)
+                            html+=`<td class="border border-black bg-green-500">${data['b2'][i]['b2']}-${(100 * data['b2'][i]['b2_count'] / data['game_count']).toFixed(2)}%</td>`;
+                        if(i == 1)
+                            html+=`<td class="border border-black bg-yellow-300">${data['b2'][i]['b2']}-${(100 * data['b2'][i]['b2_count'] / data['game_count']).toFixed(2)}%</td>`;
+                        if(i == 2)
+                            html+=`<td class="border border-black bg-orange-500">${data['b2'][i]['b2']}-${(100 * data['b2'][i]['b2_count'] / data['game_count']).toFixed(2)}%</td>`;
+                        if(i == 3)
+                            html+=`<td class="border border-black bg-rose-500">${data['b2'][i]['b2']}-${(100 * data['b2'][i]['b2_count'] / data['game_count']).toFixed(2)}%</td>`;
+
+                    }
+
+                    for(var j = 0; i < 3 - j; j++)
+                        html+=`<td class="border border-black bg-white"></td>`;
                     html+='</tr>'
+
                     html+=`<tr class="border border-black">`;
                     html+=`<td class="border border-black bodyth" style="text-align: center;">3B</td>`;
-                    html+=`<td class="border border-black bg-green-500">${data['b3'][0]['b3']}-${(100 * data['b3'][0]['b3_count'] / data['game_count']).toFixed(2)}%</td>`;
-                    html+=`<td class="border border-black bg-yellow-300">${data['b3'][1]['b3']}-${(100 * data['b3'][1]['b3_count'] / data['game_count']).toFixed(2)}%</td>`;
-                    html+=`<td class="border border-black bg-orange-500">${data['b3'][2]['b3']}-${(100 * data['b3'][2]['b3_count'] / data['game_count']).toFixed(2)}%</td>`;
-                    html+=`<td class="border border-black bg-rose-500">${data['b3'][3]['b3']}-${(100 * data['b3'][3]['b3_count'] / data['game_count']).toFixed(2)}%</td>`;
+                    for(var i = 0; i < data['b3'].length; i++) {
+                        if(i == 0)
+                            html+=`<td class="border border-black bg-green-500">${data['b3'][i]['b3']}-${(100 * data['b3'][i]['b3_count'] / data['game_count']).toFixed(2)}%</td>`;
+                        if(i == 1)
+                            html+=`<td class="border border-black bg-yellow-300">${data['b3'][i]['b3']}-${(100 * data['b3'][i]['b3_count'] / data['game_count']).toFixed(2)}%</td>`;
+                        if(i == 2)
+                            html+=`<td class="border border-black bg-orange-500">${data['b3'][i]['b3']}-${(100 * data['b3'][i]['b3_count'] / data['game_count']).toFixed(2)}%</td>`;
+                        if(i == 3)
+                            html+=`<td class="border border-black bg-rose-500">${data['b2'][i]['b2']}-${(100 * data['b2'][i]['b2_count'] / data['game_count']).toFixed(2)}%</td>`;
+
+                    }
+                    for(var j = 0; i < 3 - j; j++)
+                        html+=`<td class="border border-black bg-white"></td>`;
                     html+='</tr>'
+
                     html+=`<tr class="border border-black">`;
                     html+=`<td class="border border-black bodyth" style="text-align: center;">SS</td>`;
-                    html+=`<td class="border border-black bg-green-500">${data['ss'][0]['ss']}-${(100 * data['ss'][0]['ss_count'] / data['game_count']).toFixed(2)}%</td>`;
-                    html+=`<td class="border border-black bg-yellow-300">${data['ss'][1]['ss']}-${(100 * data['ss'][1]['ss_count'] / data['game_count']).toFixed(2)}%</td>`;
-                    html+=`<td class="border border-black bg-orange-500">${data['ss'][2]['ss']}-${(100 * data['ss'][2]['ss_count'] / data['game_count']).toFixed(2)}%</td>`;
-                    html+=`<td class="border border-black bg-rose-500">${data['ss'][3]['ss']}-${(100 * data['ss'][3]['ss_count'] / data['game_count']).toFixed(2)}%</td>`;
+                    for(var i = 0; i < data['ss'].length; i++) {
+                        if(i == 0)
+                            html+=`<td class="border border-black bg-green-500">${data['ss'][i]['ss']}-${(100 * data['ss'][i]['ss_count'] / data['game_count']).toFixed(2)}%</td>`;
+                        if(i == 1)
+                            html+=`<td class="border border-black bg-yellow-300">${data['ss'][i]['ss']}-${(100 * data['ss'][i]['ss_count'] / data['game_count']).toFixed(2)}%</td>`;
+                        if(i == 2)
+                            html+=`<td class="border border-black bg-orange-500">${data['ss'][i]['ss']}-${(100 * data['ss'][i]['ss_count'] / data['game_count']).toFixed(2)}%</td>`;
+                        if(i == 3)
+                            html+=`<td class="border border-black bg-rose-500">${data['ss'][i]['ss']}-${(100 * data['ss'][i]['ss_count'] / data['game_count']).toFixed(2)}%</td>`;
+
+                    }
+                    for(var j = 0; i < 3 - j; j++)
+                        html+=`<td class="border border-black bg-white"></td>`;
                     html+='</tr>'
+
                     html+=`<tr class="border border-black">`;
                     html+=`<td class="border border-black bodyth" style="text-align: center;">LF</td>`;
-                    html+=`<td class="border border-black bg-green-500">${data['lf'][0]['lf']}-${(100 * data['lf'][0]['lf_count'] / data['game_count']).toFixed(2)}%</td>`;
-                    html+=`<td class="border border-black bg-yellow-300">${data['lf'][1]['lf']}-${(100 * data['lf'][1]['lf_count'] / data['game_count']).toFixed(2)}%</td>`;
-                    html+=`<td class="border border-black bg-orange-500">${data['lf'][2]['lf']}-${(100 * data['lf'][2]['lf_count'] / data['game_count']).toFixed(2)}%</td>`;
-                    html+=`<td class="border border-black bg-rose-500">${data['lf'][3]['lf']}-${(100 * data['lf'][3]['lf_count'] / data['game_count']).toFixed(2)}%</td>`;
+                    for(var i = 0; i < data['lf'].length; i++) {
+                        if(i == 0)
+                            html+=`<td class="border border-black bg-green-500">${data['lf'][i]['lf']}-${(100 * data['lf'][i]['lf_count'] / data['game_count']).toFixed(2)}%</td>`;
+                        if(i == 1)
+                            html+=`<td class="border border-black bg-yellow-300">${data['lf'][i]['lf']}-${(100 * data['lf'][i]['lf_count'] / data['game_count']).toFixed(2)}%</td>`;
+                        if(i == 2)
+                            html+=`<td class="border border-black bg-orange-500">${data['lf'][i]['lf']}-${(100 * data['lf'][i]['lf_count'] / data['game_count']).toFixed(2)}%</td>`;
+                        if(i == 3)
+                            html+=`<td class="border border-black bg-rose-500">${data['lf'][i]['lf']}-${(100 * data['lf'][i]['lf_count'] / data['game_count']).toFixed(2)}%</td>`;
+
+                    }
+
+                    for(var j = 0; i < 3 - j; j++)
+                        html+=`<td class="border border-black bg-white"></td>`;
                     html+='</tr>'
+
                     html+=`<tr class="border border-black">`;
                     html+=`<td class="border border-black bodyth" style="text-align: center;">CF</td>`;
-                    html+=`<td class="border border-black bg-green-500">${data['cf'][0]['cf']}-${(100 * data['cf'][0]['cf_count'] / data['game_count']).toFixed(2)}%</td>`;
-                    html+=`<td class="border border-black bg-yellow-300">${data['cf'][1]['cf']}-${(100 * data['cf'][1]['cf_count'] / data['game_count']).toFixed(2)}%</td>`;
-                    html+=`<td class="border border-black bg-orange-500">${data['cf'][2]['cf']}-${(100 * data['cf'][2]['cf_count'] / data['game_count']).toFixed(2)}%</td>`;
-                    html+=`<td class="border border-black bg-rose-500">${data['cf'][3]['cf']}-${(100 * data['cf'][3]['cf_count'] / data['game_count']).toFixed(2)}%</td>`;
+                    for(var i = 0; i < data['cf'].length; i++) {
+                        if(i == 0)
+                            html+=`<td class="border border-black bg-green-500">${data['cf'][i]['cf']}-${(100 * data['cf'][i]['cf_count'] / data['game_count']).toFixed(2)}%</td>`;
+                        if(i == 1)
+                            html+=`<td class="border border-black bg-yellow-300">${data['cf'][i]['cf']}-${(100 * data['cf'][i]['cf_count'] / data['game_count']).toFixed(2)}%</td>`;
+                        if(i == 2)
+                            html+=`<td class="border border-black bg-orange-500">${data['cf'][i]['cf']}-${(100 * data['cf'][i]['cf_count'] / data['game_count']).toFixed(2)}%</td>`;
+                        if(i == 3)
+                            html+=`<td class="border border-black bg-rose-500">${data['cf'][i]['cf']}-${(100 * data['cf'][i]['cf_count'] / data['game_count']).toFixed(2)}%</td>`;
+
+                    }
+                    for(var j = 0; i < 3 - j; j++)
+                        html+=`<td class="border border-black bg-white"></td>`;
                     html+='</tr>'
+
                     html+=`<tr class="border border-black">`;
                     html+=`<td class="border border-black bodyth" style="text-align: center;">RF</td>`;
-                    html+=`<td class="border border-black bg-green-500">${data['rf'][0]['rf']}-${(100 * data['rf'][0]['rf_count'] / data['game_count']).toFixed(2)}%</td>`;
-                    html+=`<td class="border border-black bg-yellow-300">${data['rf'][1]['rf']}-${(100 * data['rf'][1]['rf_count'] / data['game_count']).toFixed(2)}%</td>`;
-                    html+=`<td class="border border-black bg-orange-500">${data['rf'][2]['rf']}-${(100 * data['rf'][2]['rf_count'] / data['game_count']).toFixed(2)}%</td>`;
-                    html+=`<td class="border border-black bg-rose-500">${data['rf'][3]['rf']}-${(100 * data['rf'][3]['rf_count'] / data['game_count']).toFixed(2)}%</td>`;
+                    for(var i = 0; i < data['rf'].length; i++) {
+                        if(i == 0)
+                            html+=`<td class="border border-black bg-green-500">${data['rf'][0]['rf']}-${(100 * data['rf'][0]['rf_count'] / data['game_count']).toFixed(2)}%</td>`;
+                        if(i == 1)
+                            html+=`<td class="border border-black bg-yellow-300">${data['rf'][1]['rf']}-${(100 * data['rf'][1]['rf_count'] / data['game_count']).toFixed(2)}%</td>`;
+                        if(i == 2)
+                            html+=`<td class="border border-black bg-orange-500">${data['rf'][2]['rf']}-${(100 * data['rf'][2]['rf_count'] / data['game_count']).toFixed(2)}%</td>`;
+                        if(i == 3)
+                            html+=`<td class="border border-black bg-rose-500">${data['rf'][3]['rf']}-${(100 * data['rf'][3]['rf_count'] / data['game_count']).toFixed(2)}%</td>`;
+
+                    }
                     html+='</tr>'
+
                     html+=`<tr class="border border-black">`;
                     html+=`<td class="border border-black bodyth" style="text-align: center;">DH</td>`;
-                    html+=`<td class="border border-black bg-green-500">${data['dh'][0]['dh']}-${(100 * data['dh'][0]['dh_count'] / data['game_count']).toFixed(2)}%</td>`;
-                    html+=`<td class="border border-black bg-yellow-300">${data['dh'][1]['dh']}-${(100 * data['dh'][1]['dh_count'] / data['game_count']).toFixed(2)}%</td>`;
-                    html+=`<td class="border border-black bg-orange-500">${data['dh'][2]['dh']}-${(100 * data['dh'][2]['dh_count'] / data['game_count']).toFixed(2)}%</td>`;
-                    html+=`<td class="border border-black bg-rose-500">${data['dh'][3]['dh']}-${(100 * data['dh'][3]['dh_count'] / data['game_count']).toFixed(2)}%</td>`;
+                    for(var i = 0; i < data['dh'].length; i++) {
+                        if(i == 0)
+                            html+=`<td class="border border-black bg-green-500">${data['dh'][i]['dh']}-${(100 * data['dh'][i]['dh_count'] / data['game_count']).toFixed(2)}%</td>`;
+                        if(i == 1)
+                            html+=`<td class="border border-black bg-yellow-300">${data['dh'][i]['dh']}-${(100 * data['dh'][i]['dh_count'] / data['game_count']).toFixed(2)}%</td>`;
+                        if(i == 2)
+                            html+=`<td class="border border-black bg-orange-500">${data['dh'][i]['dh']}-${(100 * data['dh'][i]['dh_count'] / data['game_count']).toFixed(2)}%</td>`;
+                        if(i == 3)
+                            html+=`<td class="border border-black bg-rose-500">${data['dh'][i]['dh']}-${(100 * data['dh'][i]['dh_count'] / data['game_count']).toFixed(2)}%</td>`;
+
+                    }
+
+                    for(var j = 0; i < 3 - j; j++)
+                        html+=`<td class="border border-black bg-white"></td>`;
                     html+='</tr>'
                     html+='</tbody>'
             

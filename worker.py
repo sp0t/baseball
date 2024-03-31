@@ -9,7 +9,25 @@ from schedule import schedule
 import requests
 
 
-win_loss_res = list(mlb.standings_data().values())  
+boxscore = mlb.boxscore_data('745436')
+away_score = boxscore['awayBattingTotals']['r']
+home_score = boxscore['homeBattingTotals']['r']
+att_exists = False
+t_exists = False
 
-print(win_loss_res)
+for item in boxscore['gameBoxInfo']:
+    if item.get('label') == 'Att':
+        att_exists = True
+    elif item.get('label') == 'T':
+        t_exists = True
+
+data ={}
+data['away_score'] = 0
+data['home_score'] = 0
+
+if att_exists == True and t_exists == True:
+    data['away_score'] = away_score
+    data['home_score'] = home_score  
+
+print(data)
 

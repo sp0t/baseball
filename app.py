@@ -1586,6 +1586,8 @@ def position_page():
     data['rf'] = rf_res
     data['dh'] = dh_res
 
+    print(data)
+
 
     return data
 

@@ -10,6 +10,7 @@ import requests
 from sqlalchemy import text
 
 playerData = {}
+engine = database.connect_to_db()
 game_sched = mlb.schedule(start_date = date.today())
 
 for game in game_sched:

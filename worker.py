@@ -184,6 +184,14 @@ for game in game_sched:
     playerData[game['game_id']]['home_pitcher'] = home_pitcher
     playerData[game['game_id']]['name'] = name
 
+today  = date.today()
+output_date = today.strftime("%Y/%m/%d")
+
+batter_stat_list = ['home_score', 'away_score', 'atBats', 'avg', 'baseOnBalls', 'doubles', 'hits', 'homeRuns', 'obp', 'ops', 'playerId', 'rbi', 'runs', 
+                    'slg', 'strikeOuts', 'triples', 'season', 'singles']
+pitcher_stat_list=['atBats', 'baseOnBalls', 'blownSave', 'doubles', 'earnedRuns', 'era', 'hits', 'holds', 'homeRuns', 'inningsPitched', 
+    'losses', 'pitchesThrown', 'playerId', 'rbi', 'runs', 'strikeOuts', 'strikes', 'triples', 'whip',  'wins']
+
 for gameid in playerData:
     print(gameid)
     away_batters = playerData[gameid]['away_batter']

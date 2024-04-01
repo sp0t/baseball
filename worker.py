@@ -15,7 +15,6 @@ engine = database.connect_to_db()
 game_sched = mlb.schedule(start_date = date.today())
 
 for game in game_sched:
-    print(game)
     playerData[game['game_id']] = {}
     playerData[game['game_id']]['away_batter'] = []
     playerData[game['game_id']]['home_batter'] = []

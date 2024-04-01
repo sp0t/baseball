@@ -7,7 +7,7 @@ from pytz import timezone
 from functions import batting, predict, starters, smartContract, sanitycheck, odds
 from schedule import schedule
 import requests
-
+from sqlalchemy import text
 
 playerData = {}
 game_sched = mlb.schedule(start_date = date.today())

@@ -118,13 +118,13 @@ for game in game_sched:
 
     for away in rosters['away']:
         if 'fullName' in away:
-            name[str(away['id'])] = away['fullName']
+            name[str(away['id'])] = away['fullName'].replace("'", " ")
         else:
             name[str(away['id'])] = ''
 
     for home in rosters['home']:
         if 'fullName' in home:
-            name[str(home['id'])] = home['fullName']
+            name[str(home['id'])] = home['fullName'].replace("'", " ")
         else:
             name[str(home['id'])] = ''
 
@@ -182,7 +182,7 @@ for game in game_sched:
     playerData[game['game_id']]['home_batter'] = home_batter
     playerData[game['game_id']]['away_pitcher'] = away_pitcher
     playerData[game['game_id']]['home_pitcher'] = home_pitcher
-    playerData[game['game_id']]['name'] = name.replace("'", " ")
+    playerData[game['game_id']]['name'] = name
 
 today  = date.today()
 output_date = today.strftime("%Y/%m/%d")

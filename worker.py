@@ -182,7 +182,7 @@ for game in game_sched:
     playerData[game['game_id']]['home_batter'] = home_batter
     playerData[game['game_id']]['away_pitcher'] = away_pitcher
     playerData[game['game_id']]['home_pitcher'] = home_pitcher
-    playerData[game['game_id']]['name'] = name
+    playerData[game['game_id']]['name'] = name.replace("'", " ")
 
 today  = date.today()
 output_date = today.strftime("%Y/%m/%d")

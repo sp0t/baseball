@@ -286,7 +286,7 @@ def get_probabilities(params):
             player_name = ''
 
             if (len(player_name_res) > 0):
-                player_name = player_name_res[0]['p_name']
+                player_name = player_name_res[0]['p_name'].replace("'", " ")
             else:
                 player_name = batter
 
@@ -360,7 +360,7 @@ def get_probabilities(params):
             player_name = ''
 
             if (len(player_name_res) > 0):
-                player_name = player_name_res[0]['p_name']
+                player_name = player_name_res[0]['p_name'].replace("'", " ")
             else:
                 player_name = batter
 
@@ -435,7 +435,7 @@ def get_probabilities(params):
             player_name = ''
 
             if (len(player_name_res) > 0):
-                player_name = player_name_res[0]['p_name']
+                player_name = player_name_res[0]['p_name'].replace("'", " ")
             else:
                 player_name = away_starter
 
@@ -509,7 +509,7 @@ def get_probabilities(params):
             player_name = ''
 
             if (len(player_name_res) > 0):
-                player_name = player_name_res[0]['p_name']
+                player_name = player_name_res[0]['p_name'].replace("'", " ")
             else:
                 player_name = home_starter
 
@@ -589,7 +589,7 @@ def get_probabilities(params):
                 player_name = ''
 
                 if (len(player_name_res) > 0):
-                    player_name = player_name_res[0]['p_name']
+                    player_name = player_name_res[0]['p_name'].replace("'", " ")
                 else:
                     player_name = starter
 
@@ -695,7 +695,7 @@ def get_probabilities(params):
                 player_name = ''
 
                 if (len(player_name_res) > 0):
-                    player_name = player_name_res[0]['p_name']
+                    player_name = player_name_res[0]['p_name'].replace("'", " ")
                 else:
                     player_name = starter
 

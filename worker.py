@@ -184,9 +184,9 @@ for game in game_sched:
     playerData[game['game_id']]['home_pitcher'] = home_pitcher
     playerData[game['game_id']]['name'] = name
 
-away_batters = predictionData[gameid]['away_batter']
-for gameid in predictionData:
+for gameid in playerData:
     print(gameid)
+    away_batters = playerData[gameid]['away_batter']
     for away_batter in away_batters:
         print(away_batter)
         player_df = batting_c.get_batter_df(away_batter, output_date)

@@ -8,6 +8,7 @@ from functions import batting, predict, starters, smartContract, sanitycheck, od
 from schedule import schedule
 import requests
 from sqlalchemy import text
+from functions_c import batting_c, starters_c, predict_c
 
 playerData = {}
 engine = database.connect_to_db()

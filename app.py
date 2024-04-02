@@ -1068,11 +1068,11 @@ def show_betting():
                 betindex = int(index) + 1
                 engine.execute(f"UPDATE betting_table SET regstate = '1', betindex = '{betindex}' WHERE betid = '{bet['betid']}';")
                 smartContract.createBetData(bet)
-                smartContract.changeBetStatus(betindex, status)
+                # smartContract.changeBetStatus(betindex, status)
 
             betindex = int(bet['betindex'])
 
-            smartContract.changeBetStatus(betindex, status)
+            # smartContract.changeBetStatus(betindex, status)
 
         engine.execute(f"UPDATE betting_table SET status = '{modify_data['status']}' WHERE betdate = '{modify_data['gamedate']}' AND team1 = '{modify_data['away']}' AND team2 = '{modify_data['home']}'AND place = '{modify_data['place']}';")
 

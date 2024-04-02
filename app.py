@@ -933,13 +933,13 @@ def update_data():
 
         for away in rosters['away']:
             if 'fullName' in away:
-                name[str(away['id'])] = away['fullName']
+                name[str(away['id'])] = away['fullName'].replace("'", " ")
             else:
                 name[str(away['id'])] = ''
 
         for home in rosters['home']:
             if 'fullName' in home:
-                name[str(home['id'])] = home['fullName']
+                name[str(home['id'])] = home['fullName'].replace("'", " ")
             else:
                 name[str(home['id'])] = ''
 
@@ -1238,7 +1238,7 @@ def betting_proc():
             'home': betting_data['home'],
             'place': betting_data['place'],
             'odds': int(betting_data['odds']),
-            'decimal_odd': decimal_odd,
+            'decimal_odd': 0,
             'stake': betting_data['stake'],
             'win_count': win_count_res[0]['count'],
             'bet_count': bet_count_res[0]['count'],

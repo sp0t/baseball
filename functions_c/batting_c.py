@@ -91,12 +91,6 @@ def process_recent_batter_data(player_df, game_date, team_starter, batter_stat_l
         recent_difficulty_data['atBats'] = (recent_df['atBats'] * weights).sum()
 
         average_obp, average_whip = average.update_league_average(game_date, False)
-        print('average_obp')
-        print(average_obp)
-        print('career_obp')
-        print(career_obp)
-        print('recent_obp')
-        print(recent_obp)
 
         if team_starter == '':
             career_obp, recent_obp = average.cal_batter_average(team_batter, game_date)
@@ -110,6 +104,13 @@ def process_recent_batter_data(player_df, game_date, team_starter, batter_stat_l
                 DifficultyRating = 8/8
             else:
                 DifficultyRating = average.switch_difficulty(average_whip/career_whip, career_whip/recent_whip)
+
+        print('average_obp')
+        print(average_obp)
+        print('career_obp')
+        print(career_obp)
+        print('recent_obp')
+        print(recent_obp)
 
         recent_difficulty_data['difficulty'] = DifficultyRating
         recent_difficulty_data['playerId'] = team_batter

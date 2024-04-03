@@ -15,12 +15,20 @@ engine = database.connect_to_db()
 game_sched = mlb.schedule(start_date = date.today())
 
 # for game in game_sched:
-playerData[game['game_id']] = {}
-playerData[game['game_id']]['away_batter'] = []
-playerData[game['game_id']]['home_batter'] = []
-playerData[game['game_id']]['away_pitcher'] = []
-playerData[game['game_id']]['home_pitcher'] = []
-playerData[game['game_id']]['name'] = {}
+# playerData[game['game_id']] = {}
+# playerData[game['game_id']]['away_batter'] = []
+# playerData[game['game_id']]['home_batter'] = []
+# playerData[game['game_id']]['away_pitcher'] = []
+# playerData[game['game_id']]['home_pitcher'] = []
+# playerData[game['game_id']]['name'] = {}
+
+playerData['746086'] = {}
+playerData['746086']['away_batter'] = []
+playerData['746086']['home_batter'] = []
+playerData['746086']['away_pitcher'] = []
+playerData['746086']['home_pitcher'] = []
+playerData['746086']['name'] = {}
+
 away_batter_atbats = {}
 home_batter_atbats = {}
 away_pitcher_atbats = {}
@@ -179,11 +187,17 @@ for key in home_pitcher_sort_atbats.keys():
     home_pitcher.append(key)
     count += 1
 
-playerData[game['game_id']]['away_batter'] = away_batter
-playerData[game['game_id']]['home_batter'] = home_batter
-playerData[game['game_id']]['away_pitcher'] = away_pitcher
-playerData[game['game_id']]['home_pitcher'] = home_pitcher
-playerData[game['game_id']]['name'] = name
+# playerData[game['game_id']]['away_batter'] = away_batter
+# playerData[game['game_id']]['home_batter'] = home_batter
+# playerData[game['game_id']]['away_pitcher'] = away_pitcher
+# playerData[game['game_id']]['home_pitcher'] = home_pitcher
+# playerData[game['game_id']]['name'] = name
+
+playerData['746086']['away_batter'] = away_batter
+playerData['746086']['home_batter'] = home_batter
+playerData['746086']['away_pitcher'] = away_pitcher
+playerData['746086']['home_pitcher'] = home_pitcher
+playerData['746086']['name'] = name
 
 today  = date.today()
 output_date = today.strftime("%Y/%m/%d")

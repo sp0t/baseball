@@ -207,7 +207,7 @@ batter_stat_list = ['home_score', 'away_score', 'atBats', 'avg', 'baseOnBalls', 
 pitcher_stat_list=['atBats', 'baseOnBalls', 'blownSave', 'doubles', 'earnedRuns', 'era', 'hits', 'holds', 'homeRuns', 'inningsPitched', 
     'losses', 'pitchesThrown', 'playerId', 'rbi', 'runs', 'strikeOuts', 'strikes', 'triples', 'whip',  'wins']
 
-print(playerData)
+# print(playerData)
 
 for gameid in playerData:
     print('gameid')

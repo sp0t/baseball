@@ -1042,9 +1042,7 @@ def show_betting():
     if request.method == 'GET':
         return render_template("betting.html")
 
-    print('start')
     modify_data = request.get_json()
-    print(modify_data)
     daystr = modify_data["gamedate"]
 
     if modify_data["status"] == 1 or modify_data["status"] == 2:
@@ -1108,6 +1106,56 @@ def show_betting():
     data = {}
     data['bet'] = betdata
     data['stake'] = stake
+
+    return data
+
+@app.route('/reconciliation', methods = ["GET", "POST"])
+def reconciliation():
+    engine = database.connect_to_db()
+    if request.method == 'GET':
+        site_res = pd.read_sql(f"SELECT * FROM site_list", con = engine).to_dict('records')
+        return render_template("reconciliation.html", sitelist = site_res)
+
+    request_data = request.get_json()
+
+    startdate = request_data["startdate"]
+    enddate = request_data["enddate"]
+    betsite = request_data["betsite"]
+
+    if betsite == 'All':
+        res = pd.read_sql(f"SELECT betid, betdate, team1, team2, place, stake, wins, status FROM betting_table WHERE regstate != '2' AND betdate BETWEEN '{startdate}' AND '{enddate}';", con = engine)
+    else:
+        res = pd.read_sql(f"SELECT betid, betdate, team1, team2, place, stake, wins, status FROM betting_table WHERE site = '{betsite}' AND regstate != '2' AND betdate BETWEEN '{startdate}' AND '{enddate}';", con = engine)
+
+    betdata = res.to_dict('records')
+    
+    for bet in betdata:
+        dec = float(bet['wins']) / float(bet['stake']) + 1
+        bet['odds'] = odds.decimalToAmerian(dec)
+
+        if(bet["team1"] == bet["team2"]):
+            bet["game"] = bet["team1"]
+        else:    
+            bet["game"] = bet["team1"] + " vs " + bet["team2"]
+
+        if bet["status"] == "0":
+            bet["status"] = "PENDING"
+            bet["wins"] = "PENDING"
+        elif bet["status"] == "1":
+            bet["status"] = "L"
+            bet["wins"] = -bet["stake"]
+        elif bet["status"] == "2":
+            bet["status"] = "W"
+
+
+    # if betsite == 'All':
+    #     stake = pd.read_sql(f"SELECT betdate, SUM(stake) stake, SUM(CASE WHEN status = '2' THEN wins ELSE 0 END) wins, SUM(CASE WHEN status = '1' THEN stake ELSE 0 END) losses FROM betting_table WHERE regstate != '2' AND betdate BETWEEN '{startdate}' AND '{enddate}';", con = engine).to_dict('records')
+    # else:
+    #     stake = pd.read_sql(f"SELECT betdate, SUM(stake) stake, SUM(CASE WHEN status = '2' THEN wins ELSE 0 END) wins, SUM(CASE WHEN status = '1' THEN stake ELSE 0 END) losses FROM betting_table WHERE betdate = '{daystr}' GROUP BY betdate ORDER BY betdate;", con = engine).to_dict('records')
+    
+    data = {}
+    data['bet'] = betdata
+    # data['stake'] = stake
 
     return data
 
@@ -1376,8 +1424,6 @@ def getWinPredict():
 
     away_name = team_dict[away_name]
     home_name = team_dict[home_name]
-
-    print('=======================>players_data', players_data)
 
     combinations_list = list(combinations(players_data['away_i_batter'], 2))
     away_lists = [list(combination) for combination in combinations_list]

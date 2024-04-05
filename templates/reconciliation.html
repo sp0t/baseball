@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>BetMLB</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="/static/styles.css">
+    <link rel="stylesheet" href="/static/nav.css">
+    <link rel="icon"
+        href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🚀</text></svg>">
+    <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='index.js') }}"></script>
+
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.3.0/css/datepicker.css" rel="stylesheet" type="text/css" />
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.3.0/js/bootstrap-datepicker.js"></script>
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.3/moment-with-locales.min.js"
+   integrity="sha512-vFABRuf5oGUaztndx4KoAEUVQnOvAIFs59y4tO0DILGWhQiFnFHiR+ZJfxLDyJlXgeut9Z07Svuvm+1Jv89w5g=="  crossorigin="anonymous" referrerpolicy="no-referrer"> </script>
+    <script type="text/javascript">
+        $(function () {
+        $("#startpicker").datepicker({ 
+                autoclose: true, 
+                todayHighlight: true
+        }).datepicker('update', new Date());
+
+        $("#startpicker").on("changeDate", ({date, oldDate}) => {      
+            changeStartDate(date);
+        });
+
+        $("#endpicker").datepicker({ 
+                autoclose: true, 
+                todayHighlight: true
+        }).datepicker('update', new Date());
+
+        $("#endpicker").on("changeDate", ({date, oldDate}) => {        
+            changeEndDate(date);
+        });
+    });
+
+    $( document ).ready(function() {
+        var date = new Date();
+        dispdate = date.toDispStr();
+        document.getElementById('startdate').innerHTML = dispdate
+        document.getElementById('enddate').innerHTML = dispdate
+        var data={};
+        data["startdate"] = $("#startdateInput").val();
+        data["enddate"] = $("#enddateInput").val();
+        data["betsite"] = $("#betsite").val();
+
+        updatebettingdata(data);
+    });
+
+    function addDays(date, days) {
+        const newDate = new Date(date);
+        newDate.setDate(date.getDate() + days);
+        return newDate;
+    }
+
+    function changeStartDate(date){
+        var dispdate = date.toDispStr();
+        var startdate = new Date($("#startdateInput").val());
+        var enddate = new Date($("#enddateInput").val());
+
+        
+        if(startdate > enddate) {
+            $("#startpicker").datepicker('update', addDays(enddate, 1));
+            document.getElementById('startdate').innerHTML = (addDays(enddate, 1)).toDispStr();
+        } else {
+            document.getElementById('startdate').innerHTML = dispdate;
+        }
+
+        var data={};
+        data["startdate"] = $("#startdateInput").val();
+        data["enddate"] = $("#enddateInput").val();
+        data["betsite"] = $("#betsite").val();
+
+        updatebettingdata(data);
+    }
+
+    function changeEndDate(date){
+        var dispdate = date.toDispStr();
+        var startdate = new Date($("#startdateInput").val());
+        var enddate = new Date($("#enddateInput").val());
+        
+        if(startdate > enddate) {
+            $("#endpicker").datepicker('update', addDays(startdate, 1));
+            document.getElementById('enddate').innerHTML = (addDays(startdate, 1)).toDispStr();
+        } else {
+            document.getElementById('enddate').innerHTML = dispdate;
+        }
+
+        var data={};
+        data["startdate"] = $("#startdateInput").val();
+        data["enddate"] = $("#enddateInput").val();
+        data["betsite"] = $("#betsite").val();
+
+        updatebettingdata(data);
+    }
+
+    function chageSite (site) {
+        var data={};
+        data["startdate"] = $("#startdateInput").val();
+        data["enddate"] = $("#enddateInput").val();
+        data["betsite"] = $("#betsite").val();
+
+    }
+
+    Date.prototype.yyyymmdd = function() {
+    var mm = this.getMonth() + 1; // getMonth() is zero-based
+    var dd = this.getDate();
+
+    return [this.getFullYear(), "-",
+            (mm>9 ? '' : '0') + mm, "-",  
+            (dd>9 ? '' : '0') + dd
+            ].join('');
+    };
+
+    Date.prototype.toDispStr = function()
+    {
+        var months = ["January", "February", "March", "April", "May", "June", "July",
+                      "August", "September", "October", "November", "December"];
+
+        var dd = this.getDate();
+        var mm = months[this.getMonth()];
+        var yy = this.getFullYear();
+
+        return [mm, " ", (dd>9 ? '' : '0') + dd, ", ", yy].join('');
+    }
+
+    function updatebettingdata(senddata){ 
+        $.ajax({
+            url: '/reconciliation', 
+            type: 'POST', 
+            data: JSON.stringify(senddata),
+            dataType: 'json',
+            contentType: 'application/json',
+
+            success: function (data){ 
+                var html='';
+                var stakehtml='';
+
+                var betstate = data['bet'];
+                var stake = data['stake'];
+
+                for(var i=0; i<betstate.length;i++){
+                    console.log(betstate[i])
+                    html+='<tr>';
+                    html+='<td>'+betstate[i]["betdate"]+'</td>';
+                    html+='<td>'+betstate[i]["game"]+'</td>';
+                    html+='<td>'+betstate[i]["place"]+'</td>';
+                    html+='<td>'+betstate[i]["stake"]+'</td>';
+                    html+='<td>'+betstate[i]["odds"]+'</td>';
+                    var result = betstate[i]["status"] == 'P' ? 'Pending': betstate[i]["status"];
+                    html+='<td>'+result+'</td>';
+                    html+='<td>'+betstate[i]["wins"]+'</td>';
+                    html+='</tr>';
+                }
+
+                // if(stake.length != 0)
+                // {
+                //     let USDollar = new Intl.NumberFormat('en-US', {
+                //         style: 'currency',
+                //         currency: 'USD',
+                //     });
+
+                //     stakehtml += `<td style="color: rgba(0, 38, 255, 0.784);">${USDollar.format(stake[0]['stake'])}</td>`
+                //     if(stake[0]['wins'] - stake[0]['losses'] >= 0)
+                //         stakehtml += `<td style="color: green;">${USDollar.format(stake[0]['wins'] - stake[0]['losses'])}</td>`
+                //     else
+                //         stakehtml += `<td style="color: red;">${USDollar.format(stake[0]['wins'] - stake[0]['losses'])}</td>`
+    
+                //     stakehtml += `<td style="color: rgb(0, 0, 0);">${((stake[0]['wins'] - stake[0]['losses']) * 100 / stake[0]['stake']).toFixed(2)}%</td>`
+                // }
+
+
+                $("#betbody").html(html);
+                $("#stake").html(stakehtml);
+            }
+        })
+    }
+
+    </script>
+    <style>
+        .table thead tr th, .table tbody tr td {
+            border: none;
+            font-size: 20px;
+        }
+
+        thead th {
+        font-size: 20px;
+        margin-top: 0;
+
+        padding-bottom: 10px !important;
+        height: 20px;
+        }
+
+        p:hover{
+                color: rgb(0, 4, 255);
+                font-size: 20x;
+            }
+        
+    </style>
+</head>
+
+<body>
+    <div class="container-fluid">
+        <div class="row" style="padding-top: 5rem">
+            <div class="col-lg-6">
+                <div class="col-lg-4 text-right">
+                    <h1 style="font-weight: bold">Summary</h1>
+                </div>
+                <div class="col-lg-8 text-left" style="display: flex;">
+                    <h1 id = "startdate" style="font-weight: bold"></h1>
+                    <h1 style="font-weight: bold; padding-left: 10px; padding-right: 10px;">~</h1>
+                    <h1 id = "enddate" style="font-weight: bold"></h1>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="col-lg-6 text-right">
+                    <a href="/season"><h1 style="font-weight: bold">Stats</h1></a>
+                    
+                </div>
+                <div class="col-lg-4" style="padding-top: 30px;">
+                    <a href="/" id="homeln" style="font-size: 20px;">Home</a>
+                    <a href="/teams" id="teamsln" style="font-size: 20px;">Teams</a>
+                    <a href="/database" id="databaseln" style="font-size: 20px;">Database</a>
+                </div>
+                <div class="col-lg-2" style="padding-right: 0px; margin-top: -20px;">
+                    <div class="dropdown">
+                        <button class="btn btn-primary dropdown-toggle dropbtn" type="button" data-toggle="dropdown">
+                            <img src="/static/1.png" style="width: 40px; height: 40px;" alt="dropdown image" class="img-responsive">
+                            <span class="caret"></span>
+                        </button>
+                        <ul class="dropdown-menu dropend" style="left: -95px; width: 100px;">
+                            <!-- <li style="display: block; padding-top: 16px; padding-bottom: 16px;"><a href="#" id="changepassword" data-toggle="modal" data-target="#updatepassword"><p>Reset Pssword</p></a></li> -->
+                            <li style="display: block; padding-top: 16px; padding-bottom: 16px;"><a href="{{url_for('logout')}}" id="logout"><p>Log Out</p></a></li>
+                        </ul>
+                    </div>
+                </div>  
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-5">
+                <div class="col-lg-6 text-center">
+                    <h3 style="margin-left: -50px">From</h3>
+                </div>
+                <div class="col-lg-6" style="margin-left: -100px">
+                    <div id="startpicker" class="input-group date" data-date-format="yyyy-mm-dd" style="padding-top: 15px;">
+                        <input id = "startdateInput" class="form-control" type="text" style="font-weight: bold; font-size: 20px; text-align: center;" value="2022-10-10"/>
+                        <span class="input-group-addon" style="cursor: pointer; font-size: 15px;">Change Date</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-5">
+                <div class="col-lg-6 text-center">
+                    <h3 style="margin-left: -50px">Date to</h3>
+                </div>
+                <div class="col-lg-6" style="margin-left: -100px">
+                    <div id="endpicker" class="input-group date" data-date-format="yyyy-mm-dd" style="padding-top: 15px;">
+                        <input id = "enddateInput"  class="form-control" type="text" style="font-weight: bold; font-size: 20px; text-align: center;" value="2022-10-10"/>
+                        <span class="input-group-addon" style="cursor: pointer; font-size: 15px;">Change Date</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row`">
+            <div class="col-lg-5">
+                <div class="col-lg-6 text-center">
+                    <h3 style="margin-left: -50px">Site</h3>
+                </div>
+                <div class="col-lg-6" style="margin-left: -110px; margin-top: 13px;">
+                    <select class="form-control" id = "betsite" style="font-weight: bold; font-size: 16px; text-align: center;" name="site" onchange="chageSite(this.value)">
+                        <option value="All">All</option>
+                        {% for site in sitelist %}
+                            <option value="{{site.site}}">{{site.site}}</option>
+                        {% endfor %}
+                    </select> 
+                </div>
+            </div>  
+        </div>
+    </div>
+    <div class="container-fluid" style="padding: 100px 120px 0px 120px;">
+        <div>
+            <table class="table" style="margin: 0 auto; text-align: center; width: auto; border: none;">
+                <thead style="font-size: 20px;color: black; font-weight: bold; height: 50px;">
+                    <tr>
+                        <td>Total Stake</td>
+                        <td style="padding-left: 40px; padding-right: 40px;">P/L</td>
+                        <td>Yield</td>
+                    </tr>
+                </thead>
+                <tbody style="font-size: 20px; height: 20px;">
+                    <tr id = 'stake'>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <hr style="height:2px;border-width:0;color:rgb(14, 14, 163);margin-top: 5px; background-color: gray;">
+        <div class="container-fluid"> 
+            <table class="table borderless" style="text-align: center; border: none">
+              <thead style="text-align: center; padding-bottom: 20px;">
+                <tr style="margin-top: 0;">
+                  <th class="text-center">GameDate</th>
+                  <th class="text-center">Game</th>
+                  <th class="text-center">Selection</th>
+                  <th class="text-center">Stake</th>
+                  <th class="text-center">Price</th>
+                  <th class="text-center">Result</th>
+                  <th class="text-center">Profit</th>
+                </tr>
+              </thead>
+              <tbody id = "betbody" style="text-align: center;">
+              </tbody>
+            </table>
+        </div>
+
+    </div>
+</html>
+
+

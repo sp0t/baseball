@@ -304,7 +304,7 @@ def update_database():
     game_id_list = []
     for game in game_sched:
         game_id_list.append(game['game_id'])
-        
+
     if len(game_id_list) > 0: 
         # Get Box Scores! 
         box_list = []
@@ -452,10 +452,4 @@ def update_database():
     print('DB Updated')
     return last_update_date, last_update_time, new_last_record, len(game_id_list)
 
-game_sched = mlb.schedule(start_date = "2024-04-03")
-info_keys = ['game_id', 'game_datetime','away_name', 'home_name']
-game_sched = [{k:v for k,v in el.items() if k in info_keys} for el in game_sched]
-game_id_list = []
-for game in game_sched:
-    game_id_list.append(game['game_id'])
-print(game_id_list)
+update_database()

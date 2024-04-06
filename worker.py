@@ -161,7 +161,7 @@ def get_pitching_box_score(data, team):
 
 def get_box_score(game_id): 
     
-    engine = connect_to_db()
+    engine = database.connect_to_db()
     data = mlb.boxscore_data(game_id)
     
     # Game Info 
@@ -311,7 +311,7 @@ def get_box_score(game_id):
     return box_score
 
 def update_database(): 
-    engine = connect_to_db()
+    engine = database.connect_to_db()
     game_sched = mlb.schedule(start_date = "2024-04-03")
     info_keys = ['game_id', 'game_datetime','away_name', 'home_name']
     game_sched = [{k:v for k,v in el.items() if k in info_keys} for el in game_sched]

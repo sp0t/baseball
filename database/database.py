@@ -352,11 +352,9 @@ def update_database():
                 else:   
                     winner = 0
                 # game_table
-                game_table_sql = 'INSERT INTO game_table( game_id, game_date, away_team, home_team, away_score, home_score, winner) VALUES (' + \
-                        '\'' + el['game_id'] + '\'' + ',' +  '\'' + el['game_date'] + '\'' +  ',' + '\'' +  el['away_team'] + '\'' +  ',' + \
-                        '\'' + el['home_team'] + '\'' +  ',' + '\'' +  el['away_score'] + '\'' +  ','  + '\'' + el['home_score']\
-                        + '\'' + ',' + '\'' + str(winner) + '\'' + ');'
-                engine.execute(game_table_sql)
+                game_table_sql = 'INSERT INTO game_table(game_id, game_date, away_team, home_team, away_score, home_score, winner) VALUES (%s, %s, %s, %s, %s, %s, %s)'
+                data_tuple = (el['game_id'], el['game_date'], el['away_team'], el['home_team'], el['away_score'], el['home_score'], winner)
+                engine.execute(game_table_sql, data_tuple)
                 
                 # pitcher_table insert query
                 teams = ['away', 'home']
@@ -372,17 +370,19 @@ def update_database():
                         data['pitchesThrown'] = 0
                         data['strikes'] = 0
 
-                    pitcher_table_sql = 'INSERT INTO pitcher_table( game_id, playerid, team, role, atbats, baseonballs, blownsaves, doubles, earnedruns, era,' \
-                                'hits, holds, homeruns, inningspitched, losses, pitchesthrown, rbi, runs, strikeouts, strikes, triples, whip, wins, batter) VALUES (' + \
-                                '\'' + el['game_id'] + '\'' + ',' +  '\'' + str(data['playerId']) + '\'' +  ',' + '\'' + team + '\'' + ',' + '\'' + 'starter' + '\'' + ',' + \
-                                '\'' + str(data['atBats']) + '\'' +  ',' + '\'' + str(data['baseOnBalls']) + '\'' +  ',' + '\'' + str(data['blownSaves']) + '\'' +  ',' + \
-                                '\'' + str(data['doubles']) + '\'' +  ',' + '\'' + str(data['earnedRuns']) + '\'' +  ',' + '\'' + str(data['era']) + '\'' + ',' + \
-                                '\'' + str(data['hits']) + '\'' +  ',' + '\'' + str(data['holds']) + '\'' +  ',' + '\'' + str(data['homeRuns']) + '\'' +  ',' + \
-                                '\'' + str(data['inningsPitched']) + '\'' +  ',' + '\'' + str(data['losses']) + '\'' +  ',' + '\'' + str(data['pitchesThrown']) + '\'' +  ',' + \
-                                '\'' + str(data['rbi']) + '\'' +  ',' + '\'' + str(data['runs']) + '\'' +  ',' + '\'' + str(data['strikeOuts']) + '\'' +  ',' + \
-                                '\'' + str(data['strikes']) + '\'' +  ',' + '\'' + str(data['triples']) + '\'' +  ',' + '\'' + str(data['whip']) + '\'' +  ',' + \
-                                '\'' + str(data['wins']) + '\'' + ',' +  '\'' + str(batter) + '\'' + ');'
-                    engine.execute(pitcher_table_sql)
+                    pitcher_table_sql = '''
+                    INSERT INTO pitcher_table(
+                        game_id, playerid, team, role, atbats, baseonballs, blownsaves, doubles, earnedruns, era,
+                        hits, holds, homeruns, inningspitched, losses, pitchesthrown, rbi, runs, strikeouts, strikes, triples, whip, wins, batter
+                    ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                    '''
+                    data_tuple = (
+                        el['game_id'], data['playerId'], team, 'starter',
+                        data['atBats'], data['baseOnBalls'], data['blownSaves'], data['doubles'], data['earnedRuns'], data['era'],
+                        data['hits'], data['holds'], data['homeRuns'], data['inningsPitched'], data['losses'], data['pitchesThrown'],
+                        data['rbi'], data['runs'], data['strikeOuts'], data['strikes'], data['triples'], data['whip'], data['wins'], batter
+                    )
+                    engine.execute(pitcher_table_sql, data_tuple)
 
                     bullpenAvgdata = el['pitcher'][team]['bullpenAvg']
 
@@ -391,17 +391,20 @@ def update_database():
                             bullpenAvgdata['pitchesThrown'] = 0
                             bullpenAvgdata['strikes'] = 0
 
-                        bullpenAvg_table_sql = 'INSERT INTO pitcher_table( game_id, playerid, team, role, atbats, baseonballs, blownsaves, doubles, earnedruns, era,' \
-                                    'hits, holds, homeruns, inningspitched, losses, pitchesthrown, rbi, runs, strikeouts, strikes, triples, whip, wins, batter) VALUES (' + \
-                                    '\'' + el['game_id'] + '\'' + ',' +  '\'' + str(bullpenAvgdata['playerId']) + '\'' +  ',' + '\'' + team + '\'' + ',' + '\'' + 'bullpenAvg' + '\'' + ',' + \
-                                    '\'' + str(bullpenAvgdata['atBats']) + '\'' +  ',' + '\'' + str(bullpenAvgdata['baseOnBalls']) + '\'' +  ',' + '\'' + str(bullpenAvgdata['blownSaves']) + '\'' +  ',' + \
-                                    '\'' + str(bullpenAvgdata['doubles']) + '\'' +  ',' + '\'' + str(bullpenAvgdata['earnedRuns']) + '\'' +  ',' + '\'' + str(bullpenAvgdata['era']) + '\'' + ',' + \
-                                    '\'' + str(bullpenAvgdata['hits']) + '\'' +  ',' + '\'' + str(bullpenAvgdata['holds']) + '\'' +  ',' + '\'' + str(bullpenAvgdata['homeRuns']) + '\'' +  ',' + \
-                                    '\'' + str(bullpenAvgdata['inningsPitched']) + '\'' +  ',' + '\'' + str(bullpenAvgdata['losses']) + '\'' +  ',' + '\'' + str(bullpenAvgdata['pitchesThrown']) + '\'' +  ',' + \
-                                    '\'' + str(bullpenAvgdata['rbi']) + '\'' +  ',' + '\'' + str(bullpenAvgdata['runs']) + '\'' +  ',' + '\'' + str(bullpenAvgdata['strikeOuts']) + '\'' +  ',' + \
-                                    '\'' + str(bullpenAvgdata['strikes']) + '\'' +  ',' + '\'' + str(bullpenAvgdata['triples']) + '\'' +  ',' + '\'' + str(bullpenAvgdata['whip']) + '\'' +  ',' + \
-                                    '\'' + str(bullpenAvgdata['wins']) + '\'' + ',' +  '\'' + str(0) + '\'' + ');'
-                        engine.execute(bullpenAvg_table_sql)
+                        bullpenAvg_table_sql = '''
+                        INSERT INTO pitcher_table(
+                            game_id, playerid, team, role, atbats, baseonballs, blownsaves, doubles, earnedruns, era,
+                            hits, holds, homeruns, inningspitched, losses, pitchesthrown, rbi, runs, strikeouts, strikes, triples, whip, wins, batter
+                        ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                        '''
+                        data_tuple = (
+                            el['game_id'], bullpenAvgdata['playerId'], team, 'bullpenAvg',
+                            bullpenAvgdata['atBats'], bullpenAvgdata['baseOnBalls'], bullpenAvgdata['blownSaves'], bullpenAvgdata['doubles'], bullpenAvgdata['earnedRuns'], bullpenAvgdata['era'],
+                            bullpenAvgdata['hits'], bullpenAvgdata['holds'], bullpenAvgdata['homeRuns'], bullpenAvgdata['inningsPitched'], bullpenAvgdata['losses'], bullpenAvgdata['pitchesThrown'],
+                            bullpenAvgdata['rbi'], bullpenAvgdata['runs'], bullpenAvgdata['strikeOuts'], bullpenAvgdata['strikes'], bullpenAvgdata['triples'], bullpenAvgdata['whip'], bullpenAvgdata['wins'], 0
+                        )
+
+                        engine.execute(bullpenAvg_table_sql, data_tuple)
 
                     for bullpen in el['pitcher'][team]['bullpen']:
                         if bullpen.get("pitchesThrown") is None or bullpen.get("strikes") is None:
@@ -413,17 +416,23 @@ def update_database():
                         if int(bullpen['playerId']) in el['batterid']:
                             batter = 1
 
-                        bullpen_table_sql = 'INSERT INTO pitcher_table( game_id, playerid, team, role, atbats, baseonballs, blownsaves, doubles, earnedruns, era,' \
-                                'hits, holds, homeruns, inningspitched, losses, pitchesthrown, rbi, runs, strikeouts, strikes, triples, whip, wins, batter) VALUES (' + \
-                                '\'' + el['game_id'] + '\'' + ',' +  '\'' + str(bullpen['playerId']) + '\'' +  ',' + '\'' + team + '\'' + ',' + '\'' + 'bullpen' + '\'' + ',' + \
-                                '\'' + str(bullpen['atBats']) + '\'' +  ',' + '\'' + str(bullpen['baseOnBalls']) + '\'' +  ',' + '\'' + str(bullpen['blownSaves']) + '\'' +  ',' + \
-                                '\'' + str(bullpen['doubles']) + '\'' +  ',' + '\'' + str(bullpen['earnedRuns']) + '\'' +  ',' + '\'' + str(bullpen['era']) + '\'' + ',' + \
-                                '\'' + str(bullpen['hits']) + '\'' +  ',' + '\'' + str(bullpen['holds']) + '\'' +  ',' + '\'' + str(bullpen['homeRuns']) + '\'' +  ',' + \
-                                '\'' + str(bullpen['inningsPitched']) + '\'' +  ',' + '\'' + str(bullpen['losses']) + '\'' +  ',' + '\'' + str(bullpen['pitchesThrown']) + '\'' +  ',' + \
-                                '\'' + str(bullpen['rbi']) + '\'' +  ',' + '\'' + str(bullpen['runs']) + '\'' +  ',' + '\'' + str(bullpen['strikeOuts']) + '\'' +  ',' + \
-                                '\'' + str(bullpen['strikes']) + '\'' +  ',' + '\'' + str(bullpen['triples']) + '\'' +  ',' + '\'' + str(bullpen['whip']) + '\'' +  ',' + \
-                                '\'' + str(bullpen['wins']) + '\'' + ',' +  '\'' + str(batter) + '\'' + ');'
-                        engine.execute(bullpen_table_sql)
+                        # Define the SQL command with placeholders for parameters
+                        bullpen_table_sql = '''
+                        INSERT INTO pitcher_table(
+                            game_id, playerid, team, role, atbats, baseonballs, blownsaves, doubles, earnedruns, era,
+                            hits, holds, homeruns, inningspitched, losses, pitchesthrown, rbi, runs, strikeouts, strikes, triples, whip, wins, batter
+                        ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                        '''
+
+                        # Create a tuple of values to insert into the database
+                        data_tuple = (
+                            el['game_id'], bullpen['playerId'], team, 'bullpen',
+                            bullpen['atBats'], bullpen['baseOnBalls'], bullpen['blownSaves'], bullpen['doubles'], bullpen['earnedRuns'], bullpen['era'],
+                            bullpen['hits'], bullpen['holds'], bullpen['homeRuns'], bullpen['inningsPitched'], bullpen['losses'], bullpen['pitchesThrown'],
+                            bullpen['rbi'], bullpen['runs'], bullpen['strikeOuts'], bullpen['strikes'], bullpen['triples'], bullpen['whip'], bullpen['wins'], batter
+                        )
+
+                        engine.execute(bullpen_table_sql, data_tuple)
 
                 # batter_table insert query
                 for team in teams:
@@ -437,18 +446,20 @@ def update_database():
                         if int(batter['playerId']) in el['bullpenid']:
                             pitcher = 2
 
-                        batter_table_sql = 'INSERT INTO batter_table( game_id, playerid, team, position, atbats, avg, baseonballs, doubles, hits, homeruns, '\
-                                    'obp, ops, rbi, runs, slg, strikeouts, triples, substitution, pitcher) VALUES (' + \
-                                    '\'' + el['game_id'] + '\'' + ',' +  '\'' + str(batter['playerId']) + '\'' +  ',' + \
-                                    '\'' + team + '\'' + ',' + '\'' +  str(batter['position']) + '\'' +  ',' +\
-                                    '\'' + str(batter['atBats']) + '\'' +  ',' + '\'' + str(batter['avg']) + '\'' +  ',' + \
-                                    '\'' + str(batter['baseOnBalls']) + '\'' +  ',' + '\'' + str(batter['doubles']) + '\'' +  ',' + \
-                                    '\'' + str(batter['hits']) + '\'' +  ',' + '\'' + str(batter['homeRuns']) + '\'' +  ',' + \
-                                    '\'' + str(batter['obp']) + '\'' +  ',' + '\'' + str(batter['ops']) + '\'' +  ',' + \
-                                    '\'' + str(batter['rbi']) + '\'' +  ',' + '\'' + str(batter['runs']) + '\'' +  ',' + '\'' + str(batter['slg']) + '\'' +  ',' + \
-                                    '\'' + str(batter['strikeOuts']) + '\'' +  ',' + '\'' + str(batter['triples']) + '\'' + ',' + '\'' + str(batter['substitution']) + '\'' + ',' +  '\'' + str(pitcher) + '\'' + ');'
-                        # print(batter_table_sql)
-                        engine.execute(batter_table_sql)
+                        batter_table_sql = '''
+                        INSERT INTO batter_table(
+                            game_id, playerid, team, position, atbats, avg, baseonballs, doubles, hits, homeruns,
+                            obp, ops, rbi, runs, slg, strikeouts, triples, substitution, pitcher
+                        ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                        '''
+
+                        # Create a tuple of values to be inserted
+                        data_tuple = (
+                            el['game_id'], batter['playerId'], team, batter['position'],
+                            batter['atBats'], batter['avg'], batter['baseOnBalls'], batter['doubles'], batter['hits'], batter['homeRuns'],
+                            batter['obp'], batter['ops'], batter['rbi'], batter['runs'], batter['slg'], batter['strikeOuts'], batter['triples'], batter['substitution'], pitcher
+                        )
+                        engine.execute(batter_table_sql, data_tuple)
                 new_last_record = el['game_date']
     else: 
         new_last_record = pd.read_sql("SELECT * FROM updates", con = engine).iloc[-1]['last_record']

@@ -153,9 +153,9 @@ def get_rosters(game_id):
 
 def get_schedule_from_mlb():
     engine = database.connect_to_db()
-    # game_sched = mlb.schedule(start_date = date.today())
+    game_sched = mlb.schedule(start_date = date.today())
     #testcommit
-    game_sched = mlb.schedule(start_date = "2024-04-04")
+    # game_sched = mlb.schedule(start_date = "2024-04-04")
     info_keys = ['game_id', 'game_datetime','away_name', 'home_name']
     game_sched = [{k:v for k,v in el.items() if k in info_keys} for el in game_sched]
     game_date = ''

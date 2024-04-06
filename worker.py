@@ -194,81 +194,81 @@ def get_box_score(game_id):
     away_rf = ""
     away_dh = ""
 
-    for batter in awayBatters:
-        if batter['personId'] != 0 and batter['substitution'] == False:
-            url = f"https://statsapi.mlb.com/api/v1/people/{batter['personId']}"
-            response = requests.get(url)
-            if response.status_code == 200:
-                result = response.json()
-                hander = result['people'][0]['batSide']['code']
-            else:
-                hander = 'R'
+    # for batter in awayBatters:
+    #     if batter['personId'] != 0 and batter['substitution'] == False:
+    #         url = f"https://statsapi.mlb.com/api/v1/people/{batter['personId']}"
+    #         response = requests.get(url)
+    #         if response.status_code == 200:
+    #             result = response.json()
+    #             hander = result['people'][0]['batSide']['code']
+    #         else:
+    #             hander = 'R'
 
-            if batter['position'] == 'C':
-                away_c = batter['name'].replace("'", " ") + "   " + hander
-            elif batter['position'] == '1B':
-                away_b1 = batter['name'].replace("'", " ") + "   " + hander
-            elif batter['position'] == '2B':
-                away_b2 = batter['name'].replace("'", " ") + "   " + hander
-            elif batter['position'] == '3B':
-                away_b3 = batter['name'].replace("'", " ") + "   " + hander
-            elif batter['position'] == 'SS':
-                away_ss = batter['name'].replace("'", " ") + "   " + hander
-            elif batter['position'] == 'LF':
-                away_lf = batter['name'].replace("'", " ") + "   " + hander
-            elif batter['position'] == 'CF':
-                away_cf = batter['name'].replace("'", " ") + "   " + hander
-            elif batter['position'] == 'RF':
-                away_rf = batter['name'].replace("'", " ") + "   " + hander
-            elif batter['position'] == 'DH':
-                away_dh = batter['name'].replace("'", " ") + "   " + hander
-
-
+    #         if batter['position'] == 'C':
+    #             away_c = batter['name'].replace("'", " ") + "   " + hander
+    #         elif batter['position'] == '1B':
+    #             away_b1 = batter['name'].replace("'", " ") + "   " + hander
+    #         elif batter['position'] == '2B':
+    #             away_b2 = batter['name'].replace("'", " ") + "   " + hander
+    #         elif batter['position'] == '3B':
+    #             away_b3 = batter['name'].replace("'", " ") + "   " + hander
+    #         elif batter['position'] == 'SS':
+    #             away_ss = batter['name'].replace("'", " ") + "   " + hander
+    #         elif batter['position'] == 'LF':
+    #             away_lf = batter['name'].replace("'", " ") + "   " + hander
+    #         elif batter['position'] == 'CF':
+    #             away_cf = batter['name'].replace("'", " ") + "   " + hander
+    #         elif batter['position'] == 'RF':
+    #             away_rf = batter['name'].replace("'", " ") + "   " + hander
+    #         elif batter['position'] == 'DH':
+    #             away_dh = batter['name'].replace("'", " ") + "   " + hander
 
 
-    engine.execute(f"INSERT INTO position(game_id, game_date, team, role, c, b1, b2, b3, ss, lf, cf, rf, dh) \
-                                    VALUES('{game_id}', '{game_date}', '{away_team}', 'away', '{away_c}', '{away_b1}', '{away_b2}', '{away_b3}', '{away_ss}', '{away_lf}', '{away_cf}', '{away_rf}', '{away_dh}');")
-    home_c = ""
-    home_b1 = ""
-    home_b2 = ""
-    home_b3 = ""
-    home_ss = ""
-    home_lf = ""
-    home_cf = ""
-    home_rf = ""
-    home_dh = ""
 
-    for batter in homeBatters:
-        if batter['personId'] != 0 and batter['substitution'] == False:
-            url = f"https://statsapi.mlb.com/api/v1/people/{batter['personId']}"
-            response = requests.get(url)
-            if response.status_code == 200:
-                result = response.json()
-                hander = result['people'][0]['batSide']['code']
-            else:
-                hander = 'R'
 
-            if batter['position'] == 'C':
-                home_c = batter['name'].replace("'", " ") + "   " + hander
-            elif batter['position'] == '1B':
-                home_b1 = batter['name'].replace("'", " ") + "   " + hander
-            elif batter['position'] == '2B':
-                home_b2 = batter['name'].replace("'", " ") + "   " + hander
-            elif batter['position'] == '3B':
-                home_b3 = batter['name'].replace("'", " ") + "   " + hander
-            elif batter['position'] == 'SS':
-                home_ss = batter['name'].replace("'", " ") + "   " + hander
-            elif batter['position'] == 'LF':
-                home_lf = batter['name'].replace("'", " ") + "   " + hander
-            elif batter['position'] == 'CF':
-                home_cf = batter['name'].replace("'", " ") + "   " + hander
-            elif batter['position'] == 'RF':
-                home_rf = batter['name'].replace("'", " ") + "   " + hander
-            elif batter['position'] == 'DH':
-                home_dh = batter['name'].replace("'", " ") + "   " + hander
+    # engine.execute(f"INSERT INTO position(game_id, game_date, team, role, c, b1, b2, b3, ss, lf, cf, rf, dh) \
+    #                                 VALUES('{game_id}', '{game_date}', '{away_team}', 'away', '{away_c}', '{away_b1}', '{away_b2}', '{away_b3}', '{away_ss}', '{away_lf}', '{away_cf}', '{away_rf}', '{away_dh}');")
+    # home_c = ""
+    # home_b1 = ""
+    # home_b2 = ""
+    # home_b3 = ""
+    # home_ss = ""
+    # home_lf = ""
+    # home_cf = ""
+    # home_rf = ""
+    # home_dh = ""
 
-    engine.execute(f"INSERT INTO position(game_id, game_date, team, role, c, b1, b2, b3, ss, lf, cf, rf, dh) \
-                                    VALUES('{game_id}', '{game_date}', '{home_team}', 'home', '{home_c}', '{home_b1}', '{home_b2}', '{home_b3}', '{home_ss}', '{home_lf}', '{home_cf}', '{home_rf}', '{home_dh}');")
+    # for batter in homeBatters:
+    #     if batter['personId'] != 0 and batter['substitution'] == False:
+    #         url = f"https://statsapi.mlb.com/api/v1/people/{batter['personId']}"
+    #         response = requests.get(url)
+    #         if response.status_code == 200:
+    #             result = response.json()
+    #             hander = result['people'][0]['batSide']['code']
+    #         else:
+    #             hander = 'R'
+
+    #         if batter['position'] == 'C':
+    #             home_c = batter['name'].replace("'", " ") + "   " + hander
+    #         elif batter['position'] == '1B':
+    #             home_b1 = batter['name'].replace("'", " ") + "   " + hander
+    #         elif batter['position'] == '2B':
+    #             home_b2 = batter['name'].replace("'", " ") + "   " + hander
+    #         elif batter['position'] == '3B':
+    #             home_b3 = batter['name'].replace("'", " ") + "   " + hander
+    #         elif batter['position'] == 'SS':
+    #             home_ss = batter['name'].replace("'", " ") + "   " + hander
+    #         elif batter['position'] == 'LF':
+    #             home_lf = batter['name'].replace("'", " ") + "   " + hander
+    #         elif batter['position'] == 'CF':
+    #             home_cf = batter['name'].replace("'", " ") + "   " + hander
+    #         elif batter['position'] == 'RF':
+    #             home_rf = batter['name'].replace("'", " ") + "   " + hander
+    #         elif batter['position'] == 'DH':
+    #             home_dh = batter['name'].replace("'", " ") + "   " + hander
+
+    # engine.execute(f"INSERT INTO position(game_id, game_date, team, role, c, b1, b2, b3, ss, lf, cf, rf, dh) \
+    #                                 VALUES('{game_id}', '{game_date}', '{home_team}', 'home', '{home_c}', '{home_b1}', '{home_b2}', '{home_b3}', '{home_ss}', '{home_lf}', '{home_cf}', '{home_rf}', '{home_dh}');")
 
     
     away_score = data['awayBattingTotals']['r']
@@ -358,6 +358,8 @@ def update_database():
                     winner = 1
                 else:   
                     winner = 0
+
+                print(str(winner))
                 # game_table
                 game_table_sql = 'INSERT INTO game_table( game_id, game_date, away_team, home_team, away_score, home_score, winner) VALUES (' + \
                         '\'' + el['game_id'] + '\'' + ',' +  '\'' + el['game_date'] + '\'' +  ',' + '\'' +  el['away_team'] + '\'' +  ',' + \

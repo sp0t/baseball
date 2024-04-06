@@ -361,11 +361,15 @@ def update_database():
 
                 print(str(winner))
                 # game_table
-                game_table_sql = 'INSERT INTO game_table( game_id, game_date, away_team, home_team, away_score, home_score, winner) VALUES (' + \
-                        '\'' + el['game_id'] + '\'' + ',' +  '\'' + el['game_date'] + '\'' +  ',' + '\'' +  el['away_team'] + '\'' +  ',' + \
-                        '\'' + el['home_team'] + '\'' +  ',' + '\'' +  el['away_score'] + '\'' +  ','  + '\'' + el['home_score']\
-                        + '\'' + ',' + '\'' + str(winner) + '\'' + ');'
-                engine.execute(game_table_sql)
+
+                game_table_sql = 'INSERT INTO game_table(game_id, game_date, away_team, home_team, away_score, home_score, winner) VALUES (%s, %s, %s, %s, %s, %s, %s)'
+                data_tuple = (el['game_id'], el['game_date'], el['away_team'], el['home_team'], el['away_score'], el['home_score'], winner)
+                engine.execute(game_table_sql, data_tuple)
+                # game_table_sql = 'INSERT INTO game_table( game_id, game_date, away_team, home_team, away_score, home_score, winner) VALUES (' + \
+                #         '\'' + el['game_id'] + '\'' + ',' +  '\'' + el['game_date'] + '\'' +  ',' + '\'' +  el['away_team'] + '\'' +  ',' + \
+                #         '\'' + el['home_team'] + '\'' +  ',' + '\'' +  el['away_score'] + '\'' +  ','  + '\'' + el['home_score']\
+                #         + '\'' + ',' + '\'' + str(winner) + '\'' + ');'
+                # engine.execute(game_table_sql)
                 
                 # pitcher_table insert query
                 teams = ['away', 'home']

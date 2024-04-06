@@ -462,8 +462,6 @@ def update_database():
                         if int(batter['playerId']) in el['bullpenid']:
                             pitcher = 2
 
-                        
-                        # Define the SQL command with placeholders for parameters
                         batter_table_sql = '''
                         INSERT INTO batter_table(
                             game_id, playerid, team, position, atbats, avg, baseonballs, doubles, hits, homeruns,
@@ -477,10 +475,9 @@ def update_database():
                             batter['atBats'], batter['avg'], batter['baseOnBalls'], batter['doubles'], batter['hits'], batter['homeRuns'],
                             batter['obp'], batter['ops'], batter['rbi'], batter['runs'], batter['slg'], batter['strikeOuts'], batter['triples'], batter['substitution'], pitcher
                         )
-
-                        # Execute the SQL command with the provided data
                         engine.execute(batter_table_sql, data_tuple)
-                                        new_last_record = el['game_date']
+                        
+                new_last_record = el['game_date']
     else: 
         new_last_record = pd.read_sql("SELECT * FROM updates", con = engine).iloc[-1]['last_record']
         

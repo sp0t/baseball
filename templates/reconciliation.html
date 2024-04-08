@@ -162,21 +162,21 @@
                     html+='</tr>';
                 }
 
-                // if(stake.length != 0)
-                // {
-                //     let USDollar = new Intl.NumberFormat('en-US', {
-                //         style: 'currency',
-                //         currency: 'USD',
-                //     });
+                if(stake.length != 0)
+                {
+                    let USDollar = new Intl.NumberFormat('en-US', {
+                        style: 'currency',
+                        currency: 'USD',
+                    });
 
-                //     stakehtml += `<td style="color: rgba(0, 38, 255, 0.784);">${USDollar.format(stake[0]['stake'])}</td>`
-                //     if(stake[0]['wins'] - stake[0]['losses'] >= 0)
-                //         stakehtml += `<td style="color: green;">${USDollar.format(stake[0]['wins'] - stake[0]['losses'])}</td>`
-                //     else
-                //         stakehtml += `<td style="color: red;">${USDollar.format(stake[0]['wins'] - stake[0]['losses'])}</td>`
+                    stakehtml += `<td style="color: rgba(0, 38, 255, 0.784);">${USDollar.format(stake[0]['stake'])}</td>`
+                    if(stake[0]['wins'] - stake[0]['losses'] >= 0)
+                        stakehtml += `<td style="color: green;">${USDollar.format(stake[0]['wins'] - stake[0]['losses'])}</td>`
+                    else
+                        stakehtml += `<td style="color: red;">${USDollar.format(stake[0]['wins'] - stake[0]['losses'])}</td>`
     
-                //     stakehtml += `<td style="color: rgb(0, 0, 0);">${((stake[0]['wins'] - stake[0]['losses']) * 100 / stake[0]['stake']).toFixed(2)}%</td>`
-                // }
+                    stakehtml += `<td style="color: rgb(0, 0, 0);">${((stake[0]['wins'] - stake[0]['losses']) * 100 / stake[0]['stake']).toFixed(2)}%</td>`
+                }
 
 
                 $("#betbody").html(html);
@@ -228,8 +228,6 @@
                 </div>
                 <div class="col-lg-4" style="padding-top: 30px;">
                     <a href="/" id="homeln" style="font-size: 20px;">Home</a>
-                    <a href="/teams" id="teamsln" style="font-size: 20px;">Teams</a>
-                    <a href="/database" id="databaseln" style="font-size: 20px;">Database</a>
                 </div>
                 <div class="col-lg-2" style="padding-right: 0px; margin-top: -20px;">
                     <div class="dropdown">

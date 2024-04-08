@@ -1148,14 +1148,14 @@ def reconciliation():
             bet["status"] = "W"
 
 
-    # if betsite == 'All':
-    #     stake = pd.read_sql(f"SELECT betdate, SUM(stake) stake, SUM(CASE WHEN status = '2' THEN wins ELSE 0 END) wins, SUM(CASE WHEN status = '1' THEN stake ELSE 0 END) losses FROM betting_table WHERE regstate != '2' AND betdate BETWEEN '{startdate}' AND '{enddate}';", con = engine).to_dict('records')
-    # else:
-    #     stake = pd.read_sql(f"SELECT betdate, SUM(stake) stake, SUM(CASE WHEN status = '2' THEN wins ELSE 0 END) wins, SUM(CASE WHEN status = '1' THEN stake ELSE 0 END) losses FROM betting_table WHERE betdate = '{daystr}' GROUP BY betdate ORDER BY betdate;", con = engine).to_dict('records')
+    if betsite == 'All':
+        stake = pd.read_sql(f"SELECT SUM(stake) stake, SUM(CASE WHEN status = '2' THEN wins ELSE 0 END) wins, SUM(CASE WHEN status = '1' THEN stake ELSE 0 END) losses FROM betting_table WHERE regstate != '2' AND betdate BETWEEN '{startdate}' AND '{enddate}';", con = engine).to_dict('records')
+    else:
+        stake = pd.read_sql(f"SELECT SUM(stake) stake, SUM(CASE WHEN status = '2' THEN wins ELSE 0 END) wins, SUM(CASE WHEN status = '1' THEN stake ELSE 0 END) losses FROM betting_table WHERE site = '{betsite}' AND regstate != '2' AND betdate BETWEEN '{startdate}' AND '{enddate}';", con = engine).to_dict('records')
     
     data = {}
     data['bet'] = betdata
-    # data['stake'] = stake
+    data['stake'] = stake
 
     return data
 

@@ -30,6 +30,8 @@ info_keys = ['game_id', 'game_datetime','away_name', 'home_name']
 game_sched = [{k:v for k,v in el.items() if k in info_keys} for el in game_sched]
 game_date = ''
 
+print(game_sched)
+
 if len(game_sched) > 0:
     game_date = game_sched[0]['game_datetime'][0:10]
     date_obj = datetime.strptime(game_date, "%Y-%m-%d")

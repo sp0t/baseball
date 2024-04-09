@@ -323,12 +323,13 @@ def get_box_score(game_id):
 
 def update_database(): 
     engine = database.connect_to_db()
-    game_sched = mlb.schedule(start_date = "2024-04-03")
-    info_keys = ['game_id', 'game_datetime','away_name', 'home_name']
-    game_sched = [{k:v for k,v in el.items() if k in info_keys} for el in game_sched]
-    game_id_list = []
-    for game in game_sched:
-        game_id_list.append(game['game_id'])
+    # game_sched = mlb.schedule(start_date = "2024-04-08")
+    # info_keys = ['game_id', 'game_datetime','away_name', 'home_name']
+    # game_sched = [{k:v for k,v in el.items() if k in info_keys} for el in game_sched]
+    # game_id_list = []
+    # for game in game_sched:
+    #     game_id_list.append(game['game_id'])
+    game_id_list = ['745432']
 
     if len(game_id_list) > 0: 
         # Get Box Scores! 
@@ -476,7 +477,7 @@ def update_database():
                             batter['obp'], batter['ops'], batter['rbi'], batter['runs'], batter['slg'], batter['strikeOuts'], batter['triples'], batter['substitution'], pitcher
                         )
                         engine.execute(batter_table_sql, data_tuple)
-                        
+
                 new_last_record = el['game_date']
     else: 
         new_last_record = pd.read_sql("SELECT * FROM updates", con = engine).iloc[-1]['last_record']

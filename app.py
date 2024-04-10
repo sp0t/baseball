@@ -537,7 +537,8 @@ def teams():
                     elif game['win'] == 1:
                         pl += game['open_price'] / 100
 
-            yd = pl / total * 100
+            if total != 0:
+                yd = pl / total * 100
             data['pl_win_loss']['total'] = round(total, 2)
             data['pl_win_loss']['pl'] = round(pl, 2)
             data['pl_win_loss']['yield'] = round(yd, 2)

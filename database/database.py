@@ -316,6 +316,9 @@ def update_database():
     current_game_list = [el[0] for el in res]
     last_record = max([el[1] for el in res])
     last_record = datetime.strptime(last_record, '%Y/%m/%d').date()
+    record_day = date.today() - timedelta(days = 2)
+    if last_record > record_day:
+        last_record = record_day
     print(f'Old Last Record is {last_record}')
     game_id_list, errored_days = get_game_id_list(start_date = last_record, 
                                                   end_date = date.today() - timedelta(days = 1), 

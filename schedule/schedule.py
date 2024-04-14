@@ -62,12 +62,9 @@ def get_schedule():
             if predict[0]['lc_home_odd'] != None:
                 predict[0]['lc_home_odd'] = odds.americanToDecimal(float(predict[0]['lc_home_odd']))
 
-            if (predict[0]['la_away_prob'] != None and predict[0]['lb_away_prob'] != None and predict[0]['lc_away_prob'] != None):
-                predict[0]['away_prob'] = float(predict[0]['la_away_prob']) * 0.5 + float(predict[0]['lb_away_prob']) * 0.2 + float(predict[0]['lc_away_prob']) * 0.3
-                predict[0]['home_prob'] = float(predict[0]['la_home_prob']) * 0.5 + float(predict[0]['lb_home_prob']) * 0.2 + float(predict[0]['lc_home_prob']) * 0.3
-            elif(predict[0]['la_away_prob'] != None and predict[0]['lb_away_prob'] != None ):
-                predict[0]['away_prob'] = float(predict[0]['la_away_prob']) * 0.7 + float(predict[0]['lb_away_prob']) * 0.3
-                predict[0]['home_prob'] = float(predict[0]['la_home_prob']) * 0.7 + float(predict[0]['lb_home_prob']) * 0.3
+            if(predict[0]['la_away_prob'] != None and predict[0]['lb_away_prob'] != None ):
+                predict[0]['away_prob'] = float(predict[0]['la_away_prob']) * 0.8 + float(predict[0]['lb_away_prob']) * 0.2
+                predict[0]['home_prob'] = float(predict[0]['la_home_prob']) * 0.8 + float(predict[0]['lb_home_prob']) * 0.2
             else:
                 predict[0]['away_prob'] = None
                 predict[0]['home_prob'] = None
@@ -76,10 +73,8 @@ def get_schedule():
                 predict[0]['away_odd'] = 'No Bet'
             elif(predict[0]['away_prob'] == None):
                 predict[0]['away_odd'] = None
-            elif(predict[0]['la_away_odd'] != None and predict[0]['lb_away_odd'] != None and predict[0]['lc_away_odd'] != None):
-                predict[0]['away_odd'] = predict[0]['la_away_odd'] * 0.5 + predict[0]['lb_away_odd'] * 0.2 + predict[0]['lc_away_odd'] * 0.3
             elif(predict[0]['la_away_odd'] != None and predict[0]['lb_away_odd'] != None):
-                predict[0]['away_odd'] = predict[0]['la_away_odd'] * 0.7 + predict[0]['lb_away_odd'] * 0.3
+                predict[0]['away_odd'] = predict[0]['la_away_odd'] * 0.8 + predict[0]['lb_away_odd'] * 0.2
 
             if(predict[0]['away_odd'] != None and predict[0]['away_odd'] != "No Bet"):
                 predict[0]['away_odd'] = odds.decimalToAmerian(predict[0]['away_odd'])
@@ -88,10 +83,8 @@ def get_schedule():
                 predict[0]['home_odd'] = 'No Bet'
             elif(predict[0]['home_prob'] == None):
                 predict[0]['home_odd'] = None
-            elif(predict[0]['la_home_odd'] != None and predict[0]['lb_home_odd'] != None and predict[0]['lc_home_odd'] != None):
-                predict[0]['home_odd'] = predict[0]['la_home_odd'] * 0.5 + predict[0]['lb_home_odd'] * 0.2 + predict[0]['lc_home_odd'] * 0.3
             elif(predict[0]['la_home_odd'] != None and predict[0]['lb_home_odd'] != None):
-                predict[0]['home_odd'] = predict[0]['la_home_odd'] * 0.7 + predict[0]['lb_home_odd'] * 0.3
+                predict[0]['home_odd'] = predict[0]['la_home_odd'] * 0.8 + predict[0]['lb_home_odd'] * 0.2
 
             if(predict[0]['home_odd'] != None and predict[0]['home_odd'] != "No Bet"):
                 predict[0]['home_odd'] = odds.decimalToAmerian(predict[0]['home_odd'])

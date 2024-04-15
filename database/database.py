@@ -350,7 +350,7 @@ def update_database():
             new_last_record = pd.read_sql("SELECT * FROM updates", con = engine).iloc[-1]['last_record']
         else:
             for el in box_list:
-                if el['away_score'] < el['home_score']:
+                if int(el['away_score']) < int(el['home_score']):
                     winner = 1
                 else:   
                     winner = 0

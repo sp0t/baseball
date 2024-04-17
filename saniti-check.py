@@ -1,6 +1,6 @@
 input_team_name_1 = 'Minnesota Twins'
 input_team_name_2 = 'Baltimore Orioles'
-batter_name = ['Byron Buxton', 'Alex Kirilloff']
+batter_name = ['Byron Buxton', 'Alex Kirilloff', 'Ryan Mountcastle']
 pitcher_name = ['Pablo López']
 game_id = '747049'
 

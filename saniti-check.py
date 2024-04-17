@@ -298,6 +298,8 @@ for player_name in batter_name:
     print(player_name)
     print('===================================================================')
     player_id = [x['id'] for x in rosters if x['fullName'] == player_name][0]
+
+    print(player_id)
  
     game_date = datetime.today()
 

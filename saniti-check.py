@@ -23,7 +23,7 @@ def get_batter_df(player_id):
     df = pd.read_sql("SELECT b.game_id, b.game_date, b.home_team, b.away_team, b.home_score, b.away_score,  (a.homeruns)homeRuns, (a.atbats)atBats, a.avg, "
             " a.slg,  a.obp,  a.ops, (a.baseonballs)baseonBalls, a.doubles, a.hits,"
             "(a.playerid)playerId, a.rbi, a.runs, (a.strikeouts)strikeOuts, "
-            "a.triples FROM batter_table a LEFT JOIN game_table b ON a.game_id = b.game_id WHERE a.playerid = '%s' ORDER BY game_date;" %(player_id), con = engine)
+            "a.triples FROM batter_table a INNER JOIN game_table b ON a.game_id = b.game_id WHERE a.playerid = '%s' ORDER BY game_date;" %(player_id), con = engine)
 
     string_cols = [col for col in df.columns if 'id' in col.lower()] + ['game_date', 'away_team', 'home_team']
 
@@ -153,7 +153,7 @@ def get_starter_df(player_id):
     df = pd.read_sql("SELECT b.game_id, b.game_date, b.home_team, b.away_team, b.home_score, b.away_score, (a.atbats)atBats, "
             "(a.baseonballs)baseonBalls, a.blownsaves, a.doubles, (a.earnedruns)earnedRuns, a.hits, a.holds, (a.homeruns)homeRuns, a.era, "
             "(a.inningspitched)inningsPitched, a.losses, (a.pitchesthrown)pitchesThrown, (a.playerid)playerId, a.rbi, a.runs, (a.strikeouts)strikeOuts, "
-            "a.strikes, a.triples, a.whip, a.wins FROM pitcher_table a LEFT JOIN game_table b ON a.game_id = b.game_id WHERE a.playerid = '%s' ORDER BY game_date DESC;" %(player_id), con = engine)
+            "a.strikes, a.triples, a.whip, a.wins FROM pitcher_table a INNER JOIN game_table b ON a.game_id = b.game_id WHERE a.playerid = '%s' ORDER BY game_date DESC;" %(player_id), con = engine)
 
     string_cols = [col for col in df.columns if 'id' in col.lower()] + ['game_date', 'away_team', 'home_team']
 

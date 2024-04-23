@@ -50,8 +50,6 @@
 
                 success: function (data){ 
 
-                    console.log(data)
-
                     var dataPoints = [];
 
                     let USDollar = new Intl.NumberFormat('en-US', {
@@ -327,11 +325,18 @@
                         var average = 0;
 
                         var seasonyear = data['total'][i].betdate.substring(0, 4);
+                        var newdate = new Date("2024-04-22");
+                        var currentDate = new Date(data['total'][i].betdate);
 
-                        if(seasonyear == '2023')
-                            update = value + data['total'][i]['wins'] * 14 - data['total'][i]['losses'] * 14
-                        else
-                            update = value + data['total'][i]['wins'] - data['total'][i]['losses']
+                        if (currentDate < newdate) {
+                            if(seasonyear == '2023')
+                                update = value + data['total'][i]['wins'] * 7 - data['total'][i]['losses'] * 7;
+                            else
+                                update = value + data['total'][i]['wins'] / 2 - data['total'][i]['losses'] / 2;
+                        } else {
+                            update = value + data['total'][i]['wins'] - data['total'][i]['losses'];
+                        }
+                        
                         pl_vlaue[i] = update
                         dataPoints.push({x: date,  y: [Number(value), Number(value > update? value: update), Number(value > update? update: value), Number(update)]})
                         

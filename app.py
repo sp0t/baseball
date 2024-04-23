@@ -1179,20 +1179,31 @@ def season_state():
 
     for item in totaldata:
         year = item['betdate'][:4]
-        if year == '2023':
-            stake += item["stake"] * 14
+        newdate = datetime.strptime("2024-04-22", "%Y-%m-%d")
+        currentdate = datetime.strptime(item['betdate'], "%Y-%m-%d")
+
+        if currentdate < newdate:
+            if year == '2023':
+                stake += item["stake"] * 7
+            else:
+                stake += item["stake"] / 2
+
+            if(item["status"] == "1"):
+                if year == '2023':
+                    losses += float(item["stake"]) * 7
+                else:  
+                    losses += float(item["stake"]) / 2
+            elif(item["status"] == "2"):
+                if year == '2023':
+                    profit += float(item["wins"]) * 7
+                else:
+                    profit += float(item["wins"]) / 2
         else:
             stake += item["stake"]
 
-        if(item["status"] == "1"):
-            if year == '2023':
-                losses += float(item["stake"]) * 14
-            else:  
+            if(item["status"] == "1"):
                 losses += float(item["stake"])
-        elif(item["status"] == "2"):
-            if year == '2023':
-                profit += float(item["wins"]) * 14
-            else:
+            elif(item["status"] == "2"):
                 profit += float(item["wins"])
     
     data['total']["stake"] = "${:,.2f}".format(stake)

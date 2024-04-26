@@ -8,7 +8,7 @@ def backup_database():
     filename = f"backup_{date_str}.sql"
     
     # Command to run pg_dump
-    command = f"pg_dump -U postgres -h localhost -p lucamlb123 -d luca -f {filename}"
+    command = f"pg_dump -U postgres -h localhost -p lucamlb123 -d betmlb -f {filename}"
     
     try:
         # Execute the pg_dump command

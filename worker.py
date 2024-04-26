@@ -389,6 +389,19 @@ def update_database(game_id):
  
     print('DB Updated')
 
-update_database('747137')
-update_database('745843')
-update_database('745844')
+update_database('745188')
+update_database('745346')
+update_database('746244')
+update_database('744864')
+update_database('746649')
+update_database('746725')
+update_database('745513')
+update_database('745099')
+update_database('745753')
+update_database('747132')
+update_database('746889')
+update_database('746317')
+update_database('745919')
+update_database('745028')
+update_database('746567')
+

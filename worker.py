@@ -271,41 +271,6 @@ def get_box_score(game_id):
         'home_score': home_score,
     }
 
-    # Batting Data
-    batter_data = {}
-    batter_player = []
-    away_batter_data, away_batter_playerid = get_batting_box_score(data, 'away')
-    batter_player.extend(away_batter_playerid)
-    batter_data['away'] = away_batter_data
-    home_batter_data, home_batter_playerid = get_batting_box_score(data, 'home')
-    batter_player.extend(home_batter_playerid)
-    batter_data['home'] = home_batter_data
-
-    if away_batter_data is None or home_batter_data is None: 
-        return None
-    
-    box_score['batter'] = batter_data
-    
-    # Pitching Data
-    pitcher_data = {}
-    pitcher_starter = []
-    pitcher_reliever = []
-    away_pitcher_data, away_starter_playerid, away_reliever_playerid = get_pitching_box_score(data, 'away')
-    pitcher_starter.append(away_starter_playerid)
-    pitcher_reliever.extend(away_reliever_playerid)
-    pitcher_data['away'] = away_pitcher_data
-    home_pitcher_data, home_starter_playerid, home_reliever_playerid = get_pitching_box_score(data, 'home')
-    pitcher_starter.append(home_starter_playerid)
-    pitcher_reliever.extend(home_reliever_playerid)
-    pitcher_data['home'] = home_pitcher_data
-    
-    if away_pitcher_data is None or home_pitcher_data is None: 
-        return None
-    
-    box_score['pitcher'] = pitcher_data
-    box_score['batterid'] = batter_player
-    box_score['starterid'] = pitcher_starter
-    box_score['bullpenid'] = pitcher_reliever
         
     return box_score
 
@@ -317,110 +282,110 @@ def update_database(game_id):
 
         
     # pitcher_table insert query
-    teams = ['away', 'home']
-    for team in teams:
-        data = box['pitcher'][team]['starter']
+    # teams = ['away', 'home']
+    # for team in teams:
+    #     data = box['pitcher'][team]['starter']
         
-        batter = 0
+    #     batter = 0
         
-        if int(data['playerId']) in box['batterid']:
-            batter = 1
+    #     if int(data['playerId']) in box['batterid']:
+    #         batter = 1
 
-        if data.get("pitchesThrown") is None or data.get("strikes") is None:
-            data['pitchesThrown'] = 0
-            data['strikes'] = 0
+    #     if data.get("pitchesThrown") is None or data.get("strikes") is None:
+    #         data['pitchesThrown'] = 0
+    #         data['strikes'] = 0
 
-        pitcher_table_sql = '''
-        INSERT INTO pitcher_table(
-            game_id, playerid, team, role, atbats, baseonballs, blownsaves, doubles, earnedruns, era,
-            hits, holds, homeruns, inningspitched, losses, pitchesthrown, rbi, runs, strikeouts, strikes, triples, whip, wins, batter
-        ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
-        '''
-        data_tuple = (
-            box['game_id'], data['playerId'], team, 'starter',
-            data['atBats'], data['baseOnBalls'], data['blownSaves'], data['doubles'], data['earnedRuns'], data['era'],
-            data['hits'], data['holds'], data['homeRuns'], data['inningsPitched'], data['losses'], data['pitchesThrown'],
-            data['rbi'], data['runs'], data['strikeOuts'], data['strikes'], data['triples'], data['whip'], data['wins'], batter
-        )
-        engine.execute(pitcher_table_sql, data_tuple)
+    #     pitcher_table_sql = '''
+    #     INSERT INTO pitcher_table(
+    #         game_id, playerid, team, role, atbats, baseonballs, blownsaves, doubles, earnedruns, era,
+    #         hits, holds, homeruns, inningspitched, losses, pitchesthrown, rbi, runs, strikeouts, strikes, triples, whip, wins, batter
+    #     ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+    #     '''
+    #     data_tuple = (
+    #         box['game_id'], data['playerId'], team, 'starter',
+    #         data['atBats'], data['baseOnBalls'], data['blownSaves'], data['doubles'], data['earnedRuns'], data['era'],
+    #         data['hits'], data['holds'], data['homeRuns'], data['inningsPitched'], data['losses'], data['pitchesThrown'],
+    #         data['rbi'], data['runs'], data['strikeOuts'], data['strikes'], data['triples'], data['whip'], data['wins'], batter
+    #     )
+    #     engine.execute(pitcher_table_sql, data_tuple)
 
-        bullpenAvgdata = box['pitcher'][team]['bullpenAvg']
+    #     bullpenAvgdata = box['pitcher'][team]['bullpenAvg']
 
-        if bullpenAvgdata != {}:
-            if bullpenAvgdata.get("pitchesThrown") is None or bullpenAvgdata.get("strikes") is None:
-                bullpenAvgdata['pitchesThrown'] = 0
-                bullpenAvgdata['strikes'] = 0
+    #     if bullpenAvgdata != {}:
+    #         if bullpenAvgdata.get("pitchesThrown") is None or bullpenAvgdata.get("strikes") is None:
+    #             bullpenAvgdata['pitchesThrown'] = 0
+    #             bullpenAvgdata['strikes'] = 0
 
-            bullpenAvg_table_sql = '''
-            INSERT INTO pitcher_table(
-                game_id, playerid, team, role, atbats, baseonballs, blownsaves, doubles, earnedruns, era,
-                hits, holds, homeruns, inningspitched, losses, pitchesthrown, rbi, runs, strikeouts, strikes, triples, whip, wins, batter
-            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
-            '''
-            data_tuple = (
-                box['game_id'], bullpenAvgdata['playerId'], team, 'bullpenAvg',
-                bullpenAvgdata['atBats'], bullpenAvgdata['baseOnBalls'], bullpenAvgdata['blownSaves'], bullpenAvgdata['doubles'], bullpenAvgdata['earnedRuns'], bullpenAvgdata['era'],
-                bullpenAvgdata['hits'], bullpenAvgdata['holds'], bullpenAvgdata['homeRuns'], bullpenAvgdata['inningsPitched'], bullpenAvgdata['losses'], bullpenAvgdata['pitchesThrown'],
-                bullpenAvgdata['rbi'], bullpenAvgdata['runs'], bullpenAvgdata['strikeOuts'], bullpenAvgdata['strikes'], bullpenAvgdata['triples'], bullpenAvgdata['whip'], bullpenAvgdata['wins'], 0
-            )
+    #         bullpenAvg_table_sql = '''
+    #         INSERT INTO pitcher_table(
+    #             game_id, playerid, team, role, atbats, baseonballs, blownsaves, doubles, earnedruns, era,
+    #             hits, holds, homeruns, inningspitched, losses, pitchesthrown, rbi, runs, strikeouts, strikes, triples, whip, wins, batter
+    #         ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+    #         '''
+    #         data_tuple = (
+    #             box['game_id'], bullpenAvgdata['playerId'], team, 'bullpenAvg',
+    #             bullpenAvgdata['atBats'], bullpenAvgdata['baseOnBalls'], bullpenAvgdata['blownSaves'], bullpenAvgdata['doubles'], bullpenAvgdata['earnedRuns'], bullpenAvgdata['era'],
+    #             bullpenAvgdata['hits'], bullpenAvgdata['holds'], bullpenAvgdata['homeRuns'], bullpenAvgdata['inningsPitched'], bullpenAvgdata['losses'], bullpenAvgdata['pitchesThrown'],
+    #             bullpenAvgdata['rbi'], bullpenAvgdata['runs'], bullpenAvgdata['strikeOuts'], bullpenAvgdata['strikes'], bullpenAvgdata['triples'], bullpenAvgdata['whip'], bullpenAvgdata['wins'], 0
+    #         )
 
-            engine.execute(bullpenAvg_table_sql, data_tuple)
+    #         engine.execute(bullpenAvg_table_sql, data_tuple)
 
-        for bullpen in box['pitcher'][team]['bullpen']:
-            if bullpen.get("pitchesThrown") is None or bullpen.get("strikes") is None:
-                bullpen['pitchesThrown'] = 0
-                bullpen['strikes'] = 0
+    #     for bullpen in box['pitcher'][team]['bullpen']:
+    #         if bullpen.get("pitchesThrown") is None or bullpen.get("strikes") is None:
+    #             bullpen['pitchesThrown'] = 0
+    #             bullpen['strikes'] = 0
             
-            batter = 0
+    #         batter = 0
 
-            if int(bullpen['playerId']) in box['batterid']:
-                batter = 1
+    #         if int(bullpen['playerId']) in box['batterid']:
+    #             batter = 1
 
-            # Define the SQL command with placeholders for parameters
-            bullpen_table_sql = '''
-            INSERT INTO pitcher_table(
-                game_id, playerid, team, role, atbats, baseonballs, blownsaves, doubles, earnedruns, era,
-                hits, holds, homeruns, inningspitched, losses, pitchesthrown, rbi, runs, strikeouts, strikes, triples, whip, wins, batter
-            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
-            '''
+    #         # Define the SQL command with placeholders for parameters
+    #         bullpen_table_sql = '''
+    #         INSERT INTO pitcher_table(
+    #             game_id, playerid, team, role, atbats, baseonballs, blownsaves, doubles, earnedruns, era,
+    #             hits, holds, homeruns, inningspitched, losses, pitchesthrown, rbi, runs, strikeouts, strikes, triples, whip, wins, batter
+    #         ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+    #         '''
 
-            # Create a tuple of values to insert into the database
-            data_tuple = (
-                box['game_id'], bullpen['playerId'], team, 'bullpen',
-                bullpen['atBats'], bullpen['baseOnBalls'], bullpen['blownSaves'], bullpen['doubles'], bullpen['earnedRuns'], bullpen['era'],
-                bullpen['hits'], bullpen['holds'], bullpen['homeRuns'], bullpen['inningsPitched'], bullpen['losses'], bullpen['pitchesThrown'],
-                bullpen['rbi'], bullpen['runs'], bullpen['strikeOuts'], bullpen['strikes'], bullpen['triples'], bullpen['whip'], bullpen['wins'], batter
-            )
+    #         # Create a tuple of values to insert into the database
+    #         data_tuple = (
+    #             box['game_id'], bullpen['playerId'], team, 'bullpen',
+    #             bullpen['atBats'], bullpen['baseOnBalls'], bullpen['blownSaves'], bullpen['doubles'], bullpen['earnedRuns'], bullpen['era'],
+    #             bullpen['hits'], bullpen['holds'], bullpen['homeRuns'], bullpen['inningsPitched'], bullpen['losses'], bullpen['pitchesThrown'],
+    #             bullpen['rbi'], bullpen['runs'], bullpen['strikeOuts'], bullpen['strikes'], bullpen['triples'], bullpen['whip'], bullpen['wins'], batter
+    #         )
 
-            engine.execute(bullpen_table_sql, data_tuple)
+    #         engine.execute(bullpen_table_sql, data_tuple)
 
-    # batter_table insert query
-    for team in teams:
-        for batter in box['batter'][team]:
+    # # batter_table insert query
+    # for team in teams:
+    #     for batter in box['batter'][team]:
 
-            pitcher = 0
+    #         pitcher = 0
 
-            if int(batter['playerId']) in box['starterid']:
-                pitcher = 1
+    #         if int(batter['playerId']) in box['starterid']:
+    #             pitcher = 1
             
-            if int(batter['playerId']) in box['bullpenid']:
-                pitcher = 2
+    #         if int(batter['playerId']) in box['bullpenid']:
+    #             pitcher = 2
 
-            batter_table_sql = '''
-            INSERT INTO batter_table(
-                game_id, playerid, team, position, atbats, avg, baseonballs, doubles, hits, homeruns,
-                obp, ops, rbi, runs, slg, strikeouts, triples, substitution, pitcher
-            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
-            '''
+    #         batter_table_sql = '''
+    #         INSERT INTO batter_table(
+    #             game_id, playerid, team, position, atbats, avg, baseonballs, doubles, hits, homeruns,
+    #             obp, ops, rbi, runs, slg, strikeouts, triples, substitution, pitcher
+    #         ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+    #         '''
 
-            # Create a tuple of values to be inserted
-            data_tuple = (
-                box['game_id'], batter['playerId'], team, batter['position'],
-                batter['atBats'], batter['avg'], batter['baseOnBalls'], batter['doubles'], batter['hits'], batter['homeRuns'],
-                batter['obp'], batter['ops'], batter['rbi'], batter['runs'], batter['slg'], batter['strikeOuts'], batter['triples'], batter['substitution'], pitcher
-            )
-            engine.execute(batter_table_sql, data_tuple)
-    new_last_record = box['game_date']
+    #         # Create a tuple of values to be inserted
+    #         data_tuple = (
+    #             box['game_id'], batter['playerId'], team, batter['position'],
+    #             batter['atBats'], batter['avg'], batter['baseOnBalls'], batter['doubles'], batter['hits'], batter['homeRuns'],
+    #             batter['obp'], batter['ops'], batter['rbi'], batter['runs'], batter['slg'], batter['strikeOuts'], batter['triples'], batter['substitution'], pitcher
+    #         )
+    #         engine.execute(batter_table_sql, data_tuple)
+    # new_last_record = box['game_date']
  
     print('DB Updated')
 

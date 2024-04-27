@@ -33,6 +33,9 @@ import requests
 from bs4 import BeautifulSoup
 import threading
 
+import subprocess
+import os
+
 # Connect App + DB
 app = Flask(__name__)
 app.secret_key = "^d@0U%['Plt7w,p"
@@ -819,6 +822,7 @@ def team(team_abbreviation):
 
 @app.route('/update_data', methods = ["POST"])
 def update_data(): 
+    backup_database()
     update_date, update_time, last_record, num_games_added = database.update_database()
     update_league_average()
     update_data = {'update_date': update_date, 'update_time': update_time, 'last_record': last_record, 'games_added': num_games_added}
@@ -2008,6 +2012,33 @@ def update_league_average():
 #     model_1b = pickle.load(open('algorithms/model_1b_v10.sav', 'rb'))
 
     return 
+
+def backup_database():
+    # Current date to append to the backup file's name
+    date_str = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+    # Filename for the backup
+    filename = f"./backup/{date_str}.sql"
+    
+    # PostgreSQL credentials
+    db_username = "postgres"
+    db_host = "localhost"
+    db_port = "5432"
+    db_name = "betmlb"
+    db_password = "lucamlb123"  # Be cautious with password handling
+
+    # Setting the PGPASSWORD environment variable
+    os.environ['PGPASSWORD'] = db_password
+
+    # Command to run pg_dump
+    command = f"pg_dump -U {db_username} -h {db_host} -p {db_port} -d {db_name} -f {filename}"
+    
+    try:
+        # Execute the pg_dump command
+        subprocess.run(command, check=True, shell=True)
+        print("Backup successful")
+    finally:
+        # Ensure that the password is cleared from the environment variables after running
+        del os.environ['PGPASSWORD']
 
 def print_date_time():
     current_GMT = time.gmtime()

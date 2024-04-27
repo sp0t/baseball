@@ -6,7 +6,7 @@ def backup_database():
     # Current date to append to the backup file's name
     date_str = datetime.datetime.now().strftime("%Y%m%d")
     # Filename for the backup
-    filename = f"baseball/backup/{date_str}.sql"
+    filename = f"/baseball/backup/{date_str}.sql"
     
     # PostgreSQL credentials
     db_username = "postgres"

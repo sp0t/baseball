@@ -1848,9 +1848,7 @@ def getWinStatus():
 def getTarget(): 
     req_data = request.get_json()
     engine = database.connect_to_db()
-    print(req_data['gameid'])
     res = pd.read_sql(f"SELECT * FROM predict_table WHERE game_id = '{req_data['gameid']}';", con = engine).to_dict('records')
-    print(res)
 
     return res 
 

@@ -1844,14 +1844,14 @@ def getWinStatus():
 
     return data 
 
-@app.route('/getTarget', methods = ["POST"])
+@app.route('/getTarget', methods = ["GET"])
 def getTarget(): 
     req_data = request.get_json()
     engine = database.connect_to_db()
     res = pd.read_sql(f"SELECT * FROM predict_table WHERE game_id = '{req_data['gameid']}';", con = engine).to_dict('records')
     print(res)
 
-    return data 
+    return res 
 
 @app.route('/startPrediction', methods = ["POST"])
 def startPrediction():

@@ -381,7 +381,7 @@ def make_prediction():
             win_percent = 0
             risk_coeff = 0
         else:
-            win_percent = round((win_count_res[0]['count'] / bet_count_res[0]['count']) * 100, 2)
+            win_percent = round(((win_count_res[0]['count'] + 291) / (bet_count_res[0]['count'] + 572)) * 100, 2)
             if win_percent > 49.25 and win_percent <= 49.75:
                 risk_coeff = 0.1
             elif win_percent <= 49.25:
@@ -393,9 +393,9 @@ def make_prediction():
             else:
                 risk_coeff = 0
         if bet_count_res[0]['count'] <= 20:
-            stake_size = 50000
+            stake_size = 25000
         else:
-            stake_size = 70000 + risk_coeff * 70000
+            stake_size = 40000 + risk_coeff * 40000
         
         # Make Prediction
         if form_data['model'] == 'a':
@@ -1270,7 +1270,7 @@ def betting_proc():
             win_percent = 0
             risk_coeff = 0
         else:
-            win_percent = round((win_count_res[0]['count'] / bet_count_res[0]['count']) * 100, 2)
+            win_percent = round(((win_count_res[0]['count'] + 291) / (bet_count_res[0]['count'] + 572)) * 100, 2)
             if win_percent > 49.25 and win_percent <= 49.75:
                 risk_coeff = 0.1
             elif win_percent <= 49.25:
@@ -1282,9 +1282,9 @@ def betting_proc():
             else:
                 risk_coeff = 0
         if bet_count_res[0]['count'] <= 20:
-            stake_size = 50000
+            stake_size = 25000
         else:
-            stake_size = 70000 + risk_coeff * 70000
+            stake_size = 40000 + risk_coeff * 40000
 
         query = text(f"""
             INSERT INTO staking_table

@@ -61,6 +61,10 @@
 
                 <div class="update-block">
                     <!-- <button class="medium-solid-button" onclick="updateDatabase()">Update Database</button> -->
+                    <div class="record-box">
+                        <div><span class="win-count-txt">{{win_count}}</span> <span class="win-percent-txt"> - </span> <span class="loss-count-txt">{{loss_count}}</span></div>
+                        <div class="win-percent-txt record-box">{{win_percent}}%</div>
+                    </div>
                     <p class="update-text" id="last-record">Last Record: {{last_record}}</p>
                     <p class="update-text" id="last-time">Last Updated on {{update_date}} at {{update_time}} EST</p>
                     <div id="update-loader" style="display: none;"><img style="width: 50px;" src="/static/loader.gif"/></div>

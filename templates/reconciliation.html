@@ -154,6 +154,7 @@
                     html+='<td>'+betstate[i]["betdate"]+'</td>';
                     html+='<td>'+betstate[i]["game"]+'</td>';
                     html+='<td>'+betstate[i]["place"]+'</td>';
+                    html+='<td>'+betstate[i]["site"]+'</td>';
                     html+='<td>'+betstate[i]["stake"]+'</td>';
                     html+='<td>'+betstate[i]["odds"]+'</td>';
                     var result = betstate[i]["status"] == 'P' ? 'Pending': betstate[i]["status"];
@@ -309,6 +310,7 @@
                   <th class="text-center">GameDate</th>
                   <th class="text-center">Game</th>
                   <th class="text-center">Selection</th>
+                  <th class="text-center">Site</th>
                   <th class="text-center">Stake</th>
                   <th class="text-center">Price</th>
                   <th class="text-center">Result</th>

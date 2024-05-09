@@ -157,9 +157,17 @@ def index():
     last_update = pd.read_sql("SELECT * FROM updates", con = engine).iloc[-1]
     last_date, last_time, last_record = last_update["update_date"], last_update["update_time"], last_update["last_record"]
     average = pd.read_sql(f"SELECT * FROM league_average WHERE year = '{year}';", con = engine).to_dict('records')
+    now = datetime.now()
+    date_string = now.strftime('%Y-%m-%d')
+    win_count_res = pd.read_sql(f"SELECT COUNT(*) FROM staking_table WHERE result = 'W' AND game_date != '{date_string}';", con = engine).to_dict('records')
+    bet_count_res = pd.read_sql(f"SELECT COUNT(*) FROM staking_table WHERE game_date != '{date_string}';", con = engine).to_dict('records')
+    win_count = win_count_res[0]['count'] + 291
+    bet_count = bet_count_res[0]['count'] + 572
+    loss_count = bet_count - win_count
+    win_percent = round((win_count / bet_count) * 100, 2)
 
     return render_template("index.html", schedule = today_schedule, last_record = last_record, 
-                           update_date = last_date, update_time = last_time, average = average)
+                           update_date = last_date, update_time = last_time, average = average, win_count = win_count, loss_count = loss_count, win_percent = win_percent)
 
 
 @app.route('/login', methods = ["GET", "POST"])
@@ -1128,9 +1136,9 @@ def reconciliation():
     betsite = request_data["betsite"]
 
     if betsite == 'All':
-        res = pd.read_sql(f"SELECT betid, betdate, team1, team2, place, stake, wins, status FROM betting_table WHERE regstate != '2' AND betdate BETWEEN '{startdate}' AND '{enddate}';", con = engine)
+        res = pd.read_sql(f"SELECT betid, betdate, team1, team2, place, site, stake, wins, status FROM betting_table WHERE regstate != '2' AND betdate BETWEEN '{startdate}' AND '{enddate}';", con = engine)
     else:
-        res = pd.read_sql(f"SELECT betid, betdate, team1, team2, place, stake, wins, status FROM betting_table WHERE site = '{betsite}' AND regstate != '2' AND betdate BETWEEN '{startdate}' AND '{enddate}';", con = engine)
+        res = pd.read_sql(f"SELECT betid, betdate, team1, team2, place, site, stake, wins, status FROM betting_table WHERE site = '{betsite}' AND regstate != '2' AND betdate BETWEEN '{startdate}' AND '{enddate}';", con = engine)
 
     betdata = res.to_dict('records')
     

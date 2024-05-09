@@ -956,3 +956,22 @@ table {
 .site-add-button:hover {
 	background-color: rgb(35, 216, 35);
 }
+
+.win-count-txt {
+	color: green;
+	font-size: 22px;
+}
+
+.loss-count-txt {
+	color: red;
+	font-size: 22px;
+}
+
+.win-percent-txt {
+	color: black;
+	font-size: 22px;
+}
+
+.record-box {
+	padding: 5px;
+}

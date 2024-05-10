@@ -157,8 +157,8 @@ def index():
     last_update = pd.read_sql("SELECT * FROM updates", con = engine).iloc[-1]
     last_date, last_time, last_record = last_update["update_date"], last_update["update_time"], last_update["last_record"]
     average = pd.read_sql(f"SELECT * FROM league_average WHERE year = '{year}';", con = engine).to_dict('records')
-    now = datetime.now()
-    date_string = now.strftime('%Y-%m-%d')
+    date_res = pd.read_sql(f"SELECT * FROM updates ORDER BY update_date DESC LIMIT 1;", con = engine).to_dict('records')
+    date_string = date_res[0]['update_date']
     win_count_res = pd.read_sql(f"SELECT COUNT(*) FROM staking_table WHERE result = 'W' AND game_date != '{date_string}';", con = engine).to_dict('records')
     bet_count_res = pd.read_sql(f"SELECT COUNT(*) FROM staking_table WHERE game_date != '{date_string}';", con = engine).to_dict('records')
     win_count = win_count_res[0]['count'] + 291

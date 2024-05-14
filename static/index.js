@@ -988,6 +988,27 @@ function  getPlayerStats(id, type){
     })
 }
 
+function setAutoBetState(gameid, state) {
+    console.log('gameid', gameid)
+    console.log('state', state)
+    var value = state? 1: 0;
+
+    $.ajax({
+        type: 'POST', 
+        url: '/set_autoBet_state', 
+        data: {
+            'gameid' : gameid,
+            'value' : value
+        },
+        beforeSend: function(){ 
+
+        },
+        success: function (data){
+
+         }, 
+    })
+}
+
 // function selectPlayer(){ 
 //     $.ajax({
 //         url: '/selectPlayer', 

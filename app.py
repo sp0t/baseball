@@ -344,6 +344,17 @@ def get_betting_info():
     data['total'] = total_res
     return data
 
+@app.route('/set_autoBet_state', methods = ["POST"])
+def set_autoBet_state(): 
+    data = {}
+    engine = database.connect_to_db()
+    
+    gameid = request.form['gameid']
+    value = request.form['value']
+    engine.execute(f"UPDATE odds_table SET auto_bet = '{value}' WHERE game_id = '{gameid}';")
+
+    return data
+
 @app.route('/make_prediction', methods = ["POST"])
 def make_prediction():
     if request.method == 'POST': 

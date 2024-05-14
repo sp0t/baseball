@@ -68,7 +68,7 @@ a{
 }
 .card{
 	width: 360px;
-    height: 390px;
+    height: 420px;
 	background-color: #FFF;
 	border-radius: 5px;
 	box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
@@ -974,4 +974,9 @@ table {
 
 .record-box {
 	padding: 5px;
+}
+
+.autobet-box {
+	padding: 10px;
+	color: black;
 }

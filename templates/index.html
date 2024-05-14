@@ -175,8 +175,13 @@
                                     {% endif %}
                                 </div>
                             </div>
-                            
-                            <button class="small-solid-button" id="game_button_{{game.game_id}}" onclick="openCard(this.id)">Set Lineups</button>
+                            <div>
+                                <button class="small-solid-button" id="game_button_{{game.game_id}}" onclick="openCard(this.id)">Set Lineups</button>
+                            </div>
+                            <div class="autobet-box">
+                                <label for = 'auto_bet_{{game.game_id}}'>Set auto bet</label>
+                                <input type="checkbox" id = 'auto_bet_{{game.game_id}}' name = 'auto_bet_{{game.game_id}}' onchange="setAutoBetState('{{game.game_id}}', this.checked)"  {% if game.predict.auto_bet %} checked {% endif %}></input>
+                            </div>
                             <div class="hover-div"></div>
                         </div>
                         <div id = "stats_{{game.game_id}}">

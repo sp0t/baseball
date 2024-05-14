@@ -30,7 +30,8 @@ def get_schedule():
 
     for game in schedule0: 
         betting = list(pd.read_sql(f"SELECT team1, team2, betdate, site, SUM(stake) AS total_stake, SUM(wins) AS total_wins FROM betting_table WHERE team1 LIKE '{game['away_name']}%%' AND team2 LIKE '{game['home_name']}%%' AND betdate = '{date.today()}' GROUP BY team1, team2, betdate, site;", con = engine).T.to_dict().values())
-        predict = list(pd.read_sql(f"SELECT * FROM predict_table WHERE game_id = '{game['game_id']}';", con = engine).T.to_dict().values())
+        predict = list(pd.read_sql(f"SELECT * FROM predict_table INNER JOIN odds_table ON predict_table.game_id = odds_table.game_id WHERE predict_table.game_id = '{game['game_id']}';", con = engine).T.to_dict().values())
+        print(predict)
         
         for bett in betting:
             data = list(pd.read_sql(f"SELECT * FROM betting_table WHERE team1 = '{bett['team1']}' AND team2 = '{bett['team2']}' AND betdate = '{bett['betdate']}' AND site = '{bett['site']}';", con = engine).T.to_dict().values())

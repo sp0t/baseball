@@ -236,6 +236,24 @@ function changeBetSite(site) {
     })
 }
 
+function changeStakeSize() {
+    var stake = $("#autobet-stake").val();
+
+    $.ajax({
+        type: 'POST', 
+        url: '/set_autoStake_size', 
+        data: {
+            'stake' : stake,
+        },
+        beforeSend: function(){ 
+
+        },
+        success: function (data){
+
+         }, 
+    })
+}
+
 function roundToNearestInteger(value) {
     const threshold = 0.04;
     const multiplier = 1 / threshold;
@@ -1008,6 +1026,17 @@ function setAutoBetState(gameid, state) {
          }, 
     })
 }
+
+function formatToFinancial(num) {
+    num = Number(num); // Convert to number if not already
+    return num.toLocaleString('en-US', {
+        style: 'currency',
+        currency: 'USD',
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0
+    });
+}
+
 
 // function selectPlayer(){ 
 //     $.ajax({

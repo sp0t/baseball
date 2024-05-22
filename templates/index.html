@@ -13,6 +13,15 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></script>
         <script type="text/javascript" src="{{ url_for('static', filename='index.js') }}"></script>
         <script>
+
+            document.addEventListener('DOMContentLoaded', function() {
+                var options = document.querySelectorAll('.autobet-option');
+                options.forEach(function(option) {
+                    var rawValue = option.dataset.stake; // Access custom data attribute
+                    option.textContent = formatToFinancial(rawValue); // Update text content
+                });
+            });
+
             let isStatsCalled = false;
             let statsDivState = false;
 
@@ -69,7 +78,17 @@
                     <p class="update-text" id="last-time">Last Updated on {{update_date}} at {{update_time}} EST</p>
                     <div id="update-loader" style="display: none;"><img style="width: 50px;" src="/static/loader.gif"/></div>
                 </div>
-            
+                <div class="auto-stake-size">
+                    <label for="autobet-stake" class="autobet-label">Auto Stake Size:</label>
+                    <select name="autobet-stake" id="autobet-stake" class="autobet-select" onchange="changeStakeSize()">
+                        {% for stake in auto_stakes %}
+                             <option value="{{ stake.stake }}" class="autobet-option" data-stake="{{ stake.stake }}"
+                                {% if stake.status == 1 %}selected{% endif %}>
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                
                 <div>
                     {% for el in average %}
                         <div class="average-container">

@@ -161,13 +161,14 @@ def index():
     date_string = date_res[0]['update_date']
     win_count_res = pd.read_sql(f"SELECT COUNT(*) FROM staking_table WHERE result = 'W' AND game_date != '{date_string}';", con = engine).to_dict('records')
     bet_count_res = pd.read_sql(f"SELECT COUNT(*) FROM staking_table WHERE game_date != '{date_string}';", con = engine).to_dict('records')
+    auto_stakes = pd.read_sql(f"SELECT * FROM sato_stake_size ORDER BY stake;", con = engine).to_dict('records')
     win_count = win_count_res[0]['count'] + 291
     bet_count = bet_count_res[0]['count'] + 572
     loss_count = bet_count - win_count
     win_percent = round((win_count / bet_count) * 100, 2)
 
     return render_template("index.html", schedule = today_schedule, last_record = last_record, 
-                           update_date = last_date, update_time = last_time, average = average, win_count = win_count, loss_count = loss_count, win_percent = win_percent)
+                           update_date = last_date, update_time = last_time, average = average, win_count = win_count, loss_count = loss_count, win_percent = win_percent, auto_stakes = auto_stakes)
 
 
 @app.route('/login', methods = ["GET", "POST"])
@@ -352,6 +353,17 @@ def set_autoBet_state():
     gameid = request.form['gameid']
     value = request.form['value']
     engine.execute(f"UPDATE odds_table SET auto_bet = '{value}' WHERE game_id = '{gameid}';")
+
+    return data
+
+@app.route('/set_autoStake_size', methods = ["POST"])
+def set_autoStake_size(): 
+    data = {}
+    engine = database.connect_to_db()
+    
+    stake = request.form['stake']
+    engine.execute(f"UPDATE sato_stake_size SET status = '0' WHERE stake != '{stake}';")
+    engine.execute(f"UPDATE sato_stake_size SET status = '1' WHERE stake = '{stake}';")
 
     return data
 

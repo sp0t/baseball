@@ -9,6 +9,7 @@ body{
     color: var(--blue); 
     font-family: 'Open Sans', sans-serif;
 }
+
 .container{
 	margin: 25px 40px;
     text-align: center;
@@ -82,7 +83,15 @@ a{
 .div-container{
 	display: flex; 
 	align-items:center; 
-	border:2px solid rgba(52, 54, 53, 0.26); 
+	border:2px solid rgba(52, 54, 53, 0.35); 
+	padding: 2px; 
+	margin-bottom: 8px;
+}
+
+.div-container-dark{
+	display: flex; 
+	align-items:center; 
+	border:2px solid rgba(255, 255, 255, 0.50); 
 	padding: 2px; 
 	margin-bottom: 8px;
 }
@@ -92,6 +101,14 @@ a{
 	grid-template-columns: auto auto auto auto auto auto auto;
 	gap: 1px;
 	background-color: white;
+	padding: 1px;
+}
+
+.average-container-dark {
+	display: grid;
+	grid-template-columns: auto auto auto auto auto auto auto;
+	gap: 1px;
+	background-color: black;
 	padding: 1px;
 }
 
@@ -112,9 +129,17 @@ a{
 }
 
 .average-container > div {
-	background-color: gray;
+	background-color: rgb(31, 30, 30);
 	text-align: center;
 	color: white;
+	padding: 10px 6px;
+	font-size: 13px;
+}
+
+.average-container-dark > div {
+	background-color: white;
+	text-align: center;
+	color: black;
 	padding: 10px 6px;
 	font-size: 13px;
 }
@@ -254,6 +279,15 @@ select{
 	border-radius: 3px;
 	height: 20px;
 }
+
+.select-dark-mode{
+	background-color: #555;
+	border: solid var(--light-blue) 1px;
+	border-radius: 3px;
+	height: 20px;
+	color: white;
+}
+
 .select-label{
 	margin: 0 9px; 
 }
@@ -499,6 +533,17 @@ body {
 	margin-bottom: 0.5rem;
 	color: #B0BEC5;
 	border: 1px solid #ECEFF1;
+	padding: 0.5rem 0.75rem;
+	border-radius: 0.5rem;
+}
+
+.home_label-dark{
+	font-size: 0.75rem;
+	font-weight: 400;
+	display: block;
+	margin-bottom: 0.5rem;
+	color: #B0BEC5;
+	border: 1px solid #eceff130;
 	padding: 0.5rem 0.75rem;
 	border-radius: 0.5rem;
 }
@@ -1007,3 +1052,52 @@ table {
 	font-size: 15px;
     padding: 5px;
 }
+
+/* Dark Mode Styles */
+.dark-mode {
+	background-color: #121212;
+	color: #ffffff;
+}
+
+.toggleDiv {
+	display: flex;
+	justify-content: end;
+}
+
+.checkbox {
+	opacity: 0;
+	position: absolute;
+	border: solid 1px white;
+  }
+  
+  .checkbox-label {
+	background-color: #41464b;
+	width: 50px;
+	height: 26px;
+	border-radius: 50px;
+	position: relative;
+	padding: 5px;
+	cursor: pointer;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+  }
+  
+  .fa-moon {color: #f1c40f;}
+  
+  .fa-sun {color: #f39c12;}
+  
+  .checkbox-label .ball {
+	background-color: #fff;
+	width: 22px;
+	height: 22px;
+	position: absolute;
+	left: 2px;
+	top: 2px;
+	border-radius: 50%;
+	transition: transform 0.2s linear;
+  }
+  
+  .checkbox:checked + .checkbox-label .ball {
+	transform: translateX(24px);
+  }

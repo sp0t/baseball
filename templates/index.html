@@ -7,12 +7,23 @@
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link rel="stylesheet" href="/static/styles.css"> 
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.1/css/all.min.css"> 
         <link rel="icon" href="favicon.svg">
-        <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🚀</text></svg>"> 
+        <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🚀</text></svg>">
         <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></script>
         <script type="text/javascript" src="{{ url_for('static', filename='index.js') }}"></script>
         <script>
+            $(document).ready(function(){
+
+                if (localStorage.getItem("darkMode") === "enabled") {
+                    $( "#checkbox" ).prop( "checked", false );
+                    changeTheme(1);
+                } else {
+                    $( "#checkbox" ).prop( "checked", true );
+                    changeTheme(0);
+                }
+            })
 
             document.addEventListener('DOMContentLoaded', function() {
                 var options = document.querySelectorAll('.autobet-option');
@@ -52,6 +63,14 @@
     </head>
     <body>
         <div class="nav">
+            <div class="toggleDiv">
+                <input type="checkbox" class="checkbox" id="checkbox" onchange="toggleDarkMode()">
+                <label for="checkbox" class="checkbox-label">
+                    <i class="fas fa-moon"></i>
+                    <i class="fas fa-sun"></i>
+                    <span class="ball"></span>
+                </label>
+            </div>
             <div class="nav-header"><div class="nav-title" style="font-size: 50px;">BetMLB</div></div>
             </div>
             
@@ -91,14 +110,14 @@
                 
                 <div>
                     {% for el in average %}
-                        <div class="average-container">
-                            <div style="background-color:black">Season</div>
-                            <div style="background-color:black">AVG</div>
-                            <div style="background-color:black">OBP</div>
-                            <div style="background-color:black">SLG</div>
-                            <div style="background-color:black">OPS</div>
-                            <div style="background-color:black">ERA</div>
-                            <div style="background-color:black">WHIP</div>
+                        <div id='average-container' class="average-container">
+                            <div class="dark-mode">Season</div>
+                            <div class="dark-mode">AVG</div>
+                            <div class="dark-mode">OBP</div>
+                            <div class="dark-mode">SLG</div>
+                            <div class="dark-mode">OPS</div>
+                            <div class="dark-mode">ERA</div>
+                            <div class="dark-mode">WHIP</div>
                             <div>{{el.year}}</div>
                             <div>{{el.avg}}</div>
                             <div>{{el.obp}}</div>
@@ -428,7 +447,7 @@
                         <input type="hidden" id="modal_game_id" name="modal_game_id" value="">
                         <div class="bet-form-row">
                             <div class="bet-form-row-left"><span>BetDate:</span></div>
-                            <div class="bet-form-row-right"><span id="betdate" style="color: blue;"></span></div>
+                            <div class="bet-form-row-right"><span id="betdate"></span></div>
                         </div>
                         <div class="bet-form-row">
                             <div class="bet-form-row-left">away:</div>

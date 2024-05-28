@@ -1,3 +1,16 @@
+$(document).ready(function(){
+
+    $('#darkModeToggle').click(function(){
+        if (localStorage.getItem("darkMode") === "enabled") {
+            toggleDarkMode(0);
+            localStorage.setItem("darkMode", "disabled");
+        } else {
+            toggleDarkMode(1);
+            localStorage.setItem("darkMode", "enabled");
+        }
+    });
+})
+
 function openCard(buttonId){ 
     var gameId = buttonId.replace("game_button_", "");
     $.ajax({
@@ -1047,3 +1060,50 @@ function formatToFinancial(num) {
 //         }
 //     })
 // }
+
+function toggleDarkMode() {
+    if (localStorage.getItem("darkMode") === "enabled") {
+        localStorage.setItem("darkMode", "disabled");
+        $(".div-container-dark").addClass("div-container").removeClass("div-container-dark");
+        $(".home_label-dark").addClass("home_label").removeClass("home_label-dark");
+    } else {
+        localStorage.setItem("darkMode", "enabled");
+        $(".div-container").addClass("div-container-dark").removeClass("div-container");
+        $(".home_label").addClass("home_label-dark").removeClass("home_label");
+    }
+
+    $("body").toggleClass("dark-mode");
+    $("select").toggleClass("select-dark-mode");
+    $("a").toggleClass("dark-mode");
+    $("p").toggleClass("dark-mode");
+    $("div").toggleClass("dark-mode");
+    $("span").toggleClass("dark-mode");
+    $("#loginForm").toggleClass("border-dark border-white")
+    $("#average-container").toggleClass("average-container average-container-dark")
+} 
+
+function changeTheme(state) {
+    if (state == 1) {
+        $("body").addClass("dark-mode");
+        $("a").addClass("dark-mode");
+        $("div").addClass("dark-mode");
+        $("p").addClass("dark-mode");
+        $("span").addClass("dark-mode");
+        $("select").addClass("select-dark-mode");
+        $("#loginForm").addClass("border-white").removeClass("border-dark");
+        $("#average-container").addClass("average-container-dark").removeClass("average-container");
+        $(".div-container").addClass("div-container-dark").removeClass("div-container");
+        $(".home_label").addClass("home_label-dark").removeClass("home_label");
+    } else {
+        $("body").removeClass("dark-mode");
+        $("a").removeClass("dark-mode");
+        $("div").removeClass("dark-mode");
+        $("p").removeClass("dark-mode");
+        $("span").removeClass("dark-mode");
+        $("select").removeClass("select-dark-mode");
+        $("#loginForm").addClass("border-dark").removeClass("border-white");
+        $("#average-container").addClass("average-container").removeClass("average-container-dark");
+        $(".div-container-dark").addClass("div-container").removeClass("div-container-dark");
+        $(".home_label-dark").addClass("home_label").removeClass("home_label-dark");
+    }
+}

@@ -1066,10 +1066,13 @@ function toggleDarkMode() {
         localStorage.setItem("darkMode", "disabled");
         $(".div-container-dark").addClass("div-container").removeClass("div-container-dark");
         $(".home_label-dark").addClass("home_label").removeClass("home_label-dark");
+        $(".nav-dark").addClass("nav").removeClass("nav-dark");
+        
     } else {
         localStorage.setItem("darkMode", "enabled");
         $(".div-container").addClass("div-container-dark").removeClass("div-container");
         $(".home_label").addClass("home_label-dark").removeClass("home_label");
+        $(".nav").addClass("nav-dark").removeClass("nav");
     }
 
     $("body").toggleClass("dark-mode");
@@ -1078,8 +1081,14 @@ function toggleDarkMode() {
     $("p").toggleClass("dark-mode");
     $("div").toggleClass("dark-mode");
     $("span").toggleClass("dark-mode");
-    $("#loginForm").toggleClass("border-dark border-white")
-    $("#average-container").toggleClass("average-container average-container-dark")
+    $("table").toggleClass("dark-mode");
+    $("#stake").toggleClass("dark-mode");
+    $("#gameTh").toggleClass("thead-dark");
+    $("#gameTd").toggleClass("tbody-dark");
+    $("#loginForm").toggleClass("border-dark border-white");
+    $("#average-container").toggleClass("average-container average-container-dark");
+    $("#total-amount").toggleClass("dark-mode total-amount-txt");
+    $("#win-amount").toggleClass("dark-mode win-amount-txt");
 } 
 
 function changeTheme(state) {
@@ -1090,10 +1099,19 @@ function changeTheme(state) {
         $("p").addClass("dark-mode");
         $("span").addClass("dark-mode");
         $("select").addClass("select-dark-mode");
+        $("table").addClass("dark-mode");
+        $("#gameTh").addClass("thead-dark");
+        $("#gameTd").addClass("tbody-dark");
+        $("#stake").addClass("dark-mode");
+        $("#total-amount").addClass("dark-mode");
+        $("#win-amount").addClass("dark-mode");
+        $("#total-amount").addClass("dark-mode").removeClass("total-amount-txt");
+        $("#win-amount").addClass("dark-mode").removeClass("win-amount-txt");
         $("#loginForm").addClass("border-white").removeClass("border-dark");
         $("#average-container").addClass("average-container-dark").removeClass("average-container");
         $(".div-container").addClass("div-container-dark").removeClass("div-container");
         $(".home_label").addClass("home_label-dark").removeClass("home_label");
+        $(".nav").addClass("nav-dark").removeClass("nav");
     } else {
         $("body").removeClass("dark-mode");
         $("a").removeClass("dark-mode");
@@ -1101,9 +1119,16 @@ function changeTheme(state) {
         $("p").removeClass("dark-mode");
         $("span").removeClass("dark-mode");
         $("select").removeClass("select-dark-mode");
+        $("table").removeClass("dark-mode");
+        $("#gameTh").removeClass("thead-dark");
+        $("#gameTd").removeClass("tbody-dark");
+        $("#stake").removeClass("dark-mode");
+        $("#total-amount").addClass("total-amount-txt").removeClass("dark-mode");
+        $("#win-amount").addClass("win-amount-txt").removeClass("dark-mode");
         $("#loginForm").addClass("border-dark").removeClass("border-white");
         $("#average-container").addClass("average-container").removeClass("average-container-dark");
         $(".div-container-dark").addClass("div-container").removeClass("div-container-dark");
         $(".home_label-dark").addClass("home_label").removeClass("home_label-dark");
+        $(".nav-dark").addClass("nav").removeClass("nav-dark");
     }
 }

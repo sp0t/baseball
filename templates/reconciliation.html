@@ -44,6 +44,13 @@
     });
 
     $( document ).ready(function() {
+
+        if (localStorage.getItem("darkMode") === "enabled") {
+            changeTheme(1);
+        } else {
+            changeTheme(0);
+        }
+
         var date = new Date();
         dispdate = date.toDispStr();
         document.getElementById('startdate').innerHTML = dispdate
@@ -170,18 +177,24 @@
                         currency: 'USD',
                     });
 
-                    stakehtml += `<td style="color: rgba(0, 38, 255, 0.784);">${USDollar.format(stake[0]['stake'])}</td>`
+                    stakehtml += `<td id="total-amount" class="total-amount-txt"">${USDollar.format(stake[0]['stake'])}</td>`
                     if(stake[0]['wins'] - stake[0]['losses'] >= 0)
-                        stakehtml += `<td style="color: green;">${USDollar.format(stake[0]['wins'] - stake[0]['losses'])}</td>`
+                        stakehtml += `<td id="win-amount" class="win-amount-txt">${USDollar.format(stake[0]['wins'] - stake[0]['losses'])}</td>`
                     else
-                        stakehtml += `<td style="color: red;">${USDollar.format(stake[0]['wins'] - stake[0]['losses'])}</td>`
+                        stakehtml += `<td id="win-amount" class="loss-amount-txt">${USDollar.format(stake[0]['wins'] - stake[0]['losses'])}</td>`
     
-                    stakehtml += `<td style="color: rgb(0, 0, 0);">${((stake[0]['wins'] - stake[0]['losses']) * 100 / stake[0]['stake']).toFixed(2)}%</td>`
+                    stakehtml += `<td>${((stake[0]['wins'] - stake[0]['losses']) * 100 / stake[0]['stake']).toFixed(2)}%</td>`
                 }
 
 
                 $("#betbody").html(html);
                 $("#stake").html(stakehtml);
+
+                if (localStorage.getItem("darkMode") === "enabled") {
+                    changeTheme(1);
+                } else {
+                    changeTheme(0);
+                }
             }
         })
     }
@@ -289,7 +302,7 @@
     <div class="container-fluid" style="padding: 100px 120px 0px 120px;">
         <div>
             <table class="table" style="margin: 0 auto; text-align: center; width: auto; border: none;">
-                <thead style="font-size: 20px;color: black; font-weight: bold; height: 50px;">
+                <thead style="font-size: 20px; font-weight: bold; height: 50px;">
                     <tr>
                         <td>Total Stake</td>
                         <td style="padding-left: 40px; padding-right: 40px;">P/L</td>

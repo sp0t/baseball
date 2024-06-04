@@ -7,7 +7,7 @@
 body{
     background-color: var(--off-white);
     color: var(--blue); 
-    font-family: 'Open Sans', sans-serif;
+    font-family: 'Open Sans', sans-serif;	
 }
 
 .container{
@@ -560,7 +560,17 @@ input:focus {outline: none;}
 table {
 	border-collapse: collapse;
 	border-spacing: 0;
+	color: black;
 }
+
+.thead-dark {
+	background-color: #2d2929;
+}
+
+.tbody-dark {
+	background-color: #332f2f;
+}
+
 .ui-datepicker-calendar thead th {
 	padding: 0.25rem 0;
 	text-align: center;
@@ -816,10 +826,10 @@ table {
      width:100%;
   }
   .tab-btn{
-    background-color:#fff;
+    background-color:#121212db;
     border:none;
     border-bottom:1px solid gray;
-    color:#000;
+    color:white;
     cursor:pointer;
     padding:10px 40px;
     margin:10px 0;
@@ -827,11 +837,14 @@ table {
     /* width:15%; */
 	font-size: 15px;
   }
+
   .tab-btn-active{
     border-bottom:2px solid hsl(0, 94%, 66%);
-    color:hsl(0, 94%, 66%);
+    color: hsl(238.67deg 100% 50.04%);
+    background-color: #ffffffbd;
     /* font-weight:bold; */
   }
+
   /* tabs content */
   .content{
     width:100%;
@@ -1017,6 +1030,22 @@ table {
 	font-size: 22px;
 }
 
+.win-amount-txt {
+	color: green;
+	font-size: 20px;
+}
+
+.loss-amount-txt {
+	color: red;
+	font-size: 20px;
+}
+
+.total-amount-txt {
+	color: rgba(0, 38, 255, 0.784);
+	font-size: 20px;
+}
+
+
 .record-box {
 	padding: 5px;
 }
@@ -1059,6 +1088,12 @@ table {
 	color: #ffffff;
 }
 
+.white-mode {
+	color: #121212;
+	background-color: #ffffff;
+}
+
+
 .toggleDiv {
 	display: flex;
 	justify-content: end;
@@ -1100,4 +1135,13 @@ table {
   
   .checkbox:checked + .checkbox-label .ball {
 	transform: translateX(24px);
+  }
+
+  .friend-container {
+	color: black;
+	width: 100%;
+  }
+
+  .friend-select {
+	height: 30px;
   }

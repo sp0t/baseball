@@ -13,6 +13,16 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></script>
         <script type="text/javascript" src="{{ url_for('static', filename='index.js') }}"></script>
         <!-- Latest compiled and minified CSS -->
+        <script>
+            $(document).ready(function(){
+    
+                if (localStorage.getItem("darkMode") === "enabled") {
+                    changeTheme(1);
+                } else {
+                    changeTheme(0);
+                }
+            })
+        </script>
     </head>
     <body>
         <div class="nav">
@@ -36,7 +46,7 @@
         <div style="margin: 100px auto">
             <p style="margin: 0 auto 20px; text-align: center">Last 10 Games in Database</p>
             <table class="table" style="margin: 0 auto; text-align: center">
-                <thead>
+                <thead id="gameTh">
                     <tr>
                         <td>game_id</td>
                         <td>game_date</td>
@@ -47,7 +57,7 @@
                     </tr>
                 </thead>
 
-                <tbody>
+                <tbody id="gameTd">
                     {% for game in data %}
 
                     <tr>

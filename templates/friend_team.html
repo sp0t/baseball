@@ -9,6 +9,8 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-throttle-debounce/1.1/jquery.ba-throttle-debounce.min.js"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='index.js') }}"></script>
+    <link rel="stylesheet" href="/static/styles.css"> 
     <style>
         table {
         font-family: "Fraunces", serif;
@@ -76,6 +78,13 @@
             
     </style>
     <script>
+    $(document).ready(function(){
+        if (localStorage.getItem("darkMode") === "enabled") {
+            changeTheme(1);
+        } else {
+            changeTheme(0);
+        }
+    })
     function changeData() {
     var team_name, team_abbr, count;
     var data = {};
@@ -513,7 +522,7 @@
     ">
     <img style="width: 50px;margin: auto;position: relative;top: calc(50vh - 25px);" src="/static/loader.gif">
     </div>
-    <div class="container-fluid">
+    <div class="friend-container">
         <div class="mt-5">
             <div>
                 <h1 class="text-3xl ml-24">Friend-team</h1>
@@ -528,9 +537,9 @@
             </div>
             <div class="mt-2 flex">
                 <div class="w-3/12 flex justify-center text-xl space-x-7">
-                    <label class="home_label" for="team_name" class="text-red-700">Team:</label>
+                    <label for="team_name" class="text-red-700">Team:</label>
                     
-                    <select class="bg-cyan-100 border-black" style="border: solid 1px" name="team_name" id="team" onchange="changeData()">
+                    <select class="bg-cyan-100 border-black friend-select" style="border: solid 1px; color: black;" name="team_name" id="team" onchange="changeData()">
                         <option value="blank"></option>
                         {% for team in data %}
                         <option value="{{team.abbreviation}}">{{team.tname}}</option>
@@ -538,9 +547,9 @@
                     </select>   
                 </div>
                 <div class="w-3/12 flex justify-center text-xl space-x-7">
-                    <label class="home_label" for="player" class="text-red-700">Player:</label>
+                    <label for="player" class="text-red-700">Player:</label>
 
-                    <select class="bg-cyan-100 border-black px-5" style="border: solid 1px" id="player" onchange="changeData()">
+                    <select class="bg-cyan-100 border-black px-5 friend-select" style="border: solid 1px; color: black;" id="player" onchange="changeData()">
                         <option value="batter">Batters</option>
                         <option value="pitcher">Pitchers</option>
                     </select>
@@ -550,9 +559,9 @@
                     </div>   
                 </div>
                 <div class="w-3/12 flex justify-center text-xl space-x-7">
-                    <label class="home_label" for="count" class="text-red-700">Count:</label>
+                    <label for="count" class="text-red-700">Count:</label>
 
-                    <select class="bg-cyan-100 border-black px-5" style="border: solid 1px" id="count" onchange="changeData()">
+                    <select class="bg-cyan-100 border-black px-5 friend-select" style="border: solid 1px; color: black;" id="count" onchange="changeData()">
                         <option>5</option>
                         <option>10</option>
                         <option>20</option>
@@ -565,15 +574,15 @@
                     </select>   
                 </div>
                 <div class="w-3/12 flex justify-center text-xl space-x-7">
-                    <label class="home_label" for="season" class="text-red-700">Year:</label>
+                    <label for="season" class="text-red-700">Year:</label>
 
-                    <input class="home_input" class="bg-cyan-100 border-black px-5"  style="border: solid 1px" type="number" id="season" min="1900" max="2099" step="1" value="2024" onchange="changeData()">
+                    <input class="bg-cyan-100 border-black px-5 friend-select"  style="border: solid 1px; color: black;" type="number" id="season" min="1900" max="2099" step="1" value="2024" onchange="changeData()">
                     </input>   
                 </div>
             </div>
             
             <div class="mt-10" role="region" aria-labelledby="caption" tabindex="0">
-                <table class="border-collapse border border-black border-collapse text-center scroll-smooth scroll-auto" id="team_page">
+                <table class="border-collapse border border-black border-collapse text-center scroll-smooth scroll-auto" style=" color: black;" id="team_page">
                 </table>
                 <div id="position_page" style="display: none;">
                     <!-- <div style="font-size: 30px; margin: auto; text-align: center;"><span >Season:&nbsp&nbsp&nbsp</span><span id="total_game" style="color: blue;">30</span></div> -->

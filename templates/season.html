@@ -33,6 +33,13 @@
             }
         </style>
         <script>
+            $(document).ready(function(){
+                if (localStorage.getItem("darkMode") === "enabled") {
+                    changeTheme(1);
+                } else {
+                    changeTheme(0);
+                }
+            })
             window.onload = function () {
 
             var today = new Date();
@@ -416,7 +423,7 @@
         
         <div style="margin-top: 100px; margin-bottom: 50px;">
             <table class="table" style="margin: 0 auto; text-align: center; width: auto; border: none;">
-                <thead style="font-size: 30px;color: black; font-weight: bold; height: 80px;">
+                <thead style="font-size: 30px; font-weight: bold; height: 80px;">
                     <tr>
                         <td>Total Stake</td>
                         <td style="padding-left: 40px; padding-right: 40px;">P/L</td>
@@ -425,14 +432,14 @@
                 </thead>
                 <tbody style="font-size: 30px; height: 60px;">
                     <tr>
-                        <td style="color: rgba(0, 38, 255, 0.784);">{{data['season']['stake']}}</td>
+                        <td id="total-amount" class="total-amount-txt" style="font-size: 30px;">{{data['season']['stake']}}</td>
                         {% if data['season'].color == "green" %}
-                            <td style="color: green;">{{data['season']['pl']}}</td>
+                            <td id="win-amount" class="win-amount-txt" style="font-size: 30px;">{{data['season']['pl']}}</td>
                         {% endif %}
                         {% if data['season'].color == "red" %}
-                            <td style="color: red;">{{data['season']['pl']}}</td>
+                            <td id="win-amount" class="loss-amount-txt" style="font-size: 30px;">{{data['season']['pl']}}</td>
                         {% endif %}
-                        <td style="color: rgb(0, 0, 0);">{{data['season']['yield']}}%</td>
+                        <td >{{data['season']['yield']}}%</td>
                     </tr>
                 </tbody>
             </table>
@@ -448,7 +455,7 @@
         </div>
         <div style="margin-top: 100px; margin-bottom: 50px;">
             <table class="table" style="margin: 0 auto; text-align: center; width: auto; border: none;">
-                <thead style="font-size: 30px;color: black; font-weight: bold; height: 80px;">
+                <thead style="font-size: 30px; font-weight: bold; height: 80px;">
                     <tr>
                         <td>Total Stake</td>
                         <td style="padding-left: 40px; padding-right: 40px;">P/L</td>
@@ -457,14 +464,14 @@
                 </thead>
                 <tbody style="font-size: 30px; height: 60px;">
                     <tr>
-                        <td style="color: rgba(0, 38, 255, 0.784);">{{data['total']['stake']}}</td>
+                        <td id="total-amount-total" class="total-amount-txt" style="font-size: 30px;">{{data['total']['stake']}}</td>
                         {% if data['total'].color == "green" %}
-                            <td style="color: green;">{{data['total']['pl']}}</td>
+                            <td id="win-amount-total" class="win-amount-txt" style="font-size: 30px;">{{data['total']['pl']}}</td>
                         {% endif %}
                         {% if data['total'].color == "red" %}
-                            <td style="color: red;">{{data['total']['pl']}}</td>
+                            <td id="win-amount-total" class="loss-amount-txt" style="font-size: 30px;">{{data['total']['pl']}}</td>
                         {% endif %}
-                        <td style="color: rgb(0, 0, 0);">{{data['total']['yield']}}%</td>
+                        <td>{{data['total']['yield']}}%</td>
                     </tr>
                 </tbody>
             </table>

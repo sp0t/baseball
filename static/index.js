@@ -1089,6 +1089,8 @@ function toggleDarkMode() {
     $("#average-container").toggleClass("average-container average-container-dark");
     $("#total-amount").toggleClass("dark-mode total-amount-txt");
     $("#win-amount").toggleClass("dark-mode win-amount-txt");
+    $("#total-amount-total").toggleClass("dark-mode total-amount-txt");
+    $("#win-amount-total").toggleClass("dark-mode win-amount-txt");
 } 
 
 function changeTheme(state) {
@@ -1103,10 +1105,10 @@ function changeTheme(state) {
         $("#gameTh").addClass("thead-dark");
         $("#gameTd").addClass("tbody-dark");
         $("#stake").addClass("dark-mode");
-        $("#total-amount").addClass("dark-mode");
-        $("#win-amount").addClass("dark-mode");
         $("#total-amount").addClass("dark-mode").removeClass("total-amount-txt");
         $("#win-amount").addClass("dark-mode").removeClass("win-amount-txt");
+        $("#total-amount-total").addClass("dark-mode").removeClass("total-amount-txt");
+        $("#win-amount-total").addClass("dark-mode").removeClass("win-amount-txt");
         $("#loginForm").addClass("border-white").removeClass("border-dark");
         $("#average-container").addClass("average-container-dark").removeClass("average-container");
         $(".div-container").addClass("div-container-dark").removeClass("div-container");
@@ -1125,6 +1127,8 @@ function changeTheme(state) {
         $("#stake").removeClass("dark-mode");
         $("#total-amount").addClass("total-amount-txt").removeClass("dark-mode");
         $("#win-amount").addClass("win-amount-txt").removeClass("dark-mode");
+        $("#total-amount-total").addClass("total-amount-txt").removeClass("dark-mode");
+        $("#win-amount-total").addClass("win-amount-txt").removeClass("dark-mode");
         $("#loginForm").addClass("border-dark").removeClass("border-white");
         $("#average-container").addClass("average-container").removeClass("average-container-dark");
         $(".div-container-dark").addClass("div-container").removeClass("div-container-dark");

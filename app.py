@@ -190,11 +190,15 @@ def login():
         session.permanent = True
         app.permanent_session_lifetime = timedelta(hours=1)
         session["username"] = user['username']
+
         if res[0][2] == "0":
             session["state"] = 0
             return jsonify("user")
         elif res[0][2] == "1":
             session["state"] = 1
+            return jsonify("admin")
+        elif res[0][2] == "2":
+            session["state"] = 2
             return jsonify("admin")
     
     return jsonify("Password failed!")
@@ -1150,7 +1154,7 @@ def reconciliation():
     engine = database.connect_to_db()
     if request.method == 'GET':
         site_res = pd.read_sql(f"SELECT * FROM site_list", con = engine).to_dict('records')
-        return render_template("reconciliation.html", sitelist = site_res)
+        return render_template("reconciliation.html", sitelist = site_res, admin = session["state"])
 
     request_data = request.get_json()
 
@@ -1159,9 +1163,9 @@ def reconciliation():
     betsite = request_data["betsite"]
 
     if betsite == 'All':
-        res = pd.read_sql(f"SELECT betid, betdate, team1, team2, place, site, stake, wins, status FROM betting_table WHERE regstate != '2' AND betdate BETWEEN '{startdate}' AND '{enddate}';", con = engine)
+        res = pd.read_sql(f"SELECT betid, betdate, team1, team2, place, site, stake, wins, status FROM betting_table WHERE regstate != '2' AND betdate BETWEEN '{startdate}' AND '{enddate}' ORDER BY betdate, site, place;", con = engine)
     else:
-        res = pd.read_sql(f"SELECT betid, betdate, team1, team2, place, site, stake, wins, status FROM betting_table WHERE site = '{betsite}' AND regstate != '2' AND betdate BETWEEN '{startdate}' AND '{enddate}';", con = engine)
+        res = pd.read_sql(f"SELECT betid, betdate, team1, team2, place, site, stake, wins, status FROM betting_table WHERE site = '{betsite}' AND regstate != '2' AND betdate BETWEEN '{startdate}' AND '{enddate}' ORDER BY betdate, site, place;", con = engine)
 
     betdata = res.to_dict('records')
     
@@ -1345,6 +1349,14 @@ def betting_proc():
 
     elif betting_data['flag'] == 1:
         betting_table_sql = f"UPDATE betting_table SET place = '{betting_data['place']}', odds = '{betting_data['odds']}', stake = '{betting_data['stake']}', wins = '{betting_data['wins']}', regtime = '{regtime}' WHERE betdate = '{betting_data['betdate']}' AND team1 = '{betting_data['away']}' AND team2 = '{betting_data['home']}' AND site = '{betting_data['site']}';"
+    
+        engine.execute(betting_table_sql)
+    elif betting_data['flag'] == 2:
+        betting_table_sql = f"UPDATE betting_table SET place = '{betting_data['place']}', odds = '{betting_data['odds']}', stake = '{betting_data['stake']}', wins = '{betting_data['wins']}', regtime = '{regtime}', site = '{betting_data['site']}' WHERE betid = '{betting_data['betid']}';"
+    
+        engine.execute(betting_table_sql)
+    elif betting_data['flag'] == 3:
+        betting_table_sql = f"DELETE FROM betting_table WHERE betdate = '{betting_data['betdate']}' AND team1 = '{betting_data['away']}' AND team2 = '{betting_data['home']}' AND site = '{betting_data['site']}';"
     
         engine.execute(betting_table_sql)
     data['result'] = 'OK'

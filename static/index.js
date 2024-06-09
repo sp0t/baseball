@@ -25,7 +25,6 @@ function openCard(buttonId){
             if (!!$('#calc')){ 
                 $('#calc').hide()
             }
-
             $('#betform').hide();
 
         },
@@ -164,14 +163,16 @@ function openBetModal(gameid){
 
             var newOption = document.createElement('option');
             newOption.value = ''; 
-            newOption.className = 'bet-input-form'
             newOption.innerHTML = '-';
+            newOption.style.fontSize = '15px';
+            newOption.style.padding = '3px';
             teams.append(newOption);
 
             var awayOption = document.createElement('option');
             awayOption.value = data['away']; 
-            awayOption.className = 'bet-input-form'
             awayOption.innerHTML = data['away'];
+            awayOption.style.fontSize = '15px';
+            awayOption.style.padding = '3px';
             if(data['away'] == data['place'])
                 awayOption.setAttribute('selected', true);
 
@@ -179,8 +180,9 @@ function openBetModal(gameid){
 
             var homeOption = document.createElement('option');
             homeOption.value = data['home']; 
-            homeOption.className = 'bet-input-form'
             homeOption.innerHTML = data['home'];
+            homeOption.style.fontSize = '15px';
+            homeOption.style.padding = '3px';
 
             if(data['home'] == data['place'])
                 homeOption.setAttribute('selected', true);
@@ -191,15 +193,17 @@ function openBetModal(gameid){
 
             var newOption = document.createElement('option');
             newOption.value = ''; 
-            newOption.className = 'bet-input-form'
             newOption.innerHTML = '-';
+            newOption.style.fontSize = '15px';
+            newOption.style.padding = '3px';
             sites.append(newOption);
 
             for (var i = 0; i<data['site_list'].length; i++) {
                 newOption = document.createElement('option');
                 newOption.value = data['site_list'][i]; 
-                newOption.className = 'bet-input-form'
                 newOption.innerHTML = data['site_list'][i];
+                newOption.style.fontSize = '15px';
+                newOption.style.padding = '3px';
                 if (data['site_list'][i] == data['site'])
                     newOption.setAttribute('selected', true);
                 sites.append(newOption);
@@ -308,7 +312,7 @@ function calWinsWithStake(value) {
     winvalue.value = roundToNearestInteger(wins);
 }
 
-function closeCard(){ 
+function closeCard(value = 0){ 
     
     var allOptions = document.querySelectorAll('.option');
     allOptions.forEach(option => {
@@ -316,19 +320,24 @@ function closeCard(){
     });
 
     var selectElement = document.getElementById('teams');
-    var options = selectElement.querySelectorAll('.bet-input-form');
+    var options = selectElement.querySelectorAll('option');
 
     options.forEach(option => {
         option.remove();
     });
 
-    selectElement = document.getElementById('sites');
-    var options = selectElement.querySelectorAll('.bet-input-form');
+    if(value != 1) {
+        selectElement = document.getElementById('sites');
+        var options = selectElement.querySelectorAll('option');
+    
+        options.forEach(option => {
+            option.remove();
+        });
+    }
 
-    options.forEach(option => {
-        option.remove();
-    });
-
+    if(value == 1) {
+        $('#betid-rec').val(0);
+    }
 
     $('.large-card').hide(); 
 
@@ -344,7 +353,15 @@ function updateBetInformation(value) {
     var odds = document.getElementById('oddvalue').value;
     var stake = document.getElementById('stakevalue').value;
     var wins = document.getElementById('winvalue').value;
-    var site = document.getElementById('sites').value;
+    var site = '';
+    var betid = 0;
+    if(value == 2 || value == 3) { 
+        site = document.getElementById('sites-rec').value;
+        betid = document.getElementById('betid-rec').value;
+    }
+    else {
+        site = document.getElementById('sites').value;
+    }
 
     // if(site == 'sports411.ag'){
     //     wins = (wins * 0.9).toString();
@@ -400,6 +417,9 @@ function updateBetInformation(value) {
     data['wins'] = wins;
     data['flag'] = value;
     data['site'] = site;
+    data['betid'] = betid;
+
+    console.log(data)
 
     $.ajax({
         type: 'POST', 
@@ -410,7 +430,17 @@ function updateBetInformation(value) {
         beforeSend: function(){ 
         },
         success: function (data){ 
-            closeCard();
+            if(value == 2 || value == 3) {
+                closeCard(1);
+                var data={};
+                data["startdate"] = $("#startdateInput").val();
+                data["enddate"] = $("#enddateInput").val();
+                data["betsite"] = $("#betsite").val();
+
+                updatebettingdata(data);
+            } else {
+                closeCard(0);
+            }
         }
     })
 }
@@ -468,6 +498,7 @@ function makePrediction(model){
             $('#large-card-wrapper').show();
             $('#form').hide();
             $('#betform').hide();
+
             $('#calc').show();
 
             document.getElementById('stake_size').textContent = 'Today Bet Size is ' + data['1a']['stake'];
@@ -1091,6 +1122,9 @@ function toggleDarkMode() {
     $("#win-amount").toggleClass("dark-mode win-amount-txt");
     $("#total-amount-total").toggleClass("dark-mode total-amount-txt");
     $("#win-amount-total").toggleClass("dark-mode win-amount-txt");
+    $("#sites").toggleClass("dark-mode bet-input-form");
+    $("#sites-rec").toggleClass("dark-mode bet-input-form");
+    $("#teams").toggleClass("dark-mode bet-input-form");
 } 
 
 function changeTheme(state) {
@@ -1105,6 +1139,9 @@ function changeTheme(state) {
         $("#gameTh").addClass("thead-dark");
         $("#gameTd").addClass("tbody-dark");
         $("#stake").addClass("dark-mode");
+        $("#sites").addClass("dark-mode").removeClass("bet-input-form");
+        $("#sites-rec").addClass("dark-mode").removeClass("bet-input-form");
+        $("#teams").addClass("dark-mode").removeClass("bet-input-form");
         $("#total-amount").addClass("dark-mode").removeClass("total-amount-txt");
         $("#win-amount").addClass("dark-mode").removeClass("win-amount-txt");
         $("#total-amount-total").addClass("dark-mode").removeClass("total-amount-txt");
@@ -1125,6 +1162,9 @@ function changeTheme(state) {
         $("#gameTh").removeClass("thead-dark");
         $("#gameTd").removeClass("tbody-dark");
         $("#stake").removeClass("dark-mode");
+        $("#sites").addClass("bet-input-form").removeClass("dark-mode");
+        $("#sites-rec").addClass("bet-input-form").removeClass("dark-mode");
+        $("#teams").addClass("bet-input-form").removeClass("dark-mode");
         $("#total-amount").addClass("total-amount-txt").removeClass("dark-mode");
         $("#win-amount").addClass("win-amount-txt").removeClass("dark-mode");
         $("#total-amount-total").addClass("total-amount-txt").removeClass("dark-mode");
@@ -1135,4 +1175,67 @@ function changeTheme(state) {
         $(".home_label-dark").addClass("home_label").removeClass("home_label-dark");
         $(".nav-dark").addClass("nav").removeClass("nav-dark");
     }
+}
+
+function openBetForm(element) {
+    var data = element.getAttribute('data-betstate');
+    var betDetails = JSON.parse(data);
+    console.log(betDetails);
+    $('.large-card').css('width', '350px').css('height', '430px').show();
+    $('#large-card-wrapper').show();
+    $('#betform').show();
+
+    var betdate = document.getElementById('betdate');
+    betdate.innerHTML = betDetails['betdate'];
+
+    var away = document.getElementById('awayname');
+    away.value = betDetails['team1'];
+
+    var home = document.getElementById('homename');
+    home.value = betDetails['team2'];
+
+    var teams = document.getElementById('teams'); 
+
+    var newOption = document.createElement('option');
+    newOption.value = ''; 
+    newOption.innerHTML = '-';
+    newOption.style.fontSize = '15px';
+    newOption.style.padding = '3px';
+    teams.append(newOption);
+
+    var awayOption = document.createElement('option');
+    awayOption.value = betDetails['team1']; 
+    awayOption.innerHTML = betDetails['team1'];
+    awayOption.style.fontSize = '15px';
+    awayOption.style.padding = '3px';
+
+    if(betDetails['team1'] == betDetails['place'])
+        awayOption.setAttribute('selected', true);
+
+    teams.append(awayOption);
+
+    var homeOption = document.createElement('option');
+    homeOption.value = betDetails['team2']; 
+    homeOption.innerHTML = betDetails['team2'];
+    homeOption.style.fontSize = '15px';
+    homeOption.style.padding = '3px';
+
+    if(betDetails['team2'] == betDetails['place'])
+        homeOption.setAttribute('selected', true);
+
+    teams.append(homeOption);
+
+    var sites = document.getElementById('sites-rec'); 
+    sites.value = betDetails['site'];
+
+    var oddvalue = document.getElementById('oddvalue');
+    oddvalue.value = betDetails['odds'];
+
+    var stakevalue = document.getElementById('stakevalue');
+    stakevalue.value = betDetails['stake'];
+
+    var winvalue = document.getElementById('winvalue');
+    winvalue.value = betDetails['wins'];
+
+    document.getElementById('betid-rec').value = betDetails['betid'];
 }

@@ -20,6 +20,7 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.3.0/js/bootstrap-datepicker.js"></script>
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.3/moment-with-locales.min.js"
    integrity="sha512-vFABRuf5oGUaztndx4KoAEUVQnOvAIFs59y4tO0DILGWhQiFnFHiR+ZJfxLDyJlXgeut9Z07Svuvm+1Jv89w5g=="  crossorigin="anonymous" referrerpolicy="no-referrer"> </script>
     <script type="text/javascript">
@@ -156,7 +157,7 @@
                 var stake = data['stake'];
 
                 for(var i=0; i<betstate.length;i++){
-                    console.log(betstate[i])
+                    let serializedObject = JSON.stringify(betstate[i]).replace(/"/g, '&quot;');
                     html+='<tr>';
                     html+='<td>'+betstate[i]["betdate"]+'</td>';
                     html+='<td>'+betstate[i]["game"]+'</td>';
@@ -167,6 +168,10 @@
                     var result = betstate[i]["status"] == 'P' ? 'Pending': betstate[i]["status"];
                     html+='<td>'+result+'</td>';
                     html+='<td>'+betstate[i]["wins"]+'</td>';
+                    var admin = document.getElementById('adminValue').value;
+                    if (admin == 2) {
+                        html += `<td><i class="bi bi-pencil-square" style="cursor:pointer" data-betstate='${serializedObject}' onclick="openBetForm(this)"></i></td>`;
+                    }
                     html+='</tr>';
                 }
 
@@ -224,6 +229,7 @@
 
 <body>
     <div class="container-fluid">
+        <input type="hidden" id="adminValue" value="{{ admin }}">
         <div class="row" style="padding-top: 5rem">
             <div class="col-lg-6">
                 <div class="col-lg-4 text-right">
@@ -328,13 +334,84 @@
                   <th class="text-center">Price</th>
                   <th class="text-center">Result</th>
                   <th class="text-center">Profit</th>
+                  {% if admin == 2 %}
+                    <th class="text-center">Edit</th>
+                  {% endif %}
+                  
                 </tr>
               </thead>
               <tbody id = "betbody" style="text-align: center;">
               </tbody>
             </table>
         </div>
-
+    </div>
+    <div class="large-card" style = "display: none">
+        <button class="close-button" style="margin-left: 135px;" onclick="closeCard(1)">Close</button>
+        <div id="large-card-wrapper">
+            <div id = 'betform' style="border: 1px solid gray; padding: 10px 5px;">
+                <input type="hidden" id="modal_game_id" name="modal_game_id" value="">
+                <div class="bet-form-row">
+                    <div class="bet-form-row-left"><span>BetDate:</span></div>
+                    <div class="bet-form-row-right"><span id="betdate"></span></div>
+                </div>
+                <div class="bet-form-row">
+                    <div class="bet-form-row-left">away:</div>
+                    <div class="bet-form-row-right">
+                        <input type="text" placeholder="Texas Rangers" class="bet-input-form" id = 'awayname'>
+                    </div>
+                </div>
+                <div class="bet-form-row">
+                    <div class="bet-form-row-left">home:</div>
+                    <div class="bet-form-row-right">
+                        <input type="text" placeholder="Arizona Diamondbacks" class="bet-input-form" id = 'homename'>
+                    </div>
+                </div>
+                <div class="bet-form-row">
+                    <div class="bet-form-row-left">Place:</div>
+                    <div class="bet-form-row-right">
+                        <select id="teams" name="teams" class="bet-input-form" style="height: auto; font-size: 15px; padding: 3px;">
+                          </select>
+                    </div>
+                </div>
+                <div class="bet-form-row">
+                    <div class="bet-form-row-left">Odds:</div>
+                    <div class="bet-form-row-right">
+                        <input type="text" placeholder="+137" class="bet-input-form" id = 'oddvalue' oninput="calWinsWithOdds(this.value)"> 
+                    </div>
+                </div>
+                <div class="bet-form-row">
+                    <div class="bet-form-row-left">Stake:</div>
+                    <div class="bet-form-row-right">
+                        <input type="number" placeholder="4671.53" class="bet-input-form" id = 'stakevalue' oninput="calWinsWithStake(this.value)"> 
+                    </div>
+                </div>
+                <div class="bet-form-row">
+                    <div class="bet-form-row-left">Wins:</div>
+                    <div class="bet-form-row-right">
+                        <input type="number" placeholder="6400" class="bet-input-form" id = 'winvalue'> 
+                    </div>
+                </div>
+                <div class="bet-form-row">
+                    <div class="bet-form-row-left">Site:</div>
+                    <div class="bet-form-row-right" style="padding: 0px 10px;">
+                        <select id="sites-rec" name="sites" class="bet-input-form" style="height: auto; font-size: 15px; padding: 3px;">
+                            <option value="">-</option>
+                            {% for site in sitelist %}
+                                <option value="{{site.site}}" style="font-size: 15px; padding: 3px;">{{site.site}}</option>
+                            {% endfor %}
+                          </select>
+                    </div>
+                </div>
+                <input type="hidden" id="betid-rec" value="0">
+                <div class="bet-form-row">
+                    <div class="bet-button-row">
+                        <button class="bet-add-button" onclick="updateBetInformation(3)">Delete</button>
+                        <button class="bet-add-button" onclick="updateBetInformation(2)">Update</button>
+                    </div>
+                </div>
+            </div>                
+        </div>        
+        <div id="loader"><img style="width: 50px; margin-top: 220px;" src="/static/loader.gif"/></div>
     </div>
 </html>
 

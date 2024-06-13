@@ -204,6 +204,46 @@
         })
     }
 
+    function sortTable(ea) {
+
+    n = $(ea).parent().children().index($(ea));
+    console.log('n', n)
+    var table, rows, switching, i, x, y, shouldSwitch;
+    table = document.getElementById("recon-table");
+    switching = true;
+    /*Make a loop that will continue until
+    no switching has been done:*/
+    console.log('switching', switching)
+    while (switching) {
+            //start by saying: no switching is done:
+            switching = false;
+            rows = table.rows;
+            /*Loop through all table rows (except the
+            first, which contains table headers):*/
+            for (i = 1; i < (rows.length - 1); i++) {
+            //start by saying there should be no switching:
+            shouldSwitch = false;
+            /*Get the two elements you want to compare,
+            one from current row and one from the next:*/
+            x = rows[i].getElementsByTagName("td")[n];
+            y = rows[i + 1].getElementsByTagName("td")[n];
+
+            //check if the two rows should switch place:
+            if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
+                //if so, mark as a switch and break the loop:
+                shouldSwitch = true;
+                break;
+            }
+            }
+            if (shouldSwitch) {
+            /*If a switch has been marked, make the switch
+            and mark that a switch has been done:*/
+            rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+            switching = true;
+            }
+        }
+    }
+
     </script>
     <style>
         .table thead tr th, .table tbody tr td {
@@ -217,6 +257,7 @@
 
         padding-bottom: 10px !important;
         height: 20px;
+        cursor: pointer;
         }
 
         p:hover{
@@ -323,13 +364,13 @@
         </div>
         <hr style="height:2px;border-width:0;color:rgb(14, 14, 163);margin-top: 5px; background-color: gray;">
         <div class="container-fluid"> 
-            <table class="table borderless" style="text-align: center; border: none">
+            <table class="table borderless" style="text-align: center; border: none" id="recon-table">
               <thead style="text-align: center; padding-bottom: 20px;">
                 <tr style="margin-top: 0;">
                   <th class="text-center">GameDate</th>
-                  <th class="text-center">Game</th>
-                  <th class="text-center">Selection</th>
-                  <th class="text-center">Site</th>
+                  <th class="text-center" onclick="sortTable(this)">Game</th>
+                  <th class="text-center" onclick="sortTable(this)">Selection</th>
+                  <th class="text-center" onclick="sortTable(this)">Site</th>
                   <th class="text-center">Stake</th>
                   <th class="text-center">Price</th>
                   <th class="text-center">Result</th>

@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Odds</title>
+    <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <h1>Real-Time Odds</h1>
+    <div id="odds">Loading...</div>
+
+    <script type="text/javascript">
+        $(document).ready(function(){
+            var socket = io();
+
+            socket.on('liveOdd', function(data) {
+                console.log(data)
+                $('#odds').text(data);
+            });
+        });
+    </script>
+</body>
+</html>

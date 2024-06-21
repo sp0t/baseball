@@ -32,6 +32,7 @@ from flask_mail import Message
 import requests
 from bs4 import BeautifulSoup
 import threading
+from flask_socketio import SocketIO, emit
 
 import subprocess
 import os
@@ -66,6 +67,7 @@ app.config['PERMANENT_SESSION_LIFETIME'] = 3600
 mail = Mail(app)
 
 users = {"username": "luca", "password": "betmlbluca4722"}
+socketio = SocketIO(app, cors_allowed_origins='*')
 
 def generate_confirmation_token(email):
     serializer = URLSafeTimedSerializer(app.config['SECRET_KEY'])
@@ -1904,6 +1906,16 @@ def startPrediction():
     # Start the thread
     thread.start()
     return redirect(url_for("index"))
+
+
+@socketio.on('liveOdd')
+def liveOdds(data):
+    print('Received new odds data:', data)
+    socketio.emit('liveOdd', data)
+
+@app.route('/odds')
+def odds():
+    return render_template('market.html')
 
 def calculate(predictionData):
     today  = date.today()

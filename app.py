@@ -1923,6 +1923,12 @@ def liveOdds():
     socketio.emit('update_odd_values', odd_values)
     return jsonify({'status': 'success', 'data': odd_values}), 200
 
+
+@socketio.on('send_odd_values')
+def handle_odd_values(data):
+    print('Received odd values:', data)
+    socketio.emit('update_odd_values', data)
+
 # @app.route('/market')
 # def odds():
 #     return render_template('market.html')

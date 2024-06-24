@@ -1917,7 +1917,7 @@ def on_disconnect():
 
 
 @app.route('/liveodds', methods=['POST'])
-def liveOdds(data):
+def liveOdds():
     odd_values = request.get_json()
     print(odd_values)
     socketio.emit('update_odd_values', odd_values)

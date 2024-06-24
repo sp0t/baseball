@@ -11,13 +11,10 @@
     <div id="odds">Loading...</div>
 
     <script type="text/javascript">
-        $(document).ready(function(){
-            var socket = io();
+        const socket = io();
 
-            socket.on('liveOdd', function(data) {
-                console.log(data)
-                $('#odds').text(data);
-            });
+        socket.on('update_odd_values', function(data) {
+            console.log(data);
         });
     </script>
 </body>

@@ -1916,12 +1916,15 @@ def on_disconnect():
     print('Client disconnected')
 
 
-@socketio.on('liveOdd')
+@app.route('/odds', methods=['POST'])
 def liveOdds(data):
-    print('Received new odds data:', data)
-    socketio.emit('liveOdd', data)
+    data = request.json
+    odd_values = data.get('data', [])
+    print(odd_values)
+    socketio.emit('update_odd_values', odd_values)
+    return jsonify({'status': 'success', 'data': odd_values}), 200
 
-@app.route('/odds')
+@app.route('/market')
 def odds():
     return render_template('market.html')
 

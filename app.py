@@ -1924,9 +1924,9 @@ def startPrediction():
 #     socketio.emit('update_odd_values', odd_values)
 #     return jsonify({'status': 'success', 'data': odd_values}), 200
 
-@app.route('/market')
-def odds():
-    return render_template('market.html')
+# @app.route('/market')
+# def odds():
+#     return render_template('market.html')
 
 def calculate(predictionData):
     today  = date.today()

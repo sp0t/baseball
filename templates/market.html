@@ -1,21 +1,149 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Odds</title>
-    <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Odds</title>
+<script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<link rel="stylesheet" href="/static/styles.css">
+<link rel="stylesheet" href="/static/nav.css">
+<link rel="icon"
+    href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🚀</text></svg>">
+<script src="https://code.jquery.com/jquery-3.6.0.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='index.js') }}"></script>
+
+<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+<title>Event Table</title>
+<style>
+    /* Basic resets */
+    body, html {
+        margin: 0;
+        padding: 0;
+        height: 100%; /* Full height for the HTML and body to aid centering */
+        justify-content: center; /* Center horizontally */
+        align-items: center; /* Center vertically */
+        font-family: Arial, sans-serif; /* Optional: sets a default font */
+        background-color: #110606;
+    }
+
+    /* Styling for the table */
+    table {
+        width: 80%; /* Adjust based on your preference */
+        border-collapse: collapse;
+        table-layout: fixed; /* Ensures the table respects column width specifications */
+    }
+
+    th, td {
+        border: .5px solid rgba(255,255,255,.2);
+        padding: 8px;
+        text-align: center;
+        vertical-align: middle;
+    }
+
+    /* Column width specifications */
+    .time { width: 10%; }
+    .event { width: 40%; }
+    .game { width: 50%; }
+
+    /* Styling for headers */
+    th {
+        background-color: #320405;
+        color: #fff;
+    }
+
+    /* Different colors for odd and even rows */
+    tr:nth-child(even) {
+        background-color: #320405;
+    }
+    tr:nth-child(odd) {
+        background-color: #210607;
+    }
+
+    /* Game column specific styles */
+
+    .subheaders, .game-data {
+        display: flex;
+    }
+    .home, .away, .home-data, .away-data {
+        flex: 1;
+        display: flex;
+        justify-content: center; /* Center the content horizontally */
+        align-items: center; /* Center the content vertically */
+    }
+
+</style>
 </head>
 <body>
-    <h1>Real-Time Odds</h1>
-    <div id="odds">Loading...</div>
-
-    <script type="text/javascript">
-        const socket = io();
-
-        socket.on('update_odd_values', function(data) {
-            console.log(data);
-        });
-    </script>
+<div class="container-fluid">
+    <input type="hidden" id="adminValue" value="{{ admin }}">
+    <div class="row" style="padding-top: 5rem">
+        <div class="col-lg-6">
+            <div class="col-lg-4 text-right">
+                <h1 style="font-weight: bold; color: white;">Market Odds</h1>
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <div class="col-lg-6 text-right">
+                <a href="/season"><h1 style="font-weight: bold">Stats</h1></a>
+                
+            </div>
+            <div class="col-lg-4" style="padding-top: 30px;">
+                <a href="/" id="homeln" style="font-size: 20px;">Home</a>
+            </div>
+        </div>
+    </div>
+    <div class="row`">
+        <div class="col-lg-5">
+            <div class="col-lg-6 text-center">
+                <h3 style="margin-left: -50px; color: white;">Site</h3>
+            </div>
+            <div class="col-lg-6" style="margin-left: -110px; margin-top: 13px;">
+                <select class="form-control" id = "betsite" style="font-weight: bold; font-size: 16px; text-align: center;" name="site">
+                    {% for site in sitelist %}
+                        <option value="{{site.site}}">{{site.site}}</option>
+                    {% endfor %}
+                </select> 
+            </div>
+        </div>  
+    </div>
+</div>
+<div class="container-fluid" style="display: flex; justify-content: center; align-items: center; padding-top: 40px;">
+    <table>
+        <thead>
+            <tr>
+                <th  rowspan="2">TIME</th>
+                <th  rowspan="2">EVENT</th>
+                <th  colspan="2">GAME</th>
+            </tr>
+            <tr>
+                <th  colspan="">HOME</th>
+                <th  colspan="">AWAY</th>
+            </tr>
+        </thead>
+        <tbody id="oddtb">
+        </tbody>
+    </table>
+</div>
 </body>
+<script type="text/javascript">
+    const socket = io();
+
+    socket.on('update_odd_values', function(data) {
+        console.log(data);
+        var html = '';
+        for(var i = 0; i<data.length; i++) {
+            html+='<tr>';
+            html+=`<td>${data[i]["starts"]}<br>LIVE</td>`;
+            html+=`<td><span style="color: #009ece;">${data[i]["home"]}</span><br><span style="color: #d86c24;">${data[i]["away"]}</span></td>`;
+            html+=`<td class="game" style="color: red;">${data[i]["home_odd"]}</td>`;
+            html+=`<td class="game" style="color: red;">${data[i]["away_odd"]}</td>`;;
+            html+='</tr>';
+        }
+
+        $("#oddtb").html(html);
+    });
+</script>
 </html>
+

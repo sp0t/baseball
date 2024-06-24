@@ -1931,7 +1931,9 @@ def handle_odd_values(data):
 
 @app.route('/market')
 def market():
-    return render_template('market.html')
+    engine = database.connect_to_db()
+    site_res = pd.read_sql(f"SELECT * FROM site_list", con = engine).to_dict('records')
+    return render_template('market.html', sitelist = site_res)
 
 def calculate(predictionData):
     today  = date.today()

@@ -1929,9 +1929,9 @@ def handle_odd_values(data):
     print('Received odd values:', data)
     socketio.emit('update_odd_values', data)
 
-# @app.route('/market')
-# def odds():
-#     return render_template('market.html')
+@app.route('/market')
+def market():
+    return render_template('market.html')
 
 def calculate(predictionData):
     today  = date.today()

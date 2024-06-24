@@ -1916,7 +1916,7 @@ def on_disconnect():
     print('Client disconnected')
 
 
-@app.route('/odds', methods=['POST'])
+@app.route('/liveodds', methods=['POST'])
 def liveOdds(data):
     data = request.json
     odd_values = data.get('data', [])

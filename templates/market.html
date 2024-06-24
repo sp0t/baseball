@@ -135,10 +135,10 @@
         var html = '';
         for(var i = 0; i<data.length; i++) {
             html+='<tr>';
-            html+=`<td>${data[i]["starts"]}<br>LIVE</td>`;
+            html+=`<td style='color: white'>${data[i]["starts"]}<br>LIVE</td>`;
             html+=`<td><span style="color: #009ece;">${data[i]["home"]}</span><br><span style="color: #d86c24;">${data[i]["away"]}</span></td>`;
-            html+=`<td class="game" style="color: red;">${data[i]["home_odd"]}</td>`;
-            html+=`<td class="game" style="color: red;">${data[i]["away_odd"]}</td>`;;
+            html+=`<td class="game" style="color: ${data[i]["home_odd"] > 0 ? 'white': 'red'};">${data[i]["home_odd"]}</td>`;
+            html+=`<td class="game" style="color: ${data[i]["away_odd"] > 0 ? 'white': 'red'};;">${data[i]["away_odd"]}</td>`;;
             html+='</tr>';
         }
 

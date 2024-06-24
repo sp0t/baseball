@@ -32,7 +32,7 @@ from flask_mail import Message
 import requests
 from bs4 import BeautifulSoup
 import threading
-from flask_socketio import SocketIO, emit
+# from flask_socketio import SocketIO, emit
 
 import subprocess
 import os

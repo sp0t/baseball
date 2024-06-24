@@ -1907,6 +1907,14 @@ def startPrediction():
     thread.start()
     return redirect(url_for("index"))
 
+@socketio.on('connect')
+def on_connect():
+    print('Client connected')
+
+@socketio.on('disconnect')
+def on_disconnect():
+    print('Client disconnected')
+
 
 @socketio.on('liveOdd')
 def liveOdds(data):

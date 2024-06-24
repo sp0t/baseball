@@ -67,7 +67,7 @@ app.config['PERMANENT_SESSION_LIFETIME'] = 3600
 mail = Mail(app)
 
 users = {"username": "luca", "password": "betmlbluca4722"}
-socketio = SocketIO(app, cors_allowed_origins='*')
+# socketio = SocketIO(app, cors_allowed_origins='*')
 
 def generate_confirmation_token(email):
     serializer = URLSafeTimedSerializer(app.config['SECRET_KEY'])
@@ -1907,22 +1907,22 @@ def startPrediction():
     thread.start()
     return redirect(url_for("index"))
 
-@socketio.on('connect')
-def on_connect():
-    print('Client connected')
+# @socketio.on('connect')
+# def on_connect():
+#     print('Client connected')
 
-@socketio.on('disconnect')
-def on_disconnect():
-    print('Client disconnected')
+# @socketio.on('disconnect')
+# def on_disconnect():
+#     print('Client disconnected')
 
 
-@app.route('/liveodds', methods=['POST'])
-def liveOdds(data):
-    data = request.json
-    odd_values = data.get('data', [])
-    print(odd_values)
-    socketio.emit('update_odd_values', odd_values)
-    return jsonify({'status': 'success', 'data': odd_values}), 200
+# @app.route('/liveodds', methods=['POST'])
+# def liveOdds(data):
+#     data = request.json
+#     odd_values = data.get('data', [])
+#     print(odd_values)
+#     socketio.emit('update_odd_values', odd_values)
+#     return jsonify({'status': 'success', 'data': odd_values}), 200
 
 @app.route('/market')
 def odds():

@@ -131,7 +131,7 @@
     const socket = io();
 
     socket.on('update_odd_values', function(data) {
-        console.log(data);
+        console.log('live-odd', data);
         var html = '';
         for(var i = 0; i<data.length; i++) {
             html+='<tr>';

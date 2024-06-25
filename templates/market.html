@@ -144,8 +144,8 @@
     }
 
     socket.on('update_odd_values', function(data) {
+        data.sort((a, b) => a.starts - b.starts);
         console.log('live-odd', data);
-        data.sort((a, b) => b.starts - a.starts);
         var html = '';
         for(var i = 0; i<data.length; i++) {
             html+='<tr>';

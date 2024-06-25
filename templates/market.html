@@ -131,7 +131,7 @@
     const socket = io();
 
     function convertUTCToEST(utcDateString) {
-        const utcDate = new Date(utcDateString + 'Z'); 
+        const utcDate = new Date(utcDateString); 
         const options = {
             timeZone: 'America/New_York',
             hour: '2-digit',

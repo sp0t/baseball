@@ -1919,7 +1919,7 @@ def startPrediction():
 @app.route('/liveodds', methods=['POST'])
 def liveOdds():
     odd_values = request.get_json()
-    socketio.emit('update_odd_values', odd_values)
+    socketio.emit('update_odd_values', odd_values['data'])
     return jsonify({'status': 'success', 'data': odd_values}), 200
 
 

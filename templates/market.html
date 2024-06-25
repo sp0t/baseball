@@ -132,7 +132,7 @@
 
     function convertUTCToEST(utcDateString) {
         const utcDate = new Date(utcDateString); 
-        utcDate.setDate(utcDate.getHours() - 3)
+        utcDate.setHours(utcDate.getHours() - 3)
         const options = {
             timeZone: 'America/New_York',
             hour: '2-digit',
@@ -144,7 +144,7 @@
     }
 
     socket.on('update_odd_values', function(data) {
-        data.sort((a, b) => a.starts - b.starts);
+        data.sort((a, b) => new Date(a.starts) - new Date(b.starts));
         console.log('live-odd', data);
         var html = '';
         for(var i = 0; i<data.length; i++) {

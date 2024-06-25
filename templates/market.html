@@ -130,12 +130,24 @@
 <script type="text/javascript">
     const socket = io();
 
+    function convertUTCToEST(utcDateString) {
+        const utcDate = new Date(utcDateString);
+        const options = {
+            timeZone: 'America/New_York',
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: false 
+        };
+
+        return utcDate.toLocaleTimeString('en-US', options);
+    }
+
     socket.on('update_odd_values', function(data) {
         console.log('live-odd', data);
         var html = '';
         for(var i = 0; i<data.length; i++) {
             html+='<tr>';
-            html+=`<td style='color: white'>${data[i]["starts"]}<br>LIVE</td>`;
+            html+=`<td style='color: white'>${convertUTCToEST(data[i]["starts"])}<br>LIVE</td>`;
             html+=`<td><span style="color: #009ece;">${data[i]["home"]}</span><br><span style="color: #d86c24;">${data[i]["away"]}</span></td>`;
             html+=`<td class="game" style="color: ${data[i]["home_odd"] > 0 ? 'white': 'red'};">${data[i]["home_odd"]}</td>`;
             html+=`<td class="game" style="color: ${data[i]["away_odd"] > 0 ? 'white': 'red'};;">${data[i]["away_odd"]}</td>`;;

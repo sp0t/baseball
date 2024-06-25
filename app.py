@@ -1907,13 +1907,13 @@ def startPrediction():
     thread.start()
     return redirect(url_for("index"))
 
-@socketio.on('connect')
-def on_connect():
-    print('Client connected')
+# @socketio.on('connect')
+# def on_connect():
+#     print('Client connected')
 
-@socketio.on('disconnect')
-def on_disconnect():
-    print('Client disconnected')
+# @socketio.on('disconnect')
+# def on_disconnect():
+#     print('Client disconnected')
 
 
 @app.route('/liveodds', methods=['POST'])
@@ -1923,10 +1923,10 @@ def liveOdds():
     return jsonify({'status': 'success', 'data': odd_values}), 200
 
 
-@socketio.on('send_odd_values')
-def handle_odd_values(data):
-    print('Received odd values:', data)
-    socketio.emit('update_odd_values', data)
+# @socketio.on('send_odd_values')
+# def handle_odd_values(data):
+#     print('Received odd values:', data)
+#     socketio.emit('update_odd_values', data)
 
 @app.route('/market')
 def market():

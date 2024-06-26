@@ -156,7 +156,7 @@ def index():
 
     year = date.today().year
     today_schedule = schedule.get_schedule()                                                                                                                                                                                                                                                                                                                                                                                                                                             
-    #engine = database.connect_to_db()
+    engine = database.connect_to_db()
     last_update = pd.read_sql("SELECT * FROM updates", con = engine).iloc[-1]
     last_date, last_time, last_record = last_update["update_date"], last_update["update_time"], last_update["last_record"]
     average = pd.read_sql(f"SELECT * FROM league_average WHERE year = '{year}';", con = engine).to_dict('records')

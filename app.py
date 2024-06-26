@@ -1932,8 +1932,9 @@ def liveOdds():
 @app.route('/market')
 def market():
     #engine = database.connect_to_db()
-    site_res = pd.read_sql(f"SELECT * FROM site_list", con = engine).to_dict('records')
-    return render_template('market.html', sitelist = site_res)
+    # site_res = pd.read_sql(f"SELECT * FROM site_list", con = engine).to_dict('records')
+    # return render_template('market.html', sitelist = site_res)
+    return render_template('market.html')
 
 def calculate(predictionData):
     today  = date.today()

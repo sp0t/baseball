@@ -748,8 +748,8 @@ def get_probabilities(params, engine):
         home_starter_data.update(team_starter_data)
         
     # Bullpen 
-    away_bullpen_data = bullpen_c.process_bullpen_data(away_name, 'away', game_date)
-    home_bullpen_data = bullpen_c.process_bullpen_data(home_name, 'home', game_date)
+    away_bullpen_data = bullpen_c.process_bullpen_data(away_name, 'away', game_date, engine)
+    home_bullpen_data = bullpen_c.process_bullpen_data(home_name, 'home', game_date, engine)
 
 
     # Combine 

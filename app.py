@@ -68,6 +68,7 @@ mail = Mail(app)
 
 users = {"username": "luca", "password": "betmlbluca4722"}
 socketio = SocketIO(app, cors_allowed_origins='*')
+engine = database.connect_to_db()
 
 def generate_confirmation_token(email):
     serializer = URLSafeTimedSerializer(app.config['SECRET_KEY'])
@@ -112,7 +113,7 @@ def confirm_email(token):
     except:
         return jsonify('The confirmation link is invalid or has expired.')
     
-    engine = database.connect_to_db()
+    #engine = database.connect_to_db()
     res = engine.execute(f"SELECT confirmed FROM user_table WHERE username = '{email}';").fetchall()
 
     if res[0][0] == "1":    
@@ -155,7 +156,7 @@ def index():
 
     year = date.today().year
     today_schedule = schedule.get_schedule()                                                                                                                                                                                                                                                                                                                                                                                                                                             
-    engine = database.connect_to_db()
+    #engine = database.connect_to_db()
     last_update = pd.read_sql("SELECT * FROM updates", con = engine).iloc[-1]
     last_date, last_time, last_record = last_update["update_date"], last_update["update_time"], last_update["last_record"]
     average = pd.read_sql(f"SELECT * FROM league_average WHERE year = '{year}';", con = engine).to_dict('records')
@@ -179,7 +180,7 @@ def login():
         return render_template("login.html")
 
     user = request.get_json()
-    engine = database.connect_to_db()
+    #engine = database.connect_to_db()
     res = engine.execute(f"SELECT username, password, position, confirmed FROM user_table WHERE username = '{user['username']}';").fetchall()
 
     if res == []:
@@ -210,7 +211,7 @@ def signup():
     user = request.get_json()   
     today = date.today()
 
-    engine = database.connect_to_db()
+    #engine = database.connect_to_db()
     res = engine.execute(f"SELECT username, confirmed FROM user_table WHERE username = '{user['username']}';").fetchall()
 
     if res !=[]:
@@ -250,7 +251,7 @@ def signup():
 @app.route('/changepassword', methods = ["POST"])
 def changepassword(): 
     user = request.get_json()
-    engine = database.connect_to_db()
+    #engine = database.connect_to_db()
     res = engine.execute(f"SELECT username, password, position FROM user_table WHERE user = '{user['username']}';").fetchall()
     password = sha256_crypt.encrypt("password")
 
@@ -263,7 +264,7 @@ def logout():
 
 @app.route('/get_game_info', methods = ["POST"])
 def get_game_info(): 
-    engine = database.connect_to_db()
+    #engine = database.connect_to_db()
     game_id = str(json.loads(request.form['data']))
     rosters = schedule.get_rosters(game_id)
 
@@ -286,7 +287,7 @@ def get_bet_info():
     site = request_data['site']
 
     gameinfo = mlb.boxscore_data(game_id)
-    engine = database.connect_to_db()
+    #engine = database.connect_to_db()
     away_res = pd.read_sql(f"SELECT * FROM team_table WHERE team_id = '{gameinfo['teamInfo']['away']['id']}'", con = engine).to_dict('records')
     home_res = pd.read_sql(f"SELECT * FROM team_table WHERE team_id = '{gameinfo['teamInfo']['home']['id']}'", con = engine).to_dict('records')
     gamedate = gameinfo['gameId'][:10]
@@ -326,7 +327,7 @@ def get_bet_info():
 
 @app.route('/get_player_info', methods = ["POST"])
 def get_player_info(): 
-    engine = database.connect_to_db()
+    #engine = database.connect_to_db()
     game_id = str(json.loads(request.form['data']))
     rosters = schedule.get_rosters(game_id)
 
@@ -342,7 +343,7 @@ def get_player_info():
 
 @app.route('/get_betting_info', methods = ["POST"])
 def get_betting_info(): 
-    engine = database.connect_to_db()
+    #engine = database.connect_to_db()
     year = request.form['year']
     season_res = pd.read_sql(f"SELECT betdate, SUM(stake) stake, SUM(CASE WHEN status = '2' THEN wins ELSE 0 END) wins, SUM(CASE WHEN status = '1' THEN stake ELSE 0 END) losses FROM betting_table WHERE status != '0' AND status != '3' AND betdate LIKE '{year}%%' GROUP BY betdate ORDER BY betdate;", con = engine).to_dict('records')
     total_res = pd.read_sql(f"SELECT betdate, SUM(stake) stake, SUM(CASE WHEN status = '2' THEN wins ELSE 0 END) wins, SUM(CASE WHEN status = '1' THEN stake ELSE 0 END) losses FROM betting_table WHERE status != '0' AND status != '3' GROUP BY betdate ORDER BY betdate;", con = engine).to_dict('records')
@@ -354,7 +355,7 @@ def get_betting_info():
 @app.route('/set_autoBet_state', methods = ["POST"])
 def set_autoBet_state(): 
     data = {}
-    engine = database.connect_to_db()
+    #engine = database.connect_to_db()
     
     gameid = request.form['gameid']
     value = request.form['value']
@@ -365,7 +366,7 @@ def set_autoBet_state():
 @app.route('/set_autoStake_size', methods = ["POST"])
 def set_autoStake_size(): 
     data = {}
-    engine = database.connect_to_db()
+    #engine = database.connect_to_db()
     
     stake = request.form['stake']
     engine.execute(f"UPDATE sato_stake_size SET status = '0' WHERE stake != '{stake}';")
@@ -402,7 +403,7 @@ def make_prediction():
         params['away_name'] = team_dict[away_full_name]
         params['home_name'] = team_dict[home_full_name]
         params['savestate'] = True
-        engine = database.connect_to_db()
+        #engine = database.connect_to_db()
 
         now = datetime.now()
         date_string = now.strftime('%Y-%m-%d')
@@ -436,7 +437,7 @@ def make_prediction():
         
         # Make Prediction
         if form_data['model'] == 'a':
-            predictions = predict.get_probabilities(params)
+            predictions = predict.get_probabilities(params, engine)
             preds_1a = predictions['1a']
             preds_1a = np.round(100 * preds_1a[0], 2)
             away_odd = 0
@@ -467,7 +468,7 @@ def make_prediction():
 
             prediction = {'model':'a', '1a': preds_1a, '1b': preds_1b}
         elif form_data['model'] == 'c':
-            prediction_c = predict_c.get_probabilities(params)
+            prediction_c = predict_c.get_probabilities(params, engine)
         
             preds_1c = prediction_c
             preds_1c = np.round(100 * preds_1c[0], 2)
@@ -518,7 +519,7 @@ def make_prediction():
 @app.route('/teams', methods = ["GET", "POST"]) 
 @login_required
 def teams():  
-    engine = database.connect_to_db()
+    #engine = database.connect_to_db()
 
     if request.method == 'GET':
         game_table = pd.read_sql(f"SELECT (team_name)tname, (team_abbr)abbreviation FROM team_table ORDER BY team_name;", con = engine).to_dict('records')
@@ -832,7 +833,7 @@ def starterprice():
         playerID = player_data['pid']
         print(playerID)
 
-        engine = database.connect_to_db()
+        #engine = database.connect_to_db()
 
         today = date.today()
         today_str = today.strftime("%Y/%m/%d")
@@ -866,7 +867,7 @@ def update_data():
     schedule.update_schedule()
     update_data = jsonify(update_data = update_data)
 
-    engine = database.connect_to_db()
+    #engine = database.connect_to_db()
     game_sched = mlb.schedule(start_date = date.today())
 
     playerData = {}
@@ -1049,7 +1050,7 @@ def update_data():
 @app.route('/update_predicdata', methods = ["POST"])
 def update_predicdata(): 
     modify_data = json.loads(request.form['data'])
-    engine = database.connect_to_db()
+    #engine = database.connect_to_db()
 
     if modify_data['team'] == 'away':
         if modify_data['modal'] == 'A':
@@ -1069,7 +1070,7 @@ def update_predicdata():
 def show_database(): 
     if session["state"] == 0:
         return redirect(url_for("show_betting"))
-    engine = database.connect_to_db()
+    #engine = database.connect_to_db()
     res = pd.read_sql("SELECT * FROM game_table", con = engine)
     res_15 = res.tail(10)
     cols = ['game_id', 'game_date', 'away_team', 'home_team', 'away_score', 'home_score']
@@ -1080,7 +1081,7 @@ def show_database():
 @app.route('/showbetting', methods = ["GET", "POST"])
 def show_betting():
     print('start1')
-    engine = database.connect_to_db()
+    #engine = database.connect_to_db()
     if request.method == 'GET':
         return render_template("betting.html")
 
@@ -1153,7 +1154,7 @@ def show_betting():
 
 @app.route('/reconciliation', methods = ["GET", "POST"])
 def reconciliation():
-    engine = database.connect_to_db()
+    #engine = database.connect_to_db()
     if request.method == 'GET':
         site_res = pd.read_sql(f"SELECT * FROM site_list", con = engine).to_dict('records')
         return render_template("reconciliation.html", sitelist = site_res, admin = session["state"])
@@ -1205,7 +1206,7 @@ def reconciliation():
 @login_required
 def season_state():
     
-    engine = database.connect_to_db()
+    #engine = database.connect_to_db()
     year = date.today().year
 
     total_res = pd.read_sql(f"SELECT betdate, stake, wins, status FROM betting_table WHERE game = 'baseball' AND regstate != '2' AND status != '0' AND status != '3' ORDER BY betid;", con = engine)
@@ -1281,7 +1282,7 @@ def season_state():
 def betting_proc(): 
     data = {}
     betting_data = request.get_json()
-    engine = database.connect_to_db()
+    #engine = database.connect_to_db()
     current_GMT = time.gmtime()
     regtime = calendar.timegm(current_GMT)
 
@@ -1366,7 +1367,7 @@ def betting_proc():
 
 @app.route("/download_game_table")
 def get_game_csv_table():
-    engine = database.connect_to_db()
+    #engine = database.connect_to_db()
     csv = pd.read_sql("SELECT * FROM game_table", con = engine).to_csv()
     return Response(
         csv,
@@ -1376,7 +1377,7 @@ def get_game_csv_table():
 
 @app.route("/download_pitcher_table")
 def get_pitcher_csv_table():
-    engine = database.connect_to_db()
+    #engine = database.connect_to_db()
     csv = pd.read_sql("SELECT * FROM pitcher_table", con = engine).to_csv()
     return Response(
         csv,
@@ -1386,7 +1387,7 @@ def get_pitcher_csv_table():
 
 @app.route("/download_batter_table")
 def get_batter_csv_table():
-    engine = database.connect_to_db()
+    #engine = database.connect_to_db()
     csv = pd.read_sql("SELECT * FROM batter_table", con = engine).to_csv()
     return Response(
         csv,
@@ -1412,7 +1413,7 @@ def get_PlayerStats():
         pitcher_table = 'pitcher_stats_c'
         data['model'] = 1
     
-    engine = database.connect_to_db()
+    #engine = database.connect_to_db()
     
     batterData = pd.read_sql(f"SELECT * FROM {batter_table} WHERE game_id = '{game_id}' ORDER BY position;", con = engine).to_dict('records')
     pitcherData = pd.read_sql(f"SELECT * FROM {pitcher_table} WHERE game_id = '{game_id}' ORDER BY position;", con = engine).to_dict('records')
@@ -1423,7 +1424,7 @@ def get_PlayerStats():
 
 @app.route('/get_predict_players', methods = ["POST"])
 def get_predict_players(): 
-    engine = database.connect_to_db()
+    #engine = database.connect_to_db()
     game_id = str(json.loads(request.form['data']))
     print(game_id)
     
@@ -1507,7 +1508,7 @@ def getWinPredict():
             params['home_name'] = home_name
             params['game_id'] = gameid
 
-            win_predict = predict_c.get_probabilities(params)
+            win_predict = predict_c.get_probabilities(params, engine)
             preds_1c = np.round(100 * win_predict[0], 2)
             preds_1c = {'away_prob': preds_1c[0], 'home_prob': preds_1c[1]}
             params['preds_1c'] = preds_1c
@@ -1523,7 +1524,7 @@ def get_batter_csv_data():
     # game_id = str(json.loads(request.form['data']))
     # data = mlb.boxscore_data(game_id)
     # gamedate = data['gameId'][:10]
-    # engine = database.connect_to_db()
+    # #engine = database.connect_to_db()
     # csv = pd.read_sql(f"SELECT * FROM current_game_batters WHERE game_id = '{game_id}';", con = engine, index_col = 'index')
     # if csv.empty:
     #     return 'No'
@@ -1541,7 +1542,7 @@ def get_pitcher_csv_data():
     # game_id = str(json.loads(request.form['data']))
     # data = mlb.boxscore_data(game_id)
     # gamedate = data['gameId'][:10]
-    # engine = database.connect_to_db()
+    # #engine = database.connect_to_db()
     # csv = pd.read_sql(f"SELECT * FROM current_game_pitchers WHERE game_id = '{game_id}';", con = engine, index_col = 'index')
     # if csv.empty:
     #     return 'No'
@@ -1557,7 +1558,7 @@ def get_pitcher_csv_data():
 @app.route('/friend_page', methods = ["GET", "POST"]) 
 @login_required
 def friend_page():  
-    engine = database.connect_to_db()
+    #engine = database.connect_to_db()
 
     if request.method == 'GET':
         game_table = pd.read_sql(f"SELECT (team_name)tname, (team_abbr)abbreviation FROM team_table ORDER BY team_name;", con = engine).to_dict('records')
@@ -1657,7 +1658,7 @@ def friend_page():
 @app.route('/position_page', methods = ["POST"]) 
 @login_required
 def position_page():  
-    engine = database.connect_to_db()
+    #engine = database.connect_to_db()
     data = {}
     team_data = request.get_json()
     total_res = pd.read_sql(text(f"SELECT COUNT(game_date)count FROM game_table WHERE game_date LIKE '{team_data['year']}%%';"), con = engine).to_dict('records')
@@ -1701,7 +1702,7 @@ def position_page():
 @app.route('/bullpen_page', methods = ["POST"]) 
 @login_required
 def bullpen_page():  
-    engine = database.connect_to_db()
+    #engine = database.connect_to_db()
     data = {}
     data['players'] = []
     team_data = request.get_json()
@@ -1785,7 +1786,7 @@ def bullpen_page():
 
 @app.route('/updateTeam', methods = ["POST"])
 def update_P_T_table():
-    engine = database.connect_to_db()
+    #engine = database.connect_to_db()
 
     # exec(open("./modify_atbat.py").read(), globals())
 
@@ -1892,7 +1893,7 @@ def getWinStatus():
 @app.route('/getTarget', methods = ["POST"])
 def getTarget(): 
     req_data = request.get_json()
-    engine = database.connect_to_db()
+    #engine = database.connect_to_db()
     res = pd.read_sql(f"SELECT * FROM predict_table WHERE game_id = '{req_data['gameid']}';", con = engine).to_dict('records')
 
     return res 
@@ -1930,13 +1931,13 @@ def liveOdds():
 
 @app.route('/market')
 def market():
-    engine = database.connect_to_db()
+    #engine = database.connect_to_db()
     site_res = pd.read_sql(f"SELECT * FROM site_list", con = engine).to_dict('records')
     return render_template('market.html', sitelist = site_res)
 
 def calculate(predictionData):
     today  = date.today()
-    engine = database.connect_to_db()
+    #engine = database.connect_to_db()
     output_date = today.strftime("%Y/%m/%d")
 
     batter_stat_list = ['home_score', 'away_score', 'atBats', 'avg', 'baseOnBalls', 'doubles', 'hits', 'homeRuns', 'obp', 'ops', 'playerId', 'rbi', 'runs', 
@@ -2001,7 +2002,7 @@ def calculate(predictionData):
     return
 
 def update_league_average():
-    engine = database.connect_to_db()
+    #engine = database.connect_to_db()
     year = date.today().year
     print(year)
     batter_df = pd.read_sql(f"SELECT b.game_id, b.game_date, b.home_team, b.away_team, b.home_score, b.away_score, (a.atbats)atBats, a.avg, \
@@ -2126,7 +2127,7 @@ def print_date_time():
     time_stamp = calendar.timegm(current_GMT)
     estimatestamp = time_stamp - 60 * 10
 
-    engine = database.connect_to_db()
+    #engine = database.connect_to_db()
     res = pd.read_sql(f"SELECT * FROM betting_table WHERE regstate = '0' AND game = 'baseball' AND regtime <= {estimatestamp} ORDER BY betid;", con = engine)
     betdata = res.to_dict('records')
     

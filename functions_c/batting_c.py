@@ -70,7 +70,7 @@ def process_recent_batter_data(player_df, game_date, team_starter, batter_stat_l
             formatted_date = date_obj.strftime('%Y/%m/%d')
             average_obp, average_whip = average.update_league_average(formatted_date, False)
             
-            career_whip, recent_whip = average.cal_pitcher_average(pitcher[0]['playerid'], formatted_date)
+            career_whip, recent_whip = average.cal_pitcher_average(pitcher[0]['playerid'], formatted_date, engine)
             if average_whip == 0 or career_whip == 0 or recent_whip == 0:
                 difficulty.append(8/8)
             else:
@@ -99,7 +99,7 @@ def process_recent_batter_data(player_df, game_date, team_starter, batter_stat_l
             else:
                 DifficultyRating = average.switch_difficulty(career_obp/average_obp, recent_obp/career_obp)
         else:
-            career_whip, recent_whip = average.cal_pitcher_average(team_starter, game_date)
+            career_whip, recent_whip = average.cal_pitcher_average(team_starter, game_date, engine)
             if average_whip == 0 or career_whip == 0 or recent_whip == 0:
                 DifficultyRating = 8/8
             else:

@@ -92,7 +92,7 @@ def process_recent_starter_data(player_df, game_date, team_batters, pitcher_stat
         average_obp, average_whip = average.update_league_average(game_date, False)
 
         if team_batters == []:
-            career_whip, recent_whip = average.cal_pitcher_average(team_starter, game_date)
+            career_whip, recent_whip = average.cal_pitcher_average(team_starter, game_date, engine)
             if average_whip == 0 or career_whip == 0 or recent_whip == 0:
                 DifficultyRating = 8/8
             else:

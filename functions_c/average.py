@@ -148,9 +148,9 @@ def cal_batter_average(team_batter, gamedate, engine):
     career_data=pd.DataFrame(all_s_data).mul(weights,axis=0).sum().to_dict()
     return career_data['obp'], recent_data['obp']
 
-def cal_pitcher_average(team_pitcher, gamedate):
+def cal_pitcher_average(team_pitcher, gamedate, engine):
   
-    df = starters_c.get_starter_df(team_pitcher, gamedate)
+    df = starters_c.get_starter_df(team_pitcher, gamedate, engine)
     
     if len(df) == 0: 
         return 0, 0

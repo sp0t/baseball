@@ -621,6 +621,7 @@ def get_probabilities(params):
 
         for j in range(len(team_career_data)):
             obj = team_career_data[j]
+            print(obj)
             for key in obj:
                 if key in team_starter_data:
                     team_starter_data[key] += obj[key] * weights[j]

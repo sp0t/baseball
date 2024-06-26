@@ -536,84 +536,86 @@ def get_probabilities(params):
 
 
         for starter in away_starters:
-            away_pitcher_res = pd.read_sql(f"SELECT * FROM predict_pitcher_stats WHERE game_id = '{game_id}' AND player_id = '{starter}';", con = engine).to_dict('records')
-        
-            if (len(away_pitcher_res) > 0):
-                print('is in the table')
-                for away_start_stas in away_pitcher_res:
-                    if away_start_stas['role'] == 'recent':
-                        keys_to_remove = ['game_date', 'game_id', 'player_name', 'team', 'role']
-                        for key in keys_to_remove:
-                            away_start_stas.pop(key, None)
+            if starter:       
+                away_pitcher_res = pd.read_sql(f"SELECT * FROM predict_pitcher_stats WHERE game_id = '{game_id}' AND player_id = '{starter}';", con = engine).to_dict('records')
+                if (len(away_pitcher_res) > 0):
+                    print('is in the table')
+                    for away_start_stas in away_pitcher_res:
+                        if away_start_stas['role'] == 'recent':
+                            keys_to_remove = ['game_date', 'game_id', 'player_name', 'team', 'role']
+                            for key in keys_to_remove:
+                                away_start_stas.pop(key, None)
 
-                        updated_stas = {}
-                        for old_key, value in away_start_stas.items():
-                            if old_key in rename_dict.keys():
-                                updated_stas[rename_dict[old_key]] = value
-                            else:
-                                updated_stas[old_key] = value
+                            updated_stas = {}
+                            for old_key, value in away_start_stas.items():
+                                if old_key in rename_dict.keys():
+                                    updated_stas[rename_dict[old_key]] = value
+                                else:
+                                    updated_stas[old_key] = value
 
-                        recent_data = {f'away_starter_recent_{k}':v for k,v in updated_stas.items()}
-                        team_recent_data.append(recent_data)
-                    elif away_start_stas['role'] == 'career':
-                        keys_to_remove = ['game_date', 'game_id', 'player_id', 'player_name', 'team', 'role', 'difficulty']
-                        for key in keys_to_remove:
-                            away_start_stas.pop(key, None)
+                            recent_data = {f'away_starter_recent_{k}':v for k,v in updated_stas.items()}
+                            team_recent_data.append(recent_data)
+                        elif away_start_stas['role'] == 'career':
+                            keys_to_remove = ['game_date', 'game_id', 'player_id', 'player_name', 'team', 'role', 'difficulty']
+                            for key in keys_to_remove:
+                                away_start_stas.pop(key, None)
 
-                        updated_stas = {}
-                        for old_key, value in away_start_stas.items():
-                            if old_key in rename_dict.keys():
-                                updated_stas[rename_dict[old_key]] = value
-                            else:
-                                updated_stas[old_key] = value
+                            updated_stas = {}
+                            for old_key, value in away_start_stas.items():
+                                if old_key in rename_dict.keys():
+                                    updated_stas[rename_dict[old_key]] = value
+                                else:
+                                    updated_stas[old_key] = value
 
-                        career_data = {f'away_starter_career_{k}':v for k,v in updated_stas.items()}
-                        team_career_data.append(starter)
-                print(starter, 'starter')
-                engine.execute(text(f"INSERT INTO pitcher_stats_c(game_id, game_date, position, player_id, career_era, career_homeRuns, career_whip, career_battersFaced, recent_era, recent_homeRuns, recent_whip, recent_battersFaced, difficulty_rating) \
-                                        VALUES('{game_id}', '{game_date}', 'awayStarter', '{int(starter)}', '{round(float(career_data['away_starter_career_era']), 3)}', '{round(float(career_data['away_starter_career_homeRuns']), 3)}', '{round(float(career_data['away_starter_career_whip']), 3)}', '{round(float(career_data['away_starter_career_atBats']), 3) + round(float(career_data['away_starter_career_baseOnBalls']), 3)}', '{round(float(recent_data['away_starter_recent_era']), 3)}', '{round(float(recent_data['away_starter_recent_homeRuns']), 3)}', '{round(float(recent_data['away_starter_recent_whip']), 3)}', '{round(float(recent_data['away_starter_recent_atBats']), 3) + round(float(recent_data['away_starter_recent_baseOnBalls']), 3)}', '{round(float(recent_data['away_starter_recent_difficulty']), 3)}')\
-                                        ON CONFLICT ON CONSTRAINT pitcher_stats_c_game_id_player_id_key DO UPDATE SET game_date = excluded.game_date, career_era = excluded.career_era, career_homeRuns = excluded.career_homeRuns, career_whip = excluded.career_whip, career_battersFaced = excluded.career_battersFaced, recent_era = excluded.recent_era, recent_homeRuns = excluded.recent_homeRuns, recent_whip = excluded.recent_whip, recent_battersFaced = excluded.recent_battersFaced, difficulty_rating = excluded.difficulty_rating;"))
+                            career_data = {f'away_starter_career_{k}':v for k,v in updated_stas.items()}
+                            team_career_data.append(starter)
+                    print(starter, 'starter')
+                    engine.execute(text(f"INSERT INTO pitcher_stats_c(game_id, game_date, position, player_id, career_era, career_homeRuns, career_whip, career_battersFaced, recent_era, recent_homeRuns, recent_whip, recent_battersFaced, difficulty_rating) \
+                                            VALUES('{game_id}', '{game_date}', 'awayStarter', '{int(starter)}', '{round(float(career_data['away_starter_career_era']), 3)}', '{round(float(career_data['away_starter_career_homeRuns']), 3)}', '{round(float(career_data['away_starter_career_whip']), 3)}', '{round(float(career_data['away_starter_career_atBats']), 3) + round(float(career_data['away_starter_career_baseOnBalls']), 3)}', '{round(float(recent_data['away_starter_recent_era']), 3)}', '{round(float(recent_data['away_starter_recent_homeRuns']), 3)}', '{round(float(recent_data['away_starter_recent_whip']), 3)}', '{round(float(recent_data['away_starter_recent_atBats']), 3) + round(float(recent_data['away_starter_recent_baseOnBalls']), 3)}', '{round(float(recent_data['away_starter_recent_difficulty']), 3)}')\
+                                            ON CONFLICT ON CONSTRAINT pitcher_stats_c_game_id_player_id_key DO UPDATE SET game_date = excluded.game_date, career_era = excluded.career_era, career_homeRuns = excluded.career_homeRuns, career_whip = excluded.career_whip, career_battersFaced = excluded.career_battersFaced, recent_era = excluded.recent_era, recent_homeRuns = excluded.recent_homeRuns, recent_whip = excluded.recent_whip, recent_battersFaced = excluded.recent_battersFaced, difficulty_rating = excluded.difficulty_rating;"))
+                else:
+                    print('not in the table')
+
+                    player_df = starters_c.get_starter_df(away_starter, game_date)
+
+                    if len(player_df) > 0 : 
+                        recent_data, games = starters_c.process_recent_starter_data(player_df, game_date, [], pitcher_stat_list)
+                        career_data = starters_c.process_career_starter_data(games, pitcher_stat_list)
+                    else: 
+                        recent_data = dict(zip(pitcher_stat_list, np.repeat(0, len(pitcher_stat_list))))
+                        career_data = dict(zip(pitcher_stat_list, np.repeat(0, len(pitcher_stat_list))))
+
+                    player_name_res = pd.read_sql(f"SELECT * FROM player_table WHERE p_id = '{starter}';", con = engine).to_dict('records')
+                    player_name = ''
+
+                    if (len(player_name_res) > 0):
+                        player_name = player_name_res[0]['p_name'].replace("'", " ")
+                    else:
+                        player_name = starter
+
+                    print('insert in the table')
+
+                    engine.execute(text(f"INSERT INTO predict_pitcher_stats(game_date, game_id, player_id, player_name, team, role, atBats, baseOnBalls, blownsaves, doubles, earnedRuns, era, hits, holds, homeRuns, inningsPitched, losses, pitchesThrown, rbi, runs, strikeOuts, strikes, triples, whip, wins, difficulty) \
+                                                VALUES('{game_date}', '{game_id}', '{starter}', '{player_name}', 'away', 'recent', '{round(float(recent_data['atBats']), 3)}', '{round(float(recent_data['baseOnBalls']), 3)}', '{round(float(recent_data['blownsaves']), 3)}', '{round(float(recent_data['doubles']), 3)}', '{round(float(recent_data['earnedRuns']), 3)}', '{round(float(recent_data['era']), 3)}', '{round(float(recent_data['hits']), 3)}', '{round(float(recent_data['holds']), 3)}', '{round(float(recent_data['homeRuns']), 3)}', '{round(float(recent_data['inningsPitched']), 3)}', '{round(float(recent_data['losses']), 3)}', '{round(float(recent_data['pitchesThrown']), 3)}', '{round(float(recent_data['rbi']), 3)}', '{round(float(recent_data['runs']), 3)}', '{round(float(recent_data['strikeOuts']), 3)}', '{round(float(recent_data['strikes']), 3)}', '{round(float(recent_data['triples']), 3)}', '{round(float(recent_data['whip']), 3)}', '{round(float(recent_data['wins']), 3)}', '{round(float(recent_data['difficulty']), 3)}')\
+                                                ON CONFLICT ON CONSTRAINT predict_pitcher_stats_key DO UPDATE SET atBats = excluded.atBats, baseOnBalls = excluded.baseOnBalls, blownsaves = excluded.blownsaves, doubles = excluded.doubles, earnedRuns = excluded.earnedRuns, era = excluded.era, hits = excluded.hits, holds = excluded.holds, homeRuns = excluded.homeRuns, inningsPitched = excluded.inningsPitched, losses = excluded.losses, pitchesThrown = excluded.pitchesThrown, rbi = excluded.rbi, runs = excluded.runs, strikeOuts = excluded.strikeOuts, strikes = excluded.strikes, triples = excluded.triples, whip = excluded.whip, wins = excluded.wins, difficulty = excluded.difficulty;"))
+                    engine.execute(text(f"INSERT INTO predict_pitcher_stats(game_date, game_id, player_id, player_name, team, role, atBats, baseOnBalls, blownsaves, doubles, earnedRuns, era, hits, holds, homeRuns, inningsPitched, losses, pitchesThrown, rbi, runs, strikeOuts, strikes, triples, whip, wins, difficulty) \
+                                            VALUES('{game_date}', '{game_id}', '{starter}', '{player_name}', 'away', 'career', '{round(float(career_data['atBats']), 3)}', '{round(float(career_data['baseOnBalls']), 3)}', '{round(float(career_data['blownsaves']), 3)}', '{round(float(career_data['doubles']), 3)}', '{round(float(career_data['earnedRuns']), 3)}', '{round(float(career_data['era']), 3)}', '{round(float(career_data['hits']), 3)}', '{round(float(career_data['holds']), 3)}', '{round(float(career_data['homeRuns']), 3)}', '{round(float(career_data['inningsPitched']), 3)}', '{round(float(career_data['losses']), 3)}', '{round(float(career_data['pitchesThrown']), 3)}', '{round(float(career_data['rbi']), 3)}', '{round(float(career_data['runs']), 3)}', '{round(float(career_data['strikeOuts']), 3)}', '{round(float(career_data['strikes']), 3)}', '{round(float(career_data['triples']), 3)}', '{round(float(career_data['whip']), 3)}', '{round(float(career_data['wins']), 3)}', '1')\
+                                            ON CONFLICT ON CONSTRAINT predict_pitcher_stats_key DO UPDATE SET atBats = excluded.atBats, baseOnBalls = excluded.baseOnBalls, blownsaves = excluded.blownsaves, doubles = excluded.doubles, earnedRuns = excluded.earnedRuns, era = excluded.era, hits = excluded.hits, holds = excluded.holds, homeRuns = excluded.homeRuns, inningsPitched = excluded.inningsPitched, losses = excluded.losses, pitchesThrown = excluded.pitchesThrown, rbi = excluded.rbi, runs = excluded.runs, strikeOuts = excluded.strikeOuts, strikes = excluded.strikes, triples = excluded.triples, whip = excluded.whip, wins = excluded.wins, difficulty = excluded.difficulty;"))
+
+                    recent_data = {f'away_starter_recent_{k}':v for k,v in recent_data.items()}
+                    career_data = {f'away_starter_career_{k}':v for k,v in career_data.items()}
+
+                    print(career_data)
+
+                    engine.execute(text(f"INSERT INTO pitcher_stats_c(game_id, game_date, position, player_id, career_era, career_homeRuns, career_whip, career_battersFaced, recent_era, recent_homeRuns, recent_whip, recent_battersFaced, difficulty_rating) \
+                                            VALUES('{game_id}', '{game_date}', 'awayStarter', '{int(starter)}', '{round(float(career_data['away_starter_career_era']), 3)}', '{round(float(career_data['away_starter_career_homeRuns']), 3)}', '{round(float(career_data['away_starter_career_whip']), 3)}', '{round(float(career_data['away_starter_career_atBats']), 3) + round(float(career_data['away_starter_career_baseOnBalls']), 3)}', '{round(float(recent_data['away_starter_recent_era']), 3)}', '{round(float(recent_data['away_starter_recent_homeRuns']), 3)}', '{round(float(recent_data['away_starter_recent_whip']), 3)}', '{round(float(recent_data['away_starter_recent_atBats']), 3) + round(float(recent_data['away_starter_recent_baseOnBalls']), 3)}', '{round(float(recent_data['away_starter_recent_difficulty']), 3)}')\
+                                            ON CONFLICT ON CONSTRAINT pitcher_stats_c_game_id_player_id_key DO UPDATE SET game_date = excluded.game_date, career_era = excluded.career_era, career_homeRuns = excluded.career_homeRuns, career_whip = excluded.career_whip, career_battersFaced = excluded.career_battersFaced, recent_era = excluded.recent_era, recent_homeRuns = excluded.recent_homeRuns, recent_whip = excluded.recent_whip, recent_battersFaced = excluded.recent_battersFaced, difficulty_rating = excluded.difficulty_rating;"))
+
+                    team_career_data.append(career_data)
+                    team_recent_data.append(recent_data)
 
             else:
-                print('not in the table')
-
-                player_df = starters_c.get_starter_df(away_starter, game_date)
-
-                if len(player_df) > 0 : 
-                    recent_data, games = starters_c.process_recent_starter_data(player_df, game_date, [], pitcher_stat_list)
-                    career_data = starters_c.process_career_starter_data(games, pitcher_stat_list)
-                else: 
-                    recent_data = dict(zip(pitcher_stat_list, np.repeat(0, len(pitcher_stat_list))))
-                    career_data = dict(zip(pitcher_stat_list, np.repeat(0, len(pitcher_stat_list))))
-
-                player_name_res = pd.read_sql(f"SELECT * FROM player_table WHERE p_id = '{starter}';", con = engine).to_dict('records')
-                player_name = ''
-
-                if (len(player_name_res) > 0):
-                    player_name = player_name_res[0]['p_name'].replace("'", " ")
-                else:
-                    player_name = starter
-
-                print('insert in the table')
-
-                engine.execute(text(f"INSERT INTO predict_pitcher_stats(game_date, game_id, player_id, player_name, team, role, atBats, baseOnBalls, blownsaves, doubles, earnedRuns, era, hits, holds, homeRuns, inningsPitched, losses, pitchesThrown, rbi, runs, strikeOuts, strikes, triples, whip, wins, difficulty) \
-                                            VALUES('{game_date}', '{game_id}', '{starter}', '{player_name}', 'away', 'recent', '{round(float(recent_data['atBats']), 3)}', '{round(float(recent_data['baseOnBalls']), 3)}', '{round(float(recent_data['blownsaves']), 3)}', '{round(float(recent_data['doubles']), 3)}', '{round(float(recent_data['earnedRuns']), 3)}', '{round(float(recent_data['era']), 3)}', '{round(float(recent_data['hits']), 3)}', '{round(float(recent_data['holds']), 3)}', '{round(float(recent_data['homeRuns']), 3)}', '{round(float(recent_data['inningsPitched']), 3)}', '{round(float(recent_data['losses']), 3)}', '{round(float(recent_data['pitchesThrown']), 3)}', '{round(float(recent_data['rbi']), 3)}', '{round(float(recent_data['runs']), 3)}', '{round(float(recent_data['strikeOuts']), 3)}', '{round(float(recent_data['strikes']), 3)}', '{round(float(recent_data['triples']), 3)}', '{round(float(recent_data['whip']), 3)}', '{round(float(recent_data['wins']), 3)}', '{round(float(recent_data['difficulty']), 3)}')\
-                                            ON CONFLICT ON CONSTRAINT predict_pitcher_stats_key DO UPDATE SET atBats = excluded.atBats, baseOnBalls = excluded.baseOnBalls, blownsaves = excluded.blownsaves, doubles = excluded.doubles, earnedRuns = excluded.earnedRuns, era = excluded.era, hits = excluded.hits, holds = excluded.holds, homeRuns = excluded.homeRuns, inningsPitched = excluded.inningsPitched, losses = excluded.losses, pitchesThrown = excluded.pitchesThrown, rbi = excluded.rbi, runs = excluded.runs, strikeOuts = excluded.strikeOuts, strikes = excluded.strikes, triples = excluded.triples, whip = excluded.whip, wins = excluded.wins, difficulty = excluded.difficulty;"))
-                engine.execute(text(f"INSERT INTO predict_pitcher_stats(game_date, game_id, player_id, player_name, team, role, atBats, baseOnBalls, blownsaves, doubles, earnedRuns, era, hits, holds, homeRuns, inningsPitched, losses, pitchesThrown, rbi, runs, strikeOuts, strikes, triples, whip, wins, difficulty) \
-                                        VALUES('{game_date}', '{game_id}', '{starter}', '{player_name}', 'away', 'career', '{round(float(career_data['atBats']), 3)}', '{round(float(career_data['baseOnBalls']), 3)}', '{round(float(career_data['blownsaves']), 3)}', '{round(float(career_data['doubles']), 3)}', '{round(float(career_data['earnedRuns']), 3)}', '{round(float(career_data['era']), 3)}', '{round(float(career_data['hits']), 3)}', '{round(float(career_data['holds']), 3)}', '{round(float(career_data['homeRuns']), 3)}', '{round(float(career_data['inningsPitched']), 3)}', '{round(float(career_data['losses']), 3)}', '{round(float(career_data['pitchesThrown']), 3)}', '{round(float(career_data['rbi']), 3)}', '{round(float(career_data['runs']), 3)}', '{round(float(career_data['strikeOuts']), 3)}', '{round(float(career_data['strikes']), 3)}', '{round(float(career_data['triples']), 3)}', '{round(float(career_data['whip']), 3)}', '{round(float(career_data['wins']), 3)}', '1')\
-                                        ON CONFLICT ON CONSTRAINT predict_pitcher_stats_key DO UPDATE SET atBats = excluded.atBats, baseOnBalls = excluded.baseOnBalls, blownsaves = excluded.blownsaves, doubles = excluded.doubles, earnedRuns = excluded.earnedRuns, era = excluded.era, hits = excluded.hits, holds = excluded.holds, homeRuns = excluded.homeRuns, inningsPitched = excluded.inningsPitched, losses = excluded.losses, pitchesThrown = excluded.pitchesThrown, rbi = excluded.rbi, runs = excluded.runs, strikeOuts = excluded.strikeOuts, strikes = excluded.strikes, triples = excluded.triples, whip = excluded.whip, wins = excluded.wins, difficulty = excluded.difficulty;"))
-
-                recent_data = {f'away_starter_recent_{k}':v for k,v in recent_data.items()}
-                career_data = {f'away_starter_career_{k}':v for k,v in career_data.items()}
-
-                print(career_data)
-
-                engine.execute(text(f"INSERT INTO pitcher_stats_c(game_id, game_date, position, player_id, career_era, career_homeRuns, career_whip, career_battersFaced, recent_era, recent_homeRuns, recent_whip, recent_battersFaced, difficulty_rating) \
-                                        VALUES('{game_id}', '{game_date}', 'awayStarter', '{int(starter)}', '{round(float(career_data['away_starter_career_era']), 3)}', '{round(float(career_data['away_starter_career_homeRuns']), 3)}', '{round(float(career_data['away_starter_career_whip']), 3)}', '{round(float(career_data['away_starter_career_atBats']), 3) + round(float(career_data['away_starter_career_baseOnBalls']), 3)}', '{round(float(recent_data['away_starter_recent_era']), 3)}', '{round(float(recent_data['away_starter_recent_homeRuns']), 3)}', '{round(float(recent_data['away_starter_recent_whip']), 3)}', '{round(float(recent_data['away_starter_recent_atBats']), 3) + round(float(recent_data['away_starter_recent_baseOnBalls']), 3)}', '{round(float(recent_data['away_starter_recent_difficulty']), 3)}')\
-                                        ON CONFLICT ON CONSTRAINT pitcher_stats_c_game_id_player_id_key DO UPDATE SET game_date = excluded.game_date, career_era = excluded.career_era, career_homeRuns = excluded.career_homeRuns, career_whip = excluded.career_whip, career_battersFaced = excluded.career_battersFaced, recent_era = excluded.recent_era, recent_homeRuns = excluded.recent_homeRuns, recent_whip = excluded.recent_whip, recent_battersFaced = excluded.recent_battersFaced, difficulty_rating = excluded.difficulty_rating;"))
-
-                team_career_data.append(career_data)
-                team_recent_data.append(recent_data)
+                continue
 
         team_starter_data = {}
 
@@ -645,81 +647,84 @@ def get_probabilities(params):
 
 
         for starter in home_starters:
+            if starter:
+                home_pitcher_res = pd.read_sql(f"SELECT * FROM predict_pitcher_stats WHERE game_id = '{game_id}' AND player_id = '{starter}';", con = engine).to_dict('records')
 
-            home_pitcher_res = pd.read_sql(f"SELECT * FROM predict_pitcher_stats WHERE game_id = '{game_id}' AND player_id = '{starter}';", con = engine).to_dict('records')
+                if (len(home_pitcher_res) > 0):
+                    print('is in the table')
+                    for home_start_stas in home_pitcher_res:
+                        if home_start_stas['role'] == 'recent':
+                            keys_to_remove = ['game_date', 'game_id', 'player_name', 'team', 'role']
+                            for key in keys_to_remove:
+                                home_start_stas.pop(key, None)
 
-            if (len(home_pitcher_res) > 0):
-                print('is in the table')
-                for home_start_stas in home_pitcher_res:
-                    if home_start_stas['role'] == 'recent':
-                        keys_to_remove = ['game_date', 'game_id', 'player_name', 'team', 'role']
-                        for key in keys_to_remove:
-                            home_start_stas.pop(key, None)
+                            updated_stas = {}
+                            for old_key, value in home_start_stas.items():
+                                if old_key in rename_dict.keys():
+                                    updated_stas[rename_dict[old_key]] = value
+                                else:
+                                    updated_stas[old_key] = value
 
-                        updated_stas = {}
-                        for old_key, value in home_start_stas.items():
-                            if old_key in rename_dict.keys():
-                                updated_stas[rename_dict[old_key]] = value
-                            else:
-                                updated_stas[old_key] = value
+                            recent_data = {f'home_starter_recent_{k}':v for k,v in updated_stas.items()}
+                            team_recent_data.append(recent_data)
+                        elif home_start_stas['role'] == 'career':
+                            keys_to_remove = ['game_date', 'game_id', 'player_id', 'player_name', 'team', 'role', 'difficulty']
+                            for key in keys_to_remove:
+                                home_start_stas.pop(key, None)
 
-                        recent_data = {f'home_starter_recent_{k}':v for k,v in updated_stas.items()}
-                        team_recent_data.append(recent_data)
-                    elif home_start_stas['role'] == 'career':
-                        keys_to_remove = ['game_date', 'game_id', 'player_id', 'player_name', 'team', 'role', 'difficulty']
-                        for key in keys_to_remove:
-                            home_start_stas.pop(key, None)
+                            updated_stas = {}
+                            for old_key, value in home_start_stas.items():
+                                if old_key in rename_dict.keys():
+                                    updated_stas[rename_dict[old_key]] = value
+                                else:
+                                    updated_stas[old_key] = value
 
-                        updated_stas = {}
-                        for old_key, value in home_start_stas.items():
-                            if old_key in rename_dict.keys():
-                                updated_stas[rename_dict[old_key]] = value
-                            else:
-                                updated_stas[old_key] = value
-
-                        career_data = {f'home_starter_career_{k}':v for k,v in updated_stas.items()}
-                        team_career_data.append(career_data)
-                engine.execute(text(f"INSERT INTO pitcher_stats_c(game_id, game_date, position, player_id, career_era, career_homeRuns, career_whip, career_battersFaced, recent_era, recent_homeRuns, recent_whip, recent_battersFaced, difficulty_rating) \
-                                        VALUES('{game_id}', '{game_date}', 'homeStarter', '{int(starter)}', '{round(float(career_data['home_starter_career_era']), 3)}', '{round(float(career_data['home_starter_career_homeRuns']), 3)}', '{round(float(career_data['home_starter_career_whip']), 3)}', '{round(float(career_data['home_starter_career_atBats']), 3) + round(float(career_data['home_starter_career_baseOnBalls']), 3)}', '{round(float(recent_data['home_starter_recent_era']), 3)}', '{round(float(recent_data['home_starter_recent_homeRuns']), 3)}', '{round(float(recent_data['home_starter_recent_whip']), 3)}', '{round(float(recent_data['home_starter_recent_atBats']), 3) + round(float(recent_data['home_starter_recent_baseOnBalls']), 3)}', '{round(float(recent_data['home_starter_recent_difficulty']), 3)}')\
-                                        ON CONFLICT ON CONSTRAINT pitcher_stats_c_game_id_player_id_key DO UPDATE SET game_date = excluded.game_date, career_era = excluded.career_era, career_homeRuns = excluded.career_homeRuns, career_whip = excluded.career_whip, career_battersFaced = excluded.career_battersFaced, recent_era = excluded.recent_era, recent_homeRuns = excluded.recent_homeRuns, recent_whip = excluded.recent_whip, recent_battersFaced = excluded.recent_battersFaced, difficulty_rating = excluded.difficulty_rating;"))
-            else:
-                print('not in the table')
-                
-                player_df = starters_c.get_starter_df(home_starter, game_date)
-
-                if len(player_df) > 0 : 
-                    recent_data, games = starters_c.process_recent_starter_data(player_df, game_date, [], pitcher_stat_list)
-                    career_data = starters_c.process_career_starter_data(games, pitcher_stat_list)
-                else: 
-                    recent_data = dict(zip(pitcher_stat_list, np.repeat(0, len(pitcher_stat_list))))
-                    career_data = dict(zip(pitcher_stat_list, np.repeat(0, len(pitcher_stat_list))))
-
-                player_name_res = pd.read_sql(f"SELECT * FROM player_table WHERE p_id = '{starter}';", con = engine).to_dict('records')
-                player_name = ''
-
-                if (len(player_name_res) > 0):
-                    player_name = player_name_res[0]['p_name'].replace("'", " ")
-                else:
-                    player_name = starter
-
-                print('insert in the table')
-
-                engine.execute(text(f"INSERT INTO predict_pitcher_stats(game_date, game_id, player_id, player_name, team, role, atBats, baseOnBalls, blownsaves, doubles, earnedRuns, era, hits, holds, homeRuns, inningsPitched, losses, pitchesThrown, rbi, runs, strikeOuts, strikes, triples, whip, wins, difficulty) \
-                                            VALUES('{game_date}', '{game_id}', '{starter}', '{player_name}', 'home', 'recent', '{round(float(recent_data['atBats']), 3)}', '{round(float(recent_data['baseOnBalls']), 3)}', '{round(float(recent_data['blownsaves']), 3)}', '{round(float(recent_data['doubles']), 3)}', '{round(float(recent_data['earnedRuns']), 3)}', '{round(float(recent_data['era']), 3)}', '{round(float(recent_data['hits']), 3)}', '{round(float(recent_data['holds']), 3)}', '{round(float(recent_data['homeRuns']), 3)}', '{round(float(recent_data['inningsPitched']), 3)}', '{round(float(recent_data['losses']), 3)}', '{round(float(recent_data['pitchesThrown']), 3)}', '{round(float(recent_data['rbi']), 3)}', '{round(float(recent_data['runs']), 3)}', '{round(float(recent_data['strikeOuts']), 3)}', '{round(float(recent_data['strikes']), 3)}', '{round(float(recent_data['triples']), 3)}', '{round(float(recent_data['whip']), 3)}', '{round(float(recent_data['wins']), 3)}', '{round(float(recent_data['difficulty']), 3)}')\
-                                            ON CONFLICT ON CONSTRAINT predict_pitcher_stats_key DO UPDATE SET atBats = excluded.atBats, baseOnBalls = excluded.baseOnBalls, blownsaves = excluded.blownsaves, doubles = excluded.doubles, earnedRuns = excluded.earnedRuns, era = excluded.era, hits = excluded.hits, holds = excluded.holds, homeRuns = excluded.homeRuns, inningsPitched = excluded.inningsPitched, losses = excluded.losses, pitchesThrown = excluded.pitchesThrown, rbi = excluded.rbi, runs = excluded.runs, strikeOuts = excluded.strikeOuts, strikes = excluded.strikes, triples = excluded.triples, whip = excluded.whip, wins = excluded.wins, difficulty = excluded.difficulty;"))
-                engine.execute(text(f"INSERT INTO predict_pitcher_stats(game_date, game_id, player_id, player_name, team, role, atBats, baseOnBalls, blownsaves, doubles, earnedRuns, era, hits, holds, homeRuns, inningsPitched, losses, pitchesThrown, rbi, runs, strikeOuts, strikes, triples, whip, wins, difficulty) \
-                                        VALUES('{game_date}', '{game_id}', '{starter}', '{player_name}', 'home', 'career', '{round(float(career_data['atBats']), 3)}', '{round(float(career_data['baseOnBalls']), 3)}', '{round(float(career_data['blownsaves']), 3)}', '{round(float(career_data['doubles']), 3)}', '{round(float(career_data['earnedRuns']), 3)}', '{round(float(career_data['era']), 3)}', '{round(float(career_data['hits']), 3)}', '{round(float(career_data['holds']), 3)}', '{round(float(career_data['homeRuns']), 3)}', '{round(float(career_data['inningsPitched']), 3)}', '{round(float(career_data['losses']), 3)}', '{round(float(career_data['pitchesThrown']), 3)}', '{round(float(career_data['rbi']), 3)}', '{round(float(career_data['runs']), 3)}', '{round(float(career_data['strikeOuts']), 3)}', '{round(float(career_data['strikes']), 3)}', '{round(float(career_data['triples']), 3)}', '{round(float(career_data['whip']), 3)}', '{round(float(career_data['wins']), 3)}', '1')\
-                                        ON CONFLICT ON CONSTRAINT predict_pitcher_stats_key DO UPDATE SET atBats = excluded.atBats, baseOnBalls = excluded.baseOnBalls, blownsaves = excluded.blownsaves, doubles = excluded.doubles, earnedRuns = excluded.earnedRuns, era = excluded.era, hits = excluded.hits, holds = excluded.holds, homeRuns = excluded.homeRuns, inningsPitched = excluded.inningsPitched, losses = excluded.losses, pitchesThrown = excluded.pitchesThrown, rbi = excluded.rbi, runs = excluded.runs, strikeOuts = excluded.strikeOuts, strikes = excluded.strikes, triples = excluded.triples, whip = excluded.whip, wins = excluded.wins, difficulty = excluded.difficulty;"))
-
-                engine.execute(text(f"INSERT INTO pitcher_stats_c(game_id, game_date, position, player_id, career_era, career_homeRuns, career_whip, career_battersFaced, recent_era, recent_homeRuns, recent_whip, recent_battersFaced, difficulty_rating) \
-                                            VALUES('{game_id}', '{game_date}', 'homeStarter', '{int(starter)}', '{round(float(career_data['era']), 3)}', '{round(float(career_data['homeRuns']), 3)}', '{round(float(career_data['whip']), 3)}', '{round(float(career_data['atBats']), 3) + round(float(career_data['baseOnBalls']), 3)}', '{round(float(recent_data['era']), 3)}', '{round(float(recent_data['homeRuns']), 3)}', '{round(float(recent_data['whip']), 3)}', '{round(float(recent_data['atBats']), 3) + round(float(recent_data['baseOnBalls']), 3)}', '{round(float(recent_data['difficulty']), 3)}')\
+                            career_data = {f'home_starter_career_{k}':v for k,v in updated_stas.items()}
+                            team_career_data.append(career_data)
+                    engine.execute(text(f"INSERT INTO pitcher_stats_c(game_id, game_date, position, player_id, career_era, career_homeRuns, career_whip, career_battersFaced, recent_era, recent_homeRuns, recent_whip, recent_battersFaced, difficulty_rating) \
+                                            VALUES('{game_id}', '{game_date}', 'homeStarter', '{int(starter)}', '{round(float(career_data['home_starter_career_era']), 3)}', '{round(float(career_data['home_starter_career_homeRuns']), 3)}', '{round(float(career_data['home_starter_career_whip']), 3)}', '{round(float(career_data['home_starter_career_atBats']), 3) + round(float(career_data['home_starter_career_baseOnBalls']), 3)}', '{round(float(recent_data['home_starter_recent_era']), 3)}', '{round(float(recent_data['home_starter_recent_homeRuns']), 3)}', '{round(float(recent_data['home_starter_recent_whip']), 3)}', '{round(float(recent_data['home_starter_recent_atBats']), 3) + round(float(recent_data['home_starter_recent_baseOnBalls']), 3)}', '{round(float(recent_data['home_starter_recent_difficulty']), 3)}')\
                                             ON CONFLICT ON CONSTRAINT pitcher_stats_c_game_id_player_id_key DO UPDATE SET game_date = excluded.game_date, career_era = excluded.career_era, career_homeRuns = excluded.career_homeRuns, career_whip = excluded.career_whip, career_battersFaced = excluded.career_battersFaced, recent_era = excluded.recent_era, recent_homeRuns = excluded.recent_homeRuns, recent_whip = excluded.recent_whip, recent_battersFaced = excluded.recent_battersFaced, difficulty_rating = excluded.difficulty_rating;"))
 
-                recent_data = {f'home_starter_recent_{k}':v for k,v in recent_data.items()}
-                career_data = {f'home_starter_career_{k}':v for k,v in career_data.items()}
+                else:
+                    print('not in the table')
+                    
+                    player_df = starters_c.get_starter_df(home_starter, game_date)
 
-                team_career_data.append(career_data)
-                team_recent_data.append(recent_data)
+                    if len(player_df) > 0 : 
+                        recent_data, games = starters_c.process_recent_starter_data(player_df, game_date, [], pitcher_stat_list)
+                        career_data = starters_c.process_career_starter_data(games, pitcher_stat_list)
+                    else: 
+                        recent_data = dict(zip(pitcher_stat_list, np.repeat(0, len(pitcher_stat_list))))
+                        career_data = dict(zip(pitcher_stat_list, np.repeat(0, len(pitcher_stat_list))))
+
+                    player_name_res = pd.read_sql(f"SELECT * FROM player_table WHERE p_id = '{starter}';", con = engine).to_dict('records')
+                    player_name = ''
+
+                    if (len(player_name_res) > 0):
+                        player_name = player_name_res[0]['p_name'].replace("'", " ")
+                    else:
+                        player_name = starter
+
+                    print('insert in the table')
+
+                    engine.execute(text(f"INSERT INTO predict_pitcher_stats(game_date, game_id, player_id, player_name, team, role, atBats, baseOnBalls, blownsaves, doubles, earnedRuns, era, hits, holds, homeRuns, inningsPitched, losses, pitchesThrown, rbi, runs, strikeOuts, strikes, triples, whip, wins, difficulty) \
+                                                VALUES('{game_date}', '{game_id}', '{starter}', '{player_name}', 'home', 'recent', '{round(float(recent_data['atBats']), 3)}', '{round(float(recent_data['baseOnBalls']), 3)}', '{round(float(recent_data['blownsaves']), 3)}', '{round(float(recent_data['doubles']), 3)}', '{round(float(recent_data['earnedRuns']), 3)}', '{round(float(recent_data['era']), 3)}', '{round(float(recent_data['hits']), 3)}', '{round(float(recent_data['holds']), 3)}', '{round(float(recent_data['homeRuns']), 3)}', '{round(float(recent_data['inningsPitched']), 3)}', '{round(float(recent_data['losses']), 3)}', '{round(float(recent_data['pitchesThrown']), 3)}', '{round(float(recent_data['rbi']), 3)}', '{round(float(recent_data['runs']), 3)}', '{round(float(recent_data['strikeOuts']), 3)}', '{round(float(recent_data['strikes']), 3)}', '{round(float(recent_data['triples']), 3)}', '{round(float(recent_data['whip']), 3)}', '{round(float(recent_data['wins']), 3)}', '{round(float(recent_data['difficulty']), 3)}')\
+                                                ON CONFLICT ON CONSTRAINT predict_pitcher_stats_key DO UPDATE SET atBats = excluded.atBats, baseOnBalls = excluded.baseOnBalls, blownsaves = excluded.blownsaves, doubles = excluded.doubles, earnedRuns = excluded.earnedRuns, era = excluded.era, hits = excluded.hits, holds = excluded.holds, homeRuns = excluded.homeRuns, inningsPitched = excluded.inningsPitched, losses = excluded.losses, pitchesThrown = excluded.pitchesThrown, rbi = excluded.rbi, runs = excluded.runs, strikeOuts = excluded.strikeOuts, strikes = excluded.strikes, triples = excluded.triples, whip = excluded.whip, wins = excluded.wins, difficulty = excluded.difficulty;"))
+                    engine.execute(text(f"INSERT INTO predict_pitcher_stats(game_date, game_id, player_id, player_name, team, role, atBats, baseOnBalls, blownsaves, doubles, earnedRuns, era, hits, holds, homeRuns, inningsPitched, losses, pitchesThrown, rbi, runs, strikeOuts, strikes, triples, whip, wins, difficulty) \
+                                            VALUES('{game_date}', '{game_id}', '{starter}', '{player_name}', 'home', 'career', '{round(float(career_data['atBats']), 3)}', '{round(float(career_data['baseOnBalls']), 3)}', '{round(float(career_data['blownsaves']), 3)}', '{round(float(career_data['doubles']), 3)}', '{round(float(career_data['earnedRuns']), 3)}', '{round(float(career_data['era']), 3)}', '{round(float(career_data['hits']), 3)}', '{round(float(career_data['holds']), 3)}', '{round(float(career_data['homeRuns']), 3)}', '{round(float(career_data['inningsPitched']), 3)}', '{round(float(career_data['losses']), 3)}', '{round(float(career_data['pitchesThrown']), 3)}', '{round(float(career_data['rbi']), 3)}', '{round(float(career_data['runs']), 3)}', '{round(float(career_data['strikeOuts']), 3)}', '{round(float(career_data['strikes']), 3)}', '{round(float(career_data['triples']), 3)}', '{round(float(career_data['whip']), 3)}', '{round(float(career_data['wins']), 3)}', '1')\
+                                            ON CONFLICT ON CONSTRAINT predict_pitcher_stats_key DO UPDATE SET atBats = excluded.atBats, baseOnBalls = excluded.baseOnBalls, blownsaves = excluded.blownsaves, doubles = excluded.doubles, earnedRuns = excluded.earnedRuns, era = excluded.era, hits = excluded.hits, holds = excluded.holds, homeRuns = excluded.homeRuns, inningsPitched = excluded.inningsPitched, losses = excluded.losses, pitchesThrown = excluded.pitchesThrown, rbi = excluded.rbi, runs = excluded.runs, strikeOuts = excluded.strikeOuts, strikes = excluded.strikes, triples = excluded.triples, whip = excluded.whip, wins = excluded.wins, difficulty = excluded.difficulty;"))
+
+                    engine.execute(text(f"INSERT INTO pitcher_stats_c(game_id, game_date, position, player_id, career_era, career_homeRuns, career_whip, career_battersFaced, recent_era, recent_homeRuns, recent_whip, recent_battersFaced, difficulty_rating) \
+                                                VALUES('{game_id}', '{game_date}', 'homeStarter', '{int(starter)}', '{round(float(career_data['era']), 3)}', '{round(float(career_data['homeRuns']), 3)}', '{round(float(career_data['whip']), 3)}', '{round(float(career_data['atBats']), 3) + round(float(career_data['baseOnBalls']), 3)}', '{round(float(recent_data['era']), 3)}', '{round(float(recent_data['homeRuns']), 3)}', '{round(float(recent_data['whip']), 3)}', '{round(float(recent_data['atBats']), 3) + round(float(recent_data['baseOnBalls']), 3)}', '{round(float(recent_data['difficulty']), 3)}')\
+                                                ON CONFLICT ON CONSTRAINT pitcher_stats_c_game_id_player_id_key DO UPDATE SET game_date = excluded.game_date, career_era = excluded.career_era, career_homeRuns = excluded.career_homeRuns, career_whip = excluded.career_whip, career_battersFaced = excluded.career_battersFaced, recent_era = excluded.recent_era, recent_homeRuns = excluded.recent_homeRuns, recent_whip = excluded.recent_whip, recent_battersFaced = excluded.recent_battersFaced, difficulty_rating = excluded.difficulty_rating;"))
+
+                    recent_data = {f'home_starter_recent_{k}':v for k,v in recent_data.items()}
+                    career_data = {f'home_starter_career_{k}':v for k,v in career_data.items()}
+
+                    team_career_data.append(career_data)
+                    team_recent_data.append(recent_data)
+            else:
+                continue
 
         team_starter_data = {}        
         for j in range(len(team_career_data)):

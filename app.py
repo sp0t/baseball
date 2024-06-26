@@ -437,7 +437,7 @@ def make_prediction():
         
         # Make Prediction
         if form_data['model'] == 'a':
-            predictions = predict.get_probabilities(params)
+            predictions = predict.get_probabilities(params, engine)
             preds_1a = predictions['1a']
             preds_1a = np.round(100 * preds_1a[0], 2)
             away_odd = 0

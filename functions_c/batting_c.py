@@ -153,7 +153,7 @@ def process_career_batter_data(games, batter_stat_list):
 
     return career_data
 
-def process_team_batter_data(team_batters, team, game_date): 
+def process_team_batter_data(team_batters, team, game_date, engine): 
     
     batter_stat_list = ['home_score', 'away_score', 'atBats', 'avg', 'baseOnBalls', 'doubles', 'hits', 'homeRuns', 'obp', 'ops', 'playerId', 'rbi', 'runs', 
                         'slg', 'strikeOuts', 'triples', 'season', 'singles']
@@ -167,7 +167,7 @@ def process_team_batter_data(team_batters, team, game_date):
         # order = team_batters.index(team_batter)+1
         order = i + 1
         team_batter = team_batters[i]
-        player_df = get_batter_df(team_batter)
+        player_df = get_batter_df(team_batter, engine)
 
         if len(player_df) > 0 : 
             recent_data, recent_games, games = process_recent_batter_data(player_df, game_date, batter_stat_list)

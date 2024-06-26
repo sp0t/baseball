@@ -149,14 +149,14 @@ def process_career_starter_data(games, pitcher_stat_list):
     
     return career_data
 
-def process_starter_data(team_starter, team, game_date, team_batters): 
+def process_starter_data(team_starter, team, game_date, team_batters, engine): 
     
     pitcher_stat_list=[
         'atBats', 'baseOnBalls', 'blownSave', 'doubles', 'earnedRuns', 'era', 'hits', 'holds', 'homeRuns', 'inningsPitched', 
         'losses', 'pitchesThrown', 'playerId', 'rbi', 'runs', 'strikeOuts', 'strikes', 'triples', 'whip',  'wins']
     
     
-    player_df = get_starter_df(team_starter, game_date)
+    player_df = get_starter_df(team_starter, game_date, engine)
 
     if len(player_df) > 0 : 
         recent_data, games = process_recent_starter_data(player_df, game_date, team_batters, pitcher_stat_list)
@@ -174,7 +174,7 @@ def process_starter_data(team_starter, team, game_date, team_batters):
     
     return team_starter_data
 
-def process_starter_data1(team_starters, team, game_date, team_batters): 
+def process_starter_data1(team_starters, team, game_date, team_batters, engine): 
     
     pitcher_stat_list=[
         'atBats', 'baseOnBalls', 'blownSave', 'doubles', 'earnedRuns', 'era', 'hits', 'holds', 'homeRuns', 'inningsPitched', 
@@ -191,7 +191,7 @@ def process_starter_data1(team_starters, team, game_date, team_batters):
     for i in range(5):
         order = i + 1
         team_starter = team_starters[i]
-        player_df = get_starter_df(team_starter, game_date)
+        player_df = get_starter_df(team_starter, game_date, engine)
 
         if len(player_df) > 0 : 
             recent_data, games = process_recent_starter_data(player_df, game_date, team_batters, pitcher_stat_list)

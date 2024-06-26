@@ -8,9 +8,9 @@ import sqlite3
 from database import database
 from sqlalchemy import text
 
-def get_starter_df(player_id): 
+def get_starter_df(player_id, engine): 
     
-    engine = database.connect_to_db()
+    # engine = database.connect_to_db()
 
     df = pd.read_sql("SELECT b.game_id, b.game_date, b.home_team, b.away_team, b.home_score, b.away_score, (a.atbats)atBats, "
             "(a.baseonballs)baseonBalls, a.blownsaves, a.doubles, (a.earnedruns)earnedRuns, a.era, a.hits, a.holds, (a.homeruns)homeRuns, "
@@ -127,14 +127,14 @@ def process_career_starter_data(player_id, games, recent_games, pitcher_stat_lis
     
     return career_data
 
-def process_starter_data(team_starter, team, game_date): 
+def process_starter_data(team_starter, team, game_date, engine): 
     
     pitcher_stat_list=[
         'atBats', 'baseOnBalls', 'blownSave', 'doubles', 'earnedRuns', 'era', 'hits', 'holds', 'homeRuns', 'inningsPitched', 
         'losses', 'pitchesThrown', 'playerId', 'rbi', 'runs', 'strikeOuts', 'strikes', 'triples', 'whip',  'wins']
     
     
-    player_df = get_starter_df(team_starter)
+    player_df = get_starter_df(team_starter, engine)
     
     if len(player_df) > 0 : 
         recent_data, recent_games, games = process_recent_starter_data(player_df, game_date, pitcher_stat_list)
@@ -170,7 +170,7 @@ def process_starter_data1(team_starters, team, game_date, gameid):
         # order = team_batters.index(team_batter)+1
         order = i + 1
         team_starter = team_starters[i]
-        player_df = get_starter_df(team_starter)
+        player_df = get_starter_df(team_starter, engine)
 
         if len(player_df) > 0 : 
             recent_data, recent_games, games = process_recent_starter_data(player_df, game_date, pitcher_stat_list)

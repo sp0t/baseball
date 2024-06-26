@@ -198,7 +198,7 @@ def standardizeData(X_test, column_names):
     
     return X_test
 
-def get_probabilities(params): 
+def get_probabilities(params, engine): 
     
     engine = database.connect_to_db()
 
@@ -222,15 +222,15 @@ def get_probabilities(params):
         team_home.append(el)
 
     # Batters 
-    away_batter_data = batting.process_team_batter_data(team_batter, 'away', game_date)
-    home_batter_data = batting.process_team_batter_data(team_home, 'home', game_date)
+    away_batter_data = batting.process_team_batter_data(team_batter, 'away', game_date, engine)
+    home_batter_data = batting.process_team_batter_data(team_home, 'home', game_date, engine)
     # Starters 
-    away_starter_data = starters.process_starter_data(away_starter, 'away', game_date)
-    home_starter_data = starters.process_starter_data(home_starter, 'home', game_date)
+    away_starter_data = starters.process_starter_data(away_starter, 'away', game_date, engine)
+    home_starter_data = starters.process_starter_data(home_starter, 'home', game_date, engine)
 
     # Bullpen 
-    away_bullpen_data = bullpen.process_bullpen_data(away_name, 'away', game_date)
-    home_bullpen_data = bullpen.process_bullpen_data(home_name, 'home', game_date)
+    away_bullpen_data = bullpen.process_bullpen_data(away_name, 'away', game_date, engine)
+    home_bullpen_data = bullpen.process_bullpen_data(home_name, 'home', game_date, engine)
 
 
     # Combine 

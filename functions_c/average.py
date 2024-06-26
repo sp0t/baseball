@@ -92,8 +92,8 @@ def update_league_average(gamedate, state):
     
     return obp, whip
 
-def cal_batter_average(team_batter, gamedate):
-    df = batting_c.get_batter_df(team_batter, gamedate)
+def cal_batter_average(team_batter, gamedate, engine):
+    df = batting_c.get_batter_df(team_batter, gamedate, engine)
 
     if len(df) == 0:
         return 0, 0

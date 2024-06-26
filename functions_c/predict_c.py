@@ -270,10 +270,10 @@ def get_probabilities(params, engine):
                     team_career_data.update(career_data)
         else:
             print('not in the table')
-            player_df = batting_c.get_batter_df(batter, game_date)
+            player_df = batting_c.get_batter_df(batter, game_date, engine)
 
             if len(player_df) > 0 : 
-                recent_data, games = batting_c.process_recent_batter_data(player_df, game_date, '', batter_stat_list)
+                recent_data, games = batting_c.process_recent_batter_data(player_df, game_date, '', batter_stat_list, engine)
                 print(recent_data)
                 career_data = batting_c.process_career_batter_data(games, batter_stat_list)
             else: 
@@ -346,10 +346,10 @@ def get_probabilities(params, engine):
                     team_career_data.update(career_data)
         else:
             print('not in the table')
-            player_df = batting_c.get_batter_df(batter, game_date)
+            player_df = batting_c.get_batter_df(batter, game_date, engine)
 
             if len(player_df) > 0 : 
-                recent_data, games = batting_c.process_recent_batter_data(player_df, game_date, '', batter_stat_list)
+                recent_data, games = batting_c.process_recent_batter_data(player_df, game_date, '', batter_stat_list, engine)
                 career_data = batting_c.process_career_batter_data(games, batter_stat_list)
             else: 
                 recent_data = dict(zip(batter_stat_list, np.repeat(0, len(batter_stat_list))))
@@ -421,7 +421,7 @@ def get_probabilities(params, engine):
         else:
             print('not in the table')
 
-            player_df = starters_c.get_starter_df(away_starter, game_date)
+            player_df = starters_c.get_starter_df(away_starter, game_date, engine)
 
             if len(player_df) > 0 : 
                 recent_data, games = starters_c.process_recent_starter_data(player_df, game_date, [], pitcher_stat_list)
@@ -495,10 +495,10 @@ def get_probabilities(params, engine):
         else:
             print('not in the table')
             
-            player_df = starters_c.get_starter_df(home_starter, game_date)
+            player_df = starters_c.get_starter_df(home_starter, game_date, engine)
 
             if len(player_df) > 0 : 
-                recent_data, games = starters_c.process_recent_starter_data(player_df, game_date, [], pitcher_stat_list)
+                recent_data, games = starters_c.process_recent_starter_data(player_df, game_date, [], pitcher_stat_list, engine)
                 recent_data['difficulty'] = 0
                 career_data = starters_c.process_career_starter_data(games, pitcher_stat_list)
             else: 
@@ -575,10 +575,10 @@ def get_probabilities(params, engine):
                 else:
                     print('not in the table')
 
-                    player_df = starters_c.get_starter_df(away_starter, game_date)
+                    player_df = starters_c.get_starter_df(away_starter, game_date, engine)
 
                     if len(player_df) > 0 : 
-                        recent_data, games = starters_c.process_recent_starter_data(player_df, game_date, [], pitcher_stat_list)
+                        recent_data, games = starters_c.process_recent_starter_data(player_df, game_date, [], pitcher_stat_list, engine)
                         career_data = starters_c.process_career_starter_data(games, pitcher_stat_list)
                     else: 
                         recent_data = dict(zip(pitcher_stat_list, np.repeat(0, len(pitcher_stat_list))))
@@ -687,10 +687,10 @@ def get_probabilities(params, engine):
                 else:
                     print('not in the table')
                     
-                    player_df = starters_c.get_starter_df(home_starter, game_date)
+                    player_df = starters_c.get_starter_df(home_starter, game_date, engine)
 
                     if len(player_df) > 0 : 
-                        recent_data, games = starters_c.process_recent_starter_data(player_df, game_date, [], pitcher_stat_list)
+                        recent_data, games = starters_c.process_recent_starter_data(player_df, game_date, [], pitcher_stat_list, engine)
                         career_data = starters_c.process_career_starter_data(games, pitcher_stat_list)
                     else: 
                         recent_data = dict(zip(pitcher_stat_list, np.repeat(0, len(pitcher_stat_list))))

@@ -5,9 +5,9 @@ import pandas as pd
 from database import database
 from functions_c import average
 
-def get_starter_df(player_id, gamedate): 
+def get_starter_df(player_id, gamedate, engine): 
 
-    engine = database.connect_to_db()
+    # engine = database.connect_to_db()
 
     df = pd.read_sql("SELECT b.game_id, b.game_date, b.home_team, b.away_team, b.home_score, b.away_score, (a.atbats)atBats, "
             "(a.baseonballs)baseonBalls, a.blownsaves, a.doubles, (a.earnedruns)earnedRuns, a.era, a.hits, a.holds, (a.homeruns)homeRuns, "
@@ -38,9 +38,9 @@ def get_starter_df(player_id, gamedate):
     player_df = player_df.reset_index(drop = True)
     return player_df
 
-def process_recent_starter_data(player_df, game_date, team_batters, pitcher_stat_list): 
+def process_recent_starter_data(player_df, game_date, team_batters, pitcher_stat_list, engine): 
 
-    engine = database.connect_to_db()
+    # engine = database.connect_to_db()
     
     player_df['game_date'] = pd.to_datetime(player_df['game_date'])
     games = player_df[player_df['game_date'] < game_date]
@@ -69,7 +69,7 @@ def process_recent_starter_data(player_df, game_date, team_batters, pitcher_stat
                 date_obj = datetime.strptime(date_str, '%Y-%m-%d %H:%M:%S')
                 formatted_date = date_obj.strftime('%Y/%m/%d')
                 average_obp, average_whip = average.update_league_average(formatted_date, False)
-                career_obp, recent_obp = average.cal_batter_average(batter['playerid'], formatted_date)
+                career_obp, recent_obp = average.cal_batter_average(batter['playerid'], formatted_date, engine)
                 if average_obp == 0 or career_obp == 0 or recent_obp == 0:
                     batter_difficulty = batter_difficulty + 8/8
                 else:
@@ -99,7 +99,7 @@ def process_recent_starter_data(player_df, game_date, team_batters, pitcher_stat
                 DifficultyRating = average.switch_difficulty(average_whip/career_whip, career_whip/recent_whip)
         else:
             for el in team_batters:
-                career_obp, recent_obp = average.cal_batter_average(el, game_date)
+                career_obp, recent_obp = average.cal_batter_average(el, game_date, engine)
                 if average_obp == 0 or career_obp == 0 or recent_obp == 0:
                     DifficultyRating = DifficultyRating + 8/8
                 else:

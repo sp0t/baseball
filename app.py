@@ -1948,8 +1948,8 @@ def calculate(predictionData):
     for gameid in predictionData:
         away_batters = predictionData[gameid]['away_batter']
         for away_batter in away_batters:
-            player_df = batting_c.get_batter_df(away_batter, output_date)
-            recent_batter_stats, games = batting_c.process_recent_batter_data(player_df, output_date, '', batter_stat_list)
+            player_df = batting_c.get_batter_df(away_batter, output_date, engine)
+            recent_batter_stats, games = batting_c.process_recent_batter_data(player_df, output_date, '', batter_stat_list, engine)
             career_batter_data = batting_c.process_career_batter_data(games, batter_stat_list)
 
             engine.execute(text(f"INSERT INTO predict_batter_stats(game_date, game_id, player_id, player_name, team, role, atBats, avg, baseOnBalls, doubles, hits, homeRuns, obp, ops, rbi, runs, slg, strikeOuts, triples, singles, difficulty) \
@@ -1962,8 +1962,8 @@ def calculate(predictionData):
 
         home_batters = predictionData[gameid]['home_batter']
         for home_batter in home_batters:
-            player_df = batting_c.get_batter_df(home_batter, output_date)
-            recent_batter_stats, games = batting_c.process_recent_batter_data(player_df, output_date, '', batter_stat_list)
+            player_df = batting_c.get_batter_df(home_batter, output_date, engine)
+            recent_batter_stats, games = batting_c.process_recent_batter_data(player_df, output_date, '', batter_stat_list, engine)
             career_batter_data = batting_c.process_career_batter_data(games, batter_stat_list)
 
             engine.execute(text(f"INSERT INTO predict_batter_stats(game_date, game_id, player_id, player_name, team, role, atBats, avg, baseOnBalls, doubles, hits, homeRuns, obp, ops, rbi, runs, slg, strikeOuts, triples, singles, difficulty) \
@@ -1975,8 +1975,8 @@ def calculate(predictionData):
 
         away_starters = predictionData[gameid]['away_pitcher']
         for away_starter in away_starters:
-            player_df = starters_c.get_starter_df(away_starter, output_date)
-            recent_pitcher_stats, games = starters_c.process_recent_starter_data(player_df, output_date, [], pitcher_stat_list)
+            player_df = starters_c.get_starter_df(away_starter, output_date, engine)
+            recent_pitcher_stats, games = starters_c.process_recent_starter_data(player_df, output_date, [], pitcher_stat_list, engine)
             career_pitcher_data = starters_c.process_career_starter_data(games, pitcher_stat_list)
 
             engine.execute(text(f"INSERT INTO predict_pitcher_stats(game_date, game_id, player_id, player_name, team, role, atBats, baseOnBalls, blownsaves, doubles, earnedRuns, era, hits, holds, homeRuns, inningsPitched, losses, pitchesThrown, rbi, runs, strikeOuts, strikes, triples, whip, wins, difficulty) \
@@ -1988,8 +1988,8 @@ def calculate(predictionData):
 
         home_starters = predictionData[gameid]['home_pitcher']
         for home_starter in home_starters:
-            player_df = starters_c.get_starter_df(home_starter, output_date)
-            recent_pitcher_stats, games = starters_c.process_recent_starter_data(player_df, output_date, [], pitcher_stat_list)
+            player_df = starters_c.get_starter_df(home_starter, output_date, engine)
+            recent_pitcher_stats, games = starters_c.process_recent_starter_data(player_df, output_date, [], pitcher_stat_list, engine)
             career_pitcher_data = starters_c.process_career_starter_data(games, pitcher_stat_list)
             
             engine.execute(text(f"INSERT INTO predict_pitcher_stats(game_date, game_id, player_id, player_name, team, role, atBats, baseOnBalls, blownsaves, doubles, earnedRuns, era, hits, holds, homeRuns, inningsPitched, losses, pitchesThrown, rbi, runs, strikeOuts, strikes, triples, whip, wins, difficulty) \

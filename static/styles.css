@@ -1194,7 +1194,12 @@ table {
 	background-color: #ffffff;
   }
 
-  .dark-mode .card-table{
-	color: #121212;
-	background-color: #ffffff;
+  .dark-mode .model-title{
+	background-color: #121212;
+	color: #ffffff;
+  }
+
+  .dark-mode .model-content{
+	background-color: #121212;
+	color: #ffffff;
   }

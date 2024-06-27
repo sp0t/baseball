@@ -1193,3 +1193,8 @@ table {
 	color: #121212;
 	background-color: #ffffff;
   }
+
+  .dark-mode .card-table{
+	color: #121212;
+	background-color: #ffffff;
+  }

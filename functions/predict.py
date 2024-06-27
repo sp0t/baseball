@@ -200,7 +200,7 @@ def standardizeData(X_test, column_names):
 
 def get_probabilities(params, engine): 
     
-    engine = database.connect_to_db()
+    # engine = database.connect_to_db()
 
     away_batters, home_batters = [str(el) for el in params['away_batters']], [str(el) for el in params['home_batters']]
     away_starters, home_starters = [str(el) for el in params['away_starters']], [str(el) for el in params['home_starters']]

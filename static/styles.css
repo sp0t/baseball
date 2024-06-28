@@ -1202,3 +1202,8 @@ table {
   .dark-mode .model-content{
 	background-color: #121212;
   }
+
+  .dark-mode .table tr{
+	background-color: #121212;
+	color: #ffffff;
+  }

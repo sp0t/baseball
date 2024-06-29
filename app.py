@@ -469,6 +469,7 @@ def make_prediction():
             prediction = {'model':'a', '1a': preds_1a, '1b': preds_1b}
         elif form_data['model'] == 'c':
             print('thread argument', params)
+            data = {}
             data['params'] = params
             data['stake_size'] = stake_size
             thread = threading.Thread(target=calModelC, args=(data,))

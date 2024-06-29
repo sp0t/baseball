@@ -469,9 +469,11 @@ def make_prediction():
             prediction = {'model':'a', '1a': preds_1a, '1b': preds_1b}
         elif form_data['model'] == 'c':
             print('thread argument', params)
-            thread = threading.Thread(target=calModelC, args=(params,))
+            data['params'] = params
+            data['stake_size'] = stake_size
+            thread = threading.Thread(target=calModelC, args=(data,))
             thread.start()
-            preds_1c = {'away_prob': 0, 'home_prob': 0, 'away_odd': 0, 'home_odd': 0, 'stake': 0}
+            preds_1c = {'away_prob': 0, 'home_prob': 0, 'away_odd': 0, 'home_odd': 0, 'stake': stake_size}
             prediction = {'model':'c', '1c': preds_1c}
             # prediction_c = predict_c.get_probabilities(params, engine)
         
@@ -2007,8 +2009,10 @@ def calculate(predictionData):
 
     return
 
-def calModelC(params):
-    print('thread start', params)
+def calModelC(data):
+    print('thread start', data)
+    params = data['params'] 
+    stake_size = data['stake_size'] 
     prediction_c = predict_c.get_probabilities(params, engine)
         
     preds_1c = prediction_c

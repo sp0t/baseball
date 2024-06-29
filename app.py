@@ -468,25 +468,30 @@ def make_prediction():
 
             prediction = {'model':'a', '1a': preds_1a, '1b': preds_1b}
         elif form_data['model'] == 'c':
-            prediction_c = predict_c.get_probabilities(params, engine)
-        
-            preds_1c = prediction_c
-            preds_1c = np.round(100 * preds_1c[0], 2)
-
-            away_odd = 0
-            home_odd = 0
-            away_dec_odd = 0
-            home_dec_odd = 0
-            away_dec_odd = round(1.03 / (preds_1c[0] / 100), 2)
-            away_odd = odds.decimalToAmerian(away_dec_odd)
-
-            home_dec_odd = round(1.03 / (preds_1c[1] / 100), 2)
-            home_odd = odds.decimalToAmerian(home_dec_odd)
-
-            preds_1c = {'away_prob': preds_1c[0], 'home_prob': preds_1c[1], 'away_odd': away_odd, 'home_odd': home_odd, 'stake': stake_size}
-            engine.execute(f"INSERT INTO predict_table(game_id, lc_away_prob, lc_home_prob, lc_away_odd, lc_home_odd) VALUES('{gameId}', '{preds_1c['away_prob']}', '{preds_1c['home_prob']}', '{preds_1c['away_odd']}', '{preds_1c['home_odd']}') ON CONFLICT (game_id) DO UPDATE SET lc_away_prob = excluded.lc_away_prob, lc_home_prob = excluded.lc_home_prob, lc_away_odd = excluded.lc_away_odd, lc_home_odd = excluded.lc_home_odd;")
-            engine.execute(f"INSERT INTO win_percent_c(game_id, away_prob, home_prob) VALUES('{gameId}', '{preds_1c['away_prob']}', '{preds_1c['home_prob']}') ON CONFLICT (game_id) DO UPDATE SET away_prob = excluded.away_prob, home_prob = excluded.home_prob;")  
+            print('thread argument', params)
+            thread = threading.Thread(target=calModelC, args=(params,))
+            thread.start()
+            preds_1c = {'away_prob': 0, 'home_prob': 0, 'away_odd': 0, 'home_odd': 0, 'stake': 0}
             prediction = {'model':'c', '1c': preds_1c}
+            # prediction_c = predict_c.get_probabilities(params, engine)
+        
+            # preds_1c = prediction_c
+            # preds_1c = np.round(100 * preds_1c[0], 2)
+
+            # away_odd = 0
+            # home_odd = 0
+            # away_dec_odd = 0
+            # home_dec_odd = 0
+            # away_dec_odd = round(1.03 / (preds_1c[0] / 100), 2)
+            # away_odd = odds.decimalToAmerian(away_dec_odd)
+
+            # home_dec_odd = round(1.03 / (preds_1c[1] / 100), 2)
+            # home_odd = odds.decimalToAmerian(home_dec_odd)
+
+            # preds_1c = {'away_prob': preds_1c[0], 'home_prob': preds_1c[1], 'away_odd': away_odd, 'home_odd': home_odd, 'stake': stake_size}
+            # engine.execute(f"INSERT INTO predict_table(game_id, lc_away_prob, lc_home_prob, lc_away_odd, lc_home_odd) VALUES('{gameId}', '{preds_1c['away_prob']}', '{preds_1c['home_prob']}', '{preds_1c['away_odd']}', '{preds_1c['home_odd']}') ON CONFLICT (game_id) DO UPDATE SET lc_away_prob = excluded.lc_away_prob, lc_home_prob = excluded.lc_home_prob, lc_away_odd = excluded.lc_away_odd, lc_home_odd = excluded.lc_home_odd;")
+            # engine.execute(f"INSERT INTO win_percent_c(game_id, away_prob, home_prob) VALUES('{gameId}', '{preds_1c['away_prob']}', '{preds_1c['home_prob']}') ON CONFLICT (game_id) DO UPDATE SET away_prob = excluded.away_prob, home_prob = excluded.home_prob;")  
+            # prediction = {'model':'c', '1c': preds_1c}
 
         prediction = jsonify(prediction)
     
@@ -1999,6 +2004,31 @@ def calculate(predictionData):
             engine.execute(text(f"INSERT INTO predict_pitcher_stats(game_date, game_id, player_id, player_name, team, role, atBats, baseOnBalls, blownsaves, doubles, earnedRuns, era, hits, holds, homeRuns, inningsPitched, losses, pitchesThrown, rbi, runs, strikeOuts, strikes, triples, whip, wins, difficulty) \
                                     VALUES('{output_date}', '{gameid}', '{home_starter}', '{predictionData[gameid]['name'][str(home_starter)]}', 'home', 'career', '{round(float(career_pitcher_data['atBats']), 3)}', '{round(float(career_pitcher_data['baseOnBalls']), 3)}', '{round(float(career_pitcher_data['blownsaves']), 3)}', '{round(float(career_pitcher_data['doubles']), 3)}', '{round(float(career_pitcher_data['earnedRuns']), 3)}', '{round(float(career_pitcher_data['era']), 3)}', '{round(float(career_pitcher_data['hits']), 3)}', '{round(float(career_pitcher_data['holds']), 3)}', '{round(float(career_pitcher_data['homeRuns']), 3)}', '{round(float(career_pitcher_data['inningsPitched']), 3)}', '{round(float(career_pitcher_data['losses']), 3)}', '{round(float(career_pitcher_data['pitchesThrown']), 3)}', '{round(float(career_pitcher_data['rbi']), 3)}', '{round(float(career_pitcher_data['runs']), 3)}', '{round(float(career_pitcher_data['strikeOuts']), 3)}', '{round(float(career_pitcher_data['strikes']), 3)}', '{round(float(career_pitcher_data['triples']), 3)}', '{round(float(career_pitcher_data['whip']), 3)}', '{round(float(career_pitcher_data['wins']), 3)}', '1')\
                                     ON CONFLICT ON CONSTRAINT predict_pitcher_stats_key DO UPDATE SET atBats = excluded.atBats, baseOnBalls = excluded.baseOnBalls, blownsaves = excluded.blownsaves, doubles = excluded.doubles, earnedRuns = excluded.earnedRuns, era = excluded.era, hits = excluded.hits, holds = excluded.holds, homeRuns = excluded.homeRuns, inningsPitched = excluded.inningsPitched, losses = excluded.losses, pitchesThrown = excluded.pitchesThrown, rbi = excluded.rbi, runs = excluded.runs, strikeOuts = excluded.strikeOuts, strikes = excluded.strikes, triples = excluded.triples, whip = excluded.whip, wins = excluded.wins, difficulty = excluded.difficulty;"))
+
+    return
+
+def calModelC(params):
+    print('thread start', params)
+    prediction_c = predict_c.get_probabilities(params, engine)
+        
+    preds_1c = prediction_c
+    preds_1c = np.round(100 * preds_1c[0], 2)
+
+    away_odd = 0
+    home_odd = 0
+    away_dec_odd = 0
+    home_dec_odd = 0
+    away_dec_odd = round(1.03 / (preds_1c[0] / 100), 2)
+    away_odd = odds.decimalToAmerian(away_dec_odd)
+
+    home_dec_odd = round(1.03 / (preds_1c[1] / 100), 2)
+    home_odd = odds.decimalToAmerian(home_dec_odd)
+
+    preds_1c = {'away_prob': preds_1c[0], 'home_prob': preds_1c[1], 'away_odd': away_odd, 'home_odd': home_odd, 'stake': stake_size}
+    engine.execute(f"INSERT INTO predict_table(game_id, lc_away_prob, lc_home_prob, lc_away_odd, lc_home_odd) VALUES('{gameId}', '{preds_1c['away_prob']}', '{preds_1c['home_prob']}', '{preds_1c['away_odd']}', '{preds_1c['home_odd']}') ON CONFLICT (game_id) DO UPDATE SET lc_away_prob = excluded.lc_away_prob, lc_home_prob = excluded.lc_home_prob, lc_away_odd = excluded.lc_away_odd, lc_home_odd = excluded.lc_home_odd;")
+    engine.execute(f"INSERT INTO win_percent_c(game_id, away_prob, home_prob) VALUES('{gameId}', '{preds_1c['away_prob']}', '{preds_1c['home_prob']}') ON CONFLICT (game_id) DO UPDATE SET away_prob = excluded.away_prob, home_prob = excluded.home_prob;")  
+    prediction = {'model':'c', '1c': preds_1c}
+    print('thread result', prediction)
 
     return
 

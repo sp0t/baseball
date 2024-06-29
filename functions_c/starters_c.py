@@ -68,7 +68,7 @@ def process_recent_starter_data(player_df, game_date, team_batters, pitcher_stat
                 date_str = str(row['game_date'])
                 date_obj = datetime.strptime(date_str, '%Y-%m-%d %H:%M:%S')
                 formatted_date = date_obj.strftime('%Y/%m/%d')
-                average_obp, average_whip = average.update_league_average(formatted_date, False)
+                average_obp, average_whip = average.update_league_average(formatted_date, False, engine)
                 career_obp, recent_obp = average.cal_batter_average(batter['playerid'], formatted_date, engine)
                 if average_obp == 0 or career_obp == 0 or recent_obp == 0:
                     batter_difficulty = batter_difficulty + 8/8
@@ -89,7 +89,7 @@ def process_recent_starter_data(player_df, game_date, team_batters, pitcher_stat
         recent_difficulty_data['atBats'] = (recent_df['atBats'] * weights).sum()
         
         DifficultyRating = 0
-        average_obp, average_whip = average.update_league_average(game_date, False)
+        average_obp, average_whip = average.update_league_average(game_date, False, engine)
 
         if team_batters == []:
             career_whip, recent_whip = average.cal_pitcher_average(team_starter, game_date, engine)

@@ -5,9 +5,9 @@ from database import database
 from sqlalchemy import text
 from functions_c import batting_c, starters_c
 
-def update_league_average(gamedate, state):
+def update_league_average(gamedate, state, engine):
 
-    engine = database.connect_to_db()
+    # engine = database.connect_to_db()
 
     date_object = datetime.strptime(gamedate, '%Y/%m/%d')
     # Extract the year from the datetime object

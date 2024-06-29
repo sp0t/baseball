@@ -472,6 +472,8 @@ def make_prediction():
             data = {}
             data['params'] = params
             data['stake_size'] = stake_size
+            data['gameId'] = gameId
+            
             thread = threading.Thread(target=calModelC, args=(data,))
             thread.start()
             preds_1c = {'away_prob': 0, 'home_prob': 0, 'away_odd': 0, 'home_odd': 0, 'stake': stake_size}
@@ -2014,6 +2016,7 @@ def calModelC(data):
     print('thread start', data)
     params = data['params'] 
     stake_size = data['stake_size'] 
+    gameId = data['gameId'] 
     prediction_c = predict_c.get_probabilities(params, engine)
         
     preds_1c = prediction_c

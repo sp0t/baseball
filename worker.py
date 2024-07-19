@@ -7,22 +7,25 @@ from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.chrome.options import Options
 from sqlalchemy import create_engine
 import pandas as pd
+from sqlalchemy import text
+from datetime import datetime, date
 
 chrome_options = Options()
 chrome_options.add_argument('--headless')
 chrome_options.add_argument('--no-sandbox')
 chrome_options.add_argument('--disable-dev-shm-usage')
-driver = webdriver.Chrome('/usr/local/bin/chromedriver',chrome_options=chrome_options)
+# driver = webdriver.Chrome('/usr/local/bin/chromedriver',chrome_options=chrome_options)
+driver=webdriver.Chrome(service=Service(ChromeDriverManager().install()))
 
 
 def connect_to_db(): 
     
     try: 
-        engine = create_engine('postgresql://postgres:lucamlb123@localhost:5432/betmlb', connect_args = {'connect_timeout': 10}, echo=False, pool_size=20, max_overflow=0)
+        # engine = create_engine('postgresql://postgres:lucamlb123@localhost:5432/betmlb', connect_args = {'connect_timeout': 10}, echo=False, pool_size=20, max_overflow=0)
         # engine = create_engine('postgresql://postgres:lucamlb123@ec2-3-115-115-146.ap-northeast-1.compute.amazonaws.com:5432/betmlb', connect_args = {'connect_timeout': 10}, echo=False, pool_size=20, max_overflow=0)
-        # engine = create_engine('postgresql://postgres:postgres@localhost:5432/luca', 
-        #                        connect_args = {'connect_timeout': 10}, 
-        #                        echo=False, pool_size=20, max_overflow=0)
+        engine = create_engine('postgresql://postgres:postgres@localhost:5432/luca', 
+                               connect_args = {'connect_timeout': 10}, 
+                               echo=False, pool_size=20, max_overflow=0)
         print('Connection Initiated')
     except:
         raise ValueError("Can't connect to Heroku PostgreSQL! You must be so embarrassed")
@@ -38,7 +41,9 @@ for game in res_game:
     date_object = datetime.strptime(game['game_date'], '%Y/%m/%d')
     date_string = date_object.strftime('%m/%d/%Y')
     url = f"https://baseballsavant.mlb.com/gamefeed?date={date_string}&gamePk={game['game_id']}&chartType=pitch&leg[…]Filter=&resultFilter=&hf=winProbability&sportId=1&liveAb="
-    wait = WebDriverWait(driver, 10)
+    print(url)
+    wait = WebDriverWait(driver, 20)
+
     get_url = driver.current_url
     wait.until(EC.url_to_be(url))
 

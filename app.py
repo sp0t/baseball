@@ -1572,6 +1572,7 @@ def friend_page():
 
     if request.method == 'GET':
         game_table = pd.read_sql(f"SELECT (team_name)tname, (team_abbr)abbreviation FROM team_table ORDER BY team_name;", con = engine).to_dict('records')
+        print(game_table)
         return render_template("friend_team.html", data = game_table)
 
     if request.method == 'POST':

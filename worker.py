@@ -14,8 +14,8 @@ chrome_options = Options()
 chrome_options.add_argument('--headless')
 chrome_options.add_argument('--no-sandbox')
 chrome_options.add_argument('--disable-dev-shm-usage')
-# driver = webdriver.Chrome('/usr/local/bin/chromedriver',chrome_options=chrome_options)
-driver=webdriver.Chrome(service=Service(ChromeDriverManager().install()))
+driver = webdriver.Chrome('/usr/bin/chromedriver',chrome_options=chrome_options)
+# driver=webdriver.Chrome(service=Service(ChromeDriverManager().install()))
 
 
 def connect_to_db(): 

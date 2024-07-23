@@ -1814,9 +1814,6 @@ def update_P_T_table():
     # team_data = request.get_json()
 
     for el in team_dict:
-        print('============cron==========', el['name'])
-        data = mlb.lookup_team(el['name'])
-        print(data)
         team_id = mlb.lookup_team(el['name'])[0]['id']
 
         query1 = f"INSERT INTO team_table(team_id, team_name, team_abbr, club_name) VALUES('{team_id}', '{el['name']}', '{el['abbreviation']}', '{el['clubName']}');"

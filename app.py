@@ -1811,6 +1811,8 @@ def update_P_T_table():
     engine.execute(text("CREATE TABLE IF NOT EXISTS team_table(team_id TEXT, team_name TEXT, team_abbr TEXT, club_name TEXT);"))
     engine.execute(text("CREATE TABLE IF NOT EXISTS player_table(p_id TEXT, p_name TEXT, t_id TEXT);"))
 
+    print(team_dict)
+
 
     # team_data = request.get_json()
 

@@ -20,35 +20,14 @@ driver = webdriver.Chrome(service=service, options=options)
 # driver=webdriver.Chrome(service=Service(ChromeDriverManager().install()))
 
 
-def connect_to_db(): 
-    
-    try: 
-        engine = create_engine('postgresql://postgres:lucamlb123@localhost:5432/betmlb', connect_args = {'connect_timeout': 10}, echo=False, pool_size=20, max_overflow=0)
-        # engine = create_engine('postgresql://postgres:lucamlb123@ec2-3-115-115-146.ap-northeast-1.compute.amazonaws.com:5432/betmlb', connect_args = {'connect_timeout': 10}, echo=False, pool_size=20, max_overflow=0)
-        # engine = create_engine('postgresql://postgres:postgres@localhost:5432/luca', 
-        #                        connect_args = {'connect_timeout': 10}, 
-        #                        echo=False, pool_size=20, max_overflow=0)
-        print('Connection Initiated')
-    except:
-        raise ValueError("Can't connect to Heroku PostgreSQL! You must be so embarrassed")
-    return engine
+res = mlb.get('teams', params={'sportId':1})['teams']
 
-engine = connect_to_db()
-engine.execute(text("CREATE TABLE IF NOT EXISTS win_probability(game_id TEXT, game_date TEXT, line TEXT, awaywp TEXT, hommewp TEXT);"))
+team_dict = [{k:v for k,v in el.items() if k in ['name', 'abbreviation', 'clubName']} for el in res]
 
+engine.execute(text("DROP TABLE IF EXISTS team_table;"))
+engine.execute(text("DROP TABLE IF EXISTS player_table;"))
 
+engine.execute(text("CREATE TABLE IF NOT EXISTS team_table(team_id TEXT, team_name TEXT, team_abbr TEXT, club_name TEXT);"))
+engine.execute(text("CREATE TABLE IF NOT EXISTS player_table(p_id TEXT, p_name TEXT, t_id TEXT);"))
 
-res_game = pd.read_sql(text(f"SELECT * FROM game_table;"), con = engine).to_dict('records')
-for game in res_game:
-    date_object = datetime.strptime(game['game_date'], '%Y/%m/%d')
-    date_string = date_object.strftime('%m/%d/%Y')
-    url = f"https://baseballsavant.mlb.com/gamefeed?date={date_string}&gamePk={game['game_id']}&chartType=pitch&leg[…]Filter=&resultFilter=&hf=winProbability&sportId=1&liveAb="
-    print(url)
-    wait = WebDriverWait(driver, 20)
-
-    get_url = driver.current_url
-    wait.until(EC.url_to_be(url))
-
-    page_source = driver.page_source
-    soup = BeautifulSoup(page_source)
-    print(soup)
+print(team_dict)

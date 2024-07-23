@@ -1811,13 +1811,12 @@ def update_P_T_table():
     engine.execute(text("CREATE TABLE IF NOT EXISTS team_table(team_id TEXT, team_name TEXT, team_abbr TEXT, club_name TEXT);"))
     engine.execute(text("CREATE TABLE IF NOT EXISTS player_table(p_id TEXT, p_name TEXT, t_id TEXT);"))
 
-    print(team_dict)
-
-
     # team_data = request.get_json()
 
     for el in team_dict:
-        print('============cron==========')
+        print('============cron==========', el['name'])
+        data = mlb.lookup_team(el['name'])
+        print(data)
         team_id = mlb.lookup_team(el['name'])[0]['id']
 
         query1 = f"INSERT INTO team_table(team_id, team_name, team_abbr, club_name) VALUES('{team_id}', '{el['name']}', '{el['abbreviation']}', '{el['clubName']}');"

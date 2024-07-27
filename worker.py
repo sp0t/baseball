@@ -1,9 +1,10 @@
 from selenium import webdriver
+from webdriver_manager.chrome import ChromeDriverManager
+from webdriver_manager.core.os_manager import ChromeType
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from bs4 import BeautifulSoup
-from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.chrome.options import Options
 from sqlalchemy import create_engine
 import pandas as pd
@@ -15,7 +16,7 @@ chrome_options.add_argument('--disable-dev-shm-usage')
 chrome_options.add_argument('--remote-debugging-port=9222')
 chrome_options.add_argument("--disable-gpu")
 # driver = webdriver.Chrome('/usr/bin/chromedriver',chrome_options=chrome_options)
-driver=webdriver.Chrome(service=Service(ChromeDriverManager().install()))
+driver = webdriver.Chrome(ChromeDriverManager(chrome_type=ChromeType.CHROMIUM).install())
 
 url = f"https://fightodds.io/recent-mma-events"
 print('###################################################')

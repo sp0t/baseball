@@ -26,5 +26,6 @@ wait.until(EC.url_to_be(url))
 
 page_source = driver.page_source
 soup = BeautifulSoup(page_source)
+print(soup)
 
 driver.close()

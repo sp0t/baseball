@@ -94,7 +94,7 @@ for game in gameData:
         else:
             print("No tbody found in the HTML.")
     
-        driver.close()
+        # driver.close()
 
     except Exception as e:
         print(f"An error occurred: {e}")

@@ -37,7 +37,9 @@ for game in gameData:
         wait.until(EC.url_to_be(url))
 
         page_source = driver.page_source
-        soup = BeautifulSoup(page_source, 'html.parser')
+        # soup = BeautifulSoup(page_source, 'html.parser')
+        soup = BeautifulSoup(page_source)
+        print(soup)
         table_data = soup.find('div', id=divId)
         tbody = table_data.find('tbody')
 

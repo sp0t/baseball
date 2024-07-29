@@ -14,7 +14,7 @@ options.add_argument('--disable-dev-shm-usage')
 driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
 
 try:
-    url = f"https://baseballsavant.mlb.com/gamefeed?date=6/21/2024&gamePk=744841&chartType=pitch&leg[%E2%80%A6]Filter=&resultFilter=&hf=winProbability&sportId=1&liveAb="
+    url = f"https://baseballsavant.mlb.com/gamefeed?date=7/27/2024&gamePk=744908&chartType=pitch&leg[%E2%80%A6]Filter=&resultFilter=&hf=winProbability&sportId=1&liveAb="
     print('###################################################')
     print('##                                               ')
     print(f'##   {url}                                      ')
@@ -57,7 +57,7 @@ try:
                     tmphomeWin = homespan.get_text()
                 else:
                     tmphomeWin = homespan.get_text()
-                    
+
                 if(linespan.get_text() == 'T2' and preGame == 'B1'):
                     print('B1', homeWin, '-', awayWin) 
                 if(linespan.get_text() == 'T3' and preGame == 'B2'):

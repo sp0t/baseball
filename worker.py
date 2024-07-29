@@ -36,9 +36,44 @@ try:
         for tr in reversed(tbody.find_all('tr')):
             tds = tr.find_all('td')
             # for td in tds:
-            span = tds[1].find('span')
-            if span:
-                print(span.get_text()) 
+            linespan = tds[1].find('span')
+            if linespan:
+                awaywin = 0
+                homewin = 0
+                awayspan = tds[6].find('span')
+                if awayspan:
+                    awaywin = awayspan.get_text()
+                else:
+                    awaywin = awayspan.get_text()
+                
+                homespan = tds[5].find('span')
+
+                if homespan:
+                    homewin = homespan.get_text()
+                else:
+                    homewin = homespan.get_text()
+
+                if(linespan.get_text() == 'B1'):
+                    print('B1', homewin, '-', awaywin) 
+
+                if(linespan.get_text() == 'B2'):
+                    print('B2', homewin, '-', awaywin)
+
+                if(linespan.get_text() == 'B3'):
+                    print('B3', homewin, '-', awaywin)
+
+                if(linespan.get_text() == 'B4'):
+                    print('B4', homewin, '-', awaywin)
+                if(linespan.get_text() == 'B5'):
+                    print('B5', homewin, '-', awaywin)
+                if(linespan.get_text() == 'B6'):
+                    print('B6', homewin, '-', awaywin)
+                if(linespan.get_text() == 'B7'):
+                    print('B7', homewin, '-', awaywin)
+                if(linespan.get_text() == 'B8'):
+                    print('B8', homewin, '-', awaywin)
+                if(linespan.get_text() == 'B9'):
+                    print('B9', homewin, '-', awaywin)
             else:
                 print("No span found in this td.")
     else:

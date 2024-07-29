@@ -9,6 +9,7 @@ from bs4 import BeautifulSoup
 from sqlalchemy import create_engine
 import pandas as pd
 from datetime import datetime
+import time
 
 options = Options()
 options.add_argument('--headless')
@@ -32,13 +33,15 @@ for game in gameData:
         divId = f"tableWinProbability_{game['game_id']}"
 
         wait = WebDriverWait(driver, 20)
-        # wait.until(EC.presence_of_element_located((By.ID, divId)))
-        get_url = driver.current_url
-        wait.until(EC.url_to_be(url))
+        wait.until(EC.presence_of_element_located((By.ID, divId)))
+        # get_url = driver.current_url
+        # wait.until(EC.url_to_be(url))
+
+        time.sleep(5)
 
         page_source = driver.page_source
-        # soup = BeautifulSoup(page_source, 'html.parser')
-        soup = BeautifulSoup(page_source)
+        soup = BeautifulSoup(page_source, 'html.parser')
+        # soup = BeautifulSoup(page_source)
         print(soup)
         table_data = soup.find('div', id=divId)
         tbody = table_data.find('tbody')

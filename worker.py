@@ -33,7 +33,7 @@ try:
     tbody = table_data.find('tbody')
 
     if tbody:
-        for tr in tbody.find_all('tr'):
+        for tr in reversed(tbody.find_all('tr')):
             tds = tr.find_all('td')
             # for td in tds:
             span = tds[1].find('span')

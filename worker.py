@@ -6,6 +6,8 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 from bs4 import BeautifulSoup
+from sqlalchemy import create_engine
+import pandas as pd
 
 options = Options()
 options.add_argument('--headless')
@@ -13,12 +15,16 @@ options.add_argument('--no-sandbox')
 options.add_argument('--disable-dev-shm-usage')
 driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
 
+engine = create_engine('postgresql://postgres:lucamlb123@localhost:5432/betmlb', connect_args = {'connect_timeout': 10}, echo=False, pool_size=20, max_overflow=0)
+gameData = pd.read_sql(f"SELECT * FROM game_table ORDER BY game_date;", con = engine).to_dict('records')
+
+for game in gameData:
+    print(game)
+
 try:
     url = f"https://baseballsavant.mlb.com/gamefeed?date=7/27/2024&gamePk=744908&chartType=pitch&leg[…]Filter=&resultFilter=&hf=winProbability&sportId=1&liveAb="
-    print('###################################################')
     print('##                                               ')
     print(f'##   {url}                                      ')
-    print('##                                               ')
     print('###################################################')
     driver.get(url)
 

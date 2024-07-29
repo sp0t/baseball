@@ -35,14 +35,12 @@ try:
     if tbody:
         for tr in tbody.find_all('tr'):
             tds = tr.find_all('td')
-            if len(tds) > 1:
-                second_tds = tds[1]
-                for td in second_tds:
-                    span = td.find('span')
-                    if span:
-                        print(span.get_text()) 
-                    else:
-                        print("No span found in this td.")
+            for td in tds:
+                span = td.find('span')
+                if span:
+                    print(span.get_text()) 
+                else:
+                    print("No span found in this td.")
     else:
         print("No tbody found in the HTML.")
     

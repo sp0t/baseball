@@ -14,7 +14,7 @@ options.add_argument('--disable-dev-shm-usage')
 driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
 
 try:
-    url = f"https://baseballsavant.mlb.com/gamefeed?date=7/27/2024&gamePk=744908&chartType=pitch&leg[%E2%80%A6]Filter=&resultFilter=&hf=winProbability&sportId=1&liveAb="
+    url = f"https://baseballsavant.mlb.com/gamefeed?date=7/27/2024&gamePk=744908&chartType=pitch&leg[...]Filter=&resultFilter=&hf=winProbability&sportId=1&liveAb="
     print('###################################################')
     print('##                                               ')
     print(f'##   {url}                                      ')

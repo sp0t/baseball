@@ -35,6 +35,7 @@ try:
     if tbody:
         awayWin = 0
         homeWin = 0
+        preGame = 'T1'
 
         for tr in reversed(tbody.find_all('tr')):
             tds = tr.find_all('td')
@@ -43,7 +44,7 @@ try:
             if linespan:
                 tmpawayWin = 0
                 tmphomeWin = 0
-                preGame = 'T1'
+                
                 awayspan = tds[6].find('span')
                 if awayspan:
                     tmpawayWin = awayspan.get_text()
@@ -56,9 +57,7 @@ try:
                     tmphomeWin = homespan.get_text()
                 else:
                     tmphomeWin = homespan.get_text()
-
-                print(linespan.get_text(), preGame)
-
+                    
                 if(linespan.get_text() == 'T2' and preGame == 'B1'):
                     print('B1', homeWin, '-', awayWin) 
                 if(linespan.get_text() == 'T3' and preGame == 'B2'):

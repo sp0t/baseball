@@ -57,6 +57,8 @@ try:
                 else:
                     tmphomeWin = homespan.get_text()
 
+                print(linespan.get_text(), preGame)
+
                 if(linespan.get_text() == 'T2' and preGame == 'B1'):
                     print('B1', homeWin, '-', awayWin) 
                 if(linespan.get_text() == 'T3' and preGame == 'B2'):

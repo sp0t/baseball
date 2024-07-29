@@ -31,7 +31,7 @@ for game in gameData:
         driver.get(url)
         divId = f"tableWinProbability_{game['game_id']}"
 
-        wait = WebDriverWait(driver, 15)
+        wait = WebDriverWait(driver, 20)
         wait.until(EC.presence_of_element_located((By.ID, divId)))
         # get_url = driver.current_url
         # wait.until(EC.url_to_be(url))
@@ -93,10 +93,8 @@ for game in gameData:
 
         else:
             print("No tbody found in the HTML.")
-        
+    
+        driver.close()
 
     except Exception as e:
         print(f"An error occurred: {e}")
-
-    finally:
-        driver.close()

@@ -32,9 +32,9 @@ for game in gameData:
         divId = f"tableWinProbability_{game['game_id']}"
 
         wait = WebDriverWait(driver, 20)
-        wait.until(EC.presence_of_element_located((By.ID, divId)))
-        # get_url = driver.current_url
-        # wait.until(EC.url_to_be(url))
+        # wait.until(EC.presence_of_element_located((By.ID, divId)))
+        get_url = driver.current_url
+        wait.until(EC.url_to_be(url))
 
         page_source = driver.page_source
         soup = BeautifulSoup(page_source, 'html.parser')

@@ -21,9 +21,9 @@ print('###################################################')
 driver.get(url)
 
 wait = WebDriverWait(driver, 10)
-# wait.until(EC.presence_of_element_located((By.ID, 'tableWinProbability_744841')))
-get_url = driver.current_url
-wait.until(EC.url_to_be(url))
+wait.until(EC.presence_of_element_located((By.ID, 'tableWinProbability_744841')))
+# get_url = driver.current_url
+# wait.until(EC.url_to_be(url))
 
 page_source = driver.page_source
 soup = BeautifulSoup(page_source, 'html.parser')

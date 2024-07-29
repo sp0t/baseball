@@ -22,7 +22,7 @@ try:
     print('###################################################')
     driver.get(url)
 
-    wait = WebDriverWait(driver, 10)
+    wait = WebDriverWait(driver, 15)
     wait.until(EC.presence_of_element_located((By.ID, 'tableWinProbability_744841')))
     # get_url = driver.current_url
     # wait.until(EC.url_to_be(url))
@@ -30,7 +30,21 @@ try:
     page_source = driver.page_source
     soup = BeautifulSoup(page_source, 'html.parser')
     table_data = soup.find('div', id='tableWinProbability_744841')
-    print(table_data)
+    tbody = table_data.find('tbody')
+
+    if tbody:
+        for tr in tbody.find_all('tr'):
+            tds = tr.find_all('td')
+            second_tds = tds[1::2]
+        for td in second_tds:
+            span = td.find('span')
+            if span:
+                print(span.get_text()) 
+            else:
+                print("No span found in this td.")
+    else:
+        print("No tbody found in the HTML.")
+    
 
 except Exception as e:
     print(f"An error occurred: {e}")

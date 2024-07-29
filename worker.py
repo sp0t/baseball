@@ -14,7 +14,7 @@ options.add_argument('--disable-dev-shm-usage')
 driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
 
 try:
-    url = f"https://baseballsavant.mlb.com/gamefeed?date=7/27/2024&gamePk=744908&chartType=pitch&leg[...]Filter=&resultFilter=&hf=winProbability&sportId=1&liveAb="
+    url = f"https://baseballsavant.mlb.com/gamefeed?date=7/27/2024&gamePk=744908&chartType=pitch&leg[…]Filter=&resultFilter=&hf=winProbability&sportId=1&liveAb="
     print('###################################################')
     print('##                                               ')
     print(f'##   {url}                                      ')
@@ -23,13 +23,13 @@ try:
     driver.get(url)
 
     wait = WebDriverWait(driver, 15)
-    wait.until(EC.presence_of_element_located((By.ID, 'tableWinProbability_744841')))
+    wait.until(EC.presence_of_element_located((By.ID, 'tableWinProbability_744908')))
     # get_url = driver.current_url
     # wait.until(EC.url_to_be(url))
 
     page_source = driver.page_source
     soup = BeautifulSoup(page_source, 'html.parser')
-    table_data = soup.find('div', id='tableWinProbability_744841')
+    table_data = soup.find('div', id='tableWinProbability_744908')
     tbody = table_data.find('tbody')
 
     if tbody:
@@ -57,7 +57,6 @@ try:
                     tmphomeWin = homespan.get_text()
                 else:
                     tmphomeWin = homespan.get_text()
-
                 if(linespan.get_text() == 'T2' and preGame == 'B1'):
                     print('B1', homeWin, '-', awayWin) 
                 if(linespan.get_text() == 'T3' and preGame == 'B2'):

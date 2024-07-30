@@ -18,6 +18,8 @@ options.add_argument('--disable-dev-shm-usage')
 driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
 
 engine = create_engine('postgresql://postgres:lucamlb123@localhost:5432/betmlb', connect_args = {'connect_timeout': 10}, echo=False, pool_size=20, max_overflow=0)
+engine.execute("CREATE TABLE IF NOT EXISTS win_prob(game_id TEXT, game_date TEXT, line TEXT, away_wp TEXT, home_wp TEXT);")
+engine.execute("CREATE TABLE IF NOT EXISTS error_game(game_id TEXT, game_date TEXT);")
 gameData = pd.read_sql(f"SELECT * FROM game_table ORDER BY game_date;", con = engine).to_dict('records')
 
 for game in gameData:
@@ -71,21 +73,21 @@ for game in gameData:
                     else:
                         tmphomeWin = homespan.get_text()
                     if(linespan.get_text() == 'T2' and preGame == 'B1'):
-                        print('B1', homeWin, '-', awayWin) 
+                        engine.execute((f"INSERT INTO win_prob(game_id, game_date, line, away_wp, home_wp) VALUES('{game['game_id']}', '{game['game_date']}', '1', '{awayWin}', '{homeWin}');"))
                     if(linespan.get_text() == 'T3' and preGame == 'B2'):
-                        print('B2', homeWin, '-', awayWin)
+                        engine.execute((f"INSERT INTO win_prob(game_id, game_date, line, away_wp, home_wp) VALUES('{game['game_id']}', '{game['game_date']}', '2', '{awayWin}', '{homeWin}');"))
                     if(linespan.get_text() == 'T4' and preGame == 'B3'):
-                        print('B3', homeWin, '-', awayWin)
+                        engine.execute((f"INSERT INTO win_prob(game_id, game_date, line, away_wp, home_wp) VALUES('{game['game_id']}', '{game['game_date']}', '3', '{awayWin}', '{homeWin}');"))
                     if(linespan.get_text() == 'T5' and preGame == 'B4'):
-                        print('B4', homeWin, '-', awayWin)
+                        engine.execute((f"INSERT INTO win_prob(game_id, game_date, line, away_wp, home_wp) VALUES('{game['game_id']}', '{game['game_date']}', '4', '{awayWin}', '{homeWin}');"))
                     if(linespan.get_text() == 'T6' and preGame == 'B5'):
-                        print('B5', homeWin, '-', awayWin)
+                        engine.execute((f"INSERT INTO win_prob(game_id, game_date, line, away_wp, home_wp) VALUES('{game['game_id']}', '{game['game_date']}', '5', '{awayWin}', '{homeWin}');"))
                     if(linespan.get_text() == 'T7' and preGame == 'B6'):
-                        print('B6', homeWin, '-', awayWin)
+                        engine.execute((f"INSERT INTO win_prob(game_id, game_date, line, away_wp, home_wp) VALUES('{game['game_id']}', '{game['game_date']}', '6', '{awayWin}', '{homeWin}');"))
                     if(linespan.get_text() == 'T8' and preGame == 'B7'):
-                        print('B7', homeWin, '-', awayWin)
+                        engine.execute((f"INSERT INTO win_prob(game_id, game_date, line, away_wp, home_wp) VALUES('{game['game_id']}', '{game['game_date']}', '7', '{awayWin}', '{homeWin}');"))
                     if(linespan.get_text() == 'T9' and preGame == 'B8'):
-                        print('B8', homeWin, '-', awayWin)
+                        engine.execute((f"INSERT INTO win_prob(game_id, game_date, line, away_wp, home_wp) VALUES('{game['game_id']}', '{game['game_date']}', '8', '{awayWin}', '{homeWin}');"))
 
                     preGame = linespan.get_text()
                 else:
@@ -93,10 +95,10 @@ for game in gameData:
                 awayWin = tmpawayWin
                 homeWin = tmphomeWin
             
-            print('B9', homeWin, '-', awayWin) 
+            engine.execute((f"INSERT INTO win_prob(game_id, game_date, line, away_wp, home_wp) VALUES('{game['game_id']}', '{game['game_date']}', '9', '{awayWin}', '{homeWin}');"))
 
         else:
-            print("No tbody found in the HTML.")
+            engine.execute((f"INSERT INTO error_game(game_id, game_date) VALUES('{game['game_id']}', '{game['game_date']}');"))
     
         # driver.close()
 

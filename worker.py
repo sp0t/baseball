@@ -73,21 +73,21 @@ for game in gameData:
                     else:
                         tmphomeWin = homespan.get_text()
                     if(linespan.get_text() == 'T2' and preGame == 'B1'):
-                        engine.execute((f"INSERT INTO win_prob(game_id, game_date, line, away_wp, home_wp) VALUES('{game['game_id']}', '{game['game_date']}', '{game['away_team']}', '{game['home_team']}', '1', '{awayWin}', '{homeWin}');"))
+                        engine.execute((f"INSERT INTO win_prob(game_id, game_date, away_team, home_team, line, away_wp, home_wp) VALUES('{game['game_id']}', '{game['game_date']}', '{game['away_team']}', '{game['home_team']}', '1', '{awayWin}', '{homeWin}');"))
                     if(linespan.get_text() == 'T3' and preGame == 'B2'):
-                        engine.execute((f"INSERT INTO win_prob(game_id, game_date, line, away_wp, home_wp) VALUES('{game['game_id']}', '{game['game_date']}', '{game['away_team']}', '{game['home_team']}', '2', '{awayWin}', '{homeWin}');"))
+                        engine.execute((f"INSERT INTO win_prob(game_id, game_date, away_team, home_team, line, away_wp, home_wp) VALUES('{game['game_id']}', '{game['game_date']}', '{game['away_team']}', '{game['home_team']}', '2', '{awayWin}', '{homeWin}');"))
                     if(linespan.get_text() == 'T4' and preGame == 'B3'):
-                        engine.execute((f"INSERT INTO win_prob(game_id, game_date, line, away_wp, home_wp) VALUES('{game['game_id']}', '{game['game_date']}', '{game['away_team']}', '{game['home_team']}', '3', '{awayWin}', '{homeWin}');"))
+                        engine.execute((f"INSERT INTO win_prob(game_id, game_date, away_team, home_team, line, away_wp, home_wp) VALUES('{game['game_id']}', '{game['game_date']}', '{game['away_team']}', '{game['home_team']}', '3', '{awayWin}', '{homeWin}');"))
                     if(linespan.get_text() == 'T5' and preGame == 'B4'):
-                        engine.execute((f"INSERT INTO win_prob(game_id, game_date, line, away_wp, home_wp) VALUES('{game['game_id']}', '{game['game_date']}', '{game['away_team']}', '{game['home_team']}', '4', '{awayWin}', '{homeWin}');"))
+                        engine.execute((f"INSERT INTO win_prob(game_id, game_date, away_team, home_team, line, away_wp, home_wp) VALUES('{game['game_id']}', '{game['game_date']}', '{game['away_team']}', '{game['home_team']}', '4', '{awayWin}', '{homeWin}');"))
                     if(linespan.get_text() == 'T6' and preGame == 'B5'):
-                        engine.execute((f"INSERT INTO win_prob(game_id, game_date, line, away_wp, home_wp) VALUES('{game['game_id']}', '{game['game_date']}', '{game['away_team']}', '{game['home_team']}', '5', '{awayWin}', '{homeWin}');"))
+                        engine.execute((f"INSERT INTO win_prob(game_id, game_date, away_team, home_team, line, away_wp, home_wp) VALUES('{game['game_id']}', '{game['game_date']}', '{game['away_team']}', '{game['home_team']}', '5', '{awayWin}', '{homeWin}');"))
                     if(linespan.get_text() == 'T7' and preGame == 'B6'):
-                        engine.execute((f"INSERT INTO win_prob(game_id, game_date, line, away_wp, home_wp) VALUES('{game['game_id']}', '{game['game_date']}', '{game['away_team']}', '{game['home_team']}', '6', '{awayWin}', '{homeWin}');"))
+                        engine.execute((f"INSERT INTO win_prob(game_id, game_date, away_team, home_team, line, away_wp, home_wp) VALUES('{game['game_id']}', '{game['game_date']}', '{game['away_team']}', '{game['home_team']}', '6', '{awayWin}', '{homeWin}');"))
                     if(linespan.get_text() == 'T8' and preGame == 'B7'):
-                        engine.execute((f"INSERT INTO win_prob(game_id, game_date, line, away_wp, home_wp) VALUES('{game['game_id']}', '{game['game_date']}', '{game['away_team']}', '{game['home_team']}', '7', '{awayWin}', '{homeWin}');"))
+                        engine.execute((f"INSERT INTO win_prob(game_id, game_date, away_team, home_team, line, away_wp, home_wp) VALUES('{game['game_id']}', '{game['game_date']}', '{game['away_team']}', '{game['home_team']}', '7', '{awayWin}', '{homeWin}');"))
                     if(linespan.get_text() == 'T9' and preGame == 'B8'):
-                        engine.execute((f"INSERT INTO win_prob(game_id, game_date, line, away_wp, home_wp) VALUES('{game['game_id']}', '{game['game_date']}', '{game['away_team']}', '{game['home_team']}', '8', '{awayWin}', '{homeWin}');"))
+                        engine.execute((f"INSERT INTO win_prob(game_id, game_date, away_team, home_team, line, away_wp, home_wp) VALUES('{game['game_id']}', '{game['game_date']}', '{game['away_team']}', '{game['home_team']}', '8', '{awayWin}', '{homeWin}');"))
 
                     preGame = linespan.get_text()
                 else:
@@ -95,7 +95,7 @@ for game in gameData:
                 awayWin = tmpawayWin
                 homeWin = tmphomeWin
             
-            engine.execute((f"INSERT INTO win_prob(game_id, game_date, line, away_wp, home_wp) VALUES('{game['game_id']}', '{game['game_date']}', '{game['away_team']}', '{game['home_team']}', '9', '{awayWin}', '{homeWin}');"))
+            engine.execute((f"INSERT INTO win_prob(game_id, game_date, away_team, home_team, line, away_wp, home_wp) VALUES('{game['game_id']}', '{game['game_date']}', '{game['away_team']}', '{game['home_team']}', '9', '{awayWin}', '{homeWin}');"))
 
         else:
             engine.execute((f"INSERT INTO error_game(game_id, game_date) VALUES('{game['game_id']}', '{game['game_date']}');"))

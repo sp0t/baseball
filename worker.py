@@ -18,7 +18,7 @@ options.add_argument('--disable-dev-shm-usage')
 driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
 
 engine = create_engine('postgresql://postgres:lucamlb123@localhost:5432/betmlb', connect_args = {'connect_timeout': 10}, echo=False, pool_size=20, max_overflow=0)
-engine.execute("CREATE TABLE IF NOT EXISTS win_prob(game_id TEXT, game_date TEXT, away_team TEXT, home team TEXT, line TEXT, away_wp TEXT, home_wp TEXT);")
+engine.execute("CREATE TABLE IF NOT EXISTS win_prob(game_id TEXT, game_date TEXT, away_team TEXT, home_team TEXT, line TEXT, away_wp TEXT, home_wp TEXT);")
 engine.execute("CREATE TABLE IF NOT EXISTS error_game(game_id TEXT, game_date TEXT);")
 gameData = pd.read_sql(f"SELECT * FROM game_table WHERE TO_DATE(game_date, 'YYYY/MM/DD') >= DATE '2023-01-01' ORDER BY game_date;", con = engine).to_dict('records')
 

@@ -18,6 +18,7 @@ import math
 from functions import batting, predict, starters, smartContract, sanitycheck, odds
 from functions_c import batting_c, starters_c, predict_c
 from schedule import schedule
+from scrapper import winprob
 import time
 import atexit
 import calendar
@@ -1054,6 +1055,7 @@ def update_data():
 
     thread = threading.Thread(target=calculate, args=(playerData,))
     thread.start()
+    winprob.scrappe_win_pro()
 
     return update_data
 

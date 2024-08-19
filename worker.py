@@ -18,7 +18,8 @@ options.add_argument('--disable-dev-shm-usage')
 driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
 
 engine = create_engine('postgresql://postgres:lucamlb123@localhost:5432/betmlb', connect_args = {'connect_timeout': 10}, echo=False, pool_size=20, max_overflow=0)
-gameData = pd.read_sql(f"SELECT * FROM game_table WHERE game_date = (SELECT MAX(game_date) FROM game_table);", con = engine).to_dict('records')
+# gameData = pd.read_sql(f"SELECT * FROM game_table WHERE game_date = (SELECT MAX(game_date) FROM game_table);", con = engine).to_dict('records')
+gameData = pd.read_sql(f"SELECT * FROM game_table WHERE TO_DATE(game_date, 'YYYY/MM/DD') >= DATE '2024-08-16' ORDER BY game_date);", con = engine).to_dict('records')
 
 for game in gameData:
     date_obj = datetime.strptime(game['game_date'], "%Y/%m/%d")

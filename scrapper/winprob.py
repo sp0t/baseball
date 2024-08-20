@@ -20,7 +20,7 @@ def scrappe_win_pro():
     options.add_argument('--disable-dev-shm-usage')
     driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
 
-    gameData = pd.read_sql(f"SELECT * FROM game_table WHERE TO_DATE(game_date, 'YYYY/MM/DD') >= DATE '2024-08-03' ORDER BY game_date;", con = engine).to_dict('records')
+    gameData = pd.read_sql(f"SELECT * FROM game_table WHERE game_date = (SELECT MAX(game_date) FROM game_table);", con = engine).to_dict('records')
 
     for game in gameData:
         date_obj = datetime.strptime(game['game_date'], "%Y/%m/%d")

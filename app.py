@@ -446,10 +446,10 @@ def make_prediction():
             away_dec_odd = 0
             home_dec_odd = 0
     
-            away_dec_odd = round(1.03 / (preds_1a[0] / 100 ), 2)
+            away_dec_odd = round(1.05 / (preds_1a[0] / 100 ), 2)
             away_odd = odds.decimalToAmerian(away_dec_odd)
 
-            home_dec_odd = round(1.03 / (preds_1a[1] / 100 ), 2)
+            home_dec_odd = round(1.05 / (preds_1a[1] / 100 ), 2)
             home_odd = odds.decimalToAmerian(home_dec_odd)
 
             preds_1a = {'away_prob': preds_1a[0], 'home_prob': preds_1a[1], 'away_odd': away_odd, 'home_odd': home_odd, 'stake': stake_size}
@@ -457,10 +457,10 @@ def make_prediction():
             preds_1b = predictions['1b']
             preds_1b = np.round(100 * preds_1b[0], 2)
 
-            away_dec_odd = round(1.03 / ( preds_1b[0] / 100 ), 2)
+            away_dec_odd = round(1.05 / ( preds_1b[0] / 100 ), 2)
             away_odd = odds.decimalToAmerian(away_dec_odd)
 
-            home_dec_odd = round(1.03 / ( preds_1b[1] / 100 ), 2)
+            home_dec_odd = round(1.05 / ( preds_1b[1] / 100 ), 2)
             home_odd = odds.decimalToAmerian(home_dec_odd)
 
             preds_1b = {'away_prob': preds_1b[0], 'home_prob': preds_1b[1], 'away_odd': away_odd, 'home_odd': home_odd, 'stake': stake_size}
@@ -2027,10 +2027,10 @@ def calModelC(data):
     home_odd = 0
     away_dec_odd = 0
     home_dec_odd = 0
-    away_dec_odd = round(1.03 / (preds_1c[0] / 100), 2)
+    away_dec_odd = round(1.05 / (preds_1c[0] / 100), 2)
     away_odd = odds.decimalToAmerian(away_dec_odd)
 
-    home_dec_odd = round(1.03 / (preds_1c[1] / 100), 2)
+    home_dec_odd = round(1.05 / (preds_1c[1] / 100), 2)
     home_odd = odds.decimalToAmerian(home_dec_odd)
 
     preds_1c = {'away_prob': preds_1c[0], 'home_prob': preds_1c[1], 'away_odd': away_odd, 'home_odd': home_odd, 'stake': stake_size}

@@ -715,7 +715,7 @@ function changeAwayAdjustment() {
     awayProbValue = awayProbValue + awayAdjustment * 100
     document.getElementsByName('away_prob')[0].textContent = awayProbValue + '%'
 
-    away_dec_odd = (1.03 / (awayProbValue / 100)).toFixed(2)
+    away_dec_odd = (1.05 / (awayProbValue / 100)).toFixed(2)
     if(away_dec_odd >= 2)
         away_odd = ((away_dec_odd - 1) * 100).toFixed(2)
     else if(away_dec_odd < 2)
@@ -739,7 +739,7 @@ function changeHomeAdjustment() {
     homeProbValue = homeProbValue + homeAdjustment * 100
     document.getElementsByName('home_prob')[0].textContent = homeProbValue + '%'
 
-    home_dec_odd = (1.03 / (homeProbValue / 100)).toFixed(2)
+    home_dec_odd = (1.05 / (homeProbValue / 100)).toFixed(2)
     if(home_dec_odd >= 2)
         home_odd = ((home_dec_odd - 1) * 100).toFixed(2)
     else if(home_dec_odd < 2)

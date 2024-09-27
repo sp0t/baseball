@@ -66,6 +66,7 @@ def update_database():
         current_game_list = [el[0] for el in res]
         last_record = max([el[1] for el in res])
         last_record = datetime.strptime(last_record, '%Y-%m-%d').date()
+        print(last_record)
         record_day = date.today() - timedelta(days = 2)
         if last_record > record_day:
             last_record = record_day

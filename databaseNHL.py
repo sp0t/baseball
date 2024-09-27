@@ -99,8 +99,30 @@ def update_database():
             box['game_date'] = apiBoxScore['gameDate']
             box['away_team'] = apiBoxScore['awayTeam']['abbrev']
             box['home_team'] = apiBoxScore['homeTeam']['abbrev']
+            start_time = apiBoxScore['startTimeUTC']
+            start_time = datetime.strptime(start_time, '%Y-%m-%dT%H:%M:%SZ')
+            offset_sign = 1 if apiBoxScore['easternUTCOffset'][0] == '+' else -1 
+            offset_hours, offset_minutes = map(int,  apiBoxScore['easternUTCOffset'][1:].split(':'))
+            time_offset = timedelta(hours=offset_hours * offset_sign, minutes=offset_minutes * offset_sign)
+            start_time = start_time + time_offset
+            start_time = start_time.strftime('%Y/%m/%d %H:%M:%S')
+            box['start_time'] = start_time
+
+            if apiBoxScore['gameState'] == 'FUT':
+                engine.execute("INSERT INTO game_table(game_id, game_date, away_team, home_team, season_id, state, start_time, import_state) VALUES(%s, %s, %s, %s, %s, %s, %s, %s)", (box['game_id'], box['game_date'], box['away_team'],  box['home_team'], box['season'], apiBoxScore['gameState'], box['start_time'], 'FAILED'))
+                continue
+
+
             box['away_score'] = apiBoxScore['awayTeam']['score']
             box['home_score'] = apiBoxScore['homeTeam']['score']
+            if box['away_score'] < box['home_score']:
+                winner = 0
+            else:
+                winner = 1
+
+            box['winner'] = winner
+
+
             box['player'] = {}
             box['player']['goalies'] = []
             box['player']['skaters'] = []
@@ -119,7 +141,10 @@ def update_database():
             any_players_share_names = check_if_duplicates_exist(box_score_player_names)
 
             if any_players_share_names:
-                return
+                engine.execute("INSERT INTO game_table(game_id, game_date, away_team, home_team, away_score, home_score, winner, season_id, state, start_time, import_state) VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)", (box['game_id'], box['game_date'], box['away_team'],  box['home_team'], box['away_score'], box['home_score'], box['winner'], box['season'], apiBoxScore['gameState'], box['start_time'], 'MULTIPLE_PLAYERS_WITH_SAME_NAME'))
+                continue
+            else:
+                engine.execute("INSERT INTO game_table(game_id, game_date, away_team, home_team, away_score, home_score, winner, season_id, state, start_time, import_state) VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)", (box['game_id'], box['game_date'], box['away_team'],  box['home_team'], box['away_score'], box['home_score'], box['winner'], box['season'], apiBoxScore['gameState'], box['start_time'], 'COMPLETED'))
 
             all_scraped_player_stats = [
                 {**player_stat, 'teamSide': team_side, 'role': _squad_name }
@@ -176,6 +201,9 @@ def update_database():
             for scraped_player_stats in all_scraped_player_stats:
                 box_score = find_box_score(scraped_player_stats)
 
+                if box_score is None:
+                    continue
+
                 if scraped_player_stats['role'] == 'skaters':
                     skater = {}
                     skater['player_id'] = box_score['playerId']
@@ -188,30 +216,48 @@ def update_database():
                     skater['time_on_ice'] = box_score['toi']
                     skater['name'] = scraped_player_stats['name']
                     skater['role'] = scraped_player_stats['role']
-                    skater['team'] = scraped_player_stats['teamSide']
+                    skater['team'] = 'AWAY' if scraped_player_stats['teamSide'] == 'awayTeam' else 'HOME'
                     skater['corsi_for'] = scraped_player_stats['corsi_for']
                     skater['corsi_against'] = scraped_player_stats['corsi_against']
                     skater['fenwick_for_percent'] = scraped_player_stats['fenwick_for_percent']
                     skater['fenwick_for_percent_relative'] = scraped_player_stats['fenwick_for_percent_relative']
                     box['player']['skaters'].append(skater)
+                    engine.execute("INSERT INTO skater_stats(game_id, player_id, team_side,  plus_mius, penalty_minutes, assists, time_on_ice, fenwick_for_percent_relative, corsi_for, position, goals, points, corsi_against, fenwick_for_percent) VALUES(%s, %s, %s,  %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)", (box['game_id'], skater['player_id'], skater['team'], skater['plus_minus'], skater['penalty_minutes'], skater['assists'], skater['time_on_ice'], skater['fenwick_for_percent_relative'], skater['corsi_for'], skater['position'], skater['goals'], skater['points'], skater['corsi_against'], skater['fenwick_for_percent']))
+
                 elif scraped_player_stats['role'] == 'goalies':
                     goalies = {}
                     goalies['player_id'] = box_score['playerId']
                     goalies['position'] = box_score['position']
                     goalies['time_on_ice'] = box_score['toi']
+                    goalies['penalty_minutes'] = box_score.get('pim', 0)
                     goalies['name'] = scraped_player_stats['name']
                     goalies['role'] = scraped_player_stats['role']
-                    goalies['team'] = scraped_player_stats['teamSide']
+                    goalies['team'] = 'AWAY' if scraped_player_stats['teamSide'] == 'awayTeam' else 'HOME'
                     goalies['goals_against'] = scraped_player_stats['goals_against']
                     goalies['save_percentage'] = scraped_player_stats['save_percentage']
                     box['player']['goalies'].append(goalies)
+                    engine.execute("INSERT INTO goaltender_stats(game_id, player_id, team_side,  penalty_minutes, time_on_ice, position, save_percentage, goals_against) VALUES(%s, %s, %s,  %s, %s, %s, %s, %s)", (box['game_id'], goalies['player_id'], goalies['team'], goalies['penalty_minutes'], goalies['time_on_ice'], goalies['position'], goalies['save_percentage'], goalies['goals_against']))
+            box_list.append(box)
+    tz = timezone('US/Eastern')
+    last_update_date = date.today()
+    last_update_time = datetime.now() + timedelta(hours = 3)
+    last_update_time = datetime.strftime(last_update_time, '%H:%M:%S')
 
-            print(box)
+    new_last_record = pd.read_sql("SELECT * FROM updates ORDER BY update_date DESC, update_time DESC", con = engine).to_dict('records')
+    if len(new_last_record) == 0:
+        last_record = last_update_date
+    else:
+        last_record = new_last_record[0]['update_date']
 
-            break
-            # box_list.append(box)
+        
+    new_updates = pd.DataFrame({'update_id': str(uuid.uuid4()), 
+                                'update_date': last_update_date, 
+                     'update_time': last_update_time, 
+                     'last_record': last_record}, index = [0])
 
-            # if game_index % 10 == 0: 
-            #     print(f'Game {game_index} of {num_games} -- {time.time() - tic:.2f} sec')
-
+    new_updates.to_sql(con = engine, 
+                 name = 'updates', 
+                 if_exists = 'append', 
+                 index = False)
+    print('DB Updated')
 update_database()

@@ -51,10 +51,10 @@ def scrape(game_nhl_id, season_nhl_id, away_team_abbreviation, home_team_abbrevi
     available_abbreviations = [re.sub(r'[^A-Z]+', '', id_) for id_ in available_abbreviations]
 
     if not available_abbreviations:
-        raise Exception("Game is missing stats")
+        return None
 
     if away_team_mapped_abbreviation not in available_abbreviations or home_team_mapped_abbreviation not in available_abbreviations:
-        raise Exception("Scraped team abbreviations do not include expected ones")
+        return None
 
     # Select player data for skaters and goalies
     away_skaters = soup.select(f'.tall #tb{away_team_mapped_abbreviation}oiall tbody tr')

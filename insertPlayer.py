@@ -1,4 +1,4 @@
-import nhlAPI
+import nhlAPI from API
 from database import databaseNHL
 import pandas as pd
 

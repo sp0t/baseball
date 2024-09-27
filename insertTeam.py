@@ -1,4 +1,4 @@
-import nhlAPI
+import nhlAPI from API
 from database import databaseNHL
 
 engine = databaseNHL.connect_to_db()

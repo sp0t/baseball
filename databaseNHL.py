@@ -68,8 +68,10 @@ def update_database():
         last_record = datetime.strptime(last_record, '%Y-%m-%d').date()
         print(last_record)
         record_day = date.today() - timedelta(days = 2)
+        print(record_day)
         if last_record > record_day:
             last_record = record_day
+            print(last_record)
 
     print(f'Old Last Record is {last_record}')
     # game_list, errored_days = get_game_id_list(start_date = last_record, 

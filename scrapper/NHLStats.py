@@ -23,7 +23,7 @@ def scrape(game_nhl_id, season_nhl_id, away_team_abbreviation, home_team_abbrevi
             retries_left -= 1
             time.sleep(1)
     else:
-        raise Exception(f"Couldn't scrape data from {url}")
+        return None
 
     data = response.text
     print("Mapping scraped data")
@@ -127,7 +127,7 @@ def scrape(game_nhl_id, season_nhl_id, away_team_abbreviation, home_team_abbrevi
     try:
         result['awayTeam']['skaters'] = map_skaters(away_skaters)
         if not result['awayTeam']['skaters']:
-            raise Exception("Couldn't find any skaters for away team")
+            return None
     except Exception as e:
         print(f"Failed to map away team skaters: {str(e)}")
         raise
@@ -135,7 +135,7 @@ def scrape(game_nhl_id, season_nhl_id, away_team_abbreviation, home_team_abbrevi
     try:
         result['awayTeam']['goalies'] = map_goalies(away_goalies)
         if not result['awayTeam']['goalies']:
-            raise Exception("Couldn't find any goalies for away team")
+            return None
     except Exception as e:
         print(f"Failed to map away team goalies: {str(e)}")
         raise
@@ -144,7 +144,7 @@ def scrape(game_nhl_id, season_nhl_id, away_team_abbreviation, home_team_abbrevi
     try:
         result['homeTeam']['skaters'] = map_skaters(home_skaters)
         if not result['homeTeam']['skaters']:
-            raise Exception("Couldn't find any skaters for home team")
+            return None
     except Exception as e:
         print(f"Failed to map home team skaters: {str(e)}")
         raise
@@ -152,7 +152,7 @@ def scrape(game_nhl_id, season_nhl_id, away_team_abbreviation, home_team_abbrevi
     try:
         result['homeTeam']['goalies'] = map_goalies(home_goalies)
         if not result['homeTeam']['goalies']:
-            raise Exception("Couldn't find any goalies for home team")
+            return None
     except Exception as e:
         print(f"Failed to map home team goalies: {str(e)}")
         raise

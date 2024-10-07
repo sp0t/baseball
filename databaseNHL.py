@@ -257,7 +257,7 @@ def update_database():
     else:
         last_record = new_last_record[0]['update_date']
 
-    update_schedule.update_schedule()
+    scheduleNHL.update_schedule()
 
     new_updates = pd.DataFrame({'update_id': str(uuid.uuid4()), 
                                 'update_date': last_update_date, 

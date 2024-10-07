@@ -14,6 +14,7 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></script>
         <script type="text/javascript" src="{{ url_for('static', filename='index.js') }}"></script>
         <script>
+            let showState = {}
             $(document).ready(function(){
 
                 if (localStorage.getItem("darkMode") === "enabled") {
@@ -33,31 +34,22 @@
                 });
             });
 
-            let isStatsCalled = false;
-            let statsDivState = false;
-
-            function sleep(ms) {
-                return new Promise(resolve => setTimeout(resolve, ms));
-            }
-
-            function setDivState(state) {
-                statsDivState = state;
-            }
-
             function showDiv(id, type) {
-                getNHLPlayerStats(id);
+                if (id in showState) {
+                    var divContent = document.getElementById(`stats_${id}`);
+                    if(showState[id]) {
+                        divContent.hide();
+                        showState[id] = false;
+                    } else {
+                        divContent.show();
+                        showState[id] = true;
+                    }
+                } else {
+                    getNHLPlayerStats(id);
+                    showState[id] = true;
+                }
             }
         
-            async function hideDiv(state) {
-                if(!state) {
-                    await sleep(1000)
-                    if(statsDivState)
-                        return;
-                }
-                isStatsCalled = false;
-                statsDivState = false;
-                const divContent = document.getElementById('stats');
-            }
           </script>
         <!-- Latest compiled and minified CSS -->
     </head>

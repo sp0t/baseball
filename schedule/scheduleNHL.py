@@ -20,6 +20,8 @@ def get_schedule(engine):
         el['home_fcnn'] = 0
         el['away_lr'] = 0
         el['home_lr'] = 0
+        el['away_rf'] = 0
+        el['home_rf'] = 0
         prediction = pd.read_sql(f"SELECT * FROM predictions WHERE game_id = '{el['game_id']}';", con = engine).to_dict('records')
         if len(prediction) != 0:
             for pr in prediction:

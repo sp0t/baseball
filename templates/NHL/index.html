@@ -35,13 +35,16 @@
             });
 
             function showDiv(id, type) {
+                console.log('showState', showState)
+                console.log('id', id)
+
                 if (id in showState) {
                     var divContent = document.getElementById(`stats_${id}`);
                     if(showState[id]) {
-                        divContent.hide();
+                        divContent.style.display = "none";
                         showState[id] = false;
                     } else {
-                        divContent.show();
+                        divContent.style.display = "block";
                         showState[id] = true;
                     }
                 } else {

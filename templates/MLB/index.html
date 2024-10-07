@@ -71,8 +71,11 @@
                     <span class="ball"></span>
                 </label>
             </div>
-            <div class="nav-header"><div class="nav-title" style="font-size: 50px;">BetMLB</div></div>
+            <div></div>
+                <button class="site-button" onclick="switchSite(1)">NHL</button>
             </div>
+
+            <div class="nav-header"><div class="nav-title" style="font-size: 50px;">BetMLB</div>
             
             <div class="nav-links">
               <a href="/" style="font-size: 25px; padding: 10px;">Home</a>
@@ -86,49 +89,47 @@
             </div>
           </div>
         <div class="container">
-
-
-                <div class="update-block">
-                    <!-- <button class="medium-solid-button" onclick="updateDatabase()">Update Database</button> -->
-                    <div class="record-box">
-                        <div><span class="win-count-txt">{{win_count}}</span> <span class="win-percent-txt"> - </span> <span class="loss-count-txt">{{loss_count}}</span></div>
-                        <div class="win-percent-txt record-box">{{win_percent}}%</div>
-                    </div>
-                    <p class="update-text" id="last-record">Last Record: {{last_record}}</p>
-                    <p class="update-text" id="last-time">Last Updated on {{update_date}} at {{update_time}} EST</p>
-                    <div id="update-loader" style="display: none;"><img style="width: 50px;" src="/static/loader.gif"/></div>
+            <div class="update-block">
+                <!-- <button class="medium-solid-button" onclick="updateDatabase()">Update Database</button> -->
+                <div class="record-box">
+                    <div><span class="win-count-txt">{{win_count}}</span> <span class="win-percent-txt"> - </span> <span class="loss-count-txt">{{loss_count}}</span></div>
+                    <div class="win-percent-txt record-box">{{win_percent}}%</div>
                 </div>
-                <div class="auto-stake-size">
-                    <label for="autobet-stake" class="autobet-label">Auto Stake Size:</label>
-                    <select name="autobet-stake" id="autobet-stake" class="autobet-select" onchange="changeStakeSize()">
-                        {% for stake in auto_stakes %}
-                             <option value="{{ stake.stake }}" class="autobet-option" data-stake="{{ stake.stake }}"
-                                {% if stake.status == 1 %}selected{% endif %}>
-                            </option>
-                        {% endfor %}
-                    </select>
-                </div>
-                
-                <div>
-                    {% for el in average %}
-                        <div id='average-container' class="average-container">
-                            <div class="seasonTb">Season</div>
-                            <div class="seasonTb">AVG</div>
-                            <div class="seasonTb">OBP</div>
-                            <div class="seasonTb">SLG</div>
-                            <div class="seasonTb">OPS</div>
-                            <div class="seasonTb">ERA</div>
-                            <div class="seasonTb">WHIP</div>
-                            <div class="seasonTb">{{el.year}}</div>
-                            <div class="seasonTb">{{el.avg}}</div>
-                            <div class="seasonTb">{{el.obp}}</div>
-                            <div class="seasonTb">{{el.slg}}</div>
-                            <div class="seasonTb">{{el.ops}}</div>
-                            <div class="seasonTb">{{el.era}}</div>
-                            <div class="seasonTb">{{el.whip}}</div>
-                        </div>
+                <p class="update-text" id="last-record">Last Record: {{last_record}}</p>
+                <p class="update-text" id="last-time">Last Updated on {{update_date}} at {{update_time}} EST</p>
+                <div id="update-loader" style="display: none;"><img style="width: 50px;" src="/static/loader.gif"/></div>
+            </div>
+            <div class="auto-stake-size">
+                <label for="autobet-stake" class="autobet-label">Auto Stake Size:</label>
+                <select name="autobet-stake" id="autobet-stake" class="autobet-select" onchange="changeStakeSize()">
+                    {% for stake in auto_stakes %}
+                            <option value="{{ stake.stake }}" class="autobet-option" data-stake="{{ stake.stake }}"
+                            {% if stake.status == 1 %}selected{% endif %}>
+                        </option>
                     {% endfor %}
-                </div>
+                </select>
+            </div>
+            
+            <div>
+                {% for el in average %}
+                    <div id='average-container' class="average-container">
+                        <div class="seasonTb">Season</div>
+                        <div class="seasonTb">AVG</div>
+                        <div class="seasonTb">OBP</div>
+                        <div class="seasonTb">SLG</div>
+                        <div class="seasonTb">OPS</div>
+                        <div class="seasonTb">ERA</div>
+                        <div class="seasonTb">WHIP</div>
+                        <div class="seasonTb">{{el.year}}</div>
+                        <div class="seasonTb">{{el.avg}}</div>
+                        <div class="seasonTb">{{el.obp}}</div>
+                        <div class="seasonTb">{{el.slg}}</div>
+                        <div class="seasonTb">{{el.ops}}</div>
+                        <div class="seasonTb">{{el.era}}</div>
+                        <div class="seasonTb">{{el.whip}}</div>
+                    </div>
+                {% endfor %}
+            </div>
             <!-- Card Grid -->
             <div class="card-grid">
                 {% for game in schedule %}

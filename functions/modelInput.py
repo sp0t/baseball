@@ -1,3 +1,4 @@
+from flask import jsonify
 from API import nhlAPI
 from scrapper import NHLStats
 import psycopg2
@@ -15,6 +16,23 @@ import copy
 from collections import defaultdict
 import re
 import numpy as np
+
+def get_win_pro(gameid):
+    url = "http://ec2-3-112-14-241.ap-northeast-1.compute.amazonaws.com:8000/api/model-scores"
+    headers = {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer YOUR_TOKEN_HERE"
+    }
+    data = {
+        "game_id": gameid
+    }
+
+    response = requests.post(url, headers=headers, json=data)
+
+    if response.status_code == 200:
+        return(response.json())
+    else
+        return None
 
 def combine_weighted_stats(*stats):
     accumulator = defaultdict(int)  
@@ -186,7 +204,7 @@ def get_current_game_stats(stats):
 
     return cloned_stats
 
-def generate_model_input(gameId, engine):
+def generate_model_input(gameId, engine, flag):
     skater_stats = pd.read_sql(f"SELECT * FROM skater_stats WHERE game_id = '{gameId}';", con = engine).to_dict('records')
     goaltender_stats = pd.read_sql(f"SELECT * FROM goaltender_stats WHERE game_id = '{gameId}';", con = engine).to_dict('records')
     game_center_data = nhlAPI.get_Landing(gameId)
@@ -256,6 +274,8 @@ def generate_model_input(gameId, engine):
     goaltender_items = [goaltender_item for goaltender_item in goaltender_items if goaltender_item is not None]
     recent_form_game_ids = []
 
+    engine.execute(f"DELETE FROM model_input WHERE game_id = '{gameId}';")
+
     for sakter_item in sakter_items:
         
         all_skater_items = get_skater_historical_stats(sakter_item['player_id'], engine)
@@ -309,7 +329,11 @@ def generate_model_input(gameId, engine):
         recent_form = get_recent_form(past_sorted_skater_items)
         weighted_stats = get_weighted_averages(past_sorted_skater_items, season_id)
         current_game_stats = get_current_game_stats(sakter_item['stats']) if sakter_item['stats'] else []
-        engine.execute("INSERT INTO model_input(game_id, start_time, player_id,  position, plays_for_home_team, home_team_won, total_games, is_goaltender, is_forward, weighted_average_goals, weighted_average_assists, weighted_average_points, weighted_average_plus_minus, weighted_average_penalty_minutes, weighted_average_time_on_ice, weighted_average_corsi_for, weighted_average_corsi_against, weighted_average_fenwick_for_percent, weighted_average_fenwick_for_percent_relative, recent_form_goals, recent_form_assists, recent_form_points, recent_form_plus_minus, recent_form_penalty_minutes, recent_form_time_on_ice,recent_form_corsi_for, recent_form_corsi_against, recent_form_fenwick_for_percent, recent_form_fenwick_for_percent_relative, current_game_position, current_game_goals, current_game_assists, current_game_points, current_game_plus_minus, current_game_penalty_minutes, current_game_time_on_ice, current_game_corsi_for, current_game_corsi_against, current_game_fenwick_for_percent, current_game_fenwick_for_percent_relative) VALUES(%s, %s, %s,  %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s,%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)", (gameId, start_time, sakter_item['player_id'],  sakter_item['stats']['position'], plays_for_home_team, home_team_won, total_games, is_goaltender, is_forward, weighted_stats['weighted_average_goals'], weighted_stats['weighted_average_assists'], weighted_stats['weighted_average_points'], weighted_stats['weighted_average_plus_minus'], weighted_stats['weighted_average_penalty_minutes'], weighted_stats['weighted_average_time_on_ice'], weighted_stats['weighted_average_corsi_for'], weighted_stats['weighted_average_corsi_against'], weighted_stats['weighted_average_fenwick_for_percent'], weighted_stats['weighted_average_fenwick_for_percent_relative'], recent_form['stats']['recent_form_goals'], recent_form['stats']['recent_form_assists'], recent_form['stats']['recent_form_points'], recent_form['stats']['recent_form_plus_minus'], recent_form['stats']['recent_form_penalty_minutes'], recent_form['stats']['recent_form_time_on_ice'], recent_form['stats']['recent_form_corsi_for'], recent_form['stats']['recent_form_corsi_against'], recent_form['stats']['recent_form_fenwick_for_percent'], recent_form['stats']['recent_form_fenwick_for_percent_relative'], current_game_stats['current_game_position'], current_game_stats['current_game_goals'], current_game_stats['current_game_assists'], current_game_stats['current_game_points'], current_game_stats['current_game_plus_minus'], current_game_stats['current_game_penalty_minutes'], current_game_stats['current_game_time_on_ice'], current_game_stats['current_game_corsi_for'], current_game_stats['current_game_corsi_against'], current_game_stats['current_game_fenwick_for_percent'], current_game_stats['current_game_fenwick_for_percent_relative']))
+
+        if flag == 0:
+            engine.execute("INSERT INTO model_input(game_id, start_time, player_id,  position, plays_for_home_team, home_team_won, total_games, is_goaltender, is_forward, weighted_average_goals, weighted_average_assists, weighted_average_points, weighted_average_plus_minus, weighted_average_penalty_minutes, weighted_average_time_on_ice, weighted_average_corsi_for, weighted_average_corsi_against, weighted_average_fenwick_for_percent, weighted_average_fenwick_for_percent_relative, recent_form_goals, recent_form_assists, recent_form_points, recent_form_plus_minus, recent_form_penalty_minutes, recent_form_time_on_ice,recent_form_corsi_for, recent_form_corsi_against, recent_form_fenwick_for_percent, recent_form_fenwick_for_percent_relative, current_game_position, current_game_goals, current_game_assists, current_game_points, current_game_plus_minus, current_game_penalty_minutes, current_game_time_on_ice, current_game_corsi_for, current_game_corsi_against, current_game_fenwick_for_percent, current_game_fenwick_for_percent_relative) VALUES(%s, %s, %s,  %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s,%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)", (gameId, start_time, sakter_item['player_id'],  sakter_item['stats']['position'], plays_for_home_team, home_team_won, total_games, is_goaltender, is_forward, weighted_stats['weighted_average_goals'], weighted_stats['weighted_average_assists'], weighted_stats['weighted_average_points'], weighted_stats['weighted_average_plus_minus'], weighted_stats['weighted_average_penalty_minutes'], weighted_stats['weighted_average_time_on_ice'], weighted_stats['weighted_average_corsi_for'], weighted_stats['weighted_average_corsi_against'], weighted_stats['weighted_average_fenwick_for_percent'], weighted_stats['weighted_average_fenwick_for_percent_relative'], recent_form['stats']['recent_form_goals'], recent_form['stats']['recent_form_assists'], recent_form['stats']['recent_form_points'], recent_form['stats']['recent_form_plus_minus'], recent_form['stats']['recent_form_penalty_minutes'], recent_form['stats']['recent_form_time_on_ice'], recent_form['stats']['recent_form_corsi_for'], recent_form['stats']['recent_form_corsi_against'], recent_form['stats']['recent_form_fenwick_for_percent'], recent_form['stats']['recent_form_fenwick_for_percent_relative'], current_game_stats['current_game_position'], current_game_stats['current_game_goals'], current_game_stats['current_game_assists'], current_game_stats['current_game_points'], current_game_stats['current_game_plus_minus'], current_game_stats['current_game_penalty_minutes'], current_game_stats['current_game_time_on_ice'], current_game_stats['current_game_corsi_for'], current_game_stats['current_game_corsi_against'], current_game_stats['current_game_fenwick_for_percent'], current_game_stats['current_game_fenwick_for_percent_relative']))
+        else:
+            engine.execute("INSERT INTO model_input(game_id, start_time, player_id, position, plays_for_home_team, total_games, is_goaltender, is_forward, weighted_average_goals, weighted_average_assists, weighted_average_points, weighted_average_plus_minus, weighted_average_penalty_minutes, weighted_average_time_on_ice, weighted_average_corsi_for, weighted_average_corsi_against, weighted_average_fenwick_for_percent, weighted_average_fenwick_for_percent_relative, recent_form_goals, recent_form_assists, recent_form_points, recent_form_plus_minus, recent_form_penalty_minutes, recent_form_time_on_ice,recent_form_corsi_for, recent_form_corsi_against, recent_form_fenwick_for_percent, recent_form_fenwick_for_percent_relative) VALUES(%s, %s, %s, %s,  %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s,%s, %s, %s)", (gameId, start_time, sakter_item['player_id'], 'F', plays_for_home_team, total_games, is_goaltender, is_forward, weighted_stats['weighted_average_goals'], weighted_stats['weighted_average_assists'], weighted_stats['weighted_average_points'], weighted_stats['weighted_average_plus_minus'], weighted_stats['weighted_average_penalty_minutes'], weighted_stats['weighted_average_time_on_ice'], weighted_stats['weighted_average_corsi_for'], weighted_stats['weighted_average_corsi_against'], weighted_stats['weighted_average_fenwick_for_percent'], weighted_stats['weighted_average_fenwick_for_percent_relative'], recent_form['stats']['recent_form_goals'], recent_form['stats']['recent_form_assists'], recent_form['stats']['recent_form_points'], recent_form['stats']['recent_form_plus_minus'], recent_form['stats']['recent_form_penalty_minutes'], recent_form['stats']['recent_form_time_on_ice'], recent_form['stats']['recent_form_corsi_for'], recent_form['stats']['recent_form_corsi_against'], recent_form['stats']['recent_form_fenwick_for_percent'], recent_form['stats']['recent_form_fenwick_for_percent_relative']))
     
     for goaltender_item in goaltender_items:
 
@@ -359,6 +383,15 @@ def generate_model_input(gameId, engine):
         current_game_stats = get_current_game_stats(goaltender_item['stats']) if goaltender_item['stats'] else []
         weighted_stats = get_weighted_averages(past_sorted_goaltender_items, season_id)
 
-        engine.execute("INSERT INTO model_input(game_id, start_time, player_id,  position, plays_for_home_team, home_team_won, total_games, is_goaltender, is_forward, weighted_average_penalty_minutes, weighted_average_time_on_ice, weighted_average_save_percentage, weighted_average_goals_against, recent_form_penalty_minutes, recent_form_time_on_ice, recent_form_save_percentage, recent_form_goals_against, current_game_position, current_game_penalty_minutes, current_game_time_on_ice, current_game_save_percentage, current_game_goals_against) VALUES(%s, %s, %s,  %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)", (gameId, start_time, goaltender_item['player_id'],  goaltender_item['stats']['position'], plays_for_home_team, home_team_won, total_games, is_goaltender, is_forward, weighted_stats['weighted_average_penalty_minutes'], weighted_stats['weighted_average_time_on_ice'], weighted_stats['weighted_average_save_percentage'], weighted_stats['weighted_average_goals_against'], recent_form['stats']['recent_form_penalty_minutes'], recent_form['stats']['recent_form_time_on_ice'], recent_form['stats']['recent_form_save_percentage'], recent_form['stats']['recent_form_goals_against'], current_game_stats['current_game_position'], current_game_stats['current_game_penalty_minutes'], current_game_stats['current_game_time_on_ice'], current_game_stats['current_game_save_percentage'], current_game_stats['current_game_goals_against']))
-    
+        if flag ==0:
+            engine.execute("INSERT INTO model_input(game_id, start_time, player_id,  position, plays_for_home_team, home_team_won, total_games, is_goaltender, is_forward, weighted_average_penalty_minutes, weighted_average_time_on_ice, weighted_average_save_percentage, weighted_average_goals_against, recent_form_penalty_minutes, recent_form_time_on_ice, recent_form_save_percentage, recent_form_goals_against, current_game_position, current_game_penalty_minutes, current_game_time_on_ice, current_game_save_percentage, current_game_goals_against) VALUES(%s, %s, %s,  %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)", (gameId, start_time, goaltender_item['player_id'],  goaltender_item['stats']['position'], plays_for_home_team, home_team_won, total_games, is_goaltender, is_forward, weighted_stats['weighted_average_penalty_minutes'], weighted_stats['weighted_average_time_on_ice'], weighted_stats['weighted_average_save_percentage'], weighted_stats['weighted_average_goals_against'], recent_form['stats']['recent_form_penalty_minutes'], recent_form['stats']['recent_form_time_on_ice'], recent_form['stats']['recent_form_save_percentage'], recent_form['stats']['recent_form_goals_against'], current_game_stats['current_game_position'], current_game_stats['current_game_penalty_minutes'], current_game_stats['current_game_time_on_ice'], current_game_stats['current_game_save_percentage'], current_game_stats['current_game_goals_against']))
+        else:
+            engine.execute("INSERT INTO model_input(game_id, start_time, player_id, position, plays_for_home_team, total_games, is_goaltender, is_forward, weighted_average_penalty_minutes, weighted_average_time_on_ice, weighted_average_save_percentage, weighted_average_goals_against, recent_form_penalty_minutes, recent_form_time_on_ice, recent_form_save_percentage, recent_form_goals_against) VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)", (gameId, start_time, goaltender_item['player_id'], 'G', plays_for_home_team, total_games, is_goaltender, is_forward, weighted_stats['weighted_average_penalty_minutes'], weighted_stats['weighted_average_time_on_ice'], weighted_stats['weighted_average_save_percentage'], weighted_stats['weighted_average_goals_against'], recent_form['stats']['recent_form_penalty_minutes'], recent_form['stats']['recent_form_time_on_ice'], recent_form['stats']['recent_form_save_percentage'], recent_form['stats']['recent_form_goals_against']))
+
+
+    predictions = get_win_pro(gameId)
+
+    if predictions is not None:
+        for x, y in predictions.items():
+            engine.execute(f"INSERT INTO predictions(game_id, model_type, away_team, home_team) VALUES('{gameId}', '{x}', '{1 - y}', '{y}')") 
     return

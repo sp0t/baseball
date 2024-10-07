@@ -12,6 +12,7 @@ from sqlalchemy import create_engine
 import uuid
 import requests
 from functions import modelInput 
+from schedule import scheduleNHL
 
 def connect_to_db(): 
     
@@ -244,7 +245,7 @@ def update_database():
                     engine.execute("INSERT INTO goaltender_stats(game_id, player_id, team_side,  penalty_minutes, time_on_ice, position, save_percentage, goals_against) VALUES(%s, %s, %s,  %s, %s, %s, %s, %s)", (box['game_id'], goalies['player_id'], goalies['team'], goalies['penalty_minutes'], goalies['time_on_ice'], goalies['position'], goalies['save_percentage'], goalies['goals_against']))
             box_list.append(box)
 
-            modelInput.generate_model_input(box['game_id'], engine)
+            modelInput.generate_model_input(box['game_id'], engine, 0)
     tz = timezone('US/Eastern')
     last_update_date = date.today()
     last_update_time = datetime.now() + timedelta(hours = 3)
@@ -256,7 +257,8 @@ def update_database():
     else:
         last_record = new_last_record[0]['update_date']
 
-        
+    update_schedule.update_schedule()
+
     new_updates = pd.DataFrame({'update_id': str(uuid.uuid4()), 
                                 'update_date': last_update_date, 
                      'update_time': last_update_time, 

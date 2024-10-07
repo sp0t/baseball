@@ -1173,3 +1173,141 @@ function openBetForm(element) {
 
     document.getElementById('betid-rec').value = betDetails['betid'];
 }
+
+//************* NHL functions *********************
+
+function  getNHLPlayerStats(id){
+    var param = {'game_id' : id}
+    $.ajax({
+        type: 'POST', 
+        url: '/getNHLPlayerStats',
+        data: { 'data' : JSON.stringify(param)},
+        beforeSend: function(){ 
+            console.log('before sending');
+        },
+        success: function (data){ 
+            console.log(data)
+            var html = '';
+                const divContainer = document.getElementById(id);
+                const divContent = document.getElementById(`stats_${id}`);
+        
+                const topPosition = divContainer.offsetTop;
+                const height = divContainer.offsetHeight;
+                const bottomPosition = topPosition + height;
+
+                divContent.style.top = `${bottomPosition}px`;
+                divContent.style.left = '160px';
+                divContent.style.width = `${window.innerWidth - 165 * 2}px`;
+
+                if(data.skater != undefined && data.skater.length > 0) {
+                    html += '<div class="batter-container">'
+                    html += '<div style="background-color:black">GID</div>'
+                    html += '<div style="background-color:black">PID</div>'
+                    html += '<div style="background-color:black">TEAM</div>'
+                    html += '<div style="background-color:black">GAMES</div>'
+                    html += '<div style="background-color:black">WG</div>'
+                    html += '<div style="background-color:black">WA</div>'
+                    html += '<div style="background-color:black">WP</div>'
+                    html += '<div style="background-color:black">WPM</div>'
+                    html += '<div style="background-color:black">WPeM</div>'
+                    html += '<div style="background-color:black">WTOI</div>'
+                    html += '<div style="background-color:black">WCF</div>'
+                    html += '<div style="background-color:black">WCA</div>'
+                    html += '<div style="background-color:black">WFP</div>'
+                    html += '<div style="background-color:black">WFPr</div>'
+                    html += '<div style="background-color:black">RG</div>'
+                    html += '<div style="background-color:black">RA</div>'
+                    html += '<div style="background-color:black">RP</div>'
+                    html += '<div style="background-color:black">RPM</div>'
+                    html += '<div style="background-color:black">RPeM</div>'
+                    html += '<div style="background-color:black">RTOI</div>'
+                    html += '<div style="background-color:black">RCF</div>'
+                    html += '<div style="background-color:black">RCA</div>'
+                    html += '<div style="background-color:black">RFP</div>'
+                    html += '<div style="background-color:black">RFPr</div>'
+                    
+
+                    for(var x in data.skater) {
+                        html += `<div>${data.skater[x].game_id}</div>`
+                        html += `<div>${data.skater[x].player_id}</div>`
+                        html += `<div>${data.skater[x].plays_for_home_team == 0 ? 'AWAY': 'HOME'}</div>`
+                        html += `<div>${data.skater[x].total_games}</div>`
+                        html += `<div>${Number(data.skater[x].weighted_average_goals).toFixed(2)}</div>`
+                        html += `<div>${Number(data.skater[x].weighted_average_assists).toFixed(2)}</div>`
+                        html += `<div>${Number(data.skater[x].weighted_average_points).toFixed(2)}</div>`
+                        html += `<div>${Number(data.skater[x].weighted_average_plus_minus).toFixed(2)}</div>`
+                        html += `<div>${Number(data.skater[x].weighted_average_penalty_minutes).toFixed(2)}</div>`
+                        html += `<div>${Number(data.skater[x].weighted_average_time_on_ice).toFixed(2)}</div>`
+                        html += `<div>${Number(data.skater[x].weighted_average_corsi_for).toFixed(2)}</div>`
+                        html += `<div>${Number(data.skater[x].weighted_average_corsi_against).toFixed(2)}</div>`
+                        html += `<div>${Number(data.skater[x].weighted_average_fenwick_for_percent).toFixed(2)}</div>`
+                        html += `<div>${Number(data.skater[x].weighted_average_fenwick_for_percent_relative).toFixed(2)}</div>`
+                        html += `<div>${Number(data.skater[x].recent_form_goals).toFixed(2)}</div>`
+                        html += `<div>${Number(data.skater[x].recent_form_assists).toFixed(2)}</div>`
+                        html += `<div>${Number(data.skater[x].recent_form_points).toFixed(2)}</div>`
+                        html += `<div>${Number(data.skater[x].recent_form_plus_minus).toFixed(2)}</div>`
+                        html += `<div>${Number(data.skater[x].recent_form_penalty_minutes).toFixed(2)}</div>`
+                        html += `<div>${Number(data.skater[x].recent_form_time_on_ice).toFixed(2)}</div>`
+                        html += `<div>${Number(data.skater[x].recent_form_corsi_for).toFixed(2)}</div>`
+                        html += `<div>${Number(data.skater[x].recent_form_corsi_against).toFixed(2)}</div>`
+                        html += `<div>${Number(data.skater[x].recent_form_fenwick_for_percent).toFixed(2)}</div>`
+                        html += `<div>${Number(data.skater[x].recent_form_fenwick_for_percent_relative).toFixed(2)}</div>`
+                    }
+                    html += '</div>';
+                }
+
+                if(data.goaltender != undefined && data.goaltender.length > 0) {
+                    html += '<div class="pitcher-container">'
+                    html += '<div style="background-color:black">GID</div>'
+                    html += '<div style="background-color:black">PID</div>'
+                    html += '<div style="background-color:black">TEAM</div>'
+                    html += '<div style="background-color:black">GAMES</div>'
+                    html += '<div style="background-color:black">WPeM</div>'
+                    html += '<div style="background-color:black">WTOI</div>'
+                    html += '<div style="background-color:black">WSP</div>'
+                    html += '<div style="background-color:black">WGA</div>'
+                    html += '<div style="background-color:black">RPM</div>'
+                    html += '<div style="background-color:black">RTOI</div>'
+                    html += '<div style="background-color:black">RSP</div>'
+                    html += '<div style="background-color:black">RGA</div>'
+                    
+
+                    for(var y in data.goaltender) {
+                        html += `<div>${data.goaltender[y].game_id}</div>`
+                        html += `<div>${data.goaltender[y].player_id}</div>`
+                        html += `<div>${data.goaltender[y].plays_for_home_team == 0 ? 'AWAY': 'HOME'}</div>`
+                        html += `<div>${data.goaltender[y].total_games}</div>`
+                        html += `<div>${Number(data.goaltender[y].weighted_average_penalty_minutes).toFixed(2)}</div>`
+                        html += `<div>${Number(data.goaltender[y].weighted_average_time_on_ice).toFixed(2)}</div>`
+                        html += `<div>${Number(data.goaltender[y].weighted_average_save_percentage).toFixed(2)}</div>`
+                        html += `<div>${Number(data.goaltender[y].weighted_average_goals_against).toFixed(2)}</div>`
+                        html += `<div>${Number(data.goaltender[y].recent_form_penalty_minutes).toFixed(2)}</div>`
+                        html += `<div>${Number(data.goaltender[y].recent_form_time_on_ice).toFixed(2)}</div>`
+                        html += `<div>${Number(data.goaltender[y].recent_form_save_percentage).toFixed(2)}</div>`
+                        html += `<div>${Number(data.goaltender[y].recent_form_goals_against).toFixed(2)}</div>`
+                    }
+                    html += '</div>'
+                }
+              divContent.innerHTML = html;
+        },
+        error: function() {
+        }
+    })
+}
+
+function switchSite(flag) {
+    $.ajax({
+        type: 'POST', 
+        url: '/switchSite', 
+        data: {
+            'flag' : flag == 0 ? 'MLB': 'NHL',
+        },
+        beforeSend: function(){ 
+            $('#loader').show(); 
+        },
+        success: function (data){
+            $('#loader').hide(); 
+            window.location.reload(true);
+         }, 
+    })
+}

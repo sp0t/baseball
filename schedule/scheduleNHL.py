@@ -6,6 +6,7 @@ from API import nhlAPI
 from functions import odds
 from pytz import timezone
 import math
+from functions import modelInput 
 
 def get_schedule(engine): 
     try: 
@@ -13,6 +14,24 @@ def get_schedule(engine):
     except: 
         schedule = get_schedule_from_nhl()
         return "Today's schedule can't be found. Try force-updating or waiting a few minutes to refresh!"
+
+    for el in schedule:
+        el['away_fcnn'] = 0
+        el['home_fcnn'] = 0
+        el['away_lr'] = 0
+        el['home_lr'] = 0
+        prediction = pd.read_sql(f"SELECT * FROM predictions WHERE game_id = '{el['game_id']}';", con = engine).to_dict('records')
+        if len(prediction) != 0:
+            for pr in prediction:
+                if pr['model_type'] == 'fcnn_1':
+                    el['away_fcnn'] = round(float(pr['away_team']), 2)
+                    el['home_fcnn'] = round(1 - float(pr['away_team']), 2)
+                elif pr['model_type'] == 'lr_1':
+                    el['away_lr'] = round(float(pr['away_team']), 2)
+                    el['home_lr'] = round(1 - float(pr['away_team']), 2)
+                elif pr['model_type'] == 'rf_1':
+                    el['away_rf'] = round(float(pr['away_team']), 2)
+                    el['home_rf'] = round(1 - float(pr['away_team']), 2)
 
     return schedule
 
@@ -33,6 +52,7 @@ def get_schedule_from_nhl(engine):
         el['game_datetime'] = el['game_datetime'].strftime('%H:%M:%S')
         el['away_name'] = el['awayTeam']['name']['default']
         el['home_name'] = el['homeTeam']['name']['default']
+        modelInput.generate_model_input(el['game_id'], engine, 1)
 
     games = [{k:v for k,v in el.items() if k in info_keys} for el in games]    
     games = pd.DataFrame(games)
@@ -47,5 +67,3 @@ def update_schedule():
     new_schedule.to_sql("schedule", con = engine, index = False, if_exists = 'replace')
     
     return
-
-update_schedule()

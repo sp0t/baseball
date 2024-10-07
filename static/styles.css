@@ -80,6 +80,19 @@ a{
 	border: solid;
 }
 
+.card-NHL{
+	width: 360px;
+    height: 350px;
+	background-color: #FFF;
+	border-radius: 5px;
+	box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+    text-align: center;
+    padding: 20px 0;
+    margin: 20px;
+    display: inline-block;
+	border: solid;
+}
+
 .div-container{
 	display: flex; 
 	align-items:center; 
@@ -107,7 +120,7 @@ a{
 
 .batter-container {
 	display: grid;
-	grid-template-columns: auto auto auto auto auto auto auto auto auto auto auto auto auto auto auto auto auto auto auto auto auto;
+	grid-template-columns: auto auto auto auto auto auto auto auto auto auto auto auto auto auto auto auto auto auto auto auto auto auto auto auto;
 	gap: 1px;
 	background-color: white;
 	padding: 1px;
@@ -115,7 +128,7 @@ a{
 
 .pitcher-container {
 	display: grid;
-	grid-template-columns: auto auto auto auto auto auto auto auto auto auto auto auto auto;
+	grid-template-columns: auto auto auto auto auto auto auto auto auto auto auto auto;
 	gap: 1px;
 	background-color: white;
 	padding: 1px;
@@ -1212,3 +1225,21 @@ table {
 	background-color: #121212;
 	color: #fff;
   }
+
+  .site-button {
+    width: 90px;
+    height: 35px;
+    border-radius: 3px;
+    background-color: #25527b;
+    border: none;
+    box-shadow: none;
+    color: #FCFCFC;
+    font-size: 16px;
+    margin-top: 8px;
+    float: right;
+	cursor: pointer;
+}
+
+.site-button:hover {
+    background-color: rgb(41, 141, 235);
+}

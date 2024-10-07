@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>BetNHL</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="/static/styles.css"> 
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.1/css/all.min.css"> 
+        <link rel="icon" href="favicon.svg">
+        <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🚀</text></svg>">
+        <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></script>
+        <script type="text/javascript" src="{{ url_for('static', filename='index.js') }}"></script>
+        <script>
+            $(document).ready(function(){
+
+                if (localStorage.getItem("darkMode") === "enabled") {
+                    $( "#checkbox" ).prop( "checked", false );
+                    changeTheme(1);
+                } else {
+                    $( "#checkbox" ).prop( "checked", true );
+                    changeTheme(0);
+                }
+            })
+
+            document.addEventListener('DOMContentLoaded', function() {
+                var options = document.querySelectorAll('.autobet-option');
+                options.forEach(function(option) {
+                    var rawValue = option.dataset.stake; // Access custom data attribute
+                    option.textContent = formatToFinancial(rawValue); // Update text content
+                });
+            });
+
+            let isStatsCalled = false;
+            let statsDivState = false;
+
+            function sleep(ms) {
+                return new Promise(resolve => setTimeout(resolve, ms));
+            }
+
+            function setDivState(state) {
+                statsDivState = state;
+            }
+
+            function showDiv(id, type) {
+                getNHLPlayerStats(id);
+            }
+        
+            async function hideDiv(state) {
+                if(!state) {
+                    await sleep(1000)
+                    if(statsDivState)
+                        return;
+                }
+                isStatsCalled = false;
+                statsDivState = false;
+                const divContent = document.getElementById('stats');
+            }
+          </script>
+        <!-- Latest compiled and minified CSS -->
+    </head>
+    <body>
+        <div class="nav">
+            <div class="toggleDiv">
+                <input type="checkbox" class="checkbox" id="checkbox" onchange="toggleDarkMode()">
+                <label for="checkbox" class="checkbox-label">
+                    <i class="fas fa-moon"></i>
+                    <i class="fas fa-sun"></i>
+                    <span class="ball"></span>
+                </label>
+            </div>
+            <div>
+                <button class="site-button" onclick="switchSite(0)">MLB</button>
+            </div>
+            <div class="nav-header"><div class="nav-title" style="font-size: 50px;">BetNHL</div></div>
+            </div>
+            
+            <div class="nav-links">
+              <a href="/" style="font-size: 25px; padding: 10px;">Home</a>
+              <a href="/" style="font-size: 25px; padding: 10px;">Accounting</a>
+            </div>
+          </div>
+        <div class="container">
+                <div class="update-block">
+                    <p class="update-text" id="last-record">Last Record: {{last_record}}</p>
+                    <p class="update-text" id="last-time">Last Updated on {{update_date}} at {{update_time}} EST</p>
+                    <div id="update-loader" style="display: none;"><img style="width: 50px;" src="/static/loader.gif"/></div>
+                </div>              
+            <!-- Card Grid -->
+            <div class="card-grid">
+                {% for game in schedule %}
+                    <div class="div-container">
+                        <div class="card-NHL" id ="{{game.game_id}}">
+                            <div>
+                                <div style="position: relative;">
+                                    <span onmouseover="showDiv('{{game.game_id}}', 0)" class="card-title">{{game.away_name}} @ {{game.home_name}}</span>
+                                </div>
+                                <p class="game-date">{{game.game_datetime}} EST</p>
+                            </div>
+                            <div class="form-wrapper">
+                                <div class="form-left">
+                                    <span>Win Prob</span>
+                                    <hr>
+                                    <div class="form-left-wrapper">
+                                        <table class = 'card-table'>
+                                            <tr>
+                                                <td class="model-title">fcnn_1</td>
+                                                {% if game.away_fcnn != 0 %}
+                                                    <td class="model-content">{{game.away_fcnn * 100}}%</td>
+                                                {% endif %}
+                                            </tr>
+                                            <tr>
+                                                <td class="model-title">lr_1</td>
+                                                {% if game.away_lr != 0 %}
+                                                    <td class="model-content">{{game.away_lr * 100}}%</td>
+                                                {% endif %}
+                                            </tr>
+                                            <tr></tr>
+                                                <td class="model-title">rf_1</td>
+                                                {% if game.away_lr != 0 %}
+                                                    <td class="model-content">{{game.away_rf * 100}}%</td>
+                                                {% endif %}
+                                            </tr>
+                                        </table>
+                                    </div>
+                                    <hr>
+                                </div>
+                                <div class="form-right">
+                                    <span>Win Prob</span>
+                                    <hr>
+                                    <div class="form-right-wrapper">
+                                        <table class="card-table">
+                                            <tr>
+                                                <td class="model-title">fcnn_1</td>
+                                                {% if game.home_fcnn != 0 %}
+                                                    <td class="model-content">{{game.home_fcnn * 100}}%</td>
+                                                {% endif %}
+                                            </tr>
+                                            <tr>
+                                                <td class="model-title">lr_1</td>
+                                                {% if game.home_lr != 0 %}
+                                                    <td class="model-content">{{game.home_lr * 100}}%</td>
+                                                {% endif %}
+                                            </tr>
+                                            <tr></tr>
+                                                <td class="model-title">rf_1</td>
+                                                {% if game.home_lr != 0 %}
+                                                    <td class="model-content">{{game.home_rf * 100}}%</td>
+                                                {% endif %}
+                                            </tr>
+                                        </table>
+                                    </div>
+                                    <hr>
+                                </div>
+                            </div>
+                            <div class="betting-title">
+                                <div style="display: flex; justify-content: center; padding: 10px;">
+                                    <div>Target</div>
+                                </div>
+                                <div style="justify-content: center; color: blue; margin-bottom: 5px; font-weight: 400">
+                                </div>
+                            </div>
+                            <div class="hover-div"></div>
+                        </div>
+                        <div id = "stats_{{game.game_id}}">
+                        </div>
+                    </div>
+                {% endfor %}
+                <div id="loader"><img style="width: 50px; margin-top: 220px;" src="/static/loader.gif"/></div>
+            </div> 
+        </div>
+    </body>
+</html>

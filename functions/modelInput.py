@@ -31,7 +31,7 @@ def get_win_pro(gameid):
 
     if response.status_code == 200:
         return(response.json())
-    else
+    else:
         return None
 
 def combine_weighted_stats(*stats):

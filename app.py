@@ -1449,10 +1449,11 @@ def getNHLPlayerStats():
     
     return data
 
-@app.route('/getNHLPlayerStats', methods = ["POST"])
+@app.route('/get_PlayerStats', methods = ["POST"])
 def get_PlayerStats():
     data = json.loads(request.form['data'])
     game_id = data['game_id']
+    type = data['type']
     batter_table = ''
     pitcher_table = ''
     data = {}

@@ -1200,7 +1200,7 @@ function  getNHLPlayerStats(id){
                 divContent.style.width = `${window.innerWidth - 165 * 2}px`;
 
                 if(data.skater != undefined && data.skater.length > 0) {
-                    html += '<div class="batter-container">'
+                    html += '<div class="skater-container">'
                     html += '<div style="background-color:black">GID</div>'
                     html += '<div style="background-color:black">PID</div>'
                     html += '<div style="background-color:black">TEAM</div>'
@@ -1257,7 +1257,7 @@ function  getNHLPlayerStats(id){
                 }
 
                 if(data.goaltender != undefined && data.goaltender.length > 0) {
-                    html += '<div class="pitcher-container">'
+                    html += '<div class="goaltender-container">'
                     html += '<div style="background-color:black">GID</div>'
                     html += '<div style="background-color:black">PID</div>'
                     html += '<div style="background-color:black">TEAM</div>'

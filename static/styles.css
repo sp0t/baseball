@@ -120,13 +120,29 @@ a{
 
 .batter-container {
 	display: grid;
-	grid-template-columns: auto auto auto auto auto auto auto auto auto auto auto auto auto auto auto auto auto auto auto auto auto auto auto auto;
+	grid-template-columns: auto auto auto auto auto auto auto auto auto auto auto auto auto auto auto auto auto auto auto auto auto;
 	gap: 1px;
 	background-color: white;
 	padding: 1px;
 }
 
 .pitcher-container {
+	display: grid;
+	grid-template-columns: auto auto auto auto auto auto auto auto auto auto auto auto auto;
+	gap: 1px;
+	background-color: white;
+	padding: 1px;
+}
+
+.skater-container {
+	display: grid;
+	grid-template-columns: auto auto auto auto auto auto auto auto auto auto auto auto auto auto auto auto auto auto auto auto auto auto auto auto;
+	gap: 1px;
+	background-color: white;
+	padding: 1px;
+}
+
+.goaltender-container {
 	display: grid;
 	grid-template-columns: auto auto auto auto auto auto auto auto auto auto auto auto;
 	gap: 1px;
@@ -151,6 +167,22 @@ a{
 }
   
 .pitcher-container > div {
+	background-color: gray;
+	text-align: center;
+	color: white;
+	padding: 10px 0;
+	font-size: 13px;
+}
+
+.skater-container > div {
+	background-color: gray;
+	text-align: center;
+	color: white;
+	padding: 10px 6px;
+	font-size: 13px;
+}
+  
+.goaltender-container > div {
 	background-color: gray;
 	text-align: center;
 	color: white;

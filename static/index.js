@@ -904,6 +904,7 @@ function  getPlayerStats(id, type){
             console.log('before sending');
         },
         success: function (data){ 
+            console.log(data)
             var html = '';
                 const divContainer = document.getElementById(id);
                 const divContent = document.getElementById(`stats_${id}`);

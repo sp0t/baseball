@@ -371,15 +371,10 @@ def get_player_info():
 
     return data
 
-@app.route('/get_betting_info', methods = ["POST"])
-def get_betting_info(): 
+@app.route('/get_graph_info', methods = ["POST"])
+def get_graph_info(): 
     #engine = database.connect_to_db()
-    year = request.form['year']
-    season_res = pd.read_sql(f"SELECT betdate, SUM(stake) stake, SUM(CASE WHEN status = '2' THEN wins ELSE 0 END) wins, SUM(CASE WHEN status = '1' THEN stake ELSE 0 END) losses FROM betting_table WHERE status != '0' AND status != '3' AND betdate LIKE '{year}%%' GROUP BY betdate ORDER BY betdate;", con = engine).to_dict('records')
-    total_res = pd.read_sql(f"SELECT betdate, SUM(stake) stake, SUM(CASE WHEN status = '2' THEN wins ELSE 0 END) wins, SUM(CASE WHEN status = '1' THEN stake ELSE 0 END) losses FROM betting_table WHERE status != '0' AND status != '3' GROUP BY betdate ORDER BY betdate;", con = engine).to_dict('records')
-    data = {}
-    data['season'] = season_res
-    data['total'] = total_res
+    data = pd.read_sql(f"SELECT * FROM graph_table ORDER BY id;", con = engine).to_dict('records')
     return data
 
 @app.route('/set_autoBet_state', methods = ["POST"])
@@ -508,53 +503,9 @@ def make_prediction():
             thread.start()
             preds_1c = {'away_prob': 0, 'home_prob': 0, 'away_odd': 0, 'home_odd': 0, 'stake': stake_size}
             prediction = {'model':'c', '1c': preds_1c}
-            # prediction_c = predict_c.get_probabilities(params, engine)
-        
-            # preds_1c = prediction_c
-            # preds_1c = np.round(100 * preds_1c[0], 2)
-
-            # away_odd = 0
-            # home_odd = 0
-            # away_dec_odd = 0
-            # home_dec_odd = 0
-            # away_dec_odd = round(1.03 / (preds_1c[0] / 100), 2)
-            # away_odd = odds.decimalToAmerian(away_dec_odd)
-
-            # home_dec_odd = round(1.03 / (preds_1c[1] / 100), 2)
-            # home_odd = odds.decimalToAmerian(home_dec_odd)
-
-            # preds_1c = {'away_prob': preds_1c[0], 'home_prob': preds_1c[1], 'away_odd': away_odd, 'home_odd': home_odd, 'stake': stake_size}
-            # engine.execute(f"INSERT INTO predict_table(game_id, lc_away_prob, lc_home_prob, lc_away_odd, lc_home_odd) VALUES('{gameId}', '{preds_1c['away_prob']}', '{preds_1c['home_prob']}', '{preds_1c['away_odd']}', '{preds_1c['home_odd']}') ON CONFLICT (game_id) DO UPDATE SET lc_away_prob = excluded.lc_away_prob, lc_home_prob = excluded.lc_home_prob, lc_away_odd = excluded.lc_away_odd, lc_home_odd = excluded.lc_home_odd;")
-            # engine.execute(f"INSERT INTO win_percent_c(game_id, away_prob, home_prob) VALUES('{gameId}', '{preds_1c['away_prob']}', '{preds_1c['home_prob']}') ON CONFLICT (game_id) DO UPDATE SET away_prob = excluded.away_prob, home_prob = excluded.home_prob;")  
-            # prediction = {'model':'c', '1c': preds_1c}
-
         prediction = jsonify(prediction)
     
     return prediction
-
-# @app.route('/teams')
-# @login_required
-# def teams():
-#     if session["state"] == 0:
-#         return redirect(url_for("show_betting"))
-#     res = mlb.get('teams', params={'sportId':1})['teams']
-#     team_dict = [{k:v for k,v in el.items() if k in ['id', 'name', 'abbreviation', 'division', 'teamName']} for el in res]
-#     team_dict = {item['name']: item for item in team_dict}
-
-#     print(team_dict)
-
-#     res = list(mlb.standings_data().values())
-
-#     print(res)
-#     for league in res: 
-#         for team in league['teams']: 
-#             team.update({'abbreviation':team_dict[team['name']]['abbreviation']})
-#             team.update({'name':team_dict[team['name']]['teamName']})
-#     al=res[:3]
-#     nl=res[3:]
-
-
-#     return render_template('teams.html', al = al, nl = nl)
 
 @app.route('/teams', methods = ["GET", "POST"]) 
 @login_required
@@ -1246,77 +1197,25 @@ def reconciliation():
 @app.route('/season', methods = ["GET"]) 
 @login_required
 def season_state():
-    
-    #engine = database.connect_to_db()
-    year = date.today().year
+    bet_res = pd.read_sql(f"SELECT * FROM graph_table", con = engine).to_dict('records')
 
-    total_res = pd.read_sql(f"SELECT betdate, stake, wins, status FROM betting_table WHERE game = 'baseball' AND regstate != '2' AND status != '0' AND status != '3' ORDER BY betid;", con = engine)
-    season_res = pd.read_sql(f"SELECT betdate, stake, wins, status FROM betting_table WHERE game = 'baseball' AND regstate != '2' AND status != '0' AND status != '3' AND betdate LIKE '{year}%%' ORDER BY betid;", con = engine)
-    totaldata = total_res.to_dict('records')
-    seasondata = season_res.to_dict('records')
-
-    stake, profit, losses = 0, 0, 0
+    pl, total = 0, 0
     data = {}
-    data['season'] = {}
-    data['total'] = {}
 
-    for item in totaldata:
-        year = item['betdate'][:4]
-        newdate = datetime.strptime("2024-04-22", "%Y-%m-%d")
-        currentdate = datetime.strptime(item['betdate'], "%Y-%m-%d")
+    for bet in bet_res:
+        print(bet["pl"], bet["risk"])
+        pl += float(bet["pl"])
+        total += float(bet["risk"])
 
-        if currentdate < newdate:
-            if year == '2023':
-                stake += item["stake"] * 7
-            else:
-                stake += item["stake"] / 2
-
-            if(item["status"] == "1"):
-                if year == '2023':
-                    losses += float(item["stake"]) * 7
-                else:  
-                    losses += float(item["stake"]) / 2
-            elif(item["status"] == "2"):
-                if year == '2023':
-                    profit += float(item["wins"]) * 7
-                else:
-                    profit += float(item["wins"]) / 2
-        else:
-            stake += item["stake"]
-
-            if(item["status"] == "1"):
-                losses += float(item["stake"])
-            elif(item["status"] == "2"):
-                profit += float(item["wins"])
-    
-    data['total']["stake"] = "${:,.2f}".format(stake)
-    data['total']["pl"] = "${:,.2f}".format(profit - losses)
-    if (profit - losses) >= 0:
-        data['total']["color"] = "green"
+    if pl >= 0:
+        data["color"] = "green"
     else:
-        data['total']["color"] = "red"
-    yd = (profit - losses) / stake * 100
-    data['total']["yield"] = round(yd, 2)
+        data["color"] = "red"
 
-    stake, profit, losses = 0, 0, 0
-
-    for item in seasondata:
-        stake += item["stake"]
-
-        if(item["status"] == "1"):
-            losses += float(item["stake"])
-        elif(item["status"] == "2"):
-            profit += float(item["wins"])
-    
-    data['season']["stake"] = "${:,.2f}".format(stake)
-    data['season']["pl"] = "${:,.2f}".format(profit - losses)
-    if (profit - losses) >= 0:
-        data['season']["color"] = "green"
-    else:
-        data['season']["color"] = "red"
-    yd = (profit - losses) / stake * 100
-    data['season']["yield"] = round(yd, 2)
-
+    data['stake'] = "{:,.2f}".format(total)
+    data['pl'] = "{:,.2f}".format(pl)
+    yd = pl / total * 100
+    data["yield"] = round(yd, 2)
     return render_template("MLB/season.html", data = data)
 
 @app.route('/betting', methods = ["POST"])    

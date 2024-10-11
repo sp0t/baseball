@@ -19,8 +19,7 @@
         <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
         <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.3/moment-with-locales.min.js"
         integrity="sha512-vFABRuf5oGUaztndx4KoAEUVQnOvAIFs59y4tO0DILGWhQiFnFHiR+ZJfxLDyJlXgeut9Z07Svuvm+1Jv89w5g=="  crossorigin="anonymous" referrerpolicy="no-referrer"> </script>
-        <script type="text/javascript" src="https://canvasjs.com/assets/script/jquery-1.11.1.min.js"></script>
-        <script type="text/javascript" src="https://cdn.canvasjs.com/canvasjs.stock.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
         <style>
             th, td {
                 padding-left: 30px;
@@ -41,354 +40,586 @@
                 }
             })
             window.onload = function () {
-
+            
             var today = new Date();
             var year = today.getFullYear();
-            var averagepoit_50 = [];
-            var averagepoit_100 = [];
-            var averagepoit_200 = [];
+            let dataPointsB = [], dataPointsD = [], dataPointsW = [], dataPointsM = [], lineHalfB= [], lineHalfD = [], lineHalfW = [], lineHalfM = [], lineB = [], lineD = [], lineW = [], lineM = [], lineDoubleB = [], lineDoubleD = [], lineDoubleW = [], lineDoubleM = [], dataPointWPro = [];
 
             $.ajax({
-                url: '/get_betting_info', 
+                url: '/get_graph_info', 
                 type: 'POST', 
                 data: {'year':year.toString()},
                 beforeSend: function (){ 
                 },
-
-                success: function (data){ 
-
-                    var dataPoints = [];
-
-                    let USDollar = new Intl.NumberFormat('en-US', {
-                        style: 'currency',
-                        currency: 'USD',
-                    });
-
-                    var averagepoit_50 = [];
-                    var averagepoit_100 = [];
-                    var averagepoit_200 = [];
-
-                    var pl_vlaue = {}
-                    var value = 0;
-                    var update = 0;
-
-                    var stockChartSeason = new CanvasJS.StockChart("chartContainerSeasson",{
-                        theme: "light2",
-                        width: 1600,
-                        height: 800,
-                        charts: [{
-                        title: {
-                            fontColor:'black',
-                            margin: 10,
-                            text: `P/L analysis-${year}`   
-                        },
-                        toolTip:{          
-                            shared: true,   
-                            content: function(e) {
-                                // Extracting data point
-                                var dataPoint = e.entries[0].dataPoint;
-                                
-                                // Calculating movement
-                                var movement = dataPoint.y[3] - dataPoint.y[0];
-
-                                let d = new Date(dataPoint.x),
-                                month = '' + (d.getMonth() + 1), // Months are zero based
-                                day = '' + d.getDate(),
-                                year = d.getFullYear();
-
-                                // Add leading zero to month and day if needed
-                                if (month.length < 2) 
-                                    month = '0' + month;
-                                if (day.length < 2) 
-                                    day = '0' + day;
-                                var daystring = [year, month, day].join('-');
-                                
-                                // Formatting content
-                                var content = `<div style='padding:3px'><div style='color: red; font-size:16px; font-weight:bold; text-align: center;'>${daystring}</div><div style='display:flex; width:100%; padding-top: 3px'><div style='width:50%; text-align: right; padding-right:5px'>Open Price:</div><div style='width:50%; text-align: left; padding-left:5px'> ${USDollar.format(dataPoint.y[0].toFixed(2))}</div></div>
-                                <div style='display:flex; width:100%; padding-top: 3px'><div style='width:50%; text-align: right; padding-right:5px'>Close Price:</div><div style='width:50%; text-align: left; padding-left:5px'> ${USDollar.format(dataPoint.y[3].toFixed(2))}</div></div>
-                                <div style='display:flex; width:100%; padding-top: 3px'><div style='width:50%; text-align: right; padding-right:5px'>Movement: </div><div style="width:50%; text-align: left; padding-left:5px; ${movement>0? 'color:green':'color:red'}"> ${USDollar.format(movement.toFixed(2))}</div></div>`;
-
-                                var str = "";
-                                for (var i = 1; i < e.entries.length; i++){
-                                    var  temp = `<div style='display:flex; width:100%; padding-top: 3px'><div style='width:50%; text-align: right; padding-right:5px'>${e.entries[i].dataSeries.name}:</div><div style="width:50%; text-align: left; padding-left:5px;Yes">${USDollar.format(e.entries[i].dataPoint.y.toFixed(2))}</div></div>` ; 
-                                    str = str.concat(temp);
-                                }
-
-                                str = str + '</div>'
-
-                                content = content.concat(str);
-                                
-                                return content;
+                success: function(data) {
+                    var value = 0, update = 0, prevalue = 0, average = 0, half_avg_value = 0, avg_value = 0, double_avg_value = 0, pre_half_avg_value = 0, pre_avg_value = 0, pre_double_avg_value = 0;
+                    var currentWeek = [];
+                    var pl= [];
+                    for(x = 0; x < data.length; x++) {
+                        update = value + parseFloat(data[x]['pl']);
+                        pl.push(update);
+                        if (x >= 50) {
+                            for (var k=x-50 + 1; k <= x; k++) {
+                                average = average + pl[k];
                             }
-                        },
-                        axisY: {
-                            prefix: "$"
-                        },
-                        axisX: {
-                            crosshair: {
-                            enabled: true
-                            }
-                        },
-                        data: [
-                            {
-                            type: "candlestick",
-                            risingColor: "green",
-                            fallingColor: "red",
-                            yValueFormatString: "$#,###.##",
-                            dataPoints : dataPoints
-                            },
-                            {        
-                                type: "spline",
-                                name: "avg-50",
-                                markerType: "none",
-                                color: "blue",
-                                dataPoints: averagepoit_50
-                            },
-
-                            {        
-                                type: "spline",
-                                name: "avg-100",
-                                markerType: "none",
-                                color: "yellow",
-                                dataPoints: averagepoit_100
-                            },
-
-                            {        
-                                type: "spline",
-                                name: "avg-200",
-                                markerType: "none",
-                                color: "purple",
-                                dataPoints: averagepoit_200
-                            },
-                            ]
-                        }],
-                    });
-
-                    for(var i = 0; i < data['season'].length; i++)
-                    {
-                        var date = new Date(data['season'][i]['betdate'])
-                        var average = 0;
-
-                        update = value + data['season'][i]['wins'] - data['season'][i]['losses']
-                        pl_vlaue[i] = update
-                        dataPoints.push({x: date,  y: [Number(value), Number(value > update? value: update), Number(value > update? update: value), Number(update)]})
-                        value = update
-
-                        if (i>=50) {
-                            for (var k=i-50 + 1; k <= i; k++) {
-                                average = average + pl_vlaue[k];
-                            }
-                            average = average / 50;
-
-                            var average_price =  USDollar.format(average);
-                            averagepoit_50.push({x: date, y: average})
-                            
+                            half_avg_value = average / 50;
+                            lineHalfB.push({x: data[x].id, y: half_avg_value});
+                            average = 0;
                         }
 
-                        average = 0
-
-                        if (i>=100) {
-                            for (var k=i-100 + 1; k <= i; k++) {
-                                average = average + pl_vlaue[k];
+                        if (x >= 100) {
+                            for (var k=x-100 + 1; k <= x; k++) {
+                                average = average + pl[k];
                             }
-                            average = average / 100;
-
-                            var average_price =  USDollar.format(average);
-                            averagepoit_100.push({x: date, y: average})
-                            
+                            avg_value = average / 100;
+                            lineB.push({x: data[x].id, y: avg_value});
+                            average = 0;
                         }
 
-                        average = 0
-
-                        if (i>=200) {
-                            for (var k=i-200 + 1; k <= i; k++) {
-                                average = average + pl_vlaue[k];
+                        if (x >= 200) {
+                            for (var k=x-200 + 1; k <= x; k++) {
+                                average = average + pl[k];
                             }
-                            average = average / 200;
-
-                            var average_price =  USDollar.format(average);
-                            averagepoit_200.push({x: date, y: average})
-                            
+                            double_avg_value = average / 200;
+                            lineDoubleB.push({x: data[x].id, y: double_avg_value});
+                            average = 0;
                         }
-                    }
-                    stockChartSeason.render();
 
-                    averagepoit_50 = [];
-                    averagepoit_100 = [];
-                    averagepoit_200 = [];
-                    dataPoints = [];
+                        dataPointsB.push({x: data[x].id, y:[value, value > update? value: update, value > update? update: value, update]});
 
-                    pl_vlaue = {}
-                    value = 0;
-                    update = 0;
-                    var startValue = new Date('2023-09-29');
-                    var endValue = new Date('2024-03-23');
-
-                    var stockChartTotal = new CanvasJS.StockChart("chartContainerTotal",{
-                        theme: "light2",
-                        width: 1600,
-                        height: 800,
-                        charts: [{
-                        title: {
-                            fontColor:'black',
-                            margin: 10,
-                            text: `P/L analysis-Total`   
-                        },
-                        toolTip:{          
-                            shared: true,   
-                            content: function(e) {
-                                // Extracting data point
-                                var dataPoint = e.entries[0].dataPoint;
-                                
-                                // Calculating movement
-                                var movement = dataPoint.y[3] - dataPoint.y[0];
-
-                                let d = new Date(dataPoint.x),
-                                month = '' + (d.getMonth() + 1), // Months are zero based
-                                day = '' + d.getDate(),
-                                year = d.getFullYear();
-
-                                // Add leading zero to month and day if needed
-                                if (month.length < 2) 
-                                    month = '0' + month;
-                                if (day.length < 2) 
-                                    day = '0' + day;
-                                var daystring = [year, month, day].join('-');
-                                
-                                // Formatting content
-                                var content = `<div style='padding:3px'><div style='color: red; font-size:16px; font-weight:bold; text-align: center;'>${daystring}</div><div style='display:flex; width:100%; padding-top: 3px'><div style='width:50%; text-align: right; padding-right:5px'>Open Price:</div><div style='width:50%; text-align: left; padding-left:5px'> ${USDollar.format(dataPoint.y[0].toFixed(2))}</div></div>
-                                <div style='display:flex; width:100%; padding-top: 3px'><div style='width:50%; text-align: right; padding-right:5px'>Close Price:</div><div style='width:50%; text-align: left; padding-left:5px'> ${USDollar.format(dataPoint.y[3].toFixed(2))}</div></div>
-                                <div style='display:flex; width:100%; padding-top: 3px'><div style='width:50%; text-align: right; padding-right:5px'>Movement: </div><div style="width:50%; text-align: left; padding-left:5px; ${movement>0? 'color:green':'color:red'}"> ${USDollar.format(movement.toFixed(2))}</div></div>`;
-
-                                var str = "";
-                                for (var i = 1; i < e.entries.length; i++){
-                                    var  temp = `<div style='display:flex; width:100%; padding-top: 3px'><div style='width:50%; text-align: right; padding-right:5px'>${e.entries[i].dataSeries.name}:</div><div style="width:50%; text-align: left; padding-left:5px;Yes">${USDollar.format(e.entries[i].dataPoint.y.toFixed(2))}</div></div>` ; 
-                                    str = str.concat(temp);
-                                }
-
-                                str = str + '</div>'
-
-                                content = content.concat(str);
-                                
-                                return content;
+                        if( x < (data.length - 2) && data[x].betdate != data[x + 1].betdate) {
+                            dataPointsD.push({x: data[x].betdate, y:[value, value > update? value: update, value > update? update: value, update]});
+                            if (x >= 50) {
+                                lineHalfD.push({x: data[x].betdate, y: half_avg_value});
                             }
-                        },
-                        axisY: {
-                            prefix: "$"
-                        },
-                        axisX: {
-                            crosshair: {
-                            enabled: true
-                            },
-                            scaleBreaks: {
-                            customBreaks: [{
-                                    startValue: startValue,
-                                    endValue: endValue,
-                                    type: "straight",
-                                    fillOpacity: 0,
-                                    spacing: '0%'
-                                }]
+                            
+                            if (x >= 100) {
+                                lineHalfD.push({x: data[x].betdate, y: avg_value});
                             }
-                        },
-                        data: [
-                            {
-                            type: "candlestick",
-                            risingColor: "green",
-                            fallingColor: "red",
-                            yValueFormatString: "$#,###.##",
-                            dataPoints : dataPoints
-                            },
-                            {        
-                                type: "spline",
-                                name: "avg-50",
-                                markerType: "none",
-                                color: "blue",
-                                dataPoints: averagepoit_50
-                            },
+                            
+                            if (x >= 200) {
+                                lineHalfD.push({x: data[x].betdate, y: double_avg_value});
+                            }
+                            dataPointWPro.push({x: data[x].betdate, y: parseFloat(data[x].run_win)});
+                        }
 
-                            {        
-                                type: "spline",
-                                name: "avg-100",
-                                markerType: "none",
-                                color: "yellow",
-                                dataPoints: averagepoit_100
-                            },
+                        if(x == (data.length - 1)) {
+                            dataPointsD.push({x: data[x].betdate, y:[value, value > update? value: update, value > update? update: value, update]});
+                            if (x >= 50) {
+                                lineHalfD.push({x: data[x].betdate, y: half_avg_value});
+                            }
 
-                            {        
-                                type: "spline",
-                                name: "avg-200",
-                                markerType: "none",
-                                color: "purple",
-                                dataPoints: averagepoit_200
-                            },
-                            ]
-                        }],
-                    });
-                    
-                    
-                    for(var i = 0; i < data['total'].length; i++)
-                    {
-                        var date = new Date(data['total'][i]['betdate'])
-                        var average = 0;
+                            if (x >= 100) {
+                                lineHalfD.push({x: data[x].betdate, y: avg_value});
+                            }
 
-                        var seasonyear = data['total'][i].betdate.substring(0, 4);
-                        var newdate = new Date("2024-04-22");
-                        var currentDate = new Date(data['total'][i].betdate);
+                            if (x >= 200) {
+                                lineHalfD.push({x: data[x].betdate, y: double_avg_value});
+                            }
+                            dataPointWPro.push({x: data[x].betdate, y: parseFloat(data[x].run_win)});
+                        }
 
-                        if (currentDate < newdate) {
-                            if(seasonyear == '2023')
-                                update = value + data['total'][i]['wins'] * 7 - data['total'][i]['losses'] * 7;
-                            else
-                                update = value + data['total'][i]['wins'] / 2 - data['total'][i]['losses'] / 2;
+                        var date = new Date(data[x].betdate);
+                        var dayOfWeek = date.getDay();
+                        if (currentWeek.length === 0) {
+                            currentWeek.push(data[x].betdate);
                         } else {
-                            update = value + data['total'][i]['wins'] - data['total'][i]['losses'];
-                        }
-                        
-                        pl_vlaue[i] = update
-                        dataPoints.push({x: date,  y: [Number(value), Number(value > update? value: update), Number(value > update? update: value), Number(update)]})
-                        
-                        value = update
+                            var lastDateInCurrentWeek = new Date(currentWeek[currentWeek.length - 1]);
+                            var differenceInDays = (date - lastDateInCurrentWeek) / (1000 * 60 * 60 * 24);
 
-                        if (i>=50) {
-                            for (var k=i-50 + 1; k <= i; k++) {
-                                average = average + pl_vlaue[k];
+                            if (differenceInDays >= 7) { 
+                                currentWeek = [data[x].betdate]; 
+                                dataPointsW.push({x: data[x-1].betdate, y:[prevalue, prevalue > value? prevalue: value, prevalue > value? value: prevalue, value]});
+                                if (x >= 50) {
+                                    lineHalfW.push({x: data[x-1].betdate, y: pre_half_avg_value});
+                                }
+
+                                if (x >= 100) {
+                                    lineHalfW.push({x: data[x-1].betdate, y: pre_avg_value});
+                                }
+
+                                if (x >= 200) {
+                                    lineHalfW.push({x: data[x-1].betdate, y: pre_double_avg_value});
+                                }
                             }
-                            average = average / 50;
-
-                            var average_price =  USDollar.format(average);
-                            averagepoit_50.push({x: date, y: average})
                             
-                        }
+                            if (x < (data.length - 2)) {
+                                if (data[x].betdate != data[x+1].betdate && (date.getDay() < lastDateInCurrentWeek.getDay() || dayOfWeek === 0)) {
+                                    currentWeek = [data[x].betdate];
+                                    dataPointsW.push({x: data[x-1].betdate, y:[prevalue, prevalue > value? prevalue: value, prevalue > value? value: prevalue, value]});
 
-                        average = 0
+                                    if (x >= 50) {
+                                        lineHalfW.push({x: data[x-1].betdate, y: pre_half_avg_value});
+                                    }
 
-                        if (i>=100) {
-                            for (var k=i-100 + 1; k <= i; k++) {
-                                average = average + pl_vlaue[k];
+                                    if (x >= 100) {
+                                        lineHalfW.push({x: data[x-1].betdate, y: pre_avg_value});
+                                    }
+
+                                    if (x >= 200) {
+                                        lineHalfW.push({x: data[x-1].betdate, y: pre_double_avg_value});
+                                    }
+                                } else {
+                                    currentWeek.push(data[x].betdate);
+                                }
+                            } else {
+                                dataPointsW.push({x: data[x].betdate, y:[value, value > update? value: update, value > update? update: value, update]});
+                                if (x >= 50) {
+                                        lineHalfW.push({x: data[x].betdate, y: half_avg_value});
+                                }
+
+                                if (x >= 100) {
+                                    lineHalfW.push({x: data[x].betdate, y: avg_value});
+                                }
+
+                                if (x >= 200) {
+                                    lineHalfW.push({x: data[x].betdate, y: double_avg_value});
+                                }
                             }
-                            average = average / 100;
-
-                            var average_price =  USDollar.format(average);
-                            averagepoit_100.push({x: date, y: average})
-                            
                         }
 
-                        average = 0
+                        if(x == (data.length - 1)) {
+                            dataPointsM.push({x: data[x].betdate, y:[value, value > update? value: update, value > update? update: value, update]});
 
-                        if (i>=200) {
-                            for (var k=i-200 + 1; k <= i; k++) {
-                                average = average + pl_vlaue[k];
+                            if (x >= 50) {
+                                lineHalfM.push({x: data[x].betdate, y: half_avg_value});
                             }
-                            average = average / 200;
 
-                            var average_price =  USDollar.format(average);
-                            averagepoit_200.push({x: date, y: average})
-                            
+                            if (x >= 100) {
+                                lineHalfM.push({x: data[x].betdate, y: avg_value});
+                            }
+
+                            if (x >= 200) {
+                                lineHalfM.push({x: data[x].betdate, y: double_avg_value});
+                            }
+                        } else {
+                            if(new Date(data[x + 1].betdate).getMonth() !== date.getMonth()) {
+                                dataPointsM.push({x: data[x].betdate, y:[value, value > update? value: update, value > update? update: value, update]});
+
+                                if (x >= 50) {
+                                    lineHalfM.push({x: data[x].betdate, y: half_avg_value});
+                                }
+
+                                if (x >= 100) {
+                                    lineHalfM.push({x: data[x].betdate, y: avg_value});
+                                }
+
+                                if (x >= 200) {
+                                    lineHalfM.push({x: data[x].betdate, y: double_avg_value});
+                                }
+                            }
                         }
+
+                        prevalue = value;
+                        value = update;
+                        pre_half_avg_value = half_avg_value;
+                        pre_avg_value = avg_value;
+                        pre_double_avg_value = double_avg_value;
+                        half_avg_value = 0;
+                        avg_value = 0;
+                        double_avg_value = 0;
                     }
-                    stockChartTotal.render();
-                 }               
-            });      
+
+                    console.log(dataPointWPro)
+
+                    var options = {
+                        series: [ {
+                        name: 'candle',
+                        type: 'candlestick',
+                        data: dataPointsM
+                        }],
+                        chart: {
+                        height: 350,
+                        type: 'line',
+                        },
+                        title: {
+                        text: 'CandleStick Chart',
+                        align: 'left'
+                        },
+                        stroke: {
+                        width: [3, 1]
+                        },
+                        tooltip: {
+                        shared: true,
+                        custom: [function({seriesIndex, dataPointIndex, w}) {
+                            return w.globals.series[seriesIndex][dataPointIndex]
+                        }, function({ seriesIndex, dataPointIndex, w }) {
+                            var o = w.globals.seriesCandleO[seriesIndex][dataPointIndex]
+                            var h = w.globals.seriesCandleH[seriesIndex][dataPointIndex]
+                            var l = w.globals.seriesCandleL[seriesIndex][dataPointIndex]
+                            var c = w.globals.seriesCandleC[seriesIndex][dataPointIndex]
+                            return (
+                            '<div class="apexcharts-tooltip-candlestick">' +
+                            '<div>Open: <span class="value">' +
+                            o +
+                            '</span></div>' +
+                            '<div>High: <span class="value">' +
+                            h +
+                            '</span></div>' +
+                            '<div>Low: <span class="value">' +
+                            l +
+                            '</span></div>' +
+                            '<div>Close: <span class="value">' +
+                            c +
+                            '</span></div>' +
+                            '</div>'
+                            )
+                        }]
+                        },
+                        xaxis: {
+                        type: 'category'
+                        }
+                        };
+
+                    var chart = new ApexCharts(document.querySelector("#chartContainerTotal"), options);
+                    chart.render();
+                }
+            })
+               
+            // $.ajax({
+            //     url: '/get_betting_info', 
+            //     type: 'POST', 
+            //     data: {'year':year.toString()},
+            //     beforeSend: function (){ 
+            //     },
+
+            //     success: function (data){ 
+
+            //         var dataPoints = [];
+
+            //         let USDollar = new Intl.NumberFormat('en-US', {
+            //             style: 'currency',
+            //             currency: 'USD',
+            //         });
+
+            //         var averagepoit_50 = [];
+            //         var averagepoit_100 = [];
+            //         var averagepoit_200 = [];
+
+            //         var pl_vlaue = {}
+            //         var value = 0;
+            //         var update = 0;
+
+            //         var stockChartSeason = new CanvasJS.StockChart("chartContainerSeasson",{
+            //             theme: "light2",
+            //             width: 1600,
+            //             height: 800,
+            //             charts: [{
+            //             title: {
+            //                 fontColor:'black',
+            //                 margin: 10,
+            //                 text: `P/L analysis-${year}`   
+            //             },
+            //             toolTip:{          
+            //                 shared: true,   
+            //                 content: function(e) {
+            //                     // Extracting data point
+            //                     var dataPoint = e.entries[0].dataPoint;
+                                
+            //                     // Calculating movement
+            //                     var movement = dataPoint.y[3] - dataPoint.y[0];
+
+            //                     let d = new Date(dataPoint.x),
+            //                     month = '' + (d.getMonth() + 1), // Months are zero based
+            //                     day = '' + d.getDate(),
+            //                     year = d.getFullYear();
+
+            //                     // Add leading zero to month and day if needed
+            //                     if (month.length < 2) 
+            //                         month = '0' + month;
+            //                     if (day.length < 2) 
+            //                         day = '0' + day;
+            //                     var daystring = [year, month, day].join('-');
+                                
+            //                     // Formatting content
+            //                     var content = `<div style='padding:3px'><div style='color: red; font-size:16px; font-weight:bold; text-align: center;'>${daystring}</div><div style='display:flex; width:100%; padding-top: 3px'><div style='width:50%; text-align: right; padding-right:5px'>Open Price:</div><div style='width:50%; text-align: left; padding-left:5px'> ${USDollar.format(dataPoint.y[0].toFixed(2))}</div></div>
+            //                     <div style='display:flex; width:100%; padding-top: 3px'><div style='width:50%; text-align: right; padding-right:5px'>Close Price:</div><div style='width:50%; text-align: left; padding-left:5px'> ${USDollar.format(dataPoint.y[3].toFixed(2))}</div></div>
+            //                     <div style='display:flex; width:100%; padding-top: 3px'><div style='width:50%; text-align: right; padding-right:5px'>Movement: </div><div style="width:50%; text-align: left; padding-left:5px; ${movement>0? 'color:green':'color:red'}"> ${USDollar.format(movement.toFixed(2))}</div></div>`;
+
+            //                     var str = "";
+            //                     for (var i = 1; i < e.entries.length; i++){
+            //                         var  temp = `<div style='display:flex; width:100%; padding-top: 3px'><div style='width:50%; text-align: right; padding-right:5px'>${e.entries[i].dataSeries.name}:</div><div style="width:50%; text-align: left; padding-left:5px;Yes">${USDollar.format(e.entries[i].dataPoint.y.toFixed(2))}</div></div>` ; 
+            //                         str = str.concat(temp);
+            //                     }
+
+            //                     str = str + '</div>'
+
+            //                     content = content.concat(str);
+                                
+            //                     return content;
+            //                 }
+            //             },
+            //             axisY: {
+            //                 prefix: "$"
+            //             },
+            //             axisX: {
+            //                 crosshair: {
+            //                 enabled: true
+            //                 }
+            //             },
+            //             data: [
+            //                 {
+            //                 type: "candlestick",
+            //                 risingColor: "green",
+            //                 fallingColor: "red",
+            //                 yValueFormatString: "$#,###.##",
+            //                 dataPoints : dataPoints
+            //                 },
+            //                 {        
+            //                     type: "spline",
+            //                     name: "avg-50",
+            //                     markerType: "none",
+            //                     color: "blue",
+            //                     dataPoints: averagepoit_50
+            //                 },
+
+            //                 {        
+            //                     type: "spline",
+            //                     name: "avg-100",
+            //                     markerType: "none",
+            //                     color: "yellow",
+            //                     dataPoints: averagepoit_100
+            //                 },
+
+            //                 {        
+            //                     type: "spline",
+            //                     name: "avg-200",
+            //                     markerType: "none",
+            //                     color: "purple",
+            //                     dataPoints: averagepoit_200
+            //                 },
+            //                 ]
+            //             }],
+            //         });
+
+            //         for(var i = 0; i < data['season'].length; i++)
+            //         {
+            //             var date = new Date(data['season'][i].betdate)
+            //             var average = 0;
+
+            //             update = value + data['season'][i]['wins'] - data['season'][i]['losses']
+            //             pl_vlaue[i] = update
+            //             dataPoints.push({x: date,  y: [Number(value), Number(value > update? value: update), Number(value > update? update: value), Number(update)]})
+            //             value = update
+
+            //             if (i>=50) {
+            //                 for (var k=i-50 + 1; k <= i; k++) {
+            //                     average = average + pl_vlaue[k];
+            //                 }
+            //                 average = average / 50;
+
+            //                 var average_price =  USDollar.format(average);
+            //                 averagepoit_50.push({x: date, y: average})
+                            
+            //             }
+
+            //             average = 0
+
+            //             if (i>=100) {
+            //                 for (var k=i-100 + 1; k <= i; k++) {
+            //                     average = average + pl_vlaue[k];
+            //                 }
+            //                 average = average / 100;
+
+            //                 var average_price =  USDollar.format(average);
+            //                 averagepoit_100.push({x: date, y: average})
+                            
+            //             }
+
+            //             average = 0
+
+            //             if (i>=200) {
+            //                 for (var k=i-200 + 1; k <= i; k++) {
+            //                     average = average + pl_vlaue[k];
+            //                 }
+            //                 average = average / 200;
+
+            //                 var average_price =  USDollar.format(average);
+            //                 averagepoit_200.push({x: date, y: average})
+                            
+            //             }
+            //         }
+            //         stockChartSeason.render();
+
+            //         averagepoit_50 = [];
+            //         averagepoit_100 = [];
+            //         averagepoit_200 = [];
+            //         dataPoints = [];
+
+            //         pl_vlaue = {}
+            //         value = 0;
+            //         update = 0;
+            //         var startValue = new Date('2023-09-29');
+            //         var endValue = new Date('2024-03-23');
+
+            //         var stockChartTotal = new CanvasJS.StockChart("chartContainerTotal",{
+            //             theme: "light2",
+            //             width: 1600,
+            //             height: 800,
+            //             charts: [{
+            //             title: {
+            //                 fontColor:'black',
+            //                 margin: 10,
+            //                 text: `P/L analysis-Total`   
+            //             },
+            //             toolTip:{          
+            //                 shared: true,   
+            //                 content: function(e) {
+            //                     // Extracting data point
+            //                     var dataPoint = e.entries[0].dataPoint;
+                                
+            //                     // Calculating movement
+            //                     var movement = dataPoint.y[3] - dataPoint.y[0];
+
+            //                     let d = new Date(dataPoint.x),
+            //                     month = '' + (d.getMonth() + 1), // Months are zero based
+            //                     day = '' + d.getDate(),
+            //                     year = d.getFullYear();
+
+            //                     // Add leading zero to month and day if needed
+            //                     if (month.length < 2) 
+            //                         month = '0' + month;
+            //                     if (day.length < 2) 
+            //                         day = '0' + day;
+            //                     var daystring = [year, month, day].join('-');
+                                
+            //                     // Formatting content
+            //                     var content = `<div style='padding:3px'><div style='color: red; font-size:16px; font-weight:bold; text-align: center;'>${daystring}</div><div style='display:flex; width:100%; padding-top: 3px'><div style='width:50%; text-align: right; padding-right:5px'>Open Price:</div><div style='width:50%; text-align: left; padding-left:5px'> ${USDollar.format(dataPoint.y[0].toFixed(2))}</div></div>
+            //                     <div style='display:flex; width:100%; padding-top: 3px'><div style='width:50%; text-align: right; padding-right:5px'>Close Price:</div><div style='width:50%; text-align: left; padding-left:5px'> ${USDollar.format(dataPoint.y[3].toFixed(2))}</div></div>
+            //                     <div style='display:flex; width:100%; padding-top: 3px'><div style='width:50%; text-align: right; padding-right:5px'>Movement: </div><div style="width:50%; text-align: left; padding-left:5px; ${movement>0? 'color:green':'color:red'}"> ${USDollar.format(movement.toFixed(2))}</div></div>`;
+
+            //                     var str = "";
+            //                     for (var i = 1; i < e.entries.length; i++){
+            //                         var  temp = `<div style='display:flex; width:100%; padding-top: 3px'><div style='width:50%; text-align: right; padding-right:5px'>${e.entries[i].dataSeries.name}:</div><div style="width:50%; text-align: left; padding-left:5px;Yes">${USDollar.format(e.entries[i].dataPoint.y.toFixed(2))}</div></div>` ; 
+            //                         str = str.concat(temp);
+            //                     }
+
+            //                     str = str + '</div>'
+
+            //                     content = content.concat(str);
+                                
+            //                     return content;
+            //                 }
+            //             },
+            //             axisY: {
+            //                 prefix: "$"
+            //             },
+            //             axisX: {
+            //                 crosshair: {
+            //                 enabled: true
+            //                 },
+            //                 scaleBreaks: {
+            //                 customBreaks: [{
+            //                         startValue: startValue,
+            //                         endValue: endValue,
+            //                         type: "straight",
+            //                         fillOpacity: 0,
+            //                         spacing: '0%'
+            //                     }]
+            //                 }
+            //             },
+            //             data: [
+            //                 {
+            //                 type: "candlestick",
+            //                 risingColor: "green",
+            //                 fallingColor: "red",
+            //                 yValueFormatString: "$#,###.##",
+            //                 dataPoints : dataPoints
+            //                 },
+            //                 {        
+            //                     type: "spline",
+            //                     name: "avg-50",
+            //                     markerType: "none",
+            //                     color: "blue",
+            //                     dataPoints: averagepoit_50
+            //                 },
+
+            //                 {        
+            //                     type: "spline",
+            //                     name: "avg-100",
+            //                     markerType: "none",
+            //                     color: "yellow",
+            //                     dataPoints: averagepoit_100
+            //                 },
+
+            //                 {        
+            //                     type: "spline",
+            //                     name: "avg-200",
+            //                     markerType: "none",
+            //                     color: "purple",
+            //                     dataPoints: averagepoit_200
+            //                 },
+            //                 ]
+            //             }],
+            //         });
+                    
+                    
+            //         for(var i = 0; i < data['total'].length; i++)
+            //         {
+            //             var date = new Date(data['total'][i].betdate)
+            //             var average = 0;
+
+            //             var seasonyear = data['total'][i].betdate.substring(0, 4);
+            //             var newdate = new Date("2024-04-22");
+            //             var currentDate = new Date(data['total'][i].betdate);
+
+            //             if (currentDate < newdate) {
+            //                 if(seasonyear == '2023')
+            //                     update = value + data['total'][i]['wins'] * 7 - data['total'][i]['losses'] * 7;
+            //                 else
+            //                     update = value + data['total'][i]['wins'] / 2 - data['total'][i]['losses'] / 2;
+            //             } else {
+            //                 update = value + data['total'][i]['wins'] - data['total'][i]['losses'];
+            //             }
+                        
+            //             pl_vlaue[i] = update
+            //             dataPoints.push({x: date,  y: [Number(value), Number(value > update? value: update), Number(value > update? update: value), Number(update)]})
+                        
+            //             value = update
+
+            //             if (i>=50) {
+            //                 for (var k=i-50 + 1; k <= i; k++) {
+            //                     average = average + pl_vlaue[k];
+            //                 }
+            //                 average = average / 50;
+
+            //                 var average_price =  USDollar.format(average);
+            //                 averagepoit_50.push({x: date, y: average})
+                            
+            //             }
+
+            //             average = 0
+
+            //             if (i>=100) {
+            //                 for (var k=i-100 + 1; k <= i; k++) {
+            //                     average = average + pl_vlaue[k];
+            //                 }
+            //                 average = average / 100;
+
+            //                 var average_price =  USDollar.format(average);
+            //                 averagepoit_100.push({x: date, y: average})
+                            
+            //             }
+
+            //             average = 0
+
+            //             if (i>=200) {
+            //                 for (var k=i-200 + 1; k <= i; k++) {
+            //                     average = average + pl_vlaue[k];
+            //                 }
+            //                 average = average / 200;
+
+            //                 var average_price =  USDollar.format(average);
+            //                 averagepoit_200.push({x: date, y: average})
+                            
+            //             }
+            //         }
+            //         stockChartTotal.render();
+            //      }               
+            // });      
+            // }
+                
+
             }
             </script>
     </head>
@@ -432,14 +663,14 @@
                 </thead>
                 <tbody style="font-size: 30px; height: 60px;">
                     <tr>
-                        <td id="total-amount" class="total-amount-txt" style="font-size: 30px;">{{data['season']['stake']}}</td>
-                        {% if data['season'].color == "green" %}
-                            <td id="win-amount" class="win-amount-txt" style="font-size: 30px;">{{data['season']['pl']}}</td>
+                        <td id="total-amount" class="total-amount-txt" style="font-size: 30px;">{{data['stake']}}</td>
+                        {% if data.color == "green" %}
+                            <td id="win-amount" class="win-amount-txt" style="font-size: 30px;">{{data['pl']}}</td>
                         {% endif %}
-                        {% if data['season'].color == "red" %}
-                            <td id="win-amount" class="loss-amount-txt" style="font-size: 30px;">{{data['season']['pl']}}</td>
+                        {% if data.color == "red" %}
+                            <td id="win-amount" class="loss-amount-txt" style="font-size: 30px;">{{data['pl']}}</td>
                         {% endif %}
-                        <td >{{data['season']['yield']}}%</td>
+                        <td >{{data['yield']}}%</td>
                     </tr>
                 </tbody>
             </table>
@@ -452,34 +683,6 @@
 
         <div style="display: flex; justify-content: center; align-items: center;">
             <div id="chartContainerSeasson" style="height: 810px; width: 1610px;border: solid 2px; border-color: aqua;"></div>
-        </div>
-        <div style="margin-top: 100px; margin-bottom: 50px;">
-            <table class="table" style="margin: 0 auto; text-align: center; width: auto; border: none;">
-                <thead style="font-size: 30px; font-weight: bold; height: 80px;">
-                    <tr>
-                        <td>Total Stake</td>
-                        <td style="padding-left: 40px; padding-right: 40px;">P/L</td>
-                        <td>Yield</td>
-                    </tr>
-                </thead>
-                <tbody style="font-size: 30px; height: 60px;">
-                    <tr>
-                        <td id="total-amount-total" class="total-amount-txt" style="font-size: 30px;">{{data['total']['stake']}}</td>
-                        {% if data['total'].color == "green" %}
-                            <td id="win-amount-total" class="win-amount-txt" style="font-size: 30px;">{{data['total']['pl']}}</td>
-                        {% endif %}
-                        {% if data['total'].color == "red" %}
-                            <td id="win-amount-total" class="loss-amount-txt" style="font-size: 30px;">{{data['total']['pl']}}</td>
-                        {% endif %}
-                        <td>{{data['total']['yield']}}%</td>
-                    </tr>
-                </tbody>
-            </table>
-            <div style="text-align: center; padding-top: 30px; font-size: 16px; font-weight: bold;">
-                <div>50 days average (blue)</div>
-                <div>100 days average (yellow)</div>
-                <div>200 days average (purple)</div>
-            </div>
         </div>
         <div style="display: flex; justify-content: center; align-items: center; padding-top: 50px; padding-bottom: 50px;">
             <div id="chartContainerTotal" style="height: 810px; width: 1610px;border: solid 2px; border-color: aqua;"></div>

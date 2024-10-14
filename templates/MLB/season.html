@@ -44,6 +44,7 @@
             var today = new Date();
             var year = today.getFullYear();
             let dataPointsB = [], dataPointsD = [], dataPointsW = [], dataPointsM = [], lineHalfB= [], lineHalfD = [], lineHalfW = [], lineHalfM = [], lineB = [], lineD = [], lineW = [], lineM = [], lineDoubleB = [], lineDoubleD = [], lineDoubleW = [], lineDoubleM = [], dataPointWPro = [];
+            let dataPointsWPro = []
 
             $.ajax({
                 url: '/get_graph_info', 
@@ -56,6 +57,7 @@
                     var currentWeek = [];
                     var pl= [];
                     for(x = 0; x < data.length; x++) {
+                        console.log(data[x])
                         update = value + parseFloat(data[x]['pl']);
                         pl.push(update);
                         if (x >= 50) {
@@ -100,7 +102,9 @@
                             if (x >= 200) {
                                 lineHalfD.push({x: data[x].betdate, y: double_avg_value});
                             }
-                            dataPointWPro.push({x: data[x].betdate, y: parseFloat(data[x].run_win)});
+                            
+                            if (parseFloat(data[x].run_win) != 0)
+                                dataPointWPro.push({x: data[x].betdate, y: parseFloat(data[x].run_win)});
                         }
 
                         if(x == (data.length - 1)) {
@@ -116,7 +120,9 @@
                             if (x >= 200) {
                                 lineHalfD.push({x: data[x].betdate, y: double_avg_value});
                             }
-                            dataPointWPro.push({x: data[x].betdate, y: parseFloat(data[x].run_win)});
+
+                            if (parseFloat(data[x].run_win) != 0)
+                                dataPointWPro.push({x: data[x].betdate, y: parseFloat(data[x].run_win)});
                         }
 
                         var date = new Date(data[x].betdate);
@@ -223,405 +229,103 @@
                     console.log(dataPointWPro)
 
                     var options = {
-                        series: [ {
-                        name: 'candle',
-                        type: 'candlestick',
-                        data: dataPointsM
-                        }],
+                        series: [{
+                            name: 'line',
+                            type: 'line',
+                            data: dataPointWPro
+                            }],
                         chart: {
-                        height: 350,
-                        type: 'line',
+                            height: 350,
+                            type: 'line',
+                            zoom: {
+                                enabled: false  // Disable default zoom behavior
+                            },
+                            events: {
+                                mounted: function(chartContext, config) {
+                                    const chartContainer = document.querySelector("#chartContainerTotal");
+
+                                    // Add mouse wheel event listener to the chart container
+                                    chartContainer.addEventListener('wheel', function(event) {
+                                        // Get the bounding box of the Y-axis area
+                                        const yAxisBounds = chartContainer.querySelector('.apexcharts-yaxis').getBoundingClientRect();
+
+                                        // Check if the mouse is within the Y-axis area
+                                        if (event.clientX >= yAxisBounds.left && event.clientX <= yAxisBounds.right &&
+                                            event.clientY >= yAxisBounds.top && event.clientY <= yAxisBounds.bottom) {
+                                            
+                                            event.preventDefault(); // Prevent default scroll behavior
+
+                                            // Get current Y-axis range
+                                            let currentMin = chartContext.w.globals.minY;
+                                            let currentMax = chartContext.w.globals.maxY;
+                                            let range = currentMax - currentMin;
+
+                                            // Determine zoom direction and scaling factor
+                                            let scaleFactor = event.deltaY > 0 ? 1.1 : 0.9;
+                                            let newRange = range * scaleFactor;
+
+                                            // Calculate new min and max for Y-axis
+                                            let center = (currentMax + currentMin) / 2;
+                                            let newMin = center - newRange / 2;
+                                            let newMax = center + newRange / 2;
+
+                                            // Update chart with new Y-axis range
+                                            chartContext.updateOptions({
+                                                yaxis: {
+                                                    min: newMin,
+                                                    max: newMax
+                                                }
+                                            });
+                                        }
+                                    });
+                                }
+                            }
                         },
                         title: {
-                        text: 'CandleStick Chart',
-                        align: 'left'
+                            text: 'CandleStick Chart',
+                            align: 'left'
                         },
                         stroke: {
-                        width: [3, 1]
+                            width: [3, 1]
                         },
                         tooltip: {
-                        shared: true,
-                        custom: [function({seriesIndex, dataPointIndex, w}) {
-                            return w.globals.series[seriesIndex][dataPointIndex]
-                        }, function({ seriesIndex, dataPointIndex, w }) {
-                            var o = w.globals.seriesCandleO[seriesIndex][dataPointIndex]
-                            var h = w.globals.seriesCandleH[seriesIndex][dataPointIndex]
-                            var l = w.globals.seriesCandleL[seriesIndex][dataPointIndex]
-                            var c = w.globals.seriesCandleC[seriesIndex][dataPointIndex]
-                            return (
-                            '<div class="apexcharts-tooltip-candlestick">' +
-                            '<div>Open: <span class="value">' +
-                            o +
-                            '</span></div>' +
-                            '<div>High: <span class="value">' +
-                            h +
-                            '</span></div>' +
-                            '<div>Low: <span class="value">' +
-                            l +
-                            '</span></div>' +
-                            '<div>Close: <span class="value">' +
-                            c +
-                            '</span></div>' +
-                            '</div>'
-                            )
-                        }]
+                            shared: true,
+                            custom: [function({seriesIndex, dataPointIndex, w}) {
+                                return w.globals.series[seriesIndex][dataPointIndex]
+                            }, function({ seriesIndex, dataPointIndex, w }) {
+                                var o = w.globals.seriesCandleO[seriesIndex][dataPointIndex]
+                                var h = w.globals.seriesCandleH[seriesIndex][dataPointIndex]
+                                var l = w.globals.seriesCandleL[seriesIndex][dataPointIndex]
+                                var c = w.globals.seriesCandleC[seriesIndex][dataPointIndex]
+                                return (
+                                '<div class="apexcharts-tooltip-candlestick">' +
+                                '<div>Open: <span class="value">' +
+                                o +
+                                '</span></div>' +
+                                '<div>High: <span class="value">' +
+                                h +
+                                '</span></div>' +
+                                '<div>Low: <span class="value">' +
+                                l +
+                                '</span></div>' +
+                                '<div>Close: <span class="value">' +
+                                c +
+                                '</span></div>' +
+                                '</div>'
+                                )
+                            }]
                         },
                         xaxis: {
-                        type: 'category'
+                            type: 'category'
                         }
-                        };
+                    };
 
                     var chart = new ApexCharts(document.querySelector("#chartContainerTotal"), options);
                     chart.render();
                 }
             })
-               
-            // $.ajax({
-            //     url: '/get_betting_info', 
-            //     type: 'POST', 
-            //     data: {'year':year.toString()},
-            //     beforeSend: function (){ 
-            //     },
-
-            //     success: function (data){ 
-
-            //         var dataPoints = [];
-
-            //         let USDollar = new Intl.NumberFormat('en-US', {
-            //             style: 'currency',
-            //             currency: 'USD',
-            //         });
-
-            //         var averagepoit_50 = [];
-            //         var averagepoit_100 = [];
-            //         var averagepoit_200 = [];
-
-            //         var pl_vlaue = {}
-            //         var value = 0;
-            //         var update = 0;
-
-            //         var stockChartSeason = new CanvasJS.StockChart("chartContainerSeasson",{
-            //             theme: "light2",
-            //             width: 1600,
-            //             height: 800,
-            //             charts: [{
-            //             title: {
-            //                 fontColor:'black',
-            //                 margin: 10,
-            //                 text: `P/L analysis-${year}`   
-            //             },
-            //             toolTip:{          
-            //                 shared: true,   
-            //                 content: function(e) {
-            //                     // Extracting data point
-            //                     var dataPoint = e.entries[0].dataPoint;
-                                
-            //                     // Calculating movement
-            //                     var movement = dataPoint.y[3] - dataPoint.y[0];
-
-            //                     let d = new Date(dataPoint.x),
-            //                     month = '' + (d.getMonth() + 1), // Months are zero based
-            //                     day = '' + d.getDate(),
-            //                     year = d.getFullYear();
-
-            //                     // Add leading zero to month and day if needed
-            //                     if (month.length < 2) 
-            //                         month = '0' + month;
-            //                     if (day.length < 2) 
-            //                         day = '0' + day;
-            //                     var daystring = [year, month, day].join('-');
-                                
-            //                     // Formatting content
-            //                     var content = `<div style='padding:3px'><div style='color: red; font-size:16px; font-weight:bold; text-align: center;'>${daystring}</div><div style='display:flex; width:100%; padding-top: 3px'><div style='width:50%; text-align: right; padding-right:5px'>Open Price:</div><div style='width:50%; text-align: left; padding-left:5px'> ${USDollar.format(dataPoint.y[0].toFixed(2))}</div></div>
-            //                     <div style='display:flex; width:100%; padding-top: 3px'><div style='width:50%; text-align: right; padding-right:5px'>Close Price:</div><div style='width:50%; text-align: left; padding-left:5px'> ${USDollar.format(dataPoint.y[3].toFixed(2))}</div></div>
-            //                     <div style='display:flex; width:100%; padding-top: 3px'><div style='width:50%; text-align: right; padding-right:5px'>Movement: </div><div style="width:50%; text-align: left; padding-left:5px; ${movement>0? 'color:green':'color:red'}"> ${USDollar.format(movement.toFixed(2))}</div></div>`;
-
-            //                     var str = "";
-            //                     for (var i = 1; i < e.entries.length; i++){
-            //                         var  temp = `<div style='display:flex; width:100%; padding-top: 3px'><div style='width:50%; text-align: right; padding-right:5px'>${e.entries[i].dataSeries.name}:</div><div style="width:50%; text-align: left; padding-left:5px;Yes">${USDollar.format(e.entries[i].dataPoint.y.toFixed(2))}</div></div>` ; 
-            //                         str = str.concat(temp);
-            //                     }
-
-            //                     str = str + '</div>'
-
-            //                     content = content.concat(str);
-                                
-            //                     return content;
-            //                 }
-            //             },
-            //             axisY: {
-            //                 prefix: "$"
-            //             },
-            //             axisX: {
-            //                 crosshair: {
-            //                 enabled: true
-            //                 }
-            //             },
-            //             data: [
-            //                 {
-            //                 type: "candlestick",
-            //                 risingColor: "green",
-            //                 fallingColor: "red",
-            //                 yValueFormatString: "$#,###.##",
-            //                 dataPoints : dataPoints
-            //                 },
-            //                 {        
-            //                     type: "spline",
-            //                     name: "avg-50",
-            //                     markerType: "none",
-            //                     color: "blue",
-            //                     dataPoints: averagepoit_50
-            //                 },
-
-            //                 {        
-            //                     type: "spline",
-            //                     name: "avg-100",
-            //                     markerType: "none",
-            //                     color: "yellow",
-            //                     dataPoints: averagepoit_100
-            //                 },
-
-            //                 {        
-            //                     type: "spline",
-            //                     name: "avg-200",
-            //                     markerType: "none",
-            //                     color: "purple",
-            //                     dataPoints: averagepoit_200
-            //                 },
-            //                 ]
-            //             }],
-            //         });
-
-            //         for(var i = 0; i < data['season'].length; i++)
-            //         {
-            //             var date = new Date(data['season'][i].betdate)
-            //             var average = 0;
-
-            //             update = value + data['season'][i]['wins'] - data['season'][i]['losses']
-            //             pl_vlaue[i] = update
-            //             dataPoints.push({x: date,  y: [Number(value), Number(value > update? value: update), Number(value > update? update: value), Number(update)]})
-            //             value = update
-
-            //             if (i>=50) {
-            //                 for (var k=i-50 + 1; k <= i; k++) {
-            //                     average = average + pl_vlaue[k];
-            //                 }
-            //                 average = average / 50;
-
-            //                 var average_price =  USDollar.format(average);
-            //                 averagepoit_50.push({x: date, y: average})
-                            
-            //             }
-
-            //             average = 0
-
-            //             if (i>=100) {
-            //                 for (var k=i-100 + 1; k <= i; k++) {
-            //                     average = average + pl_vlaue[k];
-            //                 }
-            //                 average = average / 100;
-
-            //                 var average_price =  USDollar.format(average);
-            //                 averagepoit_100.push({x: date, y: average})
-                            
-            //             }
-
-            //             average = 0
-
-            //             if (i>=200) {
-            //                 for (var k=i-200 + 1; k <= i; k++) {
-            //                     average = average + pl_vlaue[k];
-            //                 }
-            //                 average = average / 200;
-
-            //                 var average_price =  USDollar.format(average);
-            //                 averagepoit_200.push({x: date, y: average})
-                            
-            //             }
-            //         }
-            //         stockChartSeason.render();
-
-            //         averagepoit_50 = [];
-            //         averagepoit_100 = [];
-            //         averagepoit_200 = [];
-            //         dataPoints = [];
-
-            //         pl_vlaue = {}
-            //         value = 0;
-            //         update = 0;
-            //         var startValue = new Date('2023-09-29');
-            //         var endValue = new Date('2024-03-23');
-
-            //         var stockChartTotal = new CanvasJS.StockChart("chartContainerTotal",{
-            //             theme: "light2",
-            //             width: 1600,
-            //             height: 800,
-            //             charts: [{
-            //             title: {
-            //                 fontColor:'black',
-            //                 margin: 10,
-            //                 text: `P/L analysis-Total`   
-            //             },
-            //             toolTip:{          
-            //                 shared: true,   
-            //                 content: function(e) {
-            //                     // Extracting data point
-            //                     var dataPoint = e.entries[0].dataPoint;
-                                
-            //                     // Calculating movement
-            //                     var movement = dataPoint.y[3] - dataPoint.y[0];
-
-            //                     let d = new Date(dataPoint.x),
-            //                     month = '' + (d.getMonth() + 1), // Months are zero based
-            //                     day = '' + d.getDate(),
-            //                     year = d.getFullYear();
-
-            //                     // Add leading zero to month and day if needed
-            //                     if (month.length < 2) 
-            //                         month = '0' + month;
-            //                     if (day.length < 2) 
-            //                         day = '0' + day;
-            //                     var daystring = [year, month, day].join('-');
-                                
-            //                     // Formatting content
-            //                     var content = `<div style='padding:3px'><div style='color: red; font-size:16px; font-weight:bold; text-align: center;'>${daystring}</div><div style='display:flex; width:100%; padding-top: 3px'><div style='width:50%; text-align: right; padding-right:5px'>Open Price:</div><div style='width:50%; text-align: left; padding-left:5px'> ${USDollar.format(dataPoint.y[0].toFixed(2))}</div></div>
-            //                     <div style='display:flex; width:100%; padding-top: 3px'><div style='width:50%; text-align: right; padding-right:5px'>Close Price:</div><div style='width:50%; text-align: left; padding-left:5px'> ${USDollar.format(dataPoint.y[3].toFixed(2))}</div></div>
-            //                     <div style='display:flex; width:100%; padding-top: 3px'><div style='width:50%; text-align: right; padding-right:5px'>Movement: </div><div style="width:50%; text-align: left; padding-left:5px; ${movement>0? 'color:green':'color:red'}"> ${USDollar.format(movement.toFixed(2))}</div></div>`;
-
-            //                     var str = "";
-            //                     for (var i = 1; i < e.entries.length; i++){
-            //                         var  temp = `<div style='display:flex; width:100%; padding-top: 3px'><div style='width:50%; text-align: right; padding-right:5px'>${e.entries[i].dataSeries.name}:</div><div style="width:50%; text-align: left; padding-left:5px;Yes">${USDollar.format(e.entries[i].dataPoint.y.toFixed(2))}</div></div>` ; 
-            //                         str = str.concat(temp);
-            //                     }
-
-            //                     str = str + '</div>'
-
-            //                     content = content.concat(str);
-                                
-            //                     return content;
-            //                 }
-            //             },
-            //             axisY: {
-            //                 prefix: "$"
-            //             },
-            //             axisX: {
-            //                 crosshair: {
-            //                 enabled: true
-            //                 },
-            //                 scaleBreaks: {
-            //                 customBreaks: [{
-            //                         startValue: startValue,
-            //                         endValue: endValue,
-            //                         type: "straight",
-            //                         fillOpacity: 0,
-            //                         spacing: '0%'
-            //                     }]
-            //                 }
-            //             },
-            //             data: [
-            //                 {
-            //                 type: "candlestick",
-            //                 risingColor: "green",
-            //                 fallingColor: "red",
-            //                 yValueFormatString: "$#,###.##",
-            //                 dataPoints : dataPoints
-            //                 },
-            //                 {        
-            //                     type: "spline",
-            //                     name: "avg-50",
-            //                     markerType: "none",
-            //                     color: "blue",
-            //                     dataPoints: averagepoit_50
-            //                 },
-
-            //                 {        
-            //                     type: "spline",
-            //                     name: "avg-100",
-            //                     markerType: "none",
-            //                     color: "yellow",
-            //                     dataPoints: averagepoit_100
-            //                 },
-
-            //                 {        
-            //                     type: "spline",
-            //                     name: "avg-200",
-            //                     markerType: "none",
-            //                     color: "purple",
-            //                     dataPoints: averagepoit_200
-            //                 },
-            //                 ]
-            //             }],
-            //         });
-                    
-                    
-            //         for(var i = 0; i < data['total'].length; i++)
-            //         {
-            //             var date = new Date(data['total'][i].betdate)
-            //             var average = 0;
-
-            //             var seasonyear = data['total'][i].betdate.substring(0, 4);
-            //             var newdate = new Date("2024-04-22");
-            //             var currentDate = new Date(data['total'][i].betdate);
-
-            //             if (currentDate < newdate) {
-            //                 if(seasonyear == '2023')
-            //                     update = value + data['total'][i]['wins'] * 7 - data['total'][i]['losses'] * 7;
-            //                 else
-            //                     update = value + data['total'][i]['wins'] / 2 - data['total'][i]['losses'] / 2;
-            //             } else {
-            //                 update = value + data['total'][i]['wins'] - data['total'][i]['losses'];
-            //             }
-                        
-            //             pl_vlaue[i] = update
-            //             dataPoints.push({x: date,  y: [Number(value), Number(value > update? value: update), Number(value > update? update: value), Number(update)]})
-                        
-            //             value = update
-
-            //             if (i>=50) {
-            //                 for (var k=i-50 + 1; k <= i; k++) {
-            //                     average = average + pl_vlaue[k];
-            //                 }
-            //                 average = average / 50;
-
-            //                 var average_price =  USDollar.format(average);
-            //                 averagepoit_50.push({x: date, y: average})
-                            
-            //             }
-
-            //             average = 0
-
-            //             if (i>=100) {
-            //                 for (var k=i-100 + 1; k <= i; k++) {
-            //                     average = average + pl_vlaue[k];
-            //                 }
-            //                 average = average / 100;
-
-            //                 var average_price =  USDollar.format(average);
-            //                 averagepoit_100.push({x: date, y: average})
-                            
-            //             }
-
-            //             average = 0
-
-            //             if (i>=200) {
-            //                 for (var k=i-200 + 1; k <= i; k++) {
-            //                     average = average + pl_vlaue[k];
-            //                 }
-            //                 average = average / 200;
-
-            //                 var average_price =  USDollar.format(average);
-            //                 averagepoit_200.push({x: date, y: average})
-                            
-            //             }
-            //         }
-            //         stockChartTotal.render();
-            //      }               
-            // });      
-            // }
-                
-
-            }
-            </script>
+        }
+    </script>
     </head>
     <body>
         <div class="nav">

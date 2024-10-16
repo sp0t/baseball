@@ -1,128 +1,137 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <title>BetMLB</title>
-        <meta name="description" content="">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="stylesheet" href="/static/styles.css"> 
-        <link rel="stylesheet" href="/static/nav.css"> 
-        <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🚀</text></svg>"> 
-        <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></script>
-        <script type="text/javascript" src="{{ url_for('static', filename='index.js') }}"></script>
-        <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
-        <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.3.0/css/datepicker.css" rel="stylesheet" type="text/css" />
-        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.3.0/js/bootstrap-datepicker.js"></script>
-        <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.3/moment-with-locales.min.js"
-        integrity="sha512-vFABRuf5oGUaztndx4KoAEUVQnOvAIFs59y4tO0DILGWhQiFnFHiR+ZJfxLDyJlXgeut9Z07Svuvm+1Jv89w5g=="  crossorigin="anonymous" referrerpolicy="no-referrer"> </script>
-        <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
-        <style>
-            th, td {
-                padding-left: 30px;
-                padding-right: 30px;
-            }
 
-            p:hover{
-                color: rgb(0, 4, 255);
-                font-size: 20x;
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>BetMLB</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="/static/styles.css">
+    <link rel="stylesheet" href="/static/nav.css">
+    <link rel="icon"
+        href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🚀</text></svg>">
+    <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='index.js') }}"></script>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" rel="stylesheet"
+        type="text/css" />
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.3/moment-with-locales.min.js"
+        integrity="sha512-vFABRuf5oGUaztndx4KoAEUVQnOvAIFs59y4tO0DILGWhQiFnFHiR+ZJfxLDyJlXgeut9Z07Svuvm+1Jv89w5g=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"> </script>
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+    <!-- <script type="text/javascript" src="https://canvasjs.com/assets/script/jquery-1.11.1.min.js"></script>
+        <script type="text/javascript" src="https://cdn.canvasjs.com/canvasjs.stock.min.js"></script> -->
+    <style>
+        th,
+        td {
+            padding-left: 30px;
+            padding-right: 30px;
+        }
+
+        p:hover {
+            color: rgb(0, 4, 255);
+            font-size: 20x;
+        }
+    </style>
+    <script>
+        $(document).ready(function () {
+            if (localStorage.getItem("darkMode") === "enabled") {
+                changeTheme(1);
+            } else {
+                changeTheme(0);
             }
-        </style>
-        <script>
-            $(document).ready(function(){
-                if (localStorage.getItem("darkMode") === "enabled") {
-                    changeTheme(1);
-                } else {
-                    changeTheme(0);
-                }
-            })
-            window.onload = function () {
-            
-            var today = new Date();
-            var year = today.getFullYear();
-            let dataPointsB = [], dataPointsD = [], dataPointsW = [], dataPointsM = [], lineHalfB= [], lineHalfD = [], lineHalfW = [], lineHalfM = [], lineB = [], lineD = [], lineW = [], lineM = [], lineDoubleB = [], lineDoubleD = [], lineDoubleW = [], lineDoubleM = [], dataPointWPro = [];
-            let dataPointsWPro = []
+        })
+        let plchart;
+
+        var today = new Date();
+        var year = today.getFullYear();
+        let dataPointsB = [], dataPointsD = [], dataPointsW = [], dataPointsM = [], lineHalfB = [], lineHalfD = [], lineHalfW = [], lineHalfM = [], lineB = [], lineD = [], lineW = [], lineM = [], lineDoubleB = [], lineDoubleD = [], lineDoubleW = [], lineDoubleM = [];
+        let dataPointsWProCategory = [], dataPointsWProData = [];
+
+        window.onload = function () {
 
             $.ajax({
-                url: '/get_graph_info', 
-                type: 'POST', 
-                data: {'year':year.toString()},
-                beforeSend: function (){ 
+                url: '/get_graph_info',
+                type: 'POST',
+                data: { 'year': year.toString() },
+                beforeSend: function () {
                 },
-                success: function(data) {
+                success: function (data) {
                     var value = 0, update = 0, prevalue = 0, average = 0, half_avg_value = 0, avg_value = 0, double_avg_value = 0, pre_half_avg_value = 0, pre_avg_value = 0, pre_double_avg_value = 0;
                     var currentWeek = [];
-                    var pl= [];
-                    for(x = 0; x < data.length; x++) {
-                        console.log(data[x])
+                    var pl = [];
+                    for (x = 0; x < data.length; x++) {
                         update = value + parseFloat(data[x]['pl']);
                         pl.push(update);
                         if (x >= 50) {
-                            for (var k=x-50 + 1; k <= x; k++) {
+                            for (var k = x - 50 + 1; k <= x; k++) {
                                 average = average + pl[k];
                             }
                             half_avg_value = average / 50;
-                            lineHalfB.push({x: data[x].id, y: half_avg_value});
+                            lineHalfB.push({ x: data[x].id, y: half_avg_value });
                             average = 0;
                         }
 
                         if (x >= 100) {
-                            for (var k=x-100 + 1; k <= x; k++) {
+                            for (var k = x - 100 + 1; k <= x; k++) {
                                 average = average + pl[k];
                             }
                             avg_value = average / 100;
-                            lineB.push({x: data[x].id, y: avg_value});
+                            lineB.push({ x: data[x].id, y: avg_value });
                             average = 0;
                         }
 
                         if (x >= 200) {
-                            for (var k=x-200 + 1; k <= x; k++) {
+                            for (var k = x - 200 + 1; k <= x; k++) {
                                 average = average + pl[k];
                             }
                             double_avg_value = average / 200;
-                            lineDoubleB.push({x: data[x].id, y: double_avg_value});
+                            lineDoubleB.push({ x: data[x].id, y: double_avg_value });
                             average = 0;
                         }
 
-                        dataPointsB.push({x: data[x].id, y:[value, value > update? value: update, value > update? update: value, update]});
+                        dataPointsB.push({ x: data[x].id, y: [value, value > update ? value : update, value > update ? update : value, update] });
 
-                        if( x < (data.length - 2) && data[x].betdate != data[x + 1].betdate) {
-                            dataPointsD.push({x: data[x].betdate, y:[value, value > update? value: update, value > update? update: value, update]});
+                        if (x < (data.length - 2) && data[x].betdate != data[x + 1].betdate) {
+                            dataPointsD.push({ x: data[x].betdate, y: [value, value > update ? value : update, value > update ? update : value, update] });
                             if (x >= 50) {
-                                lineHalfD.push({x: data[x].betdate, y: half_avg_value});
+                                lineHalfD.push({ x: data[x].betdate, y: half_avg_value });
                             }
-                            
+
                             if (x >= 100) {
-                                lineHalfD.push({x: data[x].betdate, y: avg_value});
+                                lineD.push({ x: data[x].betdate, y: avg_value });
                             }
-                            
+
                             if (x >= 200) {
-                                lineHalfD.push({x: data[x].betdate, y: double_avg_value});
+                                lineDoubleD.push({ x: data[x].betdate, y: double_avg_value });
                             }
-                            
-                            if (parseFloat(data[x].run_win) != 0)
-                                dataPointWPro.push({x: data[x].betdate, y: parseFloat(data[x].run_win)});
+
+                            if (parseFloat(data[x].run_win) != 0) {
+                                dataPointsWProCategory.push(data[x].betdate);
+                                dataPointsWProData.push(parseFloat(data[x].run_win));
+                            }
                         }
 
-                        if(x == (data.length - 1)) {
-                            dataPointsD.push({x: data[x].betdate, y:[value, value > update? value: update, value > update? update: value, update]});
+                        if (x == (data.length - 1)) {
+                            dataPointsD.push({ x: data[x].betdate, y: [value, value > update ? value : update, value > update ? update : value, update] });
                             if (x >= 50) {
-                                lineHalfD.push({x: data[x].betdate, y: half_avg_value});
+                                lineHalfD.push({ x: data[x].betdate, y: half_avg_value });
                             }
 
                             if (x >= 100) {
-                                lineHalfD.push({x: data[x].betdate, y: avg_value});
+                                lineD.push({ x: data[x].betdate, y: avg_value });
                             }
 
                             if (x >= 200) {
-                                lineHalfD.push({x: data[x].betdate, y: double_avg_value});
+                                lineDoubleD.push({ x: data[x].betdate, y: double_avg_value });
                             }
 
-                            if (parseFloat(data[x].run_win) != 0)
-                                dataPointWPro.push({x: data[x].betdate, y: parseFloat(data[x].run_win)});
+                            if (parseFloat(data[x].run_win) != 0) {
+                                dataPointsWProCategory.push(data[x].betdate);
+                                dataPointsWProData.push(parseFloat(data[x].run_win));
+                            }
                         }
 
                         var date = new Date(data[x].betdate);
@@ -133,85 +142,85 @@
                             var lastDateInCurrentWeek = new Date(currentWeek[currentWeek.length - 1]);
                             var differenceInDays = (date - lastDateInCurrentWeek) / (1000 * 60 * 60 * 24);
 
-                            if (differenceInDays >= 7) { 
-                                currentWeek = [data[x].betdate]; 
-                                dataPointsW.push({x: data[x-1].betdate, y:[prevalue, prevalue > value? prevalue: value, prevalue > value? value: prevalue, value]});
+                            if (differenceInDays >= 7) {
+                                currentWeek = [data[x].betdate];
+                                dataPointsW.push({ x: data[x - 1].betdate, y: [prevalue, prevalue > value ? prevalue : value, prevalue > value ? value : prevalue, value] });
                                 if (x >= 50) {
-                                    lineHalfW.push({x: data[x-1].betdate, y: pre_half_avg_value});
+                                    lineHalfW.push({ x: data[x - 1].betdate, y: pre_half_avg_value });
                                 }
 
                                 if (x >= 100) {
-                                    lineHalfW.push({x: data[x-1].betdate, y: pre_avg_value});
+                                    lineW.push({ x: data[x - 1].betdate, y: pre_avg_value });
                                 }
 
                                 if (x >= 200) {
-                                    lineHalfW.push({x: data[x-1].betdate, y: pre_double_avg_value});
+                                    lineDoubleW.push({ x: data[x - 1].betdate, y: pre_double_avg_value });
                                 }
                             }
-                            
+
                             if (x < (data.length - 2)) {
-                                if (data[x].betdate != data[x+1].betdate && (date.getDay() < lastDateInCurrentWeek.getDay() || dayOfWeek === 0)) {
+                                if (data[x].betdate != data[x + 1].betdate && (date.getDay() < lastDateInCurrentWeek.getDay() || dayOfWeek === 0)) {
                                     currentWeek = [data[x].betdate];
-                                    dataPointsW.push({x: data[x-1].betdate, y:[prevalue, prevalue > value? prevalue: value, prevalue > value? value: prevalue, value]});
+                                    dataPointsW.push({ x: data[x - 1].betdate, y: [prevalue, prevalue > value ? prevalue : value, prevalue > value ? value : prevalue, value] });
 
                                     if (x >= 50) {
-                                        lineHalfW.push({x: data[x-1].betdate, y: pre_half_avg_value});
+                                        lineHalfW.push({ x: data[x - 1].betdate, y: pre_half_avg_value });
                                     }
 
                                     if (x >= 100) {
-                                        lineHalfW.push({x: data[x-1].betdate, y: pre_avg_value});
+                                        lineW.push({ x: data[x - 1].betdate, y: pre_avg_value });
                                     }
 
                                     if (x >= 200) {
-                                        lineHalfW.push({x: data[x-1].betdate, y: pre_double_avg_value});
+                                        lineDoubleW.push({ x: data[x - 1].betdate, y: pre_double_avg_value });
                                     }
                                 } else {
                                     currentWeek.push(data[x].betdate);
                                 }
                             } else {
-                                dataPointsW.push({x: data[x].betdate, y:[value, value > update? value: update, value > update? update: value, update]});
+                                dataPointsW.push({ x: data[x].betdate, y: [value, value > update ? value : update, value > update ? update : value, update] });
                                 if (x >= 50) {
-                                        lineHalfW.push({x: data[x].betdate, y: half_avg_value});
+                                    lineHalfW.push({ x: data[x].betdate, y: half_avg_value });
                                 }
 
                                 if (x >= 100) {
-                                    lineHalfW.push({x: data[x].betdate, y: avg_value});
+                                    lineW.push({ x: data[x].betdate, y: avg_value });
                                 }
 
                                 if (x >= 200) {
-                                    lineHalfW.push({x: data[x].betdate, y: double_avg_value});
+                                    lineDoubleW.push({ x: data[x].betdate, y: double_avg_value });
                                 }
                             }
                         }
 
-                        if(x == (data.length - 1)) {
-                            dataPointsM.push({x: data[x].betdate, y:[value, value > update? value: update, value > update? update: value, update]});
+                        if (x == (data.length - 1)) {
+                            dataPointsM.push({ x: data[x].betdate, y: [value, value > update ? value : update, value > update ? update : value, update] });
 
                             if (x >= 50) {
-                                lineHalfM.push({x: data[x].betdate, y: half_avg_value});
+                                lineHalfM.push({ x: data[x].betdate, y: half_avg_value });
                             }
 
                             if (x >= 100) {
-                                lineHalfM.push({x: data[x].betdate, y: avg_value});
+                                lineM.push({ x: data[x].betdate, y: avg_value });
                             }
 
                             if (x >= 200) {
-                                lineHalfM.push({x: data[x].betdate, y: double_avg_value});
+                                lineDoubleM.push({ x: data[x].betdate, y: double_avg_value });
                             }
                         } else {
-                            if(new Date(data[x + 1].betdate).getMonth() !== date.getMonth()) {
-                                dataPointsM.push({x: data[x].betdate, y:[value, value > update? value: update, value > update? update: value, update]});
+                            if (new Date(data[x + 1].betdate).getMonth() !== date.getMonth()) {
+                                dataPointsM.push({ x: data[x].betdate, y: [value, value > update ? value : update, value > update ? update : value, update] });
 
                                 if (x >= 50) {
-                                    lineHalfM.push({x: data[x].betdate, y: half_avg_value});
+                                    lineHalfM.push({ x: data[x].betdate, y: half_avg_value });
                                 }
 
                                 if (x >= 100) {
-                                    lineHalfM.push({x: data[x].betdate, y: avg_value});
+                                    lineM.push({ x: data[x].betdate, y: avg_value });
                                 }
 
                                 if (x >= 200) {
-                                    lineHalfM.push({x: data[x].betdate, y: double_avg_value});
+                                    lineDoubleM.push({ x: data[x].betdate, y: double_avg_value });
                                 }
                             }
                         }
@@ -226,170 +235,346 @@
                         double_avg_value = 0;
                     }
 
-                    console.log(dataPointWPro)
+                    drawGraph(0);
 
                     var options = {
                         series: [{
-                            name: 'line',
-                            type: 'line',
-                            data: dataPointWPro
-                            }],
+                            name: 'win%',
+                            data: dataPointsWProData
+                        }],
                         chart: {
-                            height: 350,
                             type: 'line',
+                            stacked: false,
+                            height: 800,
                             zoom: {
-                                enabled: false  // Disable default zoom behavior
+                                type: 'x',
+                                enabled: true,
+                                autoScaleYaxis: true
                             },
-                            events: {
-                                mounted: function(chartContext, config) {
-                                    const chartContainer = document.querySelector("#chartContainerTotal");
-
-                                    // Add mouse wheel event listener to the chart container
-                                    chartContainer.addEventListener('wheel', function(event) {
-                                        // Get the bounding box of the Y-axis area
-                                        const yAxisBounds = chartContainer.querySelector('.apexcharts-yaxis').getBoundingClientRect();
-
-                                        // Check if the mouse is within the Y-axis area
-                                        if (event.clientX >= yAxisBounds.left && event.clientX <= yAxisBounds.right &&
-                                            event.clientY >= yAxisBounds.top && event.clientY <= yAxisBounds.bottom) {
-                                            
-                                            event.preventDefault(); // Prevent default scroll behavior
-
-                                            // Get current Y-axis range
-                                            let currentMin = chartContext.w.globals.minY;
-                                            let currentMax = chartContext.w.globals.maxY;
-                                            let range = currentMax - currentMin;
-
-                                            // Determine zoom direction and scaling factor
-                                            let scaleFactor = event.deltaY > 0 ? 1.1 : 0.9;
-                                            let newRange = range * scaleFactor;
-
-                                            // Calculate new min and max for Y-axis
-                                            let center = (currentMax + currentMin) / 2;
-                                            let newMin = center - newRange / 2;
-                                            let newMax = center + newRange / 2;
-
-                                            // Update chart with new Y-axis range
-                                            chartContext.updateOptions({
-                                                yaxis: {
-                                                    min: newMin,
-                                                    max: newMax
-                                                }
-                                            });
-                                        }
-                                    });
-                                }
+                            toolbar: {
+                                autoSelected: 'zoom'
                             }
                         },
+                        dataLabels: {
+                            enabled: false
+                        },
+                        markers: {
+                            size: 0,
+                        },
                         title: {
-                            text: 'CandleStick Chart',
-                            align: 'left'
+                            text: 'Win Percent(%)',
+                            align: 'center',
+                            offsetY: 2,
+                            style: {
+                                fontSize: '40px',
+                                fontWeight: 'bold',
+                                color: localStorage.getItem("darkMode") === "enabled" ? '#333' : '#fff'
+                            }
                         },
-                        stroke: {
-                            width: [3, 1]
-                        },
-                        tooltip: {
-                            shared: true,
-                            custom: [function({seriesIndex, dataPointIndex, w}) {
-                                return w.globals.series[seriesIndex][dataPointIndex]
-                            }, function({ seriesIndex, dataPointIndex, w }) {
-                                var o = w.globals.seriesCandleO[seriesIndex][dataPointIndex]
-                                var h = w.globals.seriesCandleH[seriesIndex][dataPointIndex]
-                                var l = w.globals.seriesCandleL[seriesIndex][dataPointIndex]
-                                var c = w.globals.seriesCandleC[seriesIndex][dataPointIndex]
-                                return (
-                                '<div class="apexcharts-tooltip-candlestick">' +
-                                '<div>Open: <span class="value">' +
-                                o +
-                                '</span></div>' +
-                                '<div>High: <span class="value">' +
-                                h +
-                                '</span></div>' +
-                                '<div>Low: <span class="value">' +
-                                l +
-                                '</span></div>' +
-                                '<div>Close: <span class="value">' +
-                                c +
-                                '</span></div>' +
-                                '</div>'
-                                )
-                            }]
+                        yaxis: {
+                            labels: {
+                                formatter: function (val) {
+                                    return val.toFixed(2);
+                                },
+                            },
+                            title: {
+                                text: 'Percent(%)'
+                            },
                         },
                         xaxis: {
-                            type: 'category'
+                            categories: dataPointsWProCategory
+                        },
+                        tooltip: {
+                            shared: false,
+                            custom: function ({ series, seriesIndex, dataPointIndex, w }) {
+                                const value = series[seriesIndex][dataPointIndex].toFixed(2);
+                                const date = w.globals.categoryLabels[dataPointIndex];
+
+                                let tooltipContent = `
+                                    <div style="padding: 10px; border-radius: 5px;">
+                                        <div style="font-weight: bold; font-size: 14px; margin-bottom: 5px;">
+                                            Win Percent (%)</div>
+                                        <div>Date: ${date}</div>
+                                        <div>Value: <span style="color: ${value > 50 ? 'green' : 'red'}; font-weight: bold;">
+                                            ${value}%</span></div>
+                                    </div>
+                                `;
+                                if (value > 60) {
+                                    tooltipContent += `<div style="margin-top: 5px; color: gold;">⭐ Excellent Performance!</div>`;
+                                } else if (value < 40) {
+                                    tooltipContent += `<div style="margin-top: 5px; color: orange;">⚠ Needs Improvement</div>`;
+                                }
+
+                                return tooltipContent;
+                            }
                         }
                     };
 
-                    var chart = new ApexCharts(document.querySelector("#chartContainerTotal"), options);
+                    var chart = new ApexCharts(document.querySelector("#win_percent"), options);
                     chart.render();
                 }
             })
         }
+
+        function drawGraph(option) {
+            console.log('option', option)
+            var datapoint = [];
+            var linepointH = [], linepoint = [], linepointD = [];
+            var xtype = { type: 'numeric', labels: { rotate: -45 } };
+
+            switch (option) {
+                case 0:
+                    datapoint = dataPointsB;
+                    linepointH = lineHalfB;
+                    linepoint = lineB;
+                    linepointD = lineDoubleB;
+
+                    break;
+                case 1:
+                    datapoint = dataPointsD;
+                    linepointH = lineHalfD;
+                    linepoint = lineD;
+                    linepointD = lineDoubleD;
+                    xtype.type = 'datetime';
+                    break;
+                case 2:
+                    datapoint = dataPointsW;
+                    linepointH = lineHalfW;
+                    linepoint = lineW;
+                    linepointD = lineDoubleW;
+                    xtype.type = 'datetime';
+                    break;
+                case 3:
+                    datapoint = dataPointsM;
+                    linepointH = lineHalfM;
+                    linepoint = lineM;
+                    linepointD = lineDoubleM;
+                    xtype.type = 'datetime';
+                    break;
+            }
+
+            function addMissingEntries(linedata, pointdata) {
+                const linedataXValues = new Set(linedata.map(line => line.x));
+
+                pointdata.forEach(point => {
+                    if (!linedataXValues.has(point.x)) {
+                        linedata.push({ x: point.x, y: null });
+                    }
+                });
+
+                linedata.sort((a, b) => new Date(a.x) - new Date(b.x));
+
+                return linedata;
+            }
+
+            var lineTempData1 = addMissingEntries(linepointH, datapoint);
+            var lineTempData2 = addMissingEntries(linepoint, datapoint);
+            var lineTempData3 = addMissingEntries(linepointD, datapoint);
+
+
+            var options = {
+                series: [
+                    {
+                        name: 'P/L bar',
+                        type: 'candlestick',
+                        data: datapoint
+                    },
+                    {
+                        name: 'average-50',
+                        type: 'line',
+                        data: lineTempData1
+                    },
+                    {
+                        name: 'average-100',
+                        type: 'line',
+                        data: lineTempData2
+                    },
+                    {
+                        name: 'average-200',
+                        type: 'line',
+                        data: lineTempData3
+                    },
+                ],
+                chart: {
+                    height: 800,
+                    type: 'line',
+                },
+                title: {
+                    text: 'P/L analysis',
+                    align: 'center',
+                    offsetY: 2,
+                    style: {
+                        fontSize: '40px',
+                        fontWeight: 'bold',
+                        color: localStorage.getItem("darkMode") === "enabled" ? '#333' : '#fff'
+                    }
+                },
+                stroke: {
+                    width: [3, 1]
+                },
+
+                tooltip: {
+                    shared: true,
+                    custom: function ({ seriesIndex, dataPointIndex, w }) {
+                        const date = w.globals.categoryLabels[dataPointIndex];
+                        let tooltipContent = `<div style="padding: 10px; border: 1px solid #ccc; border-radius: 5px;">`;
+                        tooltipContent += `<div style="font-weight: bold; margin-bottom: 5px;">${w.globals.categoryLabels.length == 0 ? 'Index' : 'Date'}: ${w.globals.categoryLabels.length == 0 ? dataPointIndex : date}</div>`;
+
+                        // Candlestick data
+                        if (seriesIndex === 0) {
+                            const open = w.globals.seriesCandleO[0][dataPointIndex].toFixed(2);
+                            const high = w.globals.seriesCandleH[0][dataPointIndex].toFixed(2);
+                            const low = w.globals.seriesCandleL[0][dataPointIndex].toFixed(2);
+                            const close = w.globals.seriesCandleC[0][dataPointIndex].toFixed(2);
+                            tooltipContent += `
+                                <div style="display: flex; justify-content: space-between;">
+                                    <span>Open Price:</span> <span class="value">${open}</span>
+                                </div>
+                                <div style="display: flex; justify-content: space-between;">
+                                    <span>Close Price:</span> <span class="value">${close}</span>
+                                </div>
+                                <div style="display: flex; justify-content: space-between;">
+                                    <span>Movement:</span> <span style="color: ${(close - open) >= 0 ? 'green' : 'red'};">${(close - open).toFixed(2)}</span>
+                                </div>
+                            `;
+                        }
+
+                        if (w.globals.series[1][dataPointIndex] != null) {
+                            const line1 = w.globals.series[1][dataPointIndex].toFixed(2);
+                            tooltipContent += `
+                            <div style="display: flex; justify-content: space-between;">
+                                <span>Average 50:</span> <span class="value">${line1}</span>
+                            </div>`;
+                        }
+                        if (w.globals.series[2][dataPointIndex] != null) {
+                            const line2 = w.globals.series[2][dataPointIndex].toFixed(2);
+                            tooltipContent += `
+                            <div style="display: flex; justify-content: space-between;">
+                                <span>Average 100:</span> <span class="value">${line2}</span>
+                            </div>`;
+                        }
+                        if (w.globals.series[3][dataPointIndex] != null) {
+                            const line3 = w.globals.series[3][dataPointIndex].toFixed(2);
+                            tooltipContent += `
+                            <div style="display: flex; justify-content: space-between;">
+                                <span>Average 200:</span> <span class="value">${line3}</span>
+                            </div>`;
+                        }
+
+                        tooltipContent += `</div>`;
+                        return tooltipContent;
+                    }
+                },
+
+                xaxis: {
+                    type: 'category',
+                    tickAmount: Math.floor(datapoint.length / (option < 2 ? 10 : 1)),
+                    labels: {
+                        rotate: -45
+                    }
+                },
+                yaxis: {
+                    labels: {
+                        formatter: function (value) {
+                            return value != null ? value.toFixed(2) : 0;
+                        }
+                    },
+                    title: {
+                        text: 'P/L'
+                    },
+                },
+            };
+
+            if (plchart) {
+                plchart.destroy();
+            }
+
+            plchart = new ApexCharts(document.querySelector("#pl_graph"), options);
+            plchart.render();
+        }
     </script>
-    </head>
-    <body>
-        <div class="nav">
-            <input type="checkbox" id="nav-check">
-            <div class="nav-header"><div class="nav-title">Season Stats</div></div>
-            <div class="nav-btn">
-              <label for="nav-check">
-                <span></span>
-                <span></span>
-                <span></span>
-              </label>
-            </div>
-            
-            <div class="nav-links" style="display: flex;">
-                <div style="display: flex; flex-direction: column-reverse;  margin-right: 50px;">
-                    <a href="/showbetting">Accounting</a>
-                </div>
-                <div class="dropdown">
-                    <button class="btn btn-primary dropdown-toggle dropbtn" type="button" data-toggle="dropdown">
-                        <img src="/static/1.png" style="width: 40px; height: 40px;" alt="dropdown image" class="img-responsive">
-                        <span class="caret"></span>
-                    </button>
-                    <ul class="dropdown-menu dropend" style="left: -95px; width: 100px;">
-                        <!-- <li style="display: block; padding-top: 16px; padding-bottom: 16px;"><a href="#"><p>Reset Pssword</p></a></li> -->
-                        <li style="display: block; padding-top: 16px; padding-bottom: 16px;"><a  href="{{url_for('logout')}}"><p>Log Out</p></a></li>
-                    </ul>
-                </div>
-            </div>
+</head>
+
+<body>
+    <div class="nav">
+        <input type="checkbox" id="nav-check">
+        <div class="nav-header">
+            <div class="nav-title">Season Stats</div>
         </div>
-        
-        <div style="margin-top: 100px; margin-bottom: 50px;">
-            <table class="table" style="margin: 0 auto; text-align: center; width: auto; border: none;">
-                <thead style="font-size: 30px; font-weight: bold; height: 80px;">
-                    <tr>
-                        <td>Total Stake</td>
-                        <td style="padding-left: 40px; padding-right: 40px;">P/L</td>
-                        <td>Yield</td>
-                    </tr>
-                </thead>
-                <tbody style="font-size: 30px; height: 60px;">
-                    <tr>
-                        <td id="total-amount" class="total-amount-txt" style="font-size: 30px;">{{data['stake']}}</td>
-                        {% if data.color == "green" %}
-                            <td id="win-amount" class="win-amount-txt" style="font-size: 30px;">{{data['pl']}}</td>
-                        {% endif %}
-                        {% if data.color == "red" %}
-                            <td id="win-amount" class="loss-amount-txt" style="font-size: 30px;">{{data['pl']}}</td>
-                        {% endif %}
-                        <td >{{data['yield']}}%</td>
-                    </tr>
-                </tbody>
-            </table>
-            <div style="text-align: center; padding-top: 30px; font-size: 16px; font-weight: bold;">
-                <div>50 days average (blue)</div>
-                <div>100 days average (yellow)</div>
-                <div>200 days average (purple)</div>
-            </div>
+        <div class="nav-btn">
+            <label for="nav-check">
+                <span></span>
+                <span></span>
+                <span></span>
+            </label>
         </div>
 
-        <div style="display: flex; justify-content: center; align-items: center;">
-            <div id="chartContainerSeasson" style="height: 810px; width: 1610px;border: solid 2px; border-color: aqua;"></div>
+        <div class="nav-links" style="display: flex;">
+            <div style="display: flex; flex-direction: column-reverse;  margin-right: 50px;">
+                <a href="/showbetting">Accounting</a>
+            </div>
+            <div class="dropdown">
+                <button class="btn btn-primary dropdown-toggle dropbtn" type="button" data-toggle="dropdown">
+                    <img src="/static/1.png" style="width: 40px; height: 40px;" alt="dropdown image"
+                        class="img-responsive">
+                    <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu dropend" style="left: -95px; width: 100px;">
+                    <!-- <li style="display: block; padding-top: 16px; padding-bottom: 16px;"><a href="#"><p>Reset Pssword</p></a></li> -->
+                    <li style="display: block; padding-top: 16px; padding-bottom: 16px;"><a
+                            href="{{url_for('logout')}}">
+                            <p>Log Out</p>
+                        </a></li>
+                </ul>
+            </div>
         </div>
-        <div style="display: flex; justify-content: center; align-items: center; padding-top: 50px; padding-bottom: 50px;">
-            <div id="chartContainerTotal" style="height: 810px; width: 1610px;border: solid 2px; border-color: aqua;"></div>
+    </div>
+
+    <div style="margin-top: 100px; margin-bottom: 50px;">
+        <table class="table" style="margin: 0 auto; text-align: center; width: auto; border: none;">
+            <thead style="font-size: 30px; font-weight: bold; height: 80px;">
+                <tr>
+                    <td>Total Stake</td>
+                    <td style="padding-left: 40px; padding-right: 40px;">P/L</td>
+                    <td>Yield</td>
+                </tr>
+            </thead>
+            <tbody style="font-size: 30px; height: 60px;">
+                <tr>
+                    <td id="total-amount" class="total-amount-txt" style="font-size: 30px;">{{data['stake']}}</td>
+                    {% if data.color == "green" %}
+                    <td id="win-amount" class="win-amount-txt" style="font-size: 30px;">{{data['pl']}}</td>
+                    {% endif %}
+                    {% if data.color == "red" %}
+                    <td id="win-amount" class="loss-amount-txt" style="font-size: 30px;">{{data['pl']}}</td>
+                    {% endif %}
+                    <td>{{data['yield']}}%</td>
+                </tr>
+            </tbody>
+        </table>
+        <div style="text-align: center; padding-top: 30px; font-size: 16px; font-weight: bold;">
+            <div>50 days average (blue)</div>
+            <div>100 days average (yellow)</div>
+            <div>200 days average (purple)</div>
         </div>
-    </body>
+    </div>
+
+    <div style="display: flex; justify-content: center; align-items: center;">
+        <div>
+            <div
+                style="display: flex; justify-content: flex-start; width: 100%; padding-left: 20px; margin-bottom: 10px;">
+                <button class="graph-button" onclick="drawGraph(0)">B2B</button>
+                <button class="graph-button" onclick="drawGraph(1)">Daily</button>
+                <button class="graph-button" onclick="drawGraph(2)">Weekly</button>
+                <button class="graph-button" onclick="drawGraph(3)">Monthly</button>
+            </div>
+            <div id="pl_graph" style="height: 810px; width: 1610px;border: solid 2px; border-color: aqua;">
+            </div>
+        </div>
+    </div>
+    <div style="display: flex; justify-content: center; align-items: center; padding-top: 50px; padding-bottom: 50px;">
+        <div id="win_percent" style="height: 810px; width: 1610px;border: solid 2px; border-color: aqua;"></div>
+    </div>
+</body>
+
 </html>

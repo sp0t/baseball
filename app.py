@@ -147,7 +147,6 @@ def index():
     else:
         app.config['site'] = site_res[0][0]
 
-    print(app.config['site'])
 
     if app.config['site'] == 'NHL':
         if session["state"] == 0:
@@ -406,7 +405,6 @@ def make_prediction():
         # Get Form Data
     
         form_data = json.loads(request.form['data'])
-        print(form_data)
 
         params = {'away_batters': form_data['away_batters'], 
                   'home_batters': form_data['home_batters'], 
@@ -493,7 +491,6 @@ def make_prediction():
 
             prediction = {'model':'a', '1a': preds_1a, '1b': preds_1b}
         elif form_data['model'] == 'c':
-            print('thread argument', params)
             data = {}
             data['params'] = params
             data['stake_size'] = stake_size
@@ -517,8 +514,6 @@ def teams():
         return render_template("MLB/teams.html", data = game_table)
     if request.method == 'POST':
         team_data = request.get_json()
-
-        print(team_data)
 
         data = {}
         data['win_loss'] = {}
@@ -808,7 +803,6 @@ def teams():
         price_res = pd.read_sql(f"SELECT game_id, game_date, away, home, CASE WHEN away = '{team_data['name']}' THEN away_open WHEN home = '{team_data['name']}' THEN home_open ELSE 0 END as open_price, \
                                 CASE WHEN away = '{team_data['name']}' THEN away_close WHEN home = '{team_data['name']}' THEN home_close ELSE 0 END as close_price FROM odds_table WHERE (away = '{team_data['name']}' OR home = '{team_data['name']}') AND game_date LIKE '{year}%%' ORDER BY game_date DESC LIMIT 15;", con = engine).to_dict('records')   
         data['price'] = price_res
-        print(price_res)
 
         players_res = pd.read_sql(f"SELECT p_id, p_name FROM team_table INNER JOIN player_table ON team_table.team_id = player_table.t_id WHERE team_table.team_name = '{team_data['name']}';", con = engine).to_dict('records')   
 
@@ -822,7 +816,6 @@ def starterprice():
     if request.method == 'POST':
         player_data = request.get_json()
         playerID = player_data['pid']
-        print(playerID)
 
         #engine = database.connect_to_db()
 
@@ -1072,7 +1065,6 @@ def show_database():
 
 @app.route('/showbetting', methods = ["GET", "POST"])
 def show_betting():
-    print('start1')
     #engine = database.connect_to_db()
     if request.method == 'GET':
         return render_template("MLB/betting.html")
@@ -1203,7 +1195,6 @@ def season_state():
     data = {}
 
     for bet in bet_res:
-        print(bet["pl"], bet["risk"])
         pl += float(bet["pl"])
         total += float(bet["risk"])
 

@@ -95,9 +95,10 @@
                         dataPointsB.push({ x: data[x].id, y: [value, value > update ? value : update, value > update ? update : value, update] });
 
                         if (x < (data.length - 2) && data[x].betdate != data[x + 1].betdate) {
-                            console.log(data[x-1]);
-                            if(x > 0) 
+                            if(x > 0) {
+                                console.log(data[x-1]);
                                 dataPointsD.push({ x: data[x].betdate, y: [data[x-1].y[3], data[x-1].y[3] > update ? data[x-1].y[3] : update, data[x-1].y[3] > update ? update : data[x-1].y[3], update] });
+                            }
                             else
                                 dataPointsD.push({ x: data[x].betdate, y: [value, value > update ? value : update, value > update ? update : value, update] });
 

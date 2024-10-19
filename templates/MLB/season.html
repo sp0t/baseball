@@ -95,6 +95,7 @@
                         dataPointsB.push({ x: data[x].id, y: [value, value > update ? value : update, value > update ? update : value, update] });
 
                         if (x < (data.length - 2) && data[x].betdate != data[x + 1].betdate) {
+                            console.log(data[x-1]);
                             if(x > 0) 
                                 dataPointsD.push({ x: data[x].betdate, y: [data[x-1].y[3], data[x-1].y[3] > update ? data[x-1].y[3] : update, data[x-1].y[3] > update ? update : data[x-1].y[3], update] });
                             else
@@ -120,7 +121,7 @@
 
                         if (x == (data.length - 1)) {
                             dataPointsD.push({ x: data[x].betdate, y: [data[x-1].y[3], data[x-1].y[3] > update ? data[x-1].y[3] : update, data[x-1].y[3] > update ? update : data[x-1].y[3], update] });
-                            
+
                             if (x >= 50) {
                                 lineHalfD.push({ x: data[x].betdate, y: half_avg_value });
                             }

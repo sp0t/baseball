@@ -149,7 +149,12 @@
 
                             if (differenceInDays >= 7) {
                                 currentWeek = [data[x].betdate];
-                                dataPointsW.push({ x: data[x - 1].betdate, y: [prevalue, prevalue > value ? prevalue : value, prevalue > value ? value : prevalue, value] });
+
+                                if(dataPointsW.length > 0) 
+                                    dataPointsW.push({ x: data[x - 1].betdate, y: [dataPointsW[dataPointsW.length-1].y[3], dataPointsW[dataPointsW.length-1].y[3] > value ? dataPointsW[dataPointsW.length-1].y[3] : value, dataPointsW[dataPointsW.length-1].y[3] > value ? value : dataPointsW[dataPointsW.length-1].y[3], value] });
+                                else
+                                    dataPointsW.push({ x: data[x - 1].betdate, y: [prevalue, prevalue > value ? prevalue : value, prevalue > value ? value : prevalue, value] });
+
                                 if (x >= 50) {
                                     lineHalfW.push({ x: data[x - 1].betdate, y: pre_half_avg_value });
                                 }
@@ -166,7 +171,11 @@
                             if (x < (data.length - 2)) {
                                 if (data[x].betdate != data[x + 1].betdate && (date.getDay() < lastDateInCurrentWeek.getDay() || dayOfWeek === 0)) {
                                     currentWeek = [data[x].betdate];
-                                    dataPointsW.push({ x: data[x - 1].betdate, y: [prevalue, prevalue > value ? prevalue : value, prevalue > value ? value : prevalue, value] });
+                                    
+                                    if(dataPointsW.length > 0) 
+                                        dataPointsW.push({ x: data[x - 1].betdate, y: [dataPointsW[dataPointsW.length-1].y[3], dataPointsW[dataPointsW.length-1].y[3] > value ? dataPointsW[dataPointsW.length-1].y[3] : value, dataPointsW[dataPointsW.length-1].y[3] > value ? value : dataPointsW[dataPointsW.length-1].y[3], value] });
+                                    else
+                                        dataPointsW.push({ x: data[x - 1].betdate, y: [prevalue, prevalue > value ? prevalue : value, prevalue > value ? value : prevalue, value] });
 
                                     if (x >= 50) {
                                         lineHalfW.push({ x: data[x - 1].betdate, y: pre_half_avg_value });
@@ -183,7 +192,10 @@
                                     currentWeek.push(data[x].betdate);
                                 }
                             } else {
-                                dataPointsW.push({ x: data[x].betdate, y: [value, value > update ? value : update, value > update ? update : value, update] });
+                                if(dataPointsW.length > 0) 
+                                    dataPointsW.push({ x: data[x - 1].betdate, y: [dataPointsW[dataPointsW.length-1].y[3], dataPointsW[dataPointsW.length-1].y[3] > update ? dataPointsW[dataPointsW.length-1].y[3] : update, dataPointsW[dataPointsW.length-1].y[3] > update ? update : dataPointsW[dataPointsW.length-1].y[3], update] });
+                                else
+                                    dataPointsW.push({ x: data[x].betdate, y: [value, value > update ? value : update, value > update ? update : value, update] });
                                 if (x >= 50) {
                                     lineHalfW.push({ x: data[x].betdate, y: half_avg_value });
                                 }
@@ -214,7 +226,10 @@
                             }
                         } else {
                             if (new Date(data[x + 1].betdate).getMonth() !== date.getMonth()) {
-                                dataPointsM.push({ x: data[x].betdate, y: [value, value > update ? value : update, value > update ? update : value, update] });
+                                if(dataPointsM.length > 0) 
+                                    dataPointsM.push({ x: data[x].betdate, y: [dataPointsM[dataPointsM.length-1].y[3], dataPointsM[dataPointsM.length-1].y[3] > update ? dataPointsM[dataPointsM.length-1].y[3] : update, dataPointsM[dataPointsM.length-1].y[3] > update ? update : dataPointsM[dataPointsM.length-1].y[3], update] });
+                                else
+                                    dataPointsM.push({ x: data[x].betdate, y: [value, value > update ? value : update, value > update ? update : value, update] });
 
                                 if (x >= 50) {
                                     lineHalfM.push({ x: data[x].betdate, y: half_avg_value });

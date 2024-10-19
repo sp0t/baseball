@@ -1203,6 +1203,8 @@ def season_state():
     else:
         data["color"] = "red"
 
+
+    print('pl=====>', pl)
     data['stake'] = "{:,.2f}".format(total)
     data['pl'] = "{:,.2f}".format(pl)
     yd = pl / total * 100

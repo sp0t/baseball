@@ -442,10 +442,10 @@
 
                         // Candlestick data
                         if (seriesIndex === 0) {
-                            const open = w.globals.seriesCandleO[0][dataPointIndex].toFixed(2);
-                            const high = w.globals.seriesCandleH[0][dataPointIndex].toFixed(2);
-                            const low = w.globals.seriesCandleL[0][dataPointIndex].toFixed(2);
-                            const close = w.globals.seriesCandleC[0][dataPointIndex].toFixed(2);
+                            const open = w.globals.seriesCandleO[0][dataPointIndex] ? w.globals.seriesCandleO[0][dataPointIndex].toFixed(2): 0;
+                            const high = w.globals.seriesCandleH[0][dataPointIndex] ? w.globals.seriesCandleH[0][dataPointIndex].toFixed(2): 0;
+                            const low = w.globals.seriesCandleL[0][dataPointIndex] ? w.globals.seriesCandleL[0][dataPointIndex].toFixed(2): 0;
+                            const close = w.globals.seriesCandleC[0][dataPointIndex]? w.globals.seriesCandleC[0][dataPointIndex].toFixed(2): 0;
                             tooltipContent += `
                                 <div style="display: flex; justify-content: space-between;">
                                     <span>Open Price:</span> <span class="value">${open}</span>
@@ -488,7 +488,7 @@
 
                 xaxis: {
                     type: 'category',
-                    tickAmount: Math.floor(datapoint.length / (option < 2 ? 10 : 1)),
+                    tickAmount: Math.floor(datapoint.length / (option < 3 ? 10 : 1)),
                     labels: {
                         rotate: -45
                     }

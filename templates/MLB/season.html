@@ -95,10 +95,8 @@
                         dataPointsB.push({ x: data[x].id, y: [value, value > update ? value : update, value > update ? update : value, update] });
 
                         if (x < (data.length - 2) && data[x].betdate != data[x + 1].betdate) {
-                            if(x > 0) {
-                                console.log(dataPointsD[x-1]);
-                                dataPointsD.push({ x: data[x].betdate, y: [dataPointsD[x-1].y[3], dataPointsD[x-1].y[3] > update ? dataPointsD[x-1].y[3] : update, dataPointsD[x-1].y[3] > update ? update : dataPointsD[x-1].y[3], update] });
-                            }
+                            if(dataPointsD.length > 0) 
+                                dataPointsD.push({ x: data[x].betdate, y: [dataPointsD[dataPointsD.length-1].y[3], dataPointsD[dataPointsD.length-1].y[3] > update ? dataPointsD[dataPointsD.length-1].y[3] : update, dataPointsD[dataPointsD.length-1].y[3] > update ? update : dataPointsD[dataPointsD.length-1].y[3], update] });
                             else
                                 dataPointsD.push({ x: data[x].betdate, y: [value, value > update ? value : update, value > update ? update : value, update] });
 
@@ -121,7 +119,7 @@
                         }
 
                         if (x == (data.length - 1)) {
-                            dataPointsD.push({ x: data[x].betdate, y: [dataPointsD[x-1].y[3], dataPointsD[x-1].y[3] > update ? dataPointsD[x-1].y[3] : update, dataPointsD[x-1].y[3] > update ? update : dataPointsD[x-1].y[3], update] });
+                            dataPointsD.push({ x: data[x].betdate, y: [dataPointsD[dataPointsD.length-1].y[3], dataPointsD[dataPointsD.length-1].y[3] > update ? dataPointsD[dataPointsD.length-1].y[3] : update, dataPointsD[dataPointsD.length-1].y[3] > update ? update : dataPointsD[dataPointsD.length-1].y[3], update] });
 
                             if (x >= 50) {
                                 lineHalfD.push({ x: data[x].betdate, y: half_avg_value });

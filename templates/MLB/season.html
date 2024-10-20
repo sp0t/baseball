@@ -62,6 +62,7 @@
                     var value = 0, update = 0, prevalue = 0, average = 0, half_avg_value = 0, avg_value = 0, double_avg_value = 0, pre_half_avg_value = 0, pre_avg_value = 0, pre_double_avg_value = 0;
                     var currentWeek = [];
                     var pl = [];
+                    var i = 0;
                     for (x = 0; x < data.length; x++) {
                         update = value + parseFloat(data[x]['pl']);
                         pl.push(update);
@@ -100,15 +101,15 @@
                             else
                                 dataPointsD.push({ x: data[x].betdate, y: [value, value > update ? value : update, value > update ? update : value, update] });
 
-                            if (x >= 50) {
+                            if (i >= 50) {
                                 lineHalfD.push({ x: data[x].betdate, y: half_avg_value });
                             }
 
-                            if (x >= 100) {
+                            if (i >= 100) {
                                 lineD.push({ x: data[x].betdate, y: avg_value });
                             }
 
-                            if (x >= 200) {
+                            if (i >= 200) {
                                 lineDoubleD.push({ x: data[x].betdate, y: double_avg_value });
                             }
 
@@ -116,20 +117,22 @@
                                 dataPointsWProCategory.push(data[x].betdate);
                                 dataPointsWProData.push(parseFloat(data[x].run_win));
                             }
+
+                            i++;
                         }
 
                         if (x == (data.length - 1)) {
                             dataPointsD.push({ x: data[x].betdate, y: [dataPointsD[dataPointsD.length-1].y[3], dataPointsD[dataPointsD.length-1].y[3] > update ? dataPointsD[dataPointsD.length-1].y[3] : update, dataPointsD[dataPointsD.length-1].y[3] > update ? update : dataPointsD[dataPointsD.length-1].y[3], update] });
 
-                            if (x >= 50) {
+                            if (i >= 50) {
                                 lineHalfD.push({ x: data[x].betdate, y: half_avg_value });
                             }
 
-                            if (x >= 100) {
+                            if (i >= 100) {
                                 lineD.push({ x: data[x].betdate, y: avg_value });
                             }
 
-                            if (x >= 200) {
+                            if (i >= 200) {
                                 lineDoubleD.push({ x: data[x].betdate, y: double_avg_value });
                             }
 
@@ -137,6 +140,8 @@
                                 dataPointsWProCategory.push(data[x].betdate);
                                 dataPointsWProData.push(parseFloat(data[x].run_win));
                             }
+
+                            i++;
                         }
 
                         var date = new Date(data[x].betdate);
@@ -155,15 +160,15 @@
                                 else
                                     dataPointsW.push({ x: data[x - 1].betdate, y: [prevalue, prevalue > value ? prevalue : value, prevalue > value ? value : prevalue, value] });
 
-                                if (x >= 50) {
+                                if (i >= 50) {
                                     lineHalfW.push({ x: data[x - 1].betdate, y: pre_half_avg_value });
                                 }
 
-                                if (x >= 100) {
+                                if (i >= 100) {
                                     lineW.push({ x: data[x - 1].betdate, y: pre_avg_value });
                                 }
 
-                                if (x >= 200) {
+                                if (i >= 200) {
                                     lineDoubleW.push({ x: data[x - 1].betdate, y: pre_double_avg_value });
                                 }
                             }
@@ -177,15 +182,15 @@
                                     else
                                         dataPointsW.push({ x: data[x - 1].betdate, y: [prevalue, prevalue > value ? prevalue : value, prevalue > value ? value : prevalue, value] });
 
-                                    if (x >= 50) {
+                                    if (i >= 50) {
                                         lineHalfW.push({ x: data[x - 1].betdate, y: pre_half_avg_value });
                                     }
 
-                                    if (x >= 100) {
+                                    if (i >= 100) {
                                         lineW.push({ x: data[x - 1].betdate, y: pre_avg_value });
                                     }
 
-                                    if (x >= 200) {
+                                    if (i >= 200) {
                                         lineDoubleW.push({ x: data[x - 1].betdate, y: pre_double_avg_value });
                                     }
                                 } else {
@@ -196,15 +201,15 @@
                                     dataPointsW.push({ x: data[x - 1].betdate, y: [dataPointsW[dataPointsW.length-1].y[3], dataPointsW[dataPointsW.length-1].y[3] > update ? dataPointsW[dataPointsW.length-1].y[3] : update, dataPointsW[dataPointsW.length-1].y[3] > update ? update : dataPointsW[dataPointsW.length-1].y[3], update] });
                                 else
                                     dataPointsW.push({ x: data[x].betdate, y: [value, value > update ? value : update, value > update ? update : value, update] });
-                                if (x >= 50) {
+                                if (i >= 50) {
                                     lineHalfW.push({ x: data[x].betdate, y: half_avg_value });
                                 }
 
-                                if (x >= 100) {
+                                if (i >= 100) {
                                     lineW.push({ x: data[x].betdate, y: avg_value });
                                 }
 
-                                if (x >= 200) {
+                                if (i >= 200) {
                                     lineDoubleW.push({ x: data[x].betdate, y: double_avg_value });
                                 }
                             }
@@ -213,15 +218,15 @@
                         if (x == (data.length - 1)) {
                             dataPointsM.push({ x: data[x].betdate, y: [value, value > update ? value : update, value > update ? update : value, update] });
 
-                            if (x >= 50) {
+                            if (i >= 50) {
                                 lineHalfM.push({ x: data[x].betdate, y: half_avg_value });
                             }
 
-                            if (x >= 100) {
+                            if (i >= 100) {
                                 lineM.push({ x: data[x].betdate, y: avg_value });
                             }
 
-                            if (x >= 200) {
+                            if (i >= 200) {
                                 lineDoubleM.push({ x: data[x].betdate, y: double_avg_value });
                             }
                         } else {
@@ -231,15 +236,15 @@
                                 else
                                     dataPointsM.push({ x: data[x].betdate, y: [value, value > update ? value : update, value > update ? update : value, update] });
 
-                                if (x >= 50) {
+                                if (i >= 50) {
                                     lineHalfM.push({ x: data[x].betdate, y: half_avg_value });
                                 }
 
-                                if (x >= 100) {
+                                if (i >= 100) {
                                     lineM.push({ x: data[x].betdate, y: avg_value });
                                 }
 
-                                if (x >= 200) {
+                                if (i >= 200) {
                                     lineDoubleM.push({ x: data[x].betdate, y: double_avg_value });
                                 }
                             }

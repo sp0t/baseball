@@ -116,9 +116,15 @@ def update_database():
                 engine.execute("INSERT INTO game_table(game_id, game_date, away_team, home_team, season_id, state, start_time, import_state) VALUES(%s, %s, %s, %s, %s, %s, %s, %s)", (box['game_id'], box['game_date'], box['away_team'],  box['home_team'], box['season'], apiBoxScore['gameState'], box['start_time'], 'FAILED'))
                 continue
 
+            game_type = ''
+            if 'gameOutcome' in apiBoxScore:
+                if 'lastPeriodType' in apiBoxScore['gameOutcome']:
+                    game_type = apiBoxScore['gameOutcome']['lastPeriodType']
 
             box['away_score'] = apiBoxScore['awayTeam']['score']
             box['home_score'] = apiBoxScore['homeTeam']['score']
+            box['game_type'] = apiBoxScore['game_type']
+
             if box['away_score'] < box['home_score']:
                 winner = 0
             else:
@@ -145,10 +151,10 @@ def update_database():
             any_players_share_names = check_if_duplicates_exist(box_score_player_names)
 
             if any_players_share_names:
-                engine.execute("INSERT INTO game_table(game_id, game_date, away_team, home_team, away_score, home_score, winner, season_id, state, start_time, import_state) VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)", (box['game_id'], box['game_date'], box['away_team'],  box['home_team'], box['away_score'], box['home_score'], box['winner'], box['season'], apiBoxScore['gameState'], box['start_time'], 'MULTIPLE_PLAYERS_WITH_SAME_NAME'))
+                engine.execute("INSERT INTO game_table(game_id, game_date, away_team, home_team, away_score, home_score, winner, season_id, state, start_time, import_state, game_type) VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)", (box['game_id'], box['game_date'], box['away_team'],  box['home_team'], box['away_score'], box['home_score'], box['winner'], box['season'], apiBoxScore['gameState'], box['start_time'], 'MULTIPLE_PLAYERS_WITH_SAME_NAME', box['game_type']))
                 continue
             else:
-                engine.execute("INSERT INTO game_table(game_id, game_date, away_team, home_team, away_score, home_score, winner, season_id, state, start_time, import_state) VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)", (box['game_id'], box['game_date'], box['away_team'],  box['home_team'], box['away_score'], box['home_score'], box['winner'], box['season'], apiBoxScore['gameState'], box['start_time'], 'COMPLETED'))
+                engine.execute("INSERT INTO game_table(game_id, game_date, away_team, home_team, away_score, home_score, winner, season_id, state, start_time, import_state, game_type) VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)", (box['game_id'], box['game_date'], box['away_team'],  box['home_team'], box['away_score'], box['home_score'], box['winner'], box['season'], apiBoxScore['gameState'], box['start_time'], 'COMPLETED', box['game_type']))
 
             all_scraped_player_stats = [
                 {**player_stat, 'teamSide': team_side, 'role': _squad_name }

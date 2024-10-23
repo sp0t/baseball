@@ -7,4 +7,8 @@ game_res = pd.read_sql(f"SELECT * FROM game_table", con = engine_nhl).to_dict('r
 
 for el in game_res:
     boxscore = nhlAPI.get_Boxscore(el['game_id'])
-    print(boxscore['gameOutcome'])
+    game_type = ''
+    if 'gameOutcome' in boxscore:
+        if 'lastPeriodType' in boxscore['gameOutcome']:
+            game_type = boxscore['gameOutcome']['lastPeriodType']
+    print(game_type)

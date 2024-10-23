@@ -7,8 +7,10 @@ game_res = pd.read_sql(f"SELECT * FROM game_table", con = engine_nhl).to_dict('r
 
 for el in game_res:
     boxscore = nhlAPI.get_Boxscore(el['game_id'])
+    print(el['game_id'])
     game_type = ''
     if 'gameOutcome' in boxscore:
         if 'lastPeriodType' in boxscore['gameOutcome']:
             game_type = boxscore['gameOutcome']['lastPeriodType']
-    print(game_type)
+    
+    engine_nhl.execute(f"UPDATE game_table SET game_type = '{game_type}' WHERE game_id = '{el['game_id']}'")

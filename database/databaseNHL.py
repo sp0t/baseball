@@ -15,7 +15,6 @@ from functions import modelInput
 from schedule import scheduleNHL
 
 def connect_to_db(): 
-    
     try: 
         engine = create_engine('postgresql://postgres:lucamlb123@localhost:5432/betnhl_new', connect_args = {'connect_timeout': 10}, echo=False, pool_size=20, max_overflow=0)
         print('Connection Initiated')

@@ -1947,6 +1947,36 @@ def calculate(predictionData):
 
     return
 
+@app.route('/price_request', methods = ["POST"])
+def price_request():
+    data = json.loads(request.form['data'])
+    
+    if(data['site'] == 'NHL'):
+        query = text("""
+                        INSERT INTO price_table (game_id, awayprice, homeprice, awaystate, homestate, bet, status)
+                        VALUES (:game_id, :awayprice, :homeprice, :awaystate, :homestate, :bet, :status)
+                        ON CONFLICT (game_id) 
+                        DO UPDATE SET 
+                            awayprice = EXCLUDED.awayprice,
+                            homeprice = EXCLUDED.homeprice,
+                            awaystate = EXCLUDED.awaystate,
+                            homestate = EXCLUDED.homestate,
+                            bet = EXCLUDED.bet,
+                            status = EXCLUDED.status;
+                    """)
+
+        data = {
+                    'game_id': data['gameid'],
+                    'awayprice': data['awayprice'],
+                    'homeprice': data['homeprice'],
+                    'awaystate': '0',
+                    'homestate': '0',
+                    'bet': data['bet'],
+                    'status': '0'
+                }
+        engine_nhl.execute(query, data)
+    return data
+
 def calModelC(data):
     print('thread start', data)
     params = data['params'] 

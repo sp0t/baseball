@@ -88,6 +88,7 @@ def update_database():
         num_games = len(game_list)
         errored_games = []
         for game in game_list: 
+            print(game['id'])
             game_index = game_list.index(game)
             apiBoxScore = nhlAPI.get_Boxscore(game['id'])
             scrapedNstData = NHLStats.scrape(game['id'], game['season'], game['awayTeam'], game['homeTeam'])
@@ -123,7 +124,7 @@ def update_database():
 
             box['away_score'] = apiBoxScore['awayTeam']['score']
             box['home_score'] = apiBoxScore['homeTeam']['score']
-            box['game_type'] = apiBoxScore['game_type']
+            box['game_type'] = game_type
 
             if box['away_score'] < box['home_score']:
                 winner = 0

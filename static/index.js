@@ -9,6 +9,31 @@ $(document).ready(function(){
             localStorage.setItem("darkMode", "enabled");
         }
     });
+
+    const awaypriceInput = document.getElementById('awayprice');
+    awaypriceInput.addEventListener('input', function () {
+        let value = awaypriceInput.value;
+        if (value.startsWith('+') || value.startsWith('-')) {
+            value = value.substring(1);
+        }
+
+        if (value !== '') {
+            awaypriceInput.value = awaypriceInput.value.startsWith('-') ? `-${value}` : `+${value}`;
+        }
+    })
+
+    const homepriceInput = document.getElementById('homeprice');
+    homepriceInput.addEventListener('input', function () {
+        let value = homepriceInput.value;
+        if (value.startsWith('+') || value.startsWith('-')) {
+            value = value.substring(1);
+        }
+
+        if (value !== '') {
+            homepriceInput.value = homepriceInput.value.startsWith('-') ? `-${value}` : `+${value}`;
+        }
+    })
+
 })
 
 function openCard(buttonId){ 
@@ -224,6 +249,13 @@ function openBetModal(gameid){
     })
 }
 
+function openPriceModal(gameid){ 
+    document.getElementById('modal_game_id').value = gameid;
+    $('.large-card').css('width', '350px').css('height', '220px').show();
+    $('#large-card-wrapper').show();
+    $('#priceform').show();
+}
+
 
 function changeBetSite(site) {
     var gameid = $("#modal_game_id").val();
@@ -342,7 +374,6 @@ function closeCard(value = 0){
     $('.large-card').hide(); 
 
 }
-
 
 function updateBetInformation(value) {
     var data = {};
@@ -1311,4 +1342,38 @@ function switchSite(flag) {
             window.location.reload(true);
          }, 
     })
+}
+
+function closeNHLCard(value = 0){ 
+    $('.large-card').hide(); 
+}
+
+
+function saveRequestPrice(value = 0){ 
+    var awayprice = document.getElementById('awayprice').value ? document.getElementById('awayprice').value : 0;
+    var homeprice = document.getElementById('homeprice').value ? document.getElementById('homeprice').value : 0;
+    var gameid = document.getElementById('modal_game_id').value;
+    var bet = document.getElementById('auto_bet').checked ? 1: 0;
+
+    data = {}
+    data['gameid'] = gameid;
+    data['awayprice'] = awayprice;
+    data['homeprice'] = homeprice;
+    data['bet'] = bet;
+    data['site'] = 'NHL';
+
+    $.ajax({
+        type: 'POST', 
+        url: '/price_request', 
+        data: { 'data' : JSON.stringify(data)},
+        beforeSend: function(){
+            $('#large-card-wrapper').hide();
+            $('#loader').show();
+        }, 
+        success: function (data){
+            $('#loader').hide(); 
+            $('#large-card-wrapper').show();
+         }, 
+    });
+    $('.large-card').hide(); 
 }

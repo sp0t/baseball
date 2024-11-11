@@ -157,13 +157,50 @@
                                 <div style="justify-content: center; color: blue; margin-bottom: 5px; font-weight: 400">
                                 </div>
                             </div>
+                            <div style="display: flex; justify-content: center; align-items: center;">
+                                <div class="autobet-box">
+                                    <button type="button" id="price_{{game.game_id}}" class="price-button" onclick="openPriceModal('{{game.game_id}}')">Set Price</button>
+                                </div>
+                            </div>
                             <div class="hover-div"></div>
                         </div>
                         <div id = "stats_{{game.game_id}}">
                         </div>
                     </div>
                 {% endfor %}
-                <div id="loader"><img style="width: 50px; margin-top: 220px;" src="/static/loader.gif"/></div>
+                <div class="large-card" style = "display: none">
+                    <button class="close-button" onclick="closeNHLCard()" style="margin-bottom: 5px;">Close</button>
+                    <div id="large-card-wrapper">
+                        <div id = 'priceform' style="border: 1px solid gray; padding: 10px 5px;">
+                            <input type="hidden" id="modal_game_id" name="modal_game_id" value="">
+                            <div class="bet-form-row">
+                                <div class="bet-form-row-left">AWAY:</div>
+                                <div class="bet-form-row-right">
+                                    <input type="text" placeholder="+137" class="bet-input-form" id = 'awayprice'> 
+                                </div>
+                            </div>
+                            <div class="bet-form-row">
+                                <div class="bet-form-row-left">HOME:</div>
+                                <div class="bet-form-row-right">
+                                    <input type="text" placeholder="-124" class="bet-input-form" id = 'homeprice'> 
+                                </div>
+                            </div>
+                            <div class="bet-form-row">
+                                <div class="bet-form-row-left" for = 'auto_bet'>Bet:</div>
+                                <div class="bet-form-row-right">
+                                    <input type="checkbox" id = 'auto_bet' name = 'auto_bet'></input>
+                                </div>
+                            </div>
+                            <div class="bet-form-row">
+                                <div class="bet-button-row">
+                                    <button class="bet-add-button" onclick="closeNHLCard()">Cancel</button>
+                                    <button class="bet-add-button" onclick="saveRequestPrice()">OK</button>
+                                </div>
+                            </div>
+                        </div>                
+                    </div>        
+                    <div id="loader"><img style="width: 50px; margin-top: 220px;" src="/static/loader.gif"/></div>
+                </div>
             </div> 
         </div>
     </body>

@@ -11,11 +11,14 @@ from functions import modelInput
 def get_schedule(engine): 
     try: 
         schedule = list(pd.read_sql('SELECT * FROM schedule;', con = engine).T.to_dict().values())
+        print(schedule)
     except: 
-        schedule = get_schedule_from_nhl()
+        schedule = get_schedule_from_nhl(engine)
+        schedule = schedule.to_dict('records')
         return "Today's schedule can't be found. Try force-updating or waiting a few minutes to refresh!"
 
     for el in schedule:
+        print(el)
         el['away_fcnn'] = 0
         el['home_fcnn'] = 0
         el['away_lr'] = 0
@@ -41,7 +44,7 @@ def get_schedule_from_nhl(engine):
     start_date = date.today()
     game_sched = nhlAPI.get_Daily_Scores_By_Date(date = date.today())
     games = game_sched['games']
-    info_keys = ['game_id', 'game_datetime','away_name', 'home_name']
+    info_keys = ['game_id', 'game_datetime','away_name', 'home_name', 'away_full_name', 'home_full_name']
     
     for el in games:
         el['game_datetime'] = el['startTimeUTC'].split('T')[1][:-1] 
@@ -54,6 +57,21 @@ def get_schedule_from_nhl(engine):
         el['game_datetime'] = el['game_datetime'].strftime('%H:%M:%S')
         el['away_name'] = el['awayTeam']['name']['default']
         el['home_name'] = el['homeTeam']['name']['default']
+        away_team_id = el['awayTeam']['id']
+        home_team_id = el['homeTeam']['id']
+        away_res = pd.read_sql(f"SELECT * FROM team_table WHERE team_id = '{away_team_id}';", con = engine).to_dict('records')
+        home_res = pd.read_sql(f"SELECT * FROM team_table WHERE team_id = '{home_team_id}';", con = engine).to_dict('records')
+
+        if len(away_res):
+            el['away_full_name'] = away_res[0]['team_name']
+        else:
+            el['away_full_name'] = ''
+
+        if len(home_res):
+            el['home_full_name'] = home_res[0]['team_name']
+        else:
+            el['home_full_name'] = ''
+
         modelInput.generate_model_input(el['game_id'], engine, 1)
 
     games = [{k:v for k,v in el.items() if k in info_keys} for el in games]    
@@ -62,10 +80,12 @@ def get_schedule_from_nhl(engine):
 
 def update_schedule(): 
     
+    print('test')
     engine = databaseNHL.connect_to_db()
     engine.execute("DELETE FROM schedule")
     
     new_schedule = get_schedule_from_nhl(engine)
+    print(new_schedule)
     new_schedule.to_sql("schedule", con = engine, index = False, if_exists = 'replace')
     
     return

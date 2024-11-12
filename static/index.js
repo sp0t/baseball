@@ -1355,13 +1355,16 @@ function saveRequestPrice(value = 0){
     var gameid = document.getElementById('modal_game_id').value;
     var bet = document.getElementById('auto_bet').checked ? 1: 0;
 
+
+    
     data = {}
     data['gameid'] = gameid;
     data['awayprice'] = awayprice;
     data['homeprice'] = homeprice;
     data['bet'] = bet;
     data['site'] = 'NHL';
-
+    
+    console.log(data);
     $.ajax({
         type: 'POST', 
         url: '/price_request', 

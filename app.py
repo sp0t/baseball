@@ -1953,8 +1953,8 @@ def price_request():
     
     if(data['site'] == 'NHL'):
         query = text("""
-                        INSERT INTO price_table (game_id, awayprice, homeprice, awaystate, homestate, bet, status)
-                        VALUES (:game_id, :awayprice, :homeprice, :awaystate, :homestate, :bet, :status)
+                        INSERT INTO price_table (game_id, awayprice, homeprice, awaystate, homestate, bet, status, stake)
+                        VALUES (:game_id, :awayprice, :homeprice, :awaystate, :homestate, :bet, :status, :stake)
                         ON CONFLICT (game_id) 
                         DO UPDATE SET 
                             awayprice = EXCLUDED.awayprice,
@@ -1962,7 +1962,8 @@ def price_request():
                             awaystate = EXCLUDED.awaystate,
                             homestate = EXCLUDED.homestate,
                             bet = EXCLUDED.bet,
-                            status = EXCLUDED.status;
+                            status = EXCLUDED.status,
+                            stake = EXCLUDED.stake;
                     """)
 
         data = {
@@ -1972,7 +1973,8 @@ def price_request():
                     'awaystate': '0',
                     'homestate': '0',
                     'bet': data['bet'],
-                    'status': '0'
+                    'status': '0',
+                    'stake' : data['stake']
                 }
         engine_nhl.execute(query, data)
     return data

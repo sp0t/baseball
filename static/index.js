@@ -251,7 +251,7 @@ function openBetModal(gameid){
 
 function openPriceModal(gameid){ 
     document.getElementById('modal_game_id').value = gameid;
-    $('.large-card').css('width', '350px').css('height', '220px').show();
+    $('.large-card').css('width', '350px').css('height', '260px').show();
     $('#large-card-wrapper').show();
     $('#priceform').show();
 }
@@ -1354,7 +1354,7 @@ function saveRequestPrice(value = 0){
     var homeprice = document.getElementById('homeprice').value ? document.getElementById('homeprice').value : 0;
     var gameid = document.getElementById('modal_game_id').value;
     var bet = document.getElementById('auto_bet').checked ? 1: 0;
-
+    var stake = document.getElementById('stake_size').value;
 
     
     data = {}
@@ -1363,6 +1363,7 @@ function saveRequestPrice(value = 0){
     data['homeprice'] = homeprice;
     data['bet'] = bet;
     data['site'] = 'NHL';
+    data['stake'] = stake;
     
     console.log(data);
     $.ajax({

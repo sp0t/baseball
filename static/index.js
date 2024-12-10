@@ -268,8 +268,7 @@ function openNHLBetModal(gameid){
         success: function (data){ 
             $('#loader').hide();
             $('#large-card-wrapper').show();
-            $('#form').hide();
-            $('#calc').hide();
+            $('#priceform').hide();
             $('#betform').show();
             $("#modal_game_id").val(gameid);
 
@@ -351,6 +350,7 @@ function openPriceModal(gameid){
     document.getElementById('modal_game_id').value = gameid;
     $('.large-card').css('width', '350px').css('height', '260px').show();
     $('#large-card-wrapper').show();
+    $('#betform').hide();
     $('#priceform').show();
 }
 

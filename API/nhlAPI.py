@@ -687,7 +687,7 @@ def get_Boxscore(gameID):
     boxscore = {}
     url = f"https://api-web.nhle.com/v1/gamecenter/{gameID}/boxscore"
         
-    response = requests.get(url)
+    response = requests.get(url, verify=False)
 
     if response.status_code == 200:
         boxscore = response.json()

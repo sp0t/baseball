@@ -249,6 +249,104 @@ function openBetModal(gameid){
     })
 }
 
+function openNHLBetModal(gameid){ 
+    data = {}
+    data['gameid'] = gameid
+    data['site'] = 'NOSITE'
+    $.ajax({
+        type: 'POST', 
+        url: '/get_NHL_bet_info', 
+        data: JSON.stringify(data),
+        dataType: 'json',
+        contentType: 'application/json',
+        beforeSend: function(){ 
+            $('.large-card').css('width', '350px').css('height', '430px').show();
+            $('#large-card-wrapper').hide();
+            $('#loader').show();
+
+        },
+        success: function (data){ 
+            $('#loader').hide();
+            $('#large-card-wrapper').show();
+            $('#form').hide();
+            $('#calc').hide();
+            $('#betform').show();
+            $("#modal_game_id").val(gameid);
+
+            var betdate = document.getElementById('betdate');
+            betdate.innerHTML = data['date'];
+
+            var away = document.getElementById('awayname');
+            away.value = data['away'];
+
+            var home = document.getElementById('homename');
+            home.value = data['home'];
+
+            var teams = document.getElementById('teams'); 
+
+            var newOption = document.createElement('option');
+            newOption.value = ''; 
+            newOption.innerHTML = '-';
+            newOption.style.fontSize = '15px';
+            newOption.style.padding = '3px';
+            teams.append(newOption);
+
+            var awayOption = document.createElement('option');
+            awayOption.value = data['away']; 
+            awayOption.innerHTML = data['away'];
+            awayOption.style.fontSize = '15px';
+            awayOption.style.padding = '3px';
+            if(data['away'] == data['place'])
+                awayOption.setAttribute('selected', true);
+
+            teams.append(awayOption);
+
+            var homeOption = document.createElement('option');
+            homeOption.value = data['home']; 
+            homeOption.innerHTML = data['home'];
+            homeOption.style.fontSize = '15px';
+            homeOption.style.padding = '3px';
+
+            if(data['home'] == data['place'])
+                homeOption.setAttribute('selected', true);
+
+            teams.append(homeOption);
+
+            var sites = document.getElementById('sites'); 
+
+            var newOption = document.createElement('option');
+            newOption.value = ''; 
+            newOption.innerHTML = '-';
+            newOption.style.fontSize = '15px';
+            newOption.style.padding = '3px';
+            sites.append(newOption);
+
+            for (var i = 0; i<data['site_list'].length; i++) {
+                newOption = document.createElement('option');
+                newOption.value = data['site_list'][i]; 
+                newOption.innerHTML = data['site_list'][i];
+                newOption.style.fontSize = '15px';
+                newOption.style.padding = '3px';
+                if (data['site_list'][i] == data['site'])
+                    newOption.setAttribute('selected', true);
+                sites.append(newOption);
+            }
+
+            if (data['state'] == 1) {
+                var oddvalue = document.getElementById('oddvalue');
+                oddvalue.value = data['odds'];
+
+                var stakevalue = document.getElementById('stakevalue');
+                stakevalue.value = data['stake'];
+
+                var winvalue = document.getElementById('winvalue');
+                winvalue.value = data['wins'];
+            }
+
+        }, 
+    })
+}
+
 function openPriceModal(gameid){ 
     document.getElementById('modal_game_id').value = gameid;
     $('.large-card').css('width', '350px').css('height', '260px').show();
@@ -266,7 +364,7 @@ function changeBetSite(site) {
 
     $.ajax({
         type: 'POST', 
-        url: '/get_bet_info', 
+        url: '/get_NHL_bet_info', 
         data: JSON.stringify(data),
         dataType: 'json',
         contentType: 'application/json',

@@ -91,6 +91,7 @@
                             <div>
                                 <div style="position: relative;">
                                     <span onmouseover="showDiv('{{game.game_id}}', 0)" class="card-title">{{game.away_name}} @ {{game.home_name}}</span>
+                                    <button class="bet-add" onclick="openNHLBetModal('{{game.game_id}}')">Add</button>
                                 </div>
                                 <p class="game-date">{{game.game_datetime}} EST</p>
                             </div>
@@ -203,7 +204,64 @@
                                     <button class="bet-add-button" onclick="saveRequestPrice()">OK</button>
                                 </div>
                             </div>
-                        </div>                
+                        </div>
+                        <div id = 'betform' style="border: 1px solid gray; padding: 10px 5px;">
+                            <input type="hidden" id="modal_game_id" name="modal_game_id" value="">
+                            <div class="bet-form-row">
+                                <div class="bet-form-row-left"><span>BetDate:</span></div>
+                                <div class="bet-form-row-right"><span id="betdate"></span></div>
+                            </div>
+                            <div class="bet-form-row">
+                                <div class="bet-form-row-left">away:</div>
+                                <div class="bet-form-row-right">
+                                    <input type="text" placeholder="Toronto Maple Leafs" class="bet-input-form" id = 'awayname'>
+                                </div>
+                            </div>
+                            <div class="bet-form-row">
+                                <div class="bet-form-row-left">home:</div>
+                                <div class="bet-form-row-right">
+                                    <input type="text" placeholder="Florida Panthers" class="bet-input-form" id = 'homename'>
+                                </div>
+                            </div>
+                            <div class="bet-form-row">
+                                <div class="bet-form-row-left">Place:</div>
+                                <div class="bet-form-row-right">
+                                    <select id="teams" name="teams" class="bet-input-form" style="height: auto; font-size: 15px; padding: 3px;">
+                                      </select>
+                                </div>
+                            </div>
+                            <div class="bet-form-row">
+                                <div class="bet-form-row-left">Odds:</div>
+                                <div class="bet-form-row-right">
+                                    <input type="text" placeholder="+137" class="bet-input-form" id = 'oddvalue' oninput="calWinsWithOdds(this.value)"> 
+                                </div>
+                            </div>
+                            <div class="bet-form-row">
+                                <div class="bet-form-row-left">Stake:</div>
+                                <div class="bet-form-row-right">
+                                    <input type="number" placeholder="4671.53" class="bet-input-form" id = 'stakevalue' oninput="calWinsWithStake(this.value)"> 
+                                </div>
+                            </div>
+                            <div class="bet-form-row">
+                                <div class="bet-form-row-left">Wins:</div>
+                                <div class="bet-form-row-right">
+                                    <input type="number" placeholder="6400" class="bet-input-form" id = 'winvalue'> 
+                                </div>
+                            </div>
+                            <div class="bet-form-row">
+                                <div class="bet-form-row-left">Site:</div>
+                                <div class="bet-form-row-right" style="padding: 0px 10px;">
+                                    <select id="sites" name="sites" class="bet-input-form" style="height: auto; font-size: 15px; padding: 3px;" onchange="changeBetSite(this.value)">
+                                      </select>
+                                </div>
+                            </div>
+                            <div class="bet-form-row">
+                                <div class="bet-button-row">
+                                    <button class="bet-add-button" onclick="updateBetInformation(0)">Add</button>
+                                    <button class="bet-add-button" onclick="updateBetInformation(1)">Update</button>
+                                </div>
+                            </div>
+                        </div>                    
                     </div>        
                     <div id="loader"><img style="width: 50px; margin-top: 220px;" src="/static/loader.gif"/></div>
                 </div>

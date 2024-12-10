@@ -21,6 +21,7 @@ from functions_c import batting_c, starters_c, predict_c
 from schedule import schedule
 from schedule import scheduleNHL
 from scrapper import winprob
+from API import nhlAPI
 import time
 import atexit
 import calendar
@@ -353,6 +354,50 @@ def get_bet_info():
         data['site'] = bet_res[0]['site']
 
     return data
+
+@app.route('/get_NHL_bet_info', methods = ["POST"])
+def get_NHL_bet_info(): 
+    data = {}
+    request_data = request.get_json()
+
+    game_id = request_data['gameid']
+    boxscore = nhlAPI.get_Boxscore(game_id)
+    gamedate = boxscore['gameDate']
+    site = request_data['site']
+
+    info_res = pd.read_sql(f"SELECT * FROM schedule WHERE team_id = '{game_id}'", con = engine_nhl).to_dict('records')
+
+    data['away'] = info_res[0]['away_full_name']
+    data['home'] = info_res[0]['home_full_name']
+    data['date'] = gamedate
+    data['site_list'] = []
+
+    site_res = pd.read_sql(f"SELECT * FROM site_list", con = engine).to_dict('records')
+    for el in site_res:
+        data['site_list'].append(el['site'])
+
+    if site == 'NOSITE':
+        bet_res = pd.read_sql(f"SELECT * FROM betting_table WHERE betdate = '{gamedate}' AND away = '{data['away']}' AND home = '{data['home']}';", con = engine).to_dict('records')
+    else:
+        bet_res = pd.read_sql(f"SELECT * FROM betting_table WHERE betdate = '{gamedate}' AND away = '{data['away']}' AND home = '{data['home']}' AND site = '{site}';", con = engine).to_dict('records')
+
+    if(len(bet_res) == 0):
+        data['state'] = 0
+        data['odds'] = ''
+        data['place'] = ''
+        data['stake'] = 0
+        data['wins'] = 0
+        data['site'] = ''
+    else:
+        data['state'] = 1
+        data['odds'] = bet_res[0]['odds']
+        data['place'] = bet_res[0]['place']
+        data['stake'] = bet_res[0]['stake']
+        data['wins'] = bet_res[0]['wins']
+        data['site'] = bet_res[0]['site']
+
+    return data
+
 
 @app.route('/get_player_info', methods = ["POST"])
 def get_player_info(): 

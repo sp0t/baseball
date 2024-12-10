@@ -377,9 +377,9 @@ def get_NHL_bet_info():
         data['site_list'].append(el['site'])
 
     if site == 'NOSITE':
-        bet_res = pd.read_sql(f"SELECT * FROM betting_table WHERE betdate = '{gamedate}' AND away = '{data['away']}' AND home = '{data['home']}';", con = engine).to_dict('records')
+        bet_res = pd.read_sql(f"SELECT * FROM betting_table WHERE betdate = '{gamedate}' AND away = '{data['away']}' AND home = '{data['home']}';", con = engine_nhl).to_dict('records')
     else:
-        bet_res = pd.read_sql(f"SELECT * FROM betting_table WHERE betdate = '{gamedate}' AND away = '{data['away']}' AND home = '{data['home']}' AND site = '{site}';", con = engine).to_dict('records')
+        bet_res = pd.read_sql(f"SELECT * FROM betting_table WHERE betdate = '{gamedate}' AND away = '{data['away']}' AND home = '{data['home']}' AND site = '{site}';", con = engine_nhl).to_dict('records')
 
     if(len(bet_res) == 0):
         data['state'] = 0

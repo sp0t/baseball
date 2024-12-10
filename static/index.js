@@ -185,6 +185,7 @@ function openBetModal(gameid){
             home.value = data['home'];
 
             var teams = document.getElementById('teams'); 
+            teams.innerHTML = '';
 
             var newOption = document.createElement('option');
             newOption.value = ''; 
@@ -215,6 +216,7 @@ function openBetModal(gameid){
             teams.append(homeOption);
 
             var sites = document.getElementById('sites'); 
+            sites.innerHTML = '';
 
             var newOption = document.createElement('option');
             newOption.value = ''; 
@@ -260,7 +262,7 @@ function openNHLBetModal(gameid){
         dataType: 'json',
         contentType: 'application/json',
         beforeSend: function(){ 
-            $('.large-card').css('width', '350px').css('height', '430px').show();
+            $('.large-card').css('width', '350px').css('height', '400px').show();
             $('#large-card-wrapper').hide();
             $('#loader').show();
 
@@ -282,6 +284,7 @@ function openNHLBetModal(gameid){
             home.value = data['home'];
 
             var teams = document.getElementById('teams'); 
+            teams.innerHTML = '';
 
             var newOption = document.createElement('option');
             newOption.value = ''; 
@@ -312,6 +315,7 @@ function openNHLBetModal(gameid){
             teams.append(homeOption);
 
             var sites = document.getElementById('sites'); 
+            sites.innerHTML = '';
 
             var newOption = document.createElement('option');
             newOption.value = ''; 

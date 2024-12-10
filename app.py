@@ -365,7 +365,7 @@ def get_NHL_bet_info():
     gamedate = boxscore['gameDate']
     site = request_data['site']
 
-    info_res = pd.read_sql(f"SELECT * FROM schedule WHERE team_id = '{game_id}'", con = engine_nhl).to_dict('records')
+    info_res = pd.read_sql(f"SELECT * FROM schedule WHERE game_id = '{game_id}'", con = engine_nhl).to_dict('records')
 
     data['away'] = info_res[0]['away_full_name']
     data['home'] = info_res[0]['home_full_name']

@@ -556,7 +556,7 @@ function updateBetInformation(value) {
 
     $.ajax({
         type: 'POST', 
-        url: '/betting', 
+        url: '/NHL_betting', 
         data: JSON.stringify(data),
         dataType: 'json',
         contentType: 'application/json',

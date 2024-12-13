@@ -1157,7 +1157,7 @@ table {
 
 
   /* dark mode */
-  .dark-mode a, .dark-mode div, .dark-mode p, .dark-mode span, .dark-mode tbody, .dark-mode #stake, .dark-mode #sites,  .dark-mode #sites-rec, .dark-mode #teams, .dark-mode #total-amount, .dark-mode #win-amount, .dark-mode #total-amount-total, .dark-mode #win-amount-total, .dark-mode #loginForm, .dark-mode #win_percent, .dark-mode #pl_graph{
+  .dark-mode a, .dark-mode div, .dark-mode p, .dark-mode span, .dark-mode tbody, .dark-mode #stake, .dark-mode #sites,  .dark-mode #sites-rec, .dark-mode #teams, .dark-mode #total-amount, .dark-mode #win-amount, .dark-mode #total-amount-total, .dark-mode #win-amount-total, .dark-mode #loginForm, .dark-mode #win_percent, .dark-mode #pl_graph, .dark-mode #market{
 	background-color: #121212;
 	color: #ffffff;
   }

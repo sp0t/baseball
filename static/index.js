@@ -262,7 +262,7 @@ function openNHLBetModal(gameid){
         dataType: 'json',
         contentType: 'application/json',
         beforeSend: function(){ 
-            $('.large-card').css('width', '350px').css('height', '400px').show();
+            $('.large-card').css('width', '350px').css('height', '430px').show();
             $('#large-card-wrapper').hide();
             $('#loader').show();
 

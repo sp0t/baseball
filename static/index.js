@@ -556,7 +556,7 @@ function updateBetInformation(value) {
 
     $.ajax({
         type: 'POST', 
-        url: '/NHL_betting', 
+        url: '/betting', 
         data: JSON.stringify(data),
         dataType: 'json',
         contentType: 'application/json',
@@ -569,10 +569,108 @@ function updateBetInformation(value) {
                 data["startdate"] = $("#startdateInput").val();
                 data["enddate"] = $("#enddateInput").val();
                 data["betsite"] = $("#betsite").val();
-
-                updatebettingdata(data);
             } else {
                 closeCard(0);
+            }
+        }
+    })
+}
+
+
+function updateNHLBetInformation(value) {
+    var data = {};
+    var betdate = document.getElementById('betdate').textContent;
+    var away = document.getElementById('awayname').value;
+    var home = document.getElementById('homename').value;
+    var place = document.getElementById('teams').value;
+    var odds = document.getElementById('oddvalue').value;
+    var stake = document.getElementById('stakevalue').value;
+    var wins = document.getElementById('winvalue').value;
+    var site = '';
+    var betid = 0;
+    if(value == 2 || value == 3) { 
+        site = document.getElementById('sites-rec').value;
+        betid = document.getElementById('betid-rec').value;
+    }
+    else {
+        site = document.getElementById('sites').value;
+    }
+
+    // if(site == 'sports411.ag'){
+    //     wins = (wins * 0.9).toString();
+    //     stake = (stake * 0.9).toString();
+    // }
+
+    if (betdate == '') {
+        alert('invalid betdate!');
+        return;
+    }
+
+    if (away == '') {
+        alert('Please input away team!');
+        return;
+    }
+
+    if (home == '') {
+        alert('Please input home team!');
+        return;
+    }
+
+    if (place == '') {
+        alert('Please select betplace!');
+        return;
+    }
+
+    if (odds == '') {
+        alert('Please input Odd value!');
+        return;
+    }
+
+    if (stake == 0) {
+        alert('Please input stake amount!');
+        return;
+    }
+
+    if (wins == 0) {
+        alert('Please input win amount!');
+        return;
+    }
+
+    if (site == '') {
+        alert('Please select betting site!');
+        return;
+    }
+    
+    data['betdate'] = betdate;
+    data['away'] = away;
+    data['home'] = home;
+    data['place'] = place;
+    data['odds'] = odds;
+    data['stake'] = stake;
+    data['wins'] = wins;
+    data['flag'] = value;
+    data['site'] = site;
+    data['betid'] = betid;
+
+    console.log(data)
+
+    $.ajax({
+        type: 'POST', 
+        url: '/NHL_betting', 
+        data: JSON.stringify(data),
+        dataType: 'json',
+        contentType: 'application/json',
+        beforeSend: function(){ 
+        },
+        success: function (data){ 
+            if(value == 2 || value == 3) {
+                closeNHLCard(1);
+                var data={};
+                data["startdate"] = $("#startdateInput").val();
+                data["enddate"] = $("#enddateInput").val();
+                data["betsite"] = $("#betsite").val();
+            } else {
+                closeNHLCard(0);
             }
         }
     })

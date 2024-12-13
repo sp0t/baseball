@@ -314,6 +314,26 @@ function openNHLBetModal(gameid){
 
             teams.append(homeOption);
 
+            var market = document.getElementById('market'); 
+            market.innerHTML = '';
+
+            var newOption = document.createElement('option');
+            newOption.value = ''; 
+            newOption.innerHTML = '-';
+            newOption.style.fontSize = '15px';
+            newOption.style.padding = '3px';
+            market.append(newOption);
+
+            var otOption = document.createElement('option');
+            otOption.value = "OT"; 
+            otOption.innerHTML = "OT";
+            otOption.style.fontSize = '15px';
+            otOption.style.padding = '3px';
+            if(data['market'] == "OT")
+                otOption.setAttribute('selected', true);
+
+            market.append(otOption);
+
             var sites = document.getElementById('sites'); 
             sites.innerHTML = '';
 
@@ -583,6 +603,7 @@ function updateNHLBetInformation(value) {
     var away = document.getElementById('awayname').value;
     var home = document.getElementById('homename').value;
     var place = document.getElementById('teams').value;
+    var market = document.getElementById('market').value;
     var odds = document.getElementById('oddvalue').value;
     var stake = document.getElementById('stakevalue').value;
     var wins = document.getElementById('winvalue').value;
@@ -621,6 +642,11 @@ function updateNHLBetInformation(value) {
         return;
     }
 
+    if (market == '') {
+        alert('Please select market!');
+        return;
+    }
+
     if (odds == '') {
         alert('Please input Odd value!');
         return;
@@ -645,6 +671,7 @@ function updateNHLBetInformation(value) {
     data['away'] = away;
     data['home'] = home;
     data['place'] = place;
+    data['market'] = market;
     data['odds'] = odds;
     data['stake'] = stake;
     data['wins'] = wins;

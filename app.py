@@ -1349,7 +1349,7 @@ def betting_NHL_proc():
     betting_data = request.get_json()
 
     if betting_data['flag'] == 0:
-        engine_nhl.execute("INSERT INTO betting_table(betdate, away, home, place, market, site, odds, stake, wins, result) VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)", (betting_data['betdate'], betting_data['away'], betting_data['home'], betting_data['place'], betting_data['site'], betting_data['odds'], betting_data['stake'], betting_data['wins'], 'P'))
+        engine_nhl.execute("INSERT INTO betting_table(betdate, away, home, place, market, site, odds, stake, wins, result) VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)", (betting_data['betdate'], betting_data['away'], betting_data['home'], betting_data['place'], betting_data['market'], betting_data['site'], betting_data['odds'], betting_data['stake'], betting_data['wins'], 'P'))
 
     elif betting_data['flag'] == 1:
         betting_table_sql = f"UPDATE betting_table SET place = '{betting_data['place']}', odds = '{betting_data['odds']}', stake = '{betting_data['stake']}', wins = '{betting_data['wins']}' WHERE betdate = '{betting_data['betdate']}' AND away = '{betting_data['away']}' AND home = '{betting_data['home']}' AND site = '{betting_data['site']}';"

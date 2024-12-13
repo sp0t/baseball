@@ -28,9 +28,12 @@ for row in df:
         place = home_name
 
     date_obj = datetime.strptime(row['date'], "%m/%d/%Y")
+    
     betdate = date_obj.strftime("%Y-%m-%d")
 
-    engine.execute("INSERT INTO betting_table(betdate, away, home, place, market, site, odds, stake, wins, result) VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)", (betdate, away_name, home_name, place, row['market'], row['site'], row['odds'], row['stake'], row['wins'], row['result']))
-    engine.execute("INSERT INTO graph_table(betdate, away, home, place, result, ncount, wcount, run_win, risk, pl) VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)", (betdate, away_name, home_name, place, row['result'], row['ncount'], row['wcount'], row['run_win'], row['risk'], row['pl']))
+    if betdate > "2024-12-08":
+        engine.execute("INSERT INTO betting_table(betdate, away, home, place, market, site, odds, stake, wins, result) VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)", (betdate, away_name, home_name, place, row['market'], row['site'], row['odds'], row['stake'], row['wins'], row['result']))
+        engine.execute("INSERT INTO graph_table(betdate, away, home, place, result, ncount, wcount, run_win, risk, pl) VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)", (betdate, away_name, home_name, place, row['result'], row['ncount'], row['wcount'], row['run_win'], row['risk'], row['pl']))
+
 
     

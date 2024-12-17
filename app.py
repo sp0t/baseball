@@ -1181,6 +1181,30 @@ def show_betting():
 
     return data
 
+@app.route('/showNHLbetting', methods = ["GET", "POST"])
+def show_NHL_betting():
+    if request.method == 'GET':
+        return render_template("NHL/betting.html")
+
+    modify_data = request.get_json()
+    daystr = modify_data["gamedate"]
+
+    if modify_data["status"] == 1 or modify_data["status"] == 2:
+        if modify_data["status"] == 1:
+            result = "W"
+        elif modify_data["status"] == 2:
+            result = "L"
+        engine_nhl.execute(f"UPDATE betting_table SET result = '{result}' WHERE betdate = '{modify_data['gamedate']}' AND away = '{modify_data['away']}' AND home = '{modify_data['home']}'AND place = '{modify_data['place']}';")
+
+    betdata = pd.read_sql(f"SELECT COUNT(id), away, home, place, SUM(CAST(stake AS NUMERIC)) AS stake, SUM(CAST(wins AS NUMERIC)) AS wins, result FROM betting_table WHERE betdate = '{daystr}' GROUP BY away, home, place, result;", con = engine_nhl).to_dict('records')
+    stake = pd.read_sql(f"SELECT betdate, SUM(CAST(stake AS NUMERIC)) AS stake, SUM(CASE WHEN result = 'W' THEN CAST(wins AS NUMERIC) ELSE 0 END) wins, SUM(CASE WHEN result = 'L' THEN CAST(stake AS NUMERIC) ELSE 0 END) losses FROM betting_table WHERE betdate = '{daystr}' GROUP BY betdate ORDER BY betdate;", con = engine_nhl).to_dict('records')
+    
+    data = {}
+    data['bet'] = betdata
+    data['stake'] = stake
+
+    return data
+
 @app.route('/reconciliation', methods = ["GET", "POST"])
 def reconciliation():
     #engine = database.connect_to_db()

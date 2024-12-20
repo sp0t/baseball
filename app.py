@@ -1210,7 +1210,7 @@ def show_NHL_betting():
         risk = 1.0
         run_win = dec((wcount / ncount) * 100, 2)
         engine_nhl.execute(f"UPDATE betting_table SET result = '{result}' WHERE betdate = '{modify_data['gamedate']}' AND away = '{modify_data['away']}' AND home = '{modify_data['home']}'AND place = '{modify_data['place']}';")
-        engine_nhl.execute("INSERT INTO graph_table(betdate, away, home, place, result, ncount, wcount, run_win, risk, pl) VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s);")
+        engine_nhl.execute("INSERT INTO graph_table(betdate, away, home, place, result, ncount, wcount, run_win, risk, pl) VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)", (modify_data['gamedate'], modify_data['away'], modify_data['home'], modify_data['place'], result, ncount, wcount, run_win, risk, pl))
 
 
 

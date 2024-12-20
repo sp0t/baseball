@@ -1190,11 +1190,29 @@ def show_NHL_betting():
     daystr = modify_data["gamedate"]
 
     if modify_data["status"] == 1 or modify_data["status"] == 2:
+        graph_res = pd.read_sql(f"SELECT * FROM graph_table ORDER BY id DESC;", con = engine_nhl).to_dict('records')   
+        bet_res =  pd.read_sql(f"SELECT SUM(CAST(stake AS NUMERIC)) AS stake, SUM(CAST(wins AS NUMERIC)) AS wins FROM betting_table WHERE betdate = '{modify_data['gamedate']}' AND away = '{modify_data['away']}' AND home = '{modify_data['home']}'AND place = '{modify_data['place']}' GROUP BY betdate, away, home, place;", con = engine_nhl).to_dict('records')   
+        ncount = graph_res[0]['ncount']
+        wcount = graph_res[0]['wcount']
+        stake = bet_res[0]['stake']
+        wins = bet_res[0]['wins']
+
+
+        ncount = ncount + 1
+
         if modify_data["status"] == 1:
             result = "W"
+            wcount = wcount + 1
+            pl = dec(wins/stake, 2)
         elif modify_data["status"] == 2:
             result = "L"
+            pl = -1.0
+        risk = 1.0
+        run_win = dec((wcount / ncount) * 100, 2)
         engine_nhl.execute(f"UPDATE betting_table SET result = '{result}' WHERE betdate = '{modify_data['gamedate']}' AND away = '{modify_data['away']}' AND home = '{modify_data['home']}'AND place = '{modify_data['place']}';")
+        engine_nhl.execute("INSERT INTO graph_table(betdate, away, home, place, result, ncount, wcount, run_win, risk, pl) VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s);")
+
+
 
     betdata = pd.read_sql(f"SELECT COUNT(id), away, home, place, SUM(CAST(stake AS NUMERIC)) AS stake, SUM(CAST(wins AS NUMERIC)) AS wins, result FROM betting_table WHERE betdate = '{daystr}' GROUP BY away, home, place, result;", con = engine_nhl).to_dict('records')
     stake = pd.read_sql(f"SELECT betdate, SUM(CAST(stake AS NUMERIC)) AS stake, SUM(CASE WHEN result = 'W' THEN CAST(wins AS NUMERIC) ELSE 0 END) wins, SUM(CASE WHEN result = 'L' THEN CAST(stake AS NUMERIC) ELSE 0 END) losses FROM betting_table WHERE betdate = '{daystr}' GROUP BY betdate ORDER BY betdate;", con = engine_nhl).to_dict('records')
